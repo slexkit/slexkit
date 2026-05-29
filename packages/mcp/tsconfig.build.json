@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "slexkit/runtime": ["../../dist/types/runtime.d.ts"]
+    }
+  }
+}

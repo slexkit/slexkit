@@ -11,14 +11,14 @@ await rm(dist, { recursive: true, force: true });
 await mkdir(dataDir, { recursive: true });
 await generateAiDocs({ outputDirs: [join(repoRoot, "dist", "ai")] });
 
-const proc = Bun.spawn(["tsc", "-p", "tsconfig.json"], {
+const proc = Bun.spawn(["tsc", "-p", "tsconfig.build.json"], {
   cwd: packageRoot,
   stdout: "inherit",
   stderr: "inherit",
 });
 
 const code = await proc.exited;
-if (code !== 0) throw new Error(`tsc -p tsconfig.json failed with exit code ${code}`);
+if (code !== 0) throw new Error(`tsc -p tsconfig.build.json failed with exit code ${code}`);
 
 for (const file of [
   "slexkit-ai-manifest.json",

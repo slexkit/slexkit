@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "slexkit": ["../../dist/types/index.d.ts"],
+      "slexkit/tooling": ["../../dist/types/components/tooling.d.ts"]
+    }
+  }
+}
