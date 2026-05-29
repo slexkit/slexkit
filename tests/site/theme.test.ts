@@ -119,6 +119,22 @@ describe("site dark mode", () => {
     expect(shell).toContain("data-home-link");
   });
 
+  it("uses Simple Icons for npm and GitHub package links", async () => {
+    const html = await Bun.file("site/index.html").text();
+    const icons = await Bun.file("site/app/icons.js").text();
+
+    const npmIndex = html.indexOf('href="https://www.npmjs.com/package/slexkit"');
+    const githubIndex = html.indexOf('href="https://github.com/slexkit/slexkit"');
+    expect(npmIndex).toBeGreaterThan(-1);
+    expect(githubIndex).toBeGreaterThan(npmIndex);
+    expect(html).toContain('aria-label="npm"');
+    expect(html).toContain('aria-label="GitHub"');
+    expect(html).toContain("M1.763 0C.786 0 0 .786 0 1.763");
+    expect(html).toContain("M12 .297c-6.63 0-12 5.373-12 12");
+    expect(html).not.toContain('data-phosphor-icon="github-logo"');
+    expect(icons).not.toContain("github-logo");
+  });
+
   it("keeps the global desktop navigation centered without overlapping actions", async () => {
     const html = await Bun.file("site/index.html").text();
     const css = await Bun.file("site/styles/docs-shell.css").text();
