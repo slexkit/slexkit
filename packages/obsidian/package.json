@@ -2,6 +2,7 @@
   "name": "@slexkit/obsidian",
   "version": "0.2.0",
   "description": "Obsidian readonly renderer for SlexKit fenced UI blocks.",
+  "author": "SlexKit contributors",
   "type": "commonjs",
   "repository": {
     "type": "git",

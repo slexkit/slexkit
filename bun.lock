@@ -49,9 +49,6 @@
       "bin": {
         "slexkit-mcp": "./dist/index.js",
       },
-      "dependencies": {
-        "slexkit": "file:../..",
-      },
     },
     "packages/obsidian": {
       "name": "@slexkit/obsidian",

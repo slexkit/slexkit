@@ -2,6 +2,7 @@
   "name": "@slexkit/theme-shadcn",
   "version": "0.2.0",
   "description": "Official shadcn-token theme CSS for SlexKit.",
+  "author": "SlexKit contributors",
   "type": "module",
   "repository": {
     "type": "git",

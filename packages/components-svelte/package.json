@@ -2,6 +2,7 @@
   "name": "@slexkit/components-svelte",
   "version": "0.2.0",
   "description": "Official Svelte component registrations for SlexKit.",
+  "author": "SlexKit contributors",
   "type": "module",
   "repository": {
     "type": "git",

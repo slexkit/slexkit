@@ -2,6 +2,7 @@
   "name": "slexkit",
   "version": "0.2.0",
   "description": "Zero-build, Markdown-friendly reactive UI runtime for AI output.",
+  "author": "SlexKit contributors",
   "type": "module",
   "repository": {
     "type": "git",
@@ -94,7 +95,8 @@
     "test": "bun test --conditions browser --isolate --preload ./tests/setup.ts tests packages",
     "test:watch": "bun test --conditions browser --isolate --watch --preload ./tests/setup.ts tests packages",
     "lint": "eslint src/",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "publish:npm": "node scripts/publish-npm.mjs"
   },
   "keywords": [
     "reactive",

@@ -2,6 +2,7 @@
   "name": "@slexkit/runtime",
   "version": "0.2.0",
   "description": "Pure SlexKit runtime and expression engine entry.",
+  "author": "SlexKit contributors",
   "type": "module",
   "repository": {
     "type": "git",
