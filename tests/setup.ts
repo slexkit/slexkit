@@ -6,6 +6,18 @@ import { compile, compileModule } from "svelte/compiler";
 Bun.plugin({
   name: "svelte-transform",
   setup(build) {
+    build.onResolve({ filter: /^slexkit(\/.*)?$/ }, ({ path }) => {
+      const aliases: Record<string, string> = {
+        slexkit: `${import.meta.dir}/../src/index.ts`,
+        "slexkit/runtime": `${import.meta.dir}/../src/runtime.ts`,
+        "slexkit/components": `${import.meta.dir}/../src/components/index.ts`,
+        "slexkit/components-svelte": `${import.meta.dir}/../src/components-svelte.ts`,
+        "slexkit/tooling": `${import.meta.dir}/../src/components/tooling.ts`,
+      };
+
+      const alias = aliases[path];
+      return alias ? { path: alias } : undefined;
+    });
     build.onResolve({ filter: /^@humanspeak\/svelte-markdown$/ }, () => ({
       path: `${import.meta.dir}/../node_modules/@humanspeak/svelte-markdown/dist/index.js`,
     }));
