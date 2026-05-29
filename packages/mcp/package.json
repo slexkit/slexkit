@@ -44,9 +44,6 @@
     "access": "public"
   },
   "dependencies": {
-    "slexkit": "^0.2.0"
-  },
-  "devDependencies": {
     "slexkit": "file:../.."
   }
 }
