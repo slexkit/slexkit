@@ -16,7 +16,7 @@
   "module": "./dist/slexkit.js",
   "types": "./dist/types/index.d.ts",
   "bin": {
-    "slex": "./scripts/cli.mjs"
+    "slex": "scripts/cli.mjs"
   },
   "workspaces": [
     "packages/*"
@@ -92,6 +92,7 @@
     "copy-runtime": "node scripts/cli.mjs copy-runtime",
     "preview": "bun run site/server.ts",
     "smoke:release": "node scripts/release-smoke.mjs",
+    "smoke:registry": "node scripts/registry-smoke.mjs",
     "test": "bun test --conditions browser --isolate --preload ./tests/setup.ts tests packages",
     "test:watch": "bun test --conditions browser --isolate --watch --preload ./tests/setup.ts tests packages",
     "lint": "eslint src/",

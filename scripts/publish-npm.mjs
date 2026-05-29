@@ -59,18 +59,18 @@ for (const packagePath of packages) {
     continue;
   }
 
-  const args = ["publish", packagePath];
-  if (useProvenance) args.push("--provenance");
-  if (pkg.name.startsWith("@")) args.push("--access", "public");
+  const publishArgs = ["publish"];
+  if (useProvenance) publishArgs.push("--provenance");
+  if (pkg.name.startsWith("@")) publishArgs.push("--access", "public");
 
   if (dryRun) {
     console.log(`would publish: ${id}`);
-    console.log(`(cd ${packagePath} && npm ${args.filter((arg) => arg !== packagePath).join(" ")})`);
+    console.log(`(cd ${packagePath} && npm ${publishArgs.join(" ")})`);
     continue;
   }
 
   console.log(`publishing: ${id}`);
-  run(npmCommand, args.filter((arg) => arg !== packagePath), {
+  run(npmCommand, publishArgs, {
     cwd: resolve(root, packagePath),
     stdio: "inherit",
   });

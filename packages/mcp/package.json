@@ -14,7 +14,7 @@
     "url": "https://github.com/slexkit/slexkit/issues"
   },
   "bin": {
-    "slexkit-mcp": "./dist/index.js"
+    "slexkit-mcp": "dist/index.js"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
