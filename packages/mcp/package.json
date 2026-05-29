@@ -44,7 +44,7 @@
     "access": "public"
   },
   "dependencies": {
-    "slexkit": "^0.2.0"
+    "slexkit": "workspace:*"
   },
   "devDependencies": {
     "slexkit": "file:../.."
