@@ -190,6 +190,7 @@ describe("site playground markdown renderer", () => {
     const markdownComponent = await Bun.file("site/markdown/MarkdownRenderer.svelte").text();
     const slexkitRenderer = await Bun.file("site/markdown/SlexCode.svelte").text();
     const highlightedCode = await Bun.file("site/markdown/HighlightedMarkdownCode.svelte").text();
+    const headings = await Bun.file("site/markdown/headings.js").text();
     const runtimeLoader = await Bun.file("site/markdown/runtime-loader.js").text();
     const siteBuild = await Bun.file("site/scripts/build.ts").text();
 
@@ -197,7 +198,7 @@ describe("site playground markdown renderer", () => {
     expect(renderer).not.toContain("createRoot");
     expect(markdownComponent).toContain("@humanspeak/svelte-markdown");
     expect(markdownComponent).toContain("normalizeHeadingAnchors(content)");
-    expect(markdownComponent).toContain("\\{#([A-Za-z0-9_-]+)\\}");
+    expect(headings).toContain("\\{#([A-Za-z0-9_-]+)\\}");
     expect(markdownComponent).toContain("{#snippet code");
     expect(markdownComponent).toContain("slexkitRuntime");
     expect(markdownComponent).toContain("slexkitSecurePolicy");

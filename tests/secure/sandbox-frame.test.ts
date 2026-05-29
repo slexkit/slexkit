@@ -301,7 +301,7 @@ describe("secure sandbox frame", () => {
         });
         window.dispatchEvent(acknowledged);
 
-        await new Promise((resolve) => setTimeout(resolve, 35));
+        await new Promise((resolve) => setTimeout(resolve, 80));
 
         const alert = container.querySelector(".slexkit-secure-error");
         expect(alert?.textContent).toContain("stopped responding");

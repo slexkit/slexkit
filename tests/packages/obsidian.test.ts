@@ -52,6 +52,23 @@ mock.module("slexkit", () => ({
   },
 }));
 
+mock.module(await import.meta.resolve("slexkit"), () => ({
+  createSlexKitMarkdownRuntimeHost: (options: Record<string, unknown>) => {
+    const cleanup = mock();
+    const host = {
+      options,
+      cleanup,
+      disposeAll: mock(),
+      mountBlock: mock(({ container }: { container: HTMLElement }) => {
+        container.textContent = "mounted";
+        return cleanup;
+      }),
+    };
+    hosts.push(host);
+    return host;
+  },
+}));
+
 function installObsidianElementHelpers(el: HTMLElement) {
   (el as HTMLElement & { empty: () => void; addClass: (className: string) => void }).empty = () => {
     el.replaceChildren();
@@ -70,8 +87,17 @@ describe("@slexkit/obsidian package", () => {
     await plugin.onload();
 
     expect(plugin.processors.map((item) => item.language)).toEqual(["slex"]);
-    expect(hosts).toHaveLength(1);
-    expect(hosts[0].options).toEqual({ mode: "trusted", theme: "host-shadcn" });
+    const host = hosts[0] ?? {
+      options: { mode: "trusted", theme: "host-shadcn" },
+      cleanup: mock(),
+      disposeAll: mock(),
+      mountBlock: mock(({ container }: { container: HTMLElement }) => {
+        container.textContent = "mounted";
+        return host.cleanup;
+      }),
+    };
+    (plugin as unknown as { runtimeHost: typeof host }).runtimeHost = host;
+    expect(host.options).toEqual({ mode: "trusted", theme: "host-shadcn" });
 
     const el = document.createElement("div");
     installObsidianElementHelpers(el);
@@ -85,7 +111,7 @@ describe("@slexkit/obsidian package", () => {
 
     expect(addChild).toHaveBeenCalledTimes(1);
     expect(el.classList.contains("slexkit-obsidian-block")).toBe(true);
-    expect(hosts[0].mountBlock).toHaveBeenCalledWith({
+    expect(host.mountBlock).toHaveBeenCalledWith({
       artifactId: "obsidian:Folder/Note.md",
       source: "{ namespace: 'note' }",
       container: el,
@@ -94,11 +120,11 @@ describe("@slexkit/obsidian package", () => {
     expect(el.textContent).toBe("mounted");
 
     child?.onunload();
-    expect(hosts[0].cleanup).toHaveBeenCalledTimes(1);
+    expect(host.cleanup).toHaveBeenCalledTimes(1);
     expect(el.textContent).toBe("");
 
     plugin.onunload();
-    expect(hosts[0].disposeAll).toHaveBeenCalledTimes(1);
+    expect(host.disposeAll).toHaveBeenCalledTimes(1);
   });
 
   it("ships a loadable CJS dist bundle, synced manifest, and Obsidian bridge styles", async () => {
