@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execFileSync } from "node:child_process";
+import { execFile, execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
@@ -31,31 +31,57 @@ function run(command, args, options = {}) {
   return String(output ?? "").trim();
 }
 
+function runAsync(command, args, options = {}) {
+  const isWindowsCmd = process.platform === "win32" && command.endsWith(".cmd");
+  return new Promise((resolve, reject) => {
+    const child = execFile(
+      isWindowsCmd ? "cmd.exe" : command,
+      isWindowsCmd ? ["/d", "/s", "/c", command, ...args] : args,
+      { cwd: options.cwd ?? root, encoding: "utf8", shell: false, maxBuffer: 50 * 1024 * 1024 },
+      (error, stdout) => {
+        if (error) reject(error);
+        else resolve(String(stdout ?? "").trim());
+      },
+    );
+    if (options.stdio === "inherit" && child.stdout) {
+      child.stdout.pipe(process.stdout);
+      child.stderr.pipe(process.stderr);
+    }
+  });
+}
+
 function runNpm(args, options = {}) {
   return run(npmCommand, [...npmPrefix, ...args], options);
 }
 
-function pack(packagePath = ".") {
-  const output = runNpm(["pack", packagePath, "--pack-destination", packDir]);
+function runNpmAsync(args, options = {}) {
+  return runAsync(npmCommand, [...npmPrefix, ...args], options);
+}
+
+function installPackedApp(args, options = {}) {
+  if (npmExecIsBun && npmExecPath) {
+    return run(npmExecPath, ["install", ...args], options);
+  }
+
+  return runNpm(["install", "--no-audit", "--no-fund", "--ignore-scripts", ...args], options);
+}
+
+async function pack(packagePath = ".") {
+  const output = await runNpmAsync(["pack", packagePath, "--pack-destination", packDir]);
   return join(packDir, output.split(/\r?\n/).at(-1));
 }
 
-const tarballs = [
-  pack("."),
-  pack("./packages/runtime"),
-  pack("./packages/components-svelte"),
-  pack("./packages/streamdown"),
-  pack("./packages/theme-shadcn"),
-  pack("./packages/obsidian"),
-  pack("./packages/mcp"),
-];
+const tarballs = [];
+for (const pkg of [".", "./packages/runtime", "./packages/components-svelte", "./packages/streamdown", "./packages/theme-shadcn", "./packages/obsidian", "./packages/mcp"]) {
+  tarballs.push(await pack(pkg));
+}
 
 writeFileSync(
   join(appDir, "package.json"),
   JSON.stringify({ private: true, type: "module" }, null, 2),
 );
 
-runNpm(["install", "--silent", ...tarballs, "react", "react-dom", "streamdown"], { cwd: appDir, stdio: "inherit" });
+installPackedApp([...tarballs, "react", "react-dom", "streamdown"], { cwd: appDir, stdio: "inherit" });
 
 writeFileSync(
   join(appDir, "smoke.mjs"),
@@ -66,6 +92,7 @@ writeFileSync(
     "import '@slexkit/components-svelte';",
     "import { SlexKitRenderer, createSlexKitRenderer, slexkitRenderer } from '@slexkit/streamdown';",
     "import { createRequire } from 'node:module';",
+    "import { existsSync } from 'node:fs';",
     "import { join } from 'node:path';",
     "const require = createRequire(import.meta.url);",
     "const themeCss = require.resolve('@slexkit/theme-shadcn/style.css');",
@@ -96,10 +123,10 @@ writeFileSync(
     "Module._load = originalLoad;",
     "if (typeof ObsidianPlugin !== 'function') throw new Error('@slexkit/obsidian did not export a plugin constructor');",
     "if (ObsidianPlugin.default !== ObsidianPlugin) throw new Error('@slexkit/obsidian default export mismatch');",
-    "const mcpBin = process.platform === 'win32' ? join(process.cwd(), 'node_modules', '.bin', 'slexkit-mcp.cmd') : join(process.cwd(), 'node_modules', '.bin', 'slexkit-mcp');",
-    "const mcp = process.platform === 'win32'",
-    "  ? spawn('cmd.exe', ['/d', '/s', '/c', mcpBin], { cwd: process.cwd(), stdio: ['pipe', 'pipe', 'pipe'] })",
-    "  : spawn(mcpBin, [], { cwd: process.cwd(), stdio: ['pipe', 'pipe', 'pipe'] });",
+    "const mcpBinBase = join(process.cwd(), 'node_modules', '.bin', 'slexkit-mcp');",
+    "const mcpBin = (process.platform === 'win32' ? [`${mcpBinBase}.cmd`, `${mcpBinBase}.exe`, `${mcpBinBase}.bunx`, mcpBinBase] : [mcpBinBase]).find(existsSync);",
+    "if (!mcpBin) throw new Error('slexkit-mcp binary missing');",
+    "const mcp = spawn(mcpBin, [], { cwd: process.cwd(), stdio: ['pipe', 'pipe', 'pipe'], shell: false });",
     "let buffer = '';",
     "function waitForLine() {",
     "  return new Promise((resolve, reject) => {",
