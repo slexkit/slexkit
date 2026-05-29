@@ -65,10 +65,13 @@ for (const packagePath of packages) {
 
   if (dryRun) {
     console.log(`would publish: ${id}`);
-    console.log(`npm ${args.join(" ")}`);
+    console.log(`(cd ${packagePath} && npm ${args.filter((arg) => arg !== packagePath).join(" ")})`);
     continue;
   }
 
   console.log(`publishing: ${id}`);
-  run(npmCommand, args, { stdio: "inherit" });
+  run(npmCommand, args.filter((arg) => arg !== packagePath), {
+    cwd: resolve(root, packagePath),
+    stdio: "inherit",
+  });
 }
