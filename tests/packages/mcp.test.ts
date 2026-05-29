@@ -8,7 +8,7 @@ type RpcMessage = {
   error?: unknown;
 };
 
-function createLineReader(proc: ReturnType<typeof Bun.spawn>) {
+function createLineReader(proc: ReturnType<typeof Bun.spawn>, stderrSink?: string[]) {
   const reader = proc.stdout.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -23,7 +23,10 @@ function createLineReader(proc: ReturnType<typeof Bun.spawn>) {
       }
 
       const next = await reader.read();
-      if (next.done) throw new Error("MCP process closed stdout before responding");
+      if (next.done) {
+        const err = stderrSink ? ` stderr: ${stderrSink.join("").trim() || "(empty)"}` : "";
+        throw new Error(`MCP process closed stdout before responding.${err}`);
+      }
       buffer += decoder.decode(next.value, { stream: true });
     }
   };
@@ -40,7 +43,17 @@ describe("@slexkit/mcp stdio server", () => {
       stdout: "pipe",
       stderr: "pipe",
     });
-    const waitForLine = createLineReader(proc);
+    const stderrChunks: string[] = [];
+    (async () => {
+      const reader = proc.stderr.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const chunk = await reader.read();
+        if (chunk.done) break;
+        stderrChunks.push(decoder.decode(chunk.value, { stream: true }));
+      }
+    })();
+    const waitForLine = createLineReader(proc, stderrChunks);
 
     const write = (message: unknown) => {
       proc.stdin.write(`${JSON.stringify(message)}\n`);
