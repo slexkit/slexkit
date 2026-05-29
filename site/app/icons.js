@@ -3,6 +3,7 @@ import CaretDownRegular from "@phosphor-icons/core/assets/regular/caret-down.svg
 import CircleHalfRegular from "@phosphor-icons/core/assets/regular/circle-half.svg?raw";
 import CopyRegular from "@phosphor-icons/core/assets/regular/copy.svg?raw";
 import DatabaseRegular from "@phosphor-icons/core/assets/regular/database.svg?raw";
+import GithubLogoRegular from "@phosphor-icons/core/assets/regular/github-logo.svg?raw";
 import LightbulbRegular from "@phosphor-icons/core/assets/regular/lightbulb.svg?raw";
 import ListRegular from "@phosphor-icons/core/assets/regular/list.svg?raw";
 import MarkdownLogoRegular from "@phosphor-icons/core/assets/regular/markdown-logo.svg?raw";
@@ -17,6 +18,7 @@ import CaretDownDuotone from "@phosphor-icons/core/assets/duotone/caret-down-duo
 import CircleHalfDuotone from "@phosphor-icons/core/assets/duotone/circle-half-duotone.svg?raw";
 import CopyDuotone from "@phosphor-icons/core/assets/duotone/copy-duotone.svg?raw";
 import DatabaseDuotone from "@phosphor-icons/core/assets/duotone/database-duotone.svg?raw";
+import GithubLogoDuotone from "@phosphor-icons/core/assets/duotone/github-logo-duotone.svg?raw";
 import LightbulbDuotone from "@phosphor-icons/core/assets/duotone/lightbulb-duotone.svg?raw";
 import ListDuotone from "@phosphor-icons/core/assets/duotone/list-duotone.svg?raw";
 import MarkdownLogoDuotone from "@phosphor-icons/core/assets/duotone/markdown-logo-duotone.svg?raw";
@@ -33,6 +35,7 @@ const regularIcons = {
   "circle-half": CircleHalfRegular,
   copy: CopyRegular,
   database: DatabaseRegular,
+  "github-logo": GithubLogoRegular,
   lightbulb: LightbulbRegular,
   list: ListRegular,
   "markdown-logo": MarkdownLogoRegular,
@@ -50,6 +53,7 @@ const duotoneIcons = {
   "circle-half": CircleHalfDuotone,
   copy: CopyDuotone,
   database: DatabaseDuotone,
+  "github-logo": GithubLogoDuotone,
   lightbulb: LightbulbDuotone,
   list: ListDuotone,
   "markdown-logo": MarkdownLogoDuotone,
