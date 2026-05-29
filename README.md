@@ -1,48 +1,68 @@
-# SlexKit
+<div align="center">
+  <p>
+    <img src="site/assets/logo.svg" alt="SlexKit" width="84" height="84" />
+  </p>
+  <h1>SlexKit</h1>
+  <p><strong>Streaming Live EXpressions Kit</strong></p>
+  <p>
+    "Docs as tools, tools as docs." Give Markdown interactive power and make every AI output come alive.
+  </p>
+  <p>
+    <a href="site/content/guides/intro/en-US.md">Documentation</a> ·
+    <a href="site/content/components/accordion/en-US.md">Components</a> ·
+    <a href="site/content/reference/spec/en-US.md">Specification</a> ·
+    <a href="site/content/guides/ai-agents/en-US.md">AI / Agents</a> ·
+    <a href="README.zh-CN.md">简体中文</a>
+  </p>
+  <p>
+    <img alt="version" src="https://img.shields.io/badge/version-0.2.0-18181b">
+    <img alt="script" src="https://img.shields.io/badge/Slex-v0.1-18181b">
+    <img alt="TypeScript" src="https://img.shields.io/badge/runtime-TypeScript-3178c6">
+    <img alt="Svelte 5" src="https://img.shields.io/badge/components-Svelte_5-ff3e00">
+    <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a">
+  </p>
+</div>
 
-[**简体中文**](README.zh-CN.md) | **English**
+## Live interface blocks inside Markdown
 
-Zero-build, Markdown-friendly reactive UI runtime for AI output.
+**SlexKit** turns explicit `slex` Markdown fences into live, stateful UI blocks. A Slex source is just a JavaScript object literal: `g` holds state and logic, `layout` describes the component tree, and the browser runtime renders the result in place.
 
-SlexKit lets language models emit a JavaScript object literal -state and logic in `g`, component tree in `layout` -which the browser-side runtime renders as interactive UI. It targets chat messages, documents, agent panels, and tool dashboards -not full applications.
+It is built for chat messages, documents, agent panels, tool results, and AI-authored dashboards. It is not a full application framework.
 
-## Features
-
-- **JS object literal Slex source** -no build step, no imports, no project scaffolding
-- **Reactive `g`/`layout` split** -state and logic centralized in `g`, UI structure in `layout`
-- **`$if` / `$for` directives** -conditional rendering and array iteration with keyed reconciliation
-- **Expression pipes** -`$` read-pipes and `on*` write-pipes for dynamic props and event handling
-- **Component registry** -extensible component types with state modes (`value`/`checked`/`enabled`/`readable`/`none`)
-- **Trusted + secure dual runtime** -trusted mode runs in the host realm; secure mode isolates untrusted Slex source in a sandbox iframe
-- **CSP-hardened sandbox** -opaque origin, nonce-based CSP, locked-down globals, heartbeat watchdog
-- **Official Svelte components** -40+ ready-to-use components (input, navigation, layout, feedback, content, disclosure, display, tooling)
-- **ToolHost** -structured user input collection (confirm, choose, fill form) with submit boundaries
-- **MCP server** -`@slexkit/mcp` provides AI agents with docs, examples, and source validation via Model Context Protocol
-- **Markdown fence native** -host detects `slex` fences explicitly; never guesses code blocks
-- **Framework integrations** -React/Streamdown renderer, Obsidian adapter
-
-## Quick start
+## Installation
 
 ```sh
 npm install slexkit
 ```
+
+```ts
+import { mount } from "slexkit";
+import "slexkit/style.css";
+```
+
+## Usage
 
 ```html
 <div id="app"></div>
 
 <script type="module">
   import { mount } from "slexkit";
+  import "slexkit/style.css";
 
   mount(
     {
       slex: "0.1",
       namespace: "hello",
-      g: { name: "World" },
+      g: { name: "World", count: 0 },
       layout: {
         "card:greeting": {
           title: "Greeting",
           "text:message": {
-            "$content": "'Hello, ' + g.name + '!'"
+            "$text": "'Hello, ' + g.name + '! Count: ' + g.count"
+          },
+          "button:add": {
+            label: "+1",
+            onclick: "g.count++"
           }
         }
       }
@@ -52,72 +72,93 @@ npm install slexkit
 </script>
 ```
 
-## Markdown output
+## Markdown Native
 
-SlexKit-capable hosts process explicit `slex` fences only -never plain JavaScript or JSON code blocks.
+SlexKit-capable hosts process explicit `slex` fences only. Plain `js`, `json`, and unlabeled code blocks stay inert.
 
-~~~~md
+````md
 ```slex
 {
   slex: "0.1",
   namespace: "status",
   g: { done: 3, total: 4 },
   layout: {
-    "text:summary": { "$content": "g.done + '/' + g.total + ' complete'" }
+    "badge:state": { label: "Ready", tone: "success" },
+    "text:summary": { "$text": "g.done + '/' + g.total + ' complete'" }
   }
 }
 ```
 
-**Status:** 3/4 complete
-~~~~
+**Status:** Ready. 3/4 complete.
+````
 
-Platforms without SlexKit support render the fallback text. Hosts with SlexKit render the interactive UI.
+Markdown platforms without SlexKit support show the fallback text. Hosts with SlexKit render the interactive UI.
 
-## Installation
+## What You Get
 
-```sh
-npm install slexkit
-```
+- **Zero-build Slex source**: object literals with no imports, scaffolding, or component bundling in the generated output.
+- **Reactive `g` / `layout` model**: centralized state and logic with declarative component trees.
+- **Expression pipes**: `$` read expressions for dynamic props and `on*` write expressions for events.
+- **Directives**: `$if` and `$for` for conditional rendering and keyed list reconciliation.
+- **Official Svelte components**: 40+ layout, input, content, display, disclosure, feedback, and tooling components.
+- **Extensible registry**: custom component types, Svelte renderers, and component state modes.
+- **Trusted and secure runtimes**: host-realm rendering for trusted content, sandbox iframe rendering for untrusted source.
+- **ToolHost**: confirm, choose, and fill-form templates for structured AI tool-call UX.
+- **AI-friendly docs surface**: `llms.txt`, skills, and the `@slexkit/mcp` read-only MCP server.
 
-For more granular imports:
+## Packages
 
 | Package | Install | Contents |
-|---------|---------|----------|
-| `slexkit` | `npm install slexkit` | Runtime + Svelte components + ToolHost + styles |
-| `@slexkit/runtime` | `npm install slexkit @slexkit/runtime` | Component-free runtime (thin wrapper) |
+| --- | --- | --- |
+| `slexkit` | `npm install slexkit` | Runtime, Svelte components, ToolHost, styles |
+| `@slexkit/runtime` | `npm install slexkit @slexkit/runtime` | Component-free runtime wrapper |
 | `@slexkit/components-svelte` | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` | Svelte component registration |
-| `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS theme |
-| `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React/Streamdown renderer |
+| `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS theme tokens |
+| `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React / Streamdown Markdown renderer |
 | `@slexkit/obsidian` | `npm install slexkit @slexkit/obsidian` | Obsidian plugin adapter |
-| `@slexkit/mcp` | `npx -y @slexkit/mcp` | Read-only MCP server for docs, components, and source validation |
+| `@slexkit/mcp` | `npx -y @slexkit/mcp` | Read-only MCP server for docs, examples, and source validation |
 
-See [Package Boundaries](site/content/reference/packages/en-US.md) for package details.
+See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
 
-## Version information
+## Integrations
 
-```js
-import { SLEXKIT_VERSION, SLEX_PROTOCOL_VERSION, getSlexKitInfo } from "slexkit";
-```
+| Host | Path |
+| --- | --- |
+| Browser DOM | `mount()`, `ingest()`, `boot()`, `disposeNamespace()` |
+| Markdown renderers | `createSlexKitMarkdownRuntimeHost()` |
+| React / Streamdown | `@slexkit/streamdown` |
+| Obsidian | `@slexkit/obsidian` |
+| AI agents | `@slexkit/mcp`, `llms.txt`, SlexKit skill docs |
+| Custom components | `register()`, `registerSvelteComponent()`, `registerSubset()` |
 
-The npm package version, component implementation version, and Slex protocol version are exposed separately. The current public protocol is `v0.1`; it can remain stable across multiple package releases.
+## Security Runtime
+
+Trusted mode runs inside the host realm and is intended for application-authored or reviewed source. Secure mode isolates untrusted Slex source in a sandbox iframe with an opaque origin, nonce-based CSP, locked-down globals, host-mediated network access, and a heartbeat watchdog.
+
+Read the [Security Runtime](site/content/reference/security/en-US.md) docs before rendering unreviewed user or model output.
 
 ## Documentation
 
 | Document | Topic |
-|----------|-------|
+| --- | --- |
 | [Getting Started](site/content/guides/quick-start/en-US.md) | Install and render a first Markdown-friendly Slex source |
-| [Integration](site/content/guides/integration/en-US.md) | Streamdown and Obsidian host plugin paths |
-| [Runtime model](site/content/reference/runtime/en-US.md) | `mount()`, `ingest()`, `boot()`, namespace store, lifecycle |
-| [Slex usage reference](site/content/reference/usage/en-US.md) | Slex source structure, `$if`/`$for`, expressions, events, custom components |
-| [Security runtime](site/content/reference/security/en-US.md) | Threat model, policy, sandbox iframe, postMessage bridge, fail-closed |
-| [Slex Specification](site/content/reference/spec/en-US.md) | Protocol spec v0.1, types, merge rules, lifecycle hooks |
-| [Design rationale](site/content/reference/rationale/en-US.md) | Why object literals, expressions, explicit fences, trusted/secure split |
-| [Package boundaries](site/content/reference/packages/en-US.md) | Package relationship diagram, installation matrix |
-| [Host integration](site/content/reference/integration/en-US.md) | MarkdownRuntimeHost, Streamdown, Obsidian, custom host adapters |
-| [ToolHost](site/content/reference/toolhost/en-US.md) | Tool call rendering, built-in templates, custom template development |
-| [Icon system](site/content/reference/icons/en-US.md) | Phosphor icons, custom registration, Iconify fallback, API reference |
+| [Integration](site/content/guides/integration/en-US.md) | Streamdown, Obsidian, and custom host paths |
+| [Runtime model](site/content/reference/runtime/en-US.md) | Mounting, updates, namespace store, lifecycle |
+| [Slex usage reference](site/content/reference/usage/en-US.md) | Source structure, directives, expressions, events, custom components |
+| [Security runtime](site/content/reference/security/en-US.md) | Threat model, sandbox iframe, policy, postMessage bridge |
+| [Slex Specification](site/content/reference/spec/en-US.md) | Protocol v0.1, types, merge rules, lifecycle hooks |
+| [ToolHost](site/content/reference/toolhost/en-US.md) | Tool-call rendering and custom templates |
+| [Icon system](site/content/reference/icons/en-US.md) | Phosphor icons, custom registration, Iconify fallback |
 | [AI / Agents](site/content/guides/ai-agents/en-US.md) | `llms.txt`, MCP server, skills, and authoring rules |
 | [Changelog](CHANGELOG.md) | Release notes and notable changes |
+
+## Version Information
+
+```ts
+import { SLEXKIT_VERSION, SLEX_PROTOCOL_VERSION, getSlexKitInfo } from "slexkit";
+```
+
+The npm package version, component implementation version, and Slex protocol version are exposed separately. The current public protocol is `v0.1`.
 
 ## License
 
