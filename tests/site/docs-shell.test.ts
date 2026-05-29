@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { readFile } from "node:fs/promises";
 import { createDocsPage as createDocsVmPage } from "../../site/routes/docs-page.js";
 import { normalizeSiteBase, stripSiteBase, withSiteBase } from "../../site/app/site-base.js";
 import { normalizeRoutePath } from "../../site/app/site-routes.js";
@@ -15,6 +16,17 @@ describe("docs page module", () => {
       "/slexkit/docs/components/column",
     );
     expect(withSiteBase("/docs/components/column.md", "/slexkit/")).toBe("/slexkit/docs/components/column.md");
+  });
+
+  it("keeps custom-domain root exports unprefixed", async () => {
+    expect(normalizeSiteBase("/")).toBe("/");
+    expect(stripSiteBase("/docs/components/column", "/")).toBe("/docs/components/column");
+    expect(withSiteBase("/assets/main.js", "/")).toBe("/assets/main.js");
+    expect(withSiteBase("/slexkit/assets/main.js", "/")).toBe("/slexkit/assets/main.js");
+
+    const workflow = await readFile(".github/workflows/pages.yml", "utf-8");
+    expect(workflow).toContain("SITE_BASE: /");
+    expect(workflow).toContain("SITE_URL: https://slexkit.dev/");
   });
 
   it("loads wiki docs from the static asset before the dev API", async () => {

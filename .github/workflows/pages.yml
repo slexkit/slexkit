@@ -39,6 +39,9 @@ jobs:
 
       - name: Export static site
         run: bun run site:export
+        env:
+          SITE_BASE: /
+          SITE_URL: https://slexkit.dev/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
