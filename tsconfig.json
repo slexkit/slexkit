@@ -12,6 +12,13 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "paths": {
+      "slexkit": ["./src/index.ts"],
+      "slexkit/runtime": ["./src/runtime.ts"],
+      "slexkit/components": ["./src/components/index.ts"],
+      "slexkit/components-svelte": ["./src/components-svelte.ts"],
+      "slexkit/tooling": ["./src/components/tooling.ts"]
+    },
     "outDir": "./dist"
   },
   "include": ["src"],
