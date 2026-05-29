@@ -1,0 +1,43 @@
+{
+  "name": "@slexkit/theme-shadcn",
+  "version": "0.2.0",
+  "description": "Official shadcn-token theme CSS for SlexKit.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slexkit/slexkit.git",
+    "directory": "packages/theme-shadcn"
+  },
+  "homepage": "https://github.com/slexkit/slexkit/tree/main/packages/theme-shadcn#readme",
+  "bugs": {
+    "url": "https://github.com/slexkit/slexkit/issues"
+  },
+  "exports": {
+    ".": "./style.css",
+    "./style.css": "./style.css",
+    "./base.css": "./base.css",
+    "./components/*.css": "./components/*.css"
+  },
+  "files": [
+    "style.css",
+    "base.css",
+    "components/",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./style.css",
+    "./base.css",
+    "./components/*.css"
+  ],
+  "keywords": [
+    "slexkit",
+    "theme",
+    "shadcn",
+    "css"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

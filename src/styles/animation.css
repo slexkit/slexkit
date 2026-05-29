@@ -1,0 +1,98 @@
+@keyframes slex-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slex-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes slex-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slex-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+@keyframes slex-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.slex-fade-in {
+  animation: slex-fade-in 0.3s ease-out;
+}
+
+.slex-fade-out {
+  animation: slex-fade-out 0.3s ease-out;
+}
+
+.slex-slide-in {
+  animation: slex-slide-in 0.3s ease-out;
+}
+
+.slex-slide-out {
+  animation: slex-slide-out 0.3s ease-out;
+}
+
+.slex-pulse {
+  animation: slex-pulse 2s ease-in-out infinite;
+}
+
+.slex-enter {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+
+@keyframes slex-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.slex-scale-in {
+  animation-name: slex-scale-in;
+}
+
+@media (max-width: 640px) {
+  .slex-card {
+    padding: 1rem;
+  }
+
+  .slex-stat-value {
+    font-size: 1.25rem;
+  }
+}

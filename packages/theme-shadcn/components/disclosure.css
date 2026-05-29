@@ -1,0 +1,162 @@
+.slex-accordion,
+.slex-collapsible {
+  width: 100%;
+  color: var(--foreground);
+}
+
+.slex-accordion {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card);
+}
+
+.slex-accordion-inner {
+  width: 100%;
+}
+
+.slex-accordion-item + .slex-accordion-item {
+  border-top: 1px solid var(--border);
+}
+
+.slex-accordion .slex-accordion-heading {
+  margin: 0;
+  font: inherit;
+}
+
+.slex-accordion-trigger,
+.slex-collapsible-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 36px;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.slex-accordion-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.slex-collapsible-label {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slex-accordion-trigger:hover:not([data-disabled]),
+.slex-collapsible-trigger:hover:not([data-disabled]) {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.slex-accordion-trigger:focus-visible,
+.slex-collapsible-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.slex-accordion-indicator,
+.slex-collapsible-indicator {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 150ms ease;
+  flex-shrink: 0;
+}
+
+.slex-accordion-trigger[data-state="open"] .slex-accordion-indicator,
+.slex-accordion-trigger[aria-expanded="true"] .slex-accordion-indicator,
+.slex-collapsible-trigger[data-state="open"] .slex-collapsible-indicator {
+  transform: rotate(-135deg);
+}
+
+.slex-accordion-content,
+.slex-collapsible-content {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.slex-accordion-content,
+.slex-collapsible-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition:
+    grid-template-rows 160ms ease,
+    opacity 120ms ease,
+    visibility 0s linear 160ms;
+}
+
+.slex-accordion-content[data-state="open"],
+.slex-collapsible-content[data-state="open"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    grid-template-rows 160ms ease,
+    opacity 120ms ease,
+    visibility 0s;
+}
+
+.slex-accordion-content-inner,
+.slex-collapsible-content-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 0.75rem;
+  transition: padding-bottom 160ms ease;
+}
+
+.slex-accordion-content[data-state="open"] .slex-accordion-content-inner,
+.slex-collapsible-content[data-state="open"] .slex-collapsible-content-inner {
+  padding-bottom: var(--slex-disclosure-content-padding-bottom, 0.25rem);
+}
+
+.slex-collapsible {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  overflow: hidden;
+}
+
+.slex-collapsible-content {
+  --slex-disclosure-content-padding-bottom: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slex-accordion-content,
+  .slex-collapsible-content,
+  .slex-accordion-trigger,
+  .slex-collapsible-trigger,
+  .slex-accordion-indicator,
+  .slex-collapsible-indicator {
+    transition: none;
+  }
+
+  .slex-accordion-content-inner,
+  .slex-collapsible-content-inner {
+    transition: none;
+  }
+}

@@ -1,0 +1,95 @@
+.slex-streamdown-block {
+  margin-block: 0.75rem;
+}
+
+.slex-streamdown-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0;
+}
+
+.slex-streamdown-copy {
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.4rem 0.6rem;
+}
+
+.slex-streamdown-copy:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.slex-streamdown-body {
+  padding: 0.75rem;
+}
+
+.slex-streamdown-placeholder {
+  border: 1px dashed var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--muted-foreground);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.slex-streamdown-error {
+  border: 1px dashed var(--destructive);
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--destructive);
+  padding: 1rem;
+  text-align: left;
+}
+
+.slex-streamdown-error-title {
+  font-weight: 700;
+}
+
+.slex-streamdown-error-message {
+  margin-top: 0.5rem;
+  color: var(--foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.slex-streamdown-error-location,
+.slex-streamdown-error-detail {
+  margin-top: 0.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.slex-streamdown-error-excerpt {
+  overflow: auto;
+  margin: 0.75rem 0 0;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.75rem;
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  white-space: pre;
+}
+
+.slex-streamdown-source {
+  border-top: 1px solid var(--border);
+  padding: 0.5rem 0.75rem 0.75rem;
+}
+
+.slex-streamdown-source summary {
+  color: var(--muted-foreground);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.slex-streamdown-source pre {
+  margin: 0.5rem 0 0;
+  overflow: auto;
+}

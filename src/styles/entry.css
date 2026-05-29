@@ -1,0 +1,34 @@
+@import './layout.css';
+@import './theme.css';
+@import './tooling.css';
+@import './display.css';
+@import './content.css';
+@import './components/button.css';
+@import './components/submit.css';
+@import './components/slider.css';
+@import './components/switch.css';
+@import './components/text-input.css';
+@import './components/select.css';
+@import './components/tabs.css';
+@import './components/choice.css';
+@import './disclosure.css';
+@import './feedback.css';
+@import './animation.css';
+
+.slex-icon {
+  display: inline-flex;
+  width: 1em;
+  height: 1em;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.slex-icon svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}

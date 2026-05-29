@@ -1,0 +1,52 @@
+{
+  "name": "@slexkit/runtime",
+  "version": "0.2.0",
+  "description": "Pure SlexKit runtime and expression engine entry.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slexkit/slexkit.git",
+    "directory": "packages/runtime"
+  },
+  "homepage": "https://github.com/slexkit/slexkit/tree/main/packages/runtime#readme",
+  "bugs": {
+    "url": "https://github.com/slexkit/slexkit/issues"
+  },
+  "main": "./index.js",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "keywords": [
+    "slexkit",
+    "runtime",
+    "slex",
+    "expression"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "slexkit": "^0.2.0"
+  },
+  "peerDependenciesMeta": {
+    "slexkit": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "slexkit": "file:../.."
+  }
+}

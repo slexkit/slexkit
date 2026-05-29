@@ -1,0 +1,132 @@
+{
+  "name": "slexkit",
+  "version": "0.2.0",
+  "description": "Zero-build, Markdown-friendly reactive UI runtime for AI output.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slexkit/slexkit.git"
+  },
+  "homepage": "https://github.com/slexkit/slexkit#readme",
+  "bugs": {
+    "url": "https://github.com/slexkit/slexkit/issues"
+  },
+  "main": "./dist/slexkit.cjs",
+  "module": "./dist/slexkit.js",
+  "types": "./dist/types/index.d.ts",
+  "bin": {
+    "slex": "./scripts/cli.mjs"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "dist/tooling.js",
+    "dist/components/*.js",
+    "dist/components/*.cjs"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/slexkit.js",
+      "require": "./dist/slexkit.cjs"
+    },
+    "./runtime": {
+      "types": "./dist/types/runtime.d.ts",
+      "import": "./dist/runtime.js",
+      "require": "./dist/runtime.cjs"
+    },
+    "./components": {
+      "types": "./dist/types/components/index.d.ts",
+      "import": "./dist/components/index.js"
+    },
+    "./components/*": {
+      "types": "./dist/types/components/*.d.ts",
+      "import": "./dist/components/*.js"
+    },
+    "./tooling": {
+      "types": "./dist/types/components/tooling.d.ts",
+      "import": "./dist/tooling.js"
+    },
+    "./style.css": "./dist/slexkit.css",
+    "./base.css": "./dist/base.css",
+    "./components/*.css": "./dist/components/*.css",
+    "./dist/slexkit.js": "./dist/slexkit.js",
+    "./dist/runtime.js": "./dist/runtime.js",
+    "./dist/style.css": "./dist/slexkit.css",
+    "./dist/base.css": "./dist/base.css",
+    "./dist/components/*.css": "./dist/components/*.css",
+    "./styles/*": {
+      "import": "./src/styles/*.css"
+    },
+    "./src-components/*": {
+      "import": "./src/components/svelte/*"
+    }
+  },
+  "files": [
+    "dist/",
+    "skills/",
+    "scripts/cli.mjs",
+    "src/styles/*.css",
+    "src/styles/components/*.css",
+    "src/components/svelte/**/*.svelte",
+    "src/components/svelte/**/*.ts",
+    "AGENTS.slexkit.md",
+    "CHANGELOG.md",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "bun run site/server.ts",
+    "build": "bun run build:core && bun run --filter @slexkit/streamdown build && bun run --filter @slexkit/obsidian build && bun run --filter @slexkit/mcp build",
+    "build:core": "bun run scripts/build-core.ts",
+    "ai:docs": "bun run scripts/generate-ai-docs.ts",
+    "version:sync": "bun run scripts/sync-version.ts",
+    "changelog:sync": "bun run scripts/sync-changelog.ts",
+    "docs:sync-spec": "bun run site/scripts/sync-doc-spec-blocks.ts",
+    "site:export": "bun run build:core && bun run site/scripts/export-static.ts",
+    "site:preview-static": "bunx serve site-static",
+    "copy-runtime": "node scripts/cli.mjs copy-runtime",
+    "preview": "bun run site/server.ts",
+    "smoke:release": "node scripts/release-smoke.mjs",
+    "test": "bun test --conditions browser --isolate --preload ./tests/setup.ts tests packages",
+    "test:watch": "bun test --conditions browser --isolate --watch --preload ./tests/setup.ts tests packages",
+    "lint": "eslint src/",
+    "format": "prettier --write src/"
+  },
+  "keywords": [
+    "reactive",
+    "ui",
+    "slex",
+    "expression",
+    "assembly",
+    "streaming",
+    "svelte"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@humanspeak/svelte-markdown": "^1.5.2",
+    "@phosphor-icons/core": "^2.1.1",
+    "codemirror": "^6.0.2",
+    "flowbite": "^4.0.2",
+    "flowbite-svelte": "^1.33.1",
+    "katex": "^0.17.0",
+    "svelte": "^5.55.9",
+    "svelte-highlight": "^7.9.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.4",
+    "@unocss/cli": "^66.7.0",
+    "@unocss/preset-wind4": "^66.7.0",
+    "eslint": "^9.0.0",
+    "jsdom": "^25.0.0",
+    "prettier": "^3.4.0",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.59.3"
+  }
+}

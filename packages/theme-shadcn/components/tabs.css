@@ -1,0 +1,192 @@
+.slex-tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.slex-tabs[data-orientation="vertical"] {
+  flex-direction: row;
+}
+
+.slex-tabs-list {
+  --slex-tabs-indicator-inline-inset: 12px;
+  --slex-tabs-indicator-block-inset: 8px;
+  position: relative;
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.slexkit-root .slex-tabs-list {
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slexkit-root .slex-tabs-list li {
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  list-style: none;
+}
+
+.slex-tabs-selected-indicator {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  width: var(--slex-tabs-indicator-width, 0);
+  height: var(--slex-tabs-indicator-height, 0.125rem);
+  border-radius: 999px;
+  background: var(--primary);
+  opacity: var(--slex-tabs-indicator-opacity, 0);
+  pointer-events: none;
+  transform: translate3d(var(--slex-tabs-indicator-x, 0), var(--slex-tabs-indicator-y, 0), 0);
+}
+
+.slex-tabs-list[data-indicator-ready="true"] .slex-tabs-selected-indicator {
+  transition:
+    transform var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
+    width var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
+    height var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
+    opacity var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.slex-tabs[data-orientation="vertical"] .slex-tabs-list {
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  border-bottom: none;
+}
+
+.slex-tabs-trigger {
+  position: relative;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+
+.slex-tabs-trigger--icon {
+  display: inline-grid;
+  width: var(--slex-control-height, 2.25rem);
+  min-height: var(--slex-control-height, 2.25rem);
+  place-items: center;
+  padding-inline: 0;
+}
+
+.slex-tabs-trigger--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slex-tabs-trigger-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: currentColor;
+}
+
+.slex-tabs-trigger-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.slex-tabs-trigger:hover:not([data-disabled]) {
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+.slex-tabs-trigger.slex-tabs-trigger--selected {
+  color: var(--primary);
+}
+
+.slex-tabs-trigger.slex-tabs-trigger--selected:hover:not([data-disabled]) {
+  color: var(--primary);
+}
+
+.slex-tabs-trigger[data-disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.slex-tabs-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.slex-tabs-content {
+  margin-top: 0.75rem !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  line-height: 1.625;
+  animation: slex-tabs-content-in 200ms ease-out;
+}
+
+.slex-tabs[data-orientation="vertical"] .slex-tabs-content {
+  margin-top: 0 !important;
+  margin-left: 0.75rem !important;
+}
+
+.slex-tabs-content:empty {
+  display: none;
+}
+
+@keyframes slex-tabs-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slex-tabs-content[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .slex-tabs-list {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .slex-tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .slex-tabs[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  .slex-tabs[data-orientation="vertical"] .slex-tabs-list {
+    flex-direction: row;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+}

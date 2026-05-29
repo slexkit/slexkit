@@ -1,0 +1,165 @@
+.slex-checkbox-field,
+.slex-radio-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  cursor: pointer;
+  user-select: none;
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+.slex-checkbox-label,
+.slex-radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  color: var(--foreground);
+  line-height: 1.35;
+  transition: color 150ms ease;
+}
+
+.slex-checkbox,
+.slex-radio {
+  box-sizing: border-box;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  border: 1.5px solid var(--input);
+  color: var(--primary);
+  accent-color: var(--primary);
+  background: var(--background);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 120ms ease;
+}
+
+.slex-checkbox {
+  border-radius: calc(var(--radius) - 4px);
+}
+
+.slex-radio {
+  border-radius: 999px;
+}
+
+.slex-checkbox::after,
+.slex-radio::after {
+  content: "";
+  display: block;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 120ms ease, transform 140ms ease;
+}
+
+.slex-checkbox::after {
+  width: 0.55rem;
+  height: 0.34rem;
+  border: solid var(--primary-foreground);
+  border-width: 0 0 2px 2px;
+  transform: translateY(-0.08rem) rotate(-45deg) scale(0.5);
+}
+
+.slex-radio::after {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--primary-foreground);
+}
+
+.slex-checkbox-field:hover .slex-checkbox:not(:disabled),
+.slex-radio-field:hover .slex-radio:not(:disabled) {
+  border-color: color-mix(in oklab, var(--primary) 48%, var(--input));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+}
+
+.slex-checkbox-field:active .slex-checkbox:not(:disabled),
+.slex-radio-field:active .slex-radio:not(:disabled) {
+  transform: scale(0.92);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+}
+
+.slex-checkbox:checked,
+.slex-radio:checked {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.slex-checkbox:checked::after,
+.slex-radio:checked::after {
+  opacity: 1;
+}
+
+.slex-checkbox:checked::after {
+  transform: translateY(-0.08rem) rotate(-45deg) scale(1);
+}
+
+.slex-radio:checked::after {
+  transform: scale(1);
+}
+
+.slex-checkbox-field:hover .slex-checkbox-label,
+.slex-radio-field:hover .slex-radio-label {
+  color: var(--foreground);
+}
+
+.slex-checkbox:focus-visible,
+.slex-radio:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.slex-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.slex-radio-group-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.slex-radio-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slex-radio-group[data-orientation="horizontal"] .slex-radio-group-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.slex-checkbox:disabled,
+.slex-radio:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+  transform: none;
+}
+
+.slex-checkbox-field:has(.slex-checkbox:disabled),
+.slex-radio-field:has(.slex-radio:disabled) {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.slex-radio-indicator {
+  display: none;
+}

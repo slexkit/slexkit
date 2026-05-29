@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-US" class="light scroll-smooth scroll-pt-20">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (() => {
+        const root = document.documentElement;
+        let theme = null;
+        try {
+          theme = localStorage.getItem("slexkit:theme");
+        } catch {}
+        if (theme !== "dark" && theme !== "light") {
+          theme = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
+        }
+        root.classList.toggle("dark", theme === "dark");
+        root.classList.toggle("light", theme !== "dark");
+        root.dataset.theme = theme;
+      })();
+    </script>
+    <title>SlexKit</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="stylesheet" href="/assets/uno.css" />
+    <link rel="stylesheet" href="/assets/main.css" />
+  </head>
+  <body
+    class="slexkit-theme-uno m-0 min-h-screen overflow-x-hidden bg-background text-foreground font-sans leading-6 antialiased"
+  >
+    <header class="sticky top-0 z-50 bg-background/95 backdrop-blur">
+      <nav
+        class="slex-site-nav mx-auto flex h-20 max-w-[1520px] items-center justify-between gap-6 px-6 sm:px-10"
+        aria-label="Main"
+      >
+        <div class="slex-site-nav-brand flex min-w-0 items-center gap-1">
+          <a
+            class="inline-flex min-w-0 items-center gap-2.5 font-bold text-foreground no-underline"
+            href="/"
+            data-home-link
+          >
+            <span class="slex-site-logo h-7 w-7 shrink-0 rounded-md" aria-hidden="true"></span>
+            <span class="truncate">SlexKit</span>
+          </a>
+        </div>
+        <div class="slex-site-nav-links">
+          <a
+            class="slex-site-nav-link"
+            href="/docs/guides/intro"
+            data-nav-link
+            data-nav-section="guides"
+            >Introduction</a
+          >
+          <a
+            class="slex-site-nav-link"
+            href="/components"
+            data-nav-link
+            data-nav-section="components"
+            >Components</a
+          >
+          <a
+            class="slex-site-nav-link"
+            href="/playground.html?mode=live"
+            target="_blank"
+            rel="noreferrer"
+            >Playground</a
+          >
+        </div>
+        <div class="slex-site-nav-actions flex items-center gap-1">
+          <button
+            id="themeBtn"
+            class="slex-site-icon-button"
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+          >
+            <span
+              class="slex-icon slex-theme-icon slex-theme-icon--light text-base"
+              data-phosphor-icon="moon"
+              aria-hidden="true"
+            ></span>
+            <span
+              class="slex-icon slex-theme-icon slex-theme-icon--dark text-base"
+              data-phosphor-icon="sun"
+              aria-hidden="true"
+            ></span>
+          </button>
+          <div class="slex-site-language-control">
+            <button
+              id="languageTrigger"
+              class="slex-site-icon-button"
+              type="button"
+              aria-label="Language"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="languageMenu"
+            >
+              <span
+                class="slex-icon text-base"
+                data-phosphor-icon="translate"
+                aria-hidden="true"
+              ></span>
+            </button>
+            <div id="languageMenu" class="slex-site-language-menu" role="listbox" aria-label="Language" hidden>
+              <button class="slex-site-language-option" type="button" role="option" data-locale="en-US">
+                English
+              </button>
+              <button class="slex-site-language-option" type="button" role="option" data-locale="zh-CN">
+                简体中文
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div id="mobileNav" class="fixed inset-0 z-[60] lg:hidden" data-open="false" aria-hidden="true">
+      <button
+        class="absolute inset-0 bg-foreground/35 backdrop-blur-[2px]"
+        type="button"
+        aria-label="Close menu"
+        data-mobile-nav-backdrop
+        data-mobile-nav-close
+      ></button>
+      <div
+        class="relative grid h-full w-[min(17.5rem,calc(100vw-5rem))] grid-rows-[auto_1fr] border-r border-border bg-background shadow-xl"
+        data-mobile-nav-panel
+      >
+        <div class="flex h-16 items-center justify-between gap-3 border-b border-border px-6 pt-1">
+          <div class="flex min-w-0 items-center gap-1">
+            <button
+              class="inline-grid h-9 w-9 shrink-0 place-items-center rounded-md border border-transparent bg-transparent text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:slex-token-focus"
+              type="button"
+              aria-label="Close menu"
+              title="Close menu"
+              data-mobile-nav-close
+            >
+              <span class="slex-icon text-lg" data-phosphor-icon="x" aria-hidden="true"></span>
+            </button>
+            <a
+              class="inline-flex min-w-0 items-center gap-2.5 font-bold text-foreground no-underline"
+              href="/"
+              data-home-link
+              data-mobile-nav-link
+            >
+              <span class="slex-site-logo h-7 w-7 shrink-0 rounded-md" aria-hidden="true"></span>
+              <span class="truncate">SlexKit</span>
+            </a>
+          </div>
+        </div>
+        <div class="grid content-start gap-5 overflow-y-auto px-3 py-4 text-sm">
+          <nav class="grid gap-1" aria-label="Site">
+            <a
+              class="rounded-md px-3 py-2.5 text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-accent-foreground"
+              href="/docs/guides/intro"
+              data-nav-link
+              data-nav-section="guides"
+              data-mobile-nav-link
+              >简介</a
+            >
+            <a
+              class="rounded-md px-3 py-2.5 text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-accent-foreground"
+              href="/components"
+              data-nav-link
+              data-nav-section="components"
+              data-mobile-nav-link
+              >组件</a
+            >
+            <a
+              class="rounded-md px-3 py-2.5 text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-accent-foreground"
+              href="/playground.html?mode=live"
+              target="_blank"
+              rel="noreferrer"
+              data-mobile-nav-link
+              >Playground</a
+            >
+          </nav>
+          <div class="border-t border-border pt-4" data-mobile-nav-context hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="siteRoot"></div>
+
+    <footer class="border-t border-border text-[13px] text-muted-foreground">
+      <div class="mx-auto flex max-w-[1180px] flex-col gap-4 px-4 py-7 sm:px-6 md:flex-row md:items-center md:justify-between">
+        <div>
+          <div class="font-medium text-foreground">SlexKit v<span data-site-version>0.2.0</span></div>
+        </div>
+        <nav class="flex flex-wrap gap-x-4 gap-y-2" aria-label="Footer">
+          <a class="slex-site-footer-link" href="/docs/guides/intro" data-footer-link="docs">Docs</a>
+          <a class="slex-site-footer-link" href="/docs/components/accordion" data-footer-link="components">Components</a>
+          <a class="slex-site-footer-link" href="/docs/releases/changelog" data-footer-link="changelog">Changelog</a>
+          <a class="slex-site-footer-link" href="/llms.txt">llms.txt</a>
+          <a class="slex-site-footer-link" href="https://www.npmjs.com/package/slexkit" target="_blank" rel="noreferrer">npm</a>
+          <a class="slex-site-footer-link" href="https://github.com/slexkit/slexkit" target="_blank" rel="noreferrer">GitHub</a>
+          <a class="slex-site-footer-link" href="https://github.com/slexkit/slexkit/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module" src="/assets/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,114 @@
+.slex-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.slex-button--primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.slex-button--primary:hover:not(:disabled):not(.slex-button--disabled) {
+  background: color-mix(in oklab, var(--primary) 90%, transparent);
+  border-color: color-mix(in oklab, var(--primary) 90%, transparent);
+  color: var(--primary-foreground);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.slex-button--secondary {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: var(--border);
+}
+
+.slex-button--secondary:hover:not(:disabled):not(.slex-button--disabled) {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--border);
+}
+
+.slex-button--danger {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  border-color: var(--destructive);
+}
+
+.slex-button--danger:hover:not(:disabled):not(.slex-button--disabled) {
+  background: color-mix(in oklab, var(--destructive) 90%, transparent);
+  border-color: color-mix(in oklab, var(--destructive) 90%, transparent);
+}
+
+.slex-button--ghost {
+  background: transparent;
+  color: var(--muted-foreground);
+  border-color: transparent;
+}
+
+.slex-button--ghost:hover:not(:disabled):not(.slex-button--disabled) {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.slex-button:disabled,
+.slex-button[disabled],
+.slex-button--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.slex-button:active:not(:disabled):not(.slex-button--disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.slex-button--icon {
+  width: var(--slex-control-height, 2.25rem);
+  min-height: var(--slex-control-height, 2.25rem);
+  padding-inline: 0;
+}
+
+.slex-button-icon {
+  display: inline-flex;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: currentColor;
+}
+
+.slex-button-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}

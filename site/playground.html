@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-US" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (() => {
+      const root = document.documentElement;
+      let theme = null;
+      try {
+        theme = localStorage.getItem("slexkit:theme");
+      } catch {}
+      if (theme !== "dark" && theme !== "light") {
+        theme = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
+      }
+      root.classList.toggle("dark", theme === "dark");
+      root.classList.toggle("light", theme !== "dark");
+      root.dataset.theme = theme;
+    })();
+  </script>
+  <title>SlexKit Playground</title>
+  <link rel="stylesheet" href="/assets/uno.css">
+  <link rel="stylesheet" href="/assets/main.css">
+</head>
+<body class="slexkit-theme-uno m-0 min-h-screen overflow-x-hidden bg-background text-foreground font-sans leading-6 antialiased">
+  <main id="playgroundRoot" class="slex-standalone-playground"></main>
+  <div id="playgroundError" class="hidden border-t border-destructive bg-background px-4 py-3 font-mono text-xs text-destructive"></div>
+  <script type="module" src="/assets/playground.js"></script>
+</body>
+</html>

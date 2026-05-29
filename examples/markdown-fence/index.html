@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SlexKit Markdown fence example</title>
+    <link rel="stylesheet" href="/dist/slexkit.css">
+    <link rel="stylesheet" href="/shared/examples.css">
+  </head>
+  <body>
+    <main class="example-shell">
+      <header class="example-header">
+        <div class="example-kicker">Markdown host</div>
+        <h1 class="example-title">Fences, state-only blocks, and artifact scope</h1>
+        <p class="example-description">
+          This example uses the Markdown runtime host directly, mirroring how chat,
+          document, or note hosts mount explicit `slex` fences.
+        </p>
+      </header>
+      <section class="example-grid two">
+        <div class="example-panel">
+          <h2>Fence source</h2>
+          <div class="example-fence-list">
+            <div class="example-fence">
+              <div class="example-fence-label">state-only slex fence</div>
+              <pre id="state-source" class="example-code"></pre>
+            </div>
+            <div class="example-fence">
+              <div class="example-fence-label">renderable slex fence</div>
+              <pre id="layout-source" class="example-code"></pre>
+            </div>
+            <div class="example-fence">
+              <div class="example-fence-label">slex shorthand fence</div>
+              <pre id="shorthand-source" class="example-code"></pre>
+            </div>
+          </div>
+        </div>
+        <div class="example-panel">
+          <h2>Mounted blocks</h2>
+          <div id="state-slot" class="example-slot"></div>
+          <div id="layout-slot" class="example-slot"></div>
+          <div id="shorthand-slot" class="example-slot"></div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

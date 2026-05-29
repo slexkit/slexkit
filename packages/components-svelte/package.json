@@ -1,0 +1,53 @@
+{
+  "name": "@slexkit/components-svelte",
+  "version": "0.2.0",
+  "description": "Official Svelte component registrations for SlexKit.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slexkit/slexkit.git",
+    "directory": "packages/components-svelte"
+  },
+  "homepage": "https://github.com/slexkit/slexkit/tree/main/packages/components-svelte#readme",
+  "bugs": {
+    "url": "https://github.com/slexkit/slexkit/issues"
+  },
+  "main": "./index.js",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./index.js"
+  ],
+  "keywords": [
+    "slexkit",
+    "svelte",
+    "components"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "slexkit": "^0.2.0"
+  },
+  "peerDependenciesMeta": {
+    "slexkit": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "slexkit": "file:../.."
+  }
+}

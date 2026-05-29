@@ -1,0 +1,1247 @@
+/* components/button.css */
+
+.slex-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.slex-button--primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.slex-button--primary:hover:not(:disabled):not(.slex-button--disabled) {
+  background: color-mix(in oklab, var(--primary) 90%, transparent);
+  border-color: color-mix(in oklab, var(--primary) 90%, transparent);
+  color: var(--primary-foreground);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.slex-button--secondary {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: var(--border);
+}
+
+.slex-button--secondary:hover:not(:disabled):not(.slex-button--disabled) {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--border);
+}
+
+.slex-button--danger {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+  border-color: var(--destructive);
+}
+
+.slex-button--danger:hover:not(:disabled):not(.slex-button--disabled) {
+  background: color-mix(in oklab, var(--destructive) 90%, transparent);
+  border-color: color-mix(in oklab, var(--destructive) 90%, transparent);
+}
+
+.slex-button--ghost {
+  background: transparent;
+  color: var(--muted-foreground);
+  border-color: transparent;
+}
+
+.slex-button--ghost:hover:not(:disabled):not(.slex-button--disabled) {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.slex-button:disabled,
+.slex-button[disabled],
+.slex-button--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.slex-button:active:not(:disabled):not(.slex-button--disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.slex-button--icon {
+  width: var(--slex-control-height, 2.25rem);
+  min-height: var(--slex-control-height, 2.25rem);
+  padding-inline: 0;
+}
+
+.slex-button-icon {
+  display: inline-flex;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: currentColor;
+}
+
+.slex-button-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* components/submit.css */
+
+.slex-submit-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* components/slider.css */
+
+.slex-slider-container,
+.slex-slider-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.slex-slider-field {
+  padding: 0.25rem 0;
+}
+
+.slex-slider-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.slex-slider-value {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.slex-slider {
+  box-sizing: border-box;
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 999px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--primary) 0%,
+    var(--primary) var(--slex-slider-progress, 0%),
+    var(--secondary) var(--slex-slider-progress, 0%),
+    var(--secondary) 100%
+  );
+  accent-color: var(--primary);
+  cursor: pointer;
+  transition: box-shadow 150ms ease, filter 150ms ease;
+}
+
+.slex-slider:hover {
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+}
+
+.slex-slider:active {
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+}
+
+.slex-slider:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+
+.slex-slider::-webkit-slider-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--primary);
+  border-radius: 999px;
+  background: var(--background) !important;
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 14%, transparent);
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 120ms ease;
+}
+
+.slex-slider::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--primary);
+  border-radius: 999px;
+  background: var(--background) !important;
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 14%, transparent);
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 120ms ease;
+}
+
+.slex-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+  transform: scale(1.06);
+}
+
+.slex-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+  transform: scale(1.06);
+}
+
+.slex-slider:active::-webkit-slider-thumb {
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--primary) 16%, transparent);
+  transform: scale(1.12);
+}
+
+.slex-slider:active::-moz-range-thumb {
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--primary) 16%, transparent);
+  transform: scale(1.12);
+}
+
+.slex-slider::-moz-range-track {
+  height: 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--secondary);
+}
+
+.slex-slider::-moz-range-progress {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.slex-slider-label-text {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+/* components/switch.css */
+
+.slex-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.slex-switch-event-layer {
+  display: inline-flex;
+}
+
+.slex-choice-event-layer {
+  display: inline-flex;
+}
+
+.slex-switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.slex-switch-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.slex-switch-control {
+  box-sizing: border-box;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 2.75rem;
+  height: 1.5rem;
+  margin-inline-end: 0;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 9999px;
+  background: var(--input);
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.slex-switch-control::after {
+  content: "";
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--background);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 12%, transparent);
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  transform: translateX(0);
+  will-change: transform;
+}
+
+.slex-switch:hover .slex-switch-control {
+  border-color: color-mix(in oklab, var(--primary) 42%, var(--input));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+}
+
+.slex-switch:hover .slex-switch-control::after {
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 10%, transparent);
+}
+
+.slex-switch:active .slex-switch-control::after {
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 16%, transparent);
+}
+
+.slex-switch-input:checked + .slex-switch-control {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.slex-switch:hover .slex-switch-input:checked + .slex-switch-control {
+  background: color-mix(in oklab, var(--primary) 88%, var(--background));
+}
+
+.slex-switch-input:checked + .slex-switch-control::after {
+  background: var(--background);
+  transform: translateX(1.25rem);
+}
+
+.slexkit-root[dir="rtl"] .slex-switch-input:checked + .slex-switch-control::after {
+  transform: translateX(-1.25rem);
+}
+
+.slex-switch-input:focus-visible + .slex-switch-control {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 18%, transparent);
+}
+
+.slex-switch-input:disabled + .slex-switch-control {
+  opacity: 0.55;
+}
+
+.slex-switch:has(.slex-switch-input:disabled) {
+  cursor: not-allowed;
+}
+
+.slex-switch:has(.slex-switch-input:disabled):hover .slex-switch-control,
+.slex-switch:has(.slex-switch-input:disabled):hover .slex-switch-control::after {
+  box-shadow: none;
+}
+
+/* components/text-input.css */
+
+.slex-input-field {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.slex-input-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: fit-content;
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.slex-input-field[data-required="true"] .slex-input-label::after {
+  content: "*";
+  color: var(--destructive);
+  font-weight: 700;
+}
+
+.slex-input-control {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+}
+
+.slex-input {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.slex-input-control[data-has-unit="true"] .slex-input,
+.slex-input-control[data-has-controls="true"] .slex-input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.slex-input-unit {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5625rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input);
+  border-left: 0;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.slex-input-control[data-has-controls="true"] .slex-input-unit {
+  border-radius: 0;
+}
+
+.slex-input-controls {
+  box-sizing: border-box;
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  flex: 0 0 auto;
+  width: 3.75rem;
+  min-width: 3.75rem;
+  min-height: 2.5625rem;
+  overflow: hidden;
+  border: 1px solid var(--input);
+  border-left: 0;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--background);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.slex-input-step {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--input);
+  border-radius: 0;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.slex-input-step:first-child {
+  border-left: 0;
+}
+
+.slex-input-step:last-child {
+  border-radius: 0;
+}
+
+.slex-input-step:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--muted) 52%, var(--background));
+}
+
+.slex-input-step:focus-visible {
+  z-index: 1;
+  border-color: var(--ring);
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+}
+
+.slex-input-step:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.slex-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.slex-input:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+}
+
+.slex-input[type="number"] {
+  appearance: textfield;
+}
+
+.slex-input[type="number"]::-webkit-outer-spin-button,
+.slex-input[type="number"]::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.slex-input[readonly] {
+  background: color-mix(in oklab, var(--muted) 42%, var(--background));
+  color: color-mix(in oklab, var(--foreground) 82%, var(--muted-foreground));
+}
+
+.slex-input-field[data-invalid="true"] .slex-input {
+  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
+}
+
+.slex-input-field[data-invalid="true"] .slex-input:focus {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+}
+
+.slex-input-control:focus-within .slex-input-unit {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+}
+
+.slex-input-control:focus-within .slex-input-step {
+  border-color: var(--ring);
+}
+
+.slex-input-control:focus-within .slex-input-controls {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+}
+
+.slex-input-field[data-invalid="true"] .slex-input-unit {
+  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
+  color: color-mix(in oklab, var(--destructive) 84%, var(--muted-foreground));
+}
+
+.slex-input-field[data-invalid="true"] .slex-input-step {
+  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
+}
+
+.slex-input-field[data-invalid="true"] .slex-input-controls {
+  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
+}
+
+.slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-unit {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+}
+
+.slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-step {
+  border-color: var(--destructive);
+}
+
+.slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-controls {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+}
+
+.slex-input[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slex-input[disabled] + .slex-input-unit {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slex-input[disabled] ~ .slex-input-controls,
+.slex-input[readonly] ~ .slex-input-controls {
+  opacity: 0.6;
+}
+
+.slex-input-description {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.slex-input-error {
+  color: var(--destructive);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/* components/select.css */
+
+.slex-select {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slex-select-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.slex-select-control {
+  width: 100%;
+  min-width: 0;
+}
+
+.slex-select .slex-select-trigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.5rem;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  outline: none;
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent);
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease;
+  appearance: none;
+  text-align: left;
+}
+
+.slex-select .slex-select-trigger:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--accent) 34%, var(--background));
+}
+
+.slex-select .slex-select-trigger:focus-visible {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 20%, transparent);
+}
+
+.slex-select .slex-select-trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.slex-select-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slex-select-value[data-placeholder] {
+  color: var(--muted-foreground);
+}
+
+.slex-select-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 0.75rem;
+  height: 0.75rem;
+  opacity: 0.72;
+}
+
+.slex-select-icon::before {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.125rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.slex-select-native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.slex-select-menu {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 0.375rem);
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: 14rem;
+  margin: 0;
+  padding: 0.25rem;
+  overflow-y: auto;
+  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
+  border-radius: var(--radius);
+  background: var(--popover, var(--background));
+  color: var(--popover-foreground, var(--foreground));
+  box-shadow: var(
+    --shadow-md,
+    0 6px 16px rgb(0 0 0 / 0.12),
+    0 2px 4px rgb(0 0 0 / 0.08)
+  );
+  list-style: none;
+}
+
+.slexkit-root .slex-select-menu {
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+}
+
+.slexkit-root .slex-select-menu li {
+  margin: 0;
+  list-style: none;
+}
+
+.slex-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--popover-foreground, var(--foreground));
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.slex-select-option:hover:not([data-disabled]),
+.slex-select-option--active:not([data-disabled]) {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.slex-select-menu:has(.slex-select-option:hover) .slex-select-option--active:not(:hover) {
+  background: transparent;
+  color: var(--popover-foreground, var(--foreground));
+}
+
+.slex-select-option--selected {
+  font-weight: 500;
+}
+
+.slex-select-option[data-disabled] {
+  color: var(--muted-foreground);
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.slex-select-option-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slex-select-check {
+  position: relative;
+  flex: 0 0 auto;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: currentColor;
+}
+
+.slex-select-check::before {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.18rem;
+  width: 0.5rem;
+  height: 0.28rem;
+  border-left: 1.75px solid currentColor;
+  border-bottom: 1.75px solid currentColor;
+  content: "";
+  transform: rotate(-45deg);
+}
+
+.slex-select[data-variant="toolbar"] {
+  height: 100%;
+  gap: 0;
+}
+
+.slex-select[data-variant="toolbar"] .slex-select-trigger {
+  height: var(--slex-control-height, 2.25rem);
+  min-height: 0;
+  border-width: 0 1px 0 0;
+  border-color: color-mix(in oklab, var(--border) 58%, transparent);
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0.75rem 0 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1;
+  box-shadow: none;
+}
+
+.slex-select[data-variant="toolbar"] .slex-select-trigger:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--muted) 36%, var(--background));
+}
+
+.slex-select[data-variant="toolbar"] .slex-select-menu {
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: auto;
+  width: 100%;
+  min-width: 100%;
+  border-color: color-mix(in oklab, var(--border) 76%, transparent);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.25rem;
+  box-shadow: var(
+    --shadow-sm,
+    0 4px 10px rgb(0 0 0 / 0.1),
+    0 1px 3px rgb(0 0 0 / 0.06)
+  );
+}
+
+.slex-select[data-variant="toolbar"] .slex-select-option {
+  height: 1.875rem;
+  border-radius: calc(var(--radius) - 4px);
+  font-size: 0.8125rem;
+  padding-inline: 0.75rem;
+}
+
+/* components/tabs.css */
+
+.slex-tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.slex-tabs[data-orientation="vertical"] {
+  flex-direction: row;
+}
+
+.slex-tabs-list {
+  --slex-tabs-indicator-inline-inset: 12px;
+  --slex-tabs-indicator-block-inset: 8px;
+  position: relative;
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.slexkit-root .slex-tabs-list {
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slexkit-root .slex-tabs-list li {
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  list-style: none;
+}
+
+.slex-tabs-selected-indicator {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  width: var(--slex-tabs-indicator-width, 0);
+  height: var(--slex-tabs-indicator-height, 0.125rem);
+  border-radius: 999px;
+  background: var(--primary);
+  opacity: var(--slex-tabs-indicator-opacity, 0);
+  pointer-events: none;
+  transform: translate3d(var(--slex-tabs-indicator-x, 0), var(--slex-tabs-indicator-y, 0), 0);
+}
+
+.slex-tabs-list[data-indicator-ready="true"] .slex-tabs-selected-indicator {
+  transition:
+    transform var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
+    width var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
+    height var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
+    opacity var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.slex-tabs[data-orientation="vertical"] .slex-tabs-list {
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  border-bottom: none;
+}
+
+.slex-tabs-trigger {
+  position: relative;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+
+.slex-tabs-trigger--icon {
+  display: inline-grid;
+  width: var(--slex-control-height, 2.25rem);
+  min-height: var(--slex-control-height, 2.25rem);
+  place-items: center;
+  padding-inline: 0;
+}
+
+.slex-tabs-trigger--with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slex-tabs-trigger-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: currentColor;
+}
+
+.slex-tabs-trigger-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.slex-tabs-trigger:hover:not([data-disabled]) {
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+.slex-tabs-trigger.slex-tabs-trigger--selected {
+  color: var(--primary);
+}
+
+.slex-tabs-trigger.slex-tabs-trigger--selected:hover:not([data-disabled]) {
+  color: var(--primary);
+}
+
+.slex-tabs-trigger[data-disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.slex-tabs-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.slex-tabs-content {
+  margin-top: 0.75rem !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  line-height: 1.625;
+  animation: slex-tabs-content-in 200ms ease-out;
+}
+
+.slex-tabs[data-orientation="vertical"] .slex-tabs-content {
+  margin-top: 0 !important;
+  margin-left: 0.75rem !important;
+}
+
+.slex-tabs-content:empty {
+  display: none;
+}
+
+@keyframes slex-tabs-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slex-tabs-content[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .slex-tabs-list {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .slex-tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .slex-tabs[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  .slex-tabs[data-orientation="vertical"] .slex-tabs-list {
+    flex-direction: row;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+}
+
+/* components/choice.css */
+
+.slex-checkbox-field,
+.slex-radio-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  cursor: pointer;
+  user-select: none;
+  transition: color 150ms ease, opacity 150ms ease;
+}
+
+.slex-checkbox-label,
+.slex-radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  color: var(--foreground);
+  line-height: 1.35;
+  transition: color 150ms ease;
+}
+
+.slex-checkbox,
+.slex-radio {
+  box-sizing: border-box;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  border: 1.5px solid var(--input);
+  color: var(--primary);
+  accent-color: var(--primary);
+  background: var(--background);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 120ms ease;
+}
+
+.slex-checkbox {
+  border-radius: calc(var(--radius) - 4px);
+}
+
+.slex-radio {
+  border-radius: 999px;
+}
+
+.slex-checkbox::after,
+.slex-radio::after {
+  content: "";
+  display: block;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 120ms ease, transform 140ms ease;
+}
+
+.slex-checkbox::after {
+  width: 0.55rem;
+  height: 0.34rem;
+  border: solid var(--primary-foreground);
+  border-width: 0 0 2px 2px;
+  transform: translateY(-0.08rem) rotate(-45deg) scale(0.5);
+}
+
+.slex-radio::after {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--primary-foreground);
+}
+
+.slex-checkbox-field:hover .slex-checkbox:not(:disabled),
+.slex-radio-field:hover .slex-radio:not(:disabled) {
+  border-color: color-mix(in oklab, var(--primary) 48%, var(--input));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+}
+
+.slex-checkbox-field:active .slex-checkbox:not(:disabled),
+.slex-radio-field:active .slex-radio:not(:disabled) {
+  transform: scale(0.92);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+}
+
+.slex-checkbox:checked,
+.slex-radio:checked {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.slex-checkbox:checked::after,
+.slex-radio:checked::after {
+  opacity: 1;
+}
+
+.slex-checkbox:checked::after {
+  transform: translateY(-0.08rem) rotate(-45deg) scale(1);
+}
+
+.slex-radio:checked::after {
+  transform: scale(1);
+}
+
+.slex-checkbox-field:hover .slex-checkbox-label,
+.slex-radio-field:hover .slex-radio-label {
+  color: var(--foreground);
+}
+
+.slex-checkbox:focus-visible,
+.slex-radio:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.slex-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.slex-radio-group-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.slex-radio-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slex-radio-group[data-orientation="horizontal"] .slex-radio-group-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.slex-checkbox:disabled,
+.slex-radio:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+  transform: none;
+}
+
+.slex-checkbox-field:has(.slex-checkbox:disabled),
+.slex-radio-field:has(.slex-radio:disabled) {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.slex-radio-indicator {
+  display: none;
+}

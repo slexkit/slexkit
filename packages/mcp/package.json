@@ -1,0 +1,52 @@
+{
+  "name": "@slexkit/mcp",
+  "version": "0.2.0",
+  "description": "Read-only MCP server for SlexKit docs, components, and source validation.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slexkit/slexkit.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/slexkit/slexkit/tree/main/packages/mcp#readme",
+  "bugs": {
+    "url": "https://github.com/slexkit/slexkit/issues"
+  },
+  "bin": {
+    "slexkit-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun run scripts/build.ts"
+  },
+  "keywords": [
+    "slexkit",
+    "mcp",
+    "llms",
+    "agent",
+    "markdown"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "slexkit": "^0.2.0"
+  },
+  "devDependencies": {
+    "slexkit": "file:../.."
+  }
+}

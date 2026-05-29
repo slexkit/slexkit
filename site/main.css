@@ -1,0 +1,14 @@
+@import "../dist/slexkit.css";
+@import "./styles/site-components.css";
+@import "./styles/navigation.css";
+@import "./styles/docs-shell.css";
+@import "katex/dist/katex.min.css";
+
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+body.slexkit-theme-uno {
+  overflow-x: clip;
+}

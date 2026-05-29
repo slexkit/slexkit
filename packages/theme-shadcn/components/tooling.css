@@ -1,0 +1,1009 @@
+.slex-playground {
+  --slex-playground-toolbar-height: var(--slex-control-height, 2.25rem);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--border) 64%, transparent);
+  border-radius: 1rem;
+  background: var(--background);
+  color: var(--card-foreground);
+  box-shadow: none;
+}
+
+.slex-playground-heading {
+  min-width: 0;
+}
+
+.slex-playground-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.slex-playground-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.slex-playground-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.25rem;
+  padding: 0 0.375rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.slex-playground-chrome {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0;
+  height: var(--slex-playground-toolbar-height);
+  min-height: var(--slex-playground-toolbar-height);
+  padding: 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 46%, transparent);
+  background: color-mix(in oklab, var(--muted) 22%, var(--background));
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+  overflow: visible;
+  scrollbar-width: none;
+}
+
+.slex-playground-chrome::-webkit-scrollbar {
+  display: none;
+}
+
+.slex-playground-source-picker {
+  position: relative;
+  z-index: 60;
+  width: 8rem;
+  min-width: 8rem;
+  height: var(--slex-playground-toolbar-height);
+  align-self: stretch;
+}
+
+.slex-playground-source-picker .slex-select {
+  height: 100%;
+}
+
+.slex-playground-tabs,
+.slex-playground-actions {
+  display: inline-flex;
+  height: var(--slex-playground-toolbar-height);
+  align-self: stretch;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: auto;
+}
+
+.slex-playground-tabs {
+  margin-right: auto;
+}
+
+.slex-playground-tabs .slex-tabs {
+  width: auto;
+  height: 100%;
+}
+
+.slex-playground-tabs .slex-tabs-list {
+  height: 100%;
+  border-bottom: 0;
+}
+
+.slex-playground-tabs .slex-tabs-trigger {
+  width: var(--slex-playground-toolbar-height);
+  min-height: var(--slex-playground-toolbar-height);
+  height: var(--slex-playground-toolbar-height);
+  padding: 0;
+  color: var(--muted-foreground);
+}
+
+.slex-playground-tabs .slex-tabs-trigger:hover:not([data-disabled]),
+.slex-playground-tabs .slex-tabs-trigger.slex-tabs-trigger--selected {
+  background: color-mix(in oklab, var(--muted) 32%, transparent);
+  color: var(--foreground);
+}
+
+.slex-playground-tabs .slex-tabs-trigger-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.slex-playground-editor:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.slex-playground-actions .slex-button {
+  width: var(--slex-playground-toolbar-height);
+  height: var(--slex-playground-toolbar-height);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  box-shadow: none;
+}
+
+.slex-playground-actions .slex-button:hover {
+  background: color-mix(in oklab, var(--muted) 44%, var(--background));
+  color: var(--foreground);
+  transform: none;
+  box-shadow: none;
+}
+
+.slex-playground-actions {
+  border-left: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+}
+
+.slex-playground--workbench {
+  height: auto;
+  min-height: var(--slex-playground-min-height, 16rem);
+}
+
+.slex-playground--embedded {
+  height: 100svh;
+  box-shadow: none;
+}
+
+.slex-playground--standalone {
+  height: var(--slex-playground-min-height, calc(100svh - 2rem));
+  min-height: var(--slex-playground-min-height, calc(100svh - 2rem));
+}
+
+.slex-playground--embedded .slex-playground-preview-pane,
+.slex-playground--embedded .slex-playground-code-pane,
+.slex-playground--embedded .slex-playground-live-pane,
+.slex-playground--standalone .slex-playground-preview-pane,
+.slex-playground--standalone .slex-playground-code-pane,
+.slex-playground--standalone .slex-playground-live-pane {
+  height: 100%;
+  min-height: 0;
+}
+
+.slex-playground--embedded .slex-playground-code,
+.slex-playground--embedded .slex-playground-editor,
+.slex-playground--embedded .slex-playground-editor.codemirror,
+.slex-playground--embedded .slex-playground-editor .cm-editor,
+.slex-playground--embedded .slex-playground-editor .cm-scroller,
+.slex-playground--standalone .slex-playground-code,
+.slex-playground--standalone .slex-playground-editor,
+.slex-playground--standalone .slex-playground-editor.codemirror,
+.slex-playground--standalone .slex-playground-editor .cm-editor,
+.slex-playground--standalone .slex-playground-editor .cm-scroller {
+  height: 100%;
+}
+
+.slex-playground-preview-pane {
+  display: grid;
+  align-items: safe center;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+  min-height: var(--slex-playground-min-height, 16rem);
+  padding: calc(var(--slex-playground-toolbar-height) + 1.25rem) 2.25rem 2.25rem;
+  background-color: var(--background);
+  background-image: radial-gradient(color-mix(in oklab, var(--border) 58%, transparent) 1px, transparent 1px);
+  background-position: 0 0;
+  background-size: 18px 18px;
+}
+
+.slex-playground-preview-pane[hidden],
+.slex-playground-code-pane[hidden] {
+  display: none;
+}
+
+.slex-playground-preview {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.slex-playground[data-preview-align="start"] .slex-playground-preview-pane {
+  align-items: start;
+}
+
+.slex-playground[data-source-type="markdown"] .slex-playground-preview-pane {
+  align-items: start;
+}
+
+.slex-playground[data-preview-overflow="true"] .slex-playground-preview-pane {
+  align-items: start;
+}
+
+.slex-playground[data-preview-align="center"][data-preview-anchor="fixed"]:not([data-preview-overflow="true"]) .slex-playground-preview-pane {
+  align-items: start;
+}
+
+.slex-playground[data-preview-align="center"][data-preview-anchor="fixed"]:not([data-preview-overflow="true"]) .slex-playground-preview {
+  margin-top: var(--slex-preview-anchor-offset, 0);
+}
+
+.slex-playground[data-preview-align="start"] .slex-playground-live-preview {
+  align-items: start;
+}
+
+.slex-playground[data-source-type="markdown"] .slex-playground-live-preview {
+  align-items: start;
+}
+
+.slex-playground[data-preview-overflow="true"] .slex-playground-live-preview {
+  align-items: start;
+}
+
+.slex-playground[data-preview-align="center"][data-preview-anchor="fixed"]:not([data-preview-overflow="true"]) .slex-playground-live-preview {
+  align-items: start;
+}
+
+.slex-playground[data-preview-align="center"][data-preview-anchor="fixed"]:not([data-preview-overflow="true"]) .slex-playground-live-preview > .slex-standalone-playground-preview-inner {
+  margin-top: var(--slex-preview-anchor-offset, 0);
+}
+
+.slex-playground-code-pane {
+  display: flex;
+  min-width: 0;
+  min-height: var(--slex-playground-min-height, 16rem);
+  overflow: hidden;
+  background: var(--background);
+}
+
+.slex-playground-code {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--slex-playground-min-height, 16rem);
+  overflow: hidden;
+}
+
+.slex-playground-code-scroll {
+  box-sizing: border-box;
+  width: 100%;
+  overflow: auto;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.slex-playground-code-lines {
+  min-width: max-content;
+  padding: 3.75rem 0 1.25rem;
+}
+
+.slex-playground-live-pane {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  min-height: var(--slex-playground-min-height, 16rem);
+  background: var(--background);
+}
+
+.slex-playground-live-code {
+  min-width: 0;
+  min-height: var(--slex-playground-min-height, 16rem);
+  overflow: hidden;
+  border-right: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+}
+
+.slex-playground-live-preview {
+  display: grid;
+  align-items: safe center;
+  min-width: 0;
+  min-height: var(--slex-playground-min-height, 16rem);
+  overflow: auto;
+  padding: calc(var(--slex-playground-toolbar-height) + 1.25rem) 1.5rem 1.5rem;
+  background-color: var(--background);
+  background-image: radial-gradient(color-mix(in oklab, var(--border) 52%, transparent) 1px, transparent 1px);
+  background-position: 0 0;
+  background-size: 18px 18px;
+}
+
+.slex-playground-live-pane.vertical {
+  grid-template-columns: 1fr;
+}
+
+.slex-playground-live-pane.vertical .slex-playground-live-code {
+  border-right: 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+}
+
+.slex-playground-splitter {
+  position: relative;
+  background: color-mix(in oklab, var(--border) 76%, transparent);
+  touch-action: none;
+  transition: background-color 120ms ease;
+}
+
+.slex-playground-splitter:focus-visible {
+  background: color-mix(in oklab, var(--ring) 28%, var(--border));
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.slex-playground-splitter.dragging {
+  background: var(--ring);
+  outline: none;
+}
+
+.slex-playground-live-pane.horizontal .slex-playground-splitter {
+  width: 8px;
+  cursor: col-resize;
+}
+
+.slex-playground-live-pane.vertical .slex-playground-splitter {
+  height: 8px;
+  cursor: row-resize;
+}
+
+.slex-playground-code-line {
+  display: grid;
+  grid-template-columns: 3.75rem minmax(0, 1fr);
+  min-height: 1.55em;
+}
+
+.slex-playground-code-line-number {
+  user-select: none;
+  border-right: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  padding: 0 0.75rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.slex-playground-code-line-text {
+  display: block;
+  min-width: max-content;
+  white-space: pre;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.slex-playground-code-scroll .hljs {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.slex-playground-code-scroll pre,
+.slex-playground-code-scroll code {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+}
+
+.slex-playground-editor {
+  --slex-code-keyword: color-mix(in oklab, var(--info) 82%, var(--foreground));
+  --slex-code-name: color-mix(in oklab, var(--foreground) 84%, var(--muted-foreground));
+  --slex-code-string: color-mix(in oklab, var(--success) 82%, var(--foreground));
+  --slex-code-literal: color-mix(in oklab, var(--warning) 82%, var(--foreground));
+  --slex-code-function: color-mix(in oklab, var(--info) 64%, var(--foreground));
+  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
+  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 76%, transparent);
+  --slex-code-heading: color-mix(in oklab, var(--foreground) 92%, var(--info));
+  --slex-code-link: color-mix(in oklab, var(--info) 86%, var(--foreground));
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--slex-playground-min-height, 16rem);
+  resize: none;
+  border: 0;
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0;
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  outline: none;
+}
+
+.dark .slex-playground-editor {
+  --slex-code-keyword: color-mix(in oklab, var(--info) 72%, var(--foreground));
+  --slex-code-name: color-mix(in oklab, var(--foreground) 88%, var(--info));
+  --slex-code-string: color-mix(in oklab, var(--success) 76%, var(--foreground));
+  --slex-code-literal: color-mix(in oklab, var(--warning) 72%, var(--foreground));
+  --slex-code-function: color-mix(in oklab, var(--info) 82%, var(--foreground));
+  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 88%, var(--foreground));
+  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 82%, transparent);
+  --slex-code-heading: color-mix(in oklab, var(--foreground) 94%, var(--info));
+  --slex-code-link: color-mix(in oklab, var(--info) 76%, var(--foreground));
+}
+
+.dark :where(.slex-playground-editor, .slex-standalone-playground-editor) .cm-content :where([class~="ͼ5"]) {
+  color: var(--slex-code-comment) !important;
+}
+
+.dark :where(.slex-playground-editor, .slex-standalone-playground-editor) .cm-content :where([class~="ͼ7"]) {
+  color: var(--slex-code-heading) !important;
+}
+
+.dark :where(.slex-playground-editor, .slex-standalone-playground-editor) .cm-content :where([class~="ͼb"]) {
+  color: var(--slex-code-keyword) !important;
+}
+
+.dark :where(.slex-playground-editor, .slex-standalone-playground-editor) .cm-content :where([class~="ͼc"], [class~="ͼg"], [class~="ͼh"], [class~="ͼi"], [class~="ͼj"]) {
+  color: var(--slex-code-name) !important;
+}
+
+.dark :where(.slex-playground-editor, .slex-standalone-playground-editor) .cm-content :where([class~="ͼd"], [class~="ͼf"]) {
+  color: var(--slex-code-literal) !important;
+}
+
+.dark :where(.slex-playground-editor, .slex-standalone-playground-editor) .cm-content :where([class~="ͼe"]) {
+  color: var(--slex-code-string) !important;
+}
+
+.slex-playground-editor.codemirror,
+.slex-playground-editor .cm-editor {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto;
+  min-height: var(--slex-playground-min-height, 16rem);
+  overflow: hidden;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.slex-playground-editor .cm-editor.cm-focused .cm-cursor {
+  border-left-color: var(--foreground);
+}
+
+.slex-playground-editor .cm-editor.cm-focused .cm-selectionBackground,
+.slex-playground-editor .cm-editor .cm-selectionBackground,
+.slex-playground-editor .cm-editor.cm-focused .cm-content ::selection {
+  background: color-mix(in oklab, var(--foreground) 18%, transparent) !important;
+}
+
+.slex-playground-editor .cm-focused {
+  outline: none;
+}
+
+.slex-playground-editor .cm-scroller {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: var(--slex-playground-min-height, 16rem);
+  height: auto;
+  overflow: auto;
+  padding-top: var(--slex-playground-toolbar-height);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.slex-playground-code-scroll,
+.slex-playground-live-preview,
+.slex-playground-editor .cm-scroller,
+.slex-standalone-playground-preview,
+.slex-standalone-playground-editor .cm-scroller {
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 42%, transparent) transparent;
+  scrollbar-width: thin;
+}
+
+.slex-playground-code-scroll::-webkit-scrollbar,
+.slex-playground-live-preview::-webkit-scrollbar,
+.slex-playground-editor .cm-scroller::-webkit-scrollbar,
+.slex-standalone-playground-preview::-webkit-scrollbar,
+.slex-standalone-playground-editor .cm-scroller::-webkit-scrollbar {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.slex-playground-code-scroll::-webkit-scrollbar-track,
+.slex-playground-live-preview::-webkit-scrollbar-track,
+.slex-playground-editor .cm-scroller::-webkit-scrollbar-track,
+.slex-standalone-playground-preview::-webkit-scrollbar-track,
+.slex-standalone-playground-editor .cm-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.slex-playground-code-scroll::-webkit-scrollbar-thumb,
+.slex-playground-code-scroll::-webkit-scrollbar-thumb:hover,
+.slex-playground-code-scroll::-webkit-scrollbar-thumb:active,
+.slex-playground-live-preview::-webkit-scrollbar-thumb,
+.slex-playground-live-preview::-webkit-scrollbar-thumb:hover,
+.slex-playground-live-preview::-webkit-scrollbar-thumb:active,
+.slex-playground-editor .cm-scroller::-webkit-scrollbar-thumb,
+.slex-playground-editor .cm-scroller::-webkit-scrollbar-thumb:hover,
+.slex-playground-editor .cm-scroller::-webkit-scrollbar-thumb:active,
+.slex-standalone-playground-preview::-webkit-scrollbar-thumb,
+.slex-standalone-playground-preview::-webkit-scrollbar-thumb:hover,
+.slex-standalone-playground-preview::-webkit-scrollbar-thumb:active,
+.slex-standalone-playground-editor .cm-scroller::-webkit-scrollbar-thumb,
+.slex-standalone-playground-editor .cm-scroller::-webkit-scrollbar-thumb:hover,
+.slex-standalone-playground-editor .cm-scroller::-webkit-scrollbar-thumb:active {
+  border: 0.1875rem solid transparent;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--muted-foreground) 42%, transparent);
+  background-clip: content-box;
+}
+
+.slex-playground-editor .cm-editor .cm-gutters {
+  height: calc(var(--slex-playground-min-height, 16rem) - var(--slex-playground-toolbar-height));
+}
+
+.slex-playground-editor .cm-gutters {
+  height: calc(var(--slex-playground-min-height, 16rem) - var(--slex-playground-toolbar-height));
+  border-right: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.slex-playground-editor .cm-activeLine,
+.slex-playground-editor .cm-activeLineGutter {
+  background: color-mix(in oklab, var(--accent) 42%, transparent);
+}
+
+.slex-playground-editor .cm-content {
+  min-height: calc(var(--slex-playground-min-height, 16rem) - var(--slex-playground-toolbar-height));
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.slexkit-root .sr-only,
+.slex-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.slex-playground-error {
+  border-top: 1px solid var(--destructive);
+  background: color-mix(in oklab, var(--destructive) 10%, transparent);
+  color: var(--destructive);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.75rem;
+}
+
+.slex-streamdown-block {
+  margin-block: 0.75rem;
+}
+
+.slex-streamdown-body {
+  padding: 0.75rem;
+}
+
+.slex-streamdown-error {
+  border: 1px dashed var(--destructive);
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--destructive);
+  padding: 1rem;
+  text-align: left;
+}
+
+.slex-streamdown-error-title {
+  font-weight: 700;
+}
+
+.slex-streamdown-error-message {
+  margin-top: 0.5rem;
+  color: var(--foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.slex-streamdown-error-location,
+.slex-streamdown-error-detail {
+  margin-top: 0.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.slex-streamdown-error-excerpt {
+  overflow: auto;
+  margin: 0.75rem 0 0;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.75rem;
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  white-space: pre;
+}
+
+.slex-standalone-playground {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100svh;
+  min-height: 0;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.slex-playground-embedded-body .slex-standalone-playground {
+  height: 100svh;
+  padding: 0;
+}
+
+.slex-playground-embedded-body {
+  background: transparent;
+}
+
+.slex-standalone-playground-shell {
+  position: relative;
+  height: calc(100svh - 2rem);
+  min-height: calc(100svh - 2rem);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+
+.slex-standalone-playground-toolbar {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 3;
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--muted) 86%, transparent);
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-standalone-playground-button {
+  display: inline-grid;
+  width: 2.5rem;
+  height: 2.25rem;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.slex-standalone-playground-button svg {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: currentColor;
+}
+
+.slex-standalone-playground-icon {
+  display: inline-grid;
+  place-items: center;
+}
+
+.slex-standalone-playground-button:hover {
+  color: var(--foreground);
+}
+
+.slex-standalone-playground-button:focus-visible,
+.slex-standalone-playground-editor .cm-focused {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.slex-standalone-playground-button--active {
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-standalone-playground-error {
+  border: 1px solid var(--destructive);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--destructive) 6%, var(--background));
+  color: var(--destructive);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-standalone-playground-error-title {
+  color: var(--destructive);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.slex-standalone-playground-error-message {
+  margin-top: 0.5rem;
+  color: var(--foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.slex-standalone-playground-error-location,
+.slex-standalone-playground-error-detail {
+  margin-top: 0.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.slex-standalone-playground-error-excerpt {
+  overflow: auto;
+  margin: 0.75rem 0 0;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.75rem;
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.slex-standalone-playground-surface {
+  box-sizing: border-box;
+  height: calc(100svh - 2rem);
+  min-height: calc(100svh - 2rem);
+  overflow: hidden;
+}
+
+.slex-standalone-playground-surface:not(.slex-standalone-playground-surface--split) {
+  display: block;
+}
+
+.slex-standalone-playground-pane {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.slex-standalone-playground-surface--split,
+.slex-standalone-playground-surface--split > .split-pane-pane {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+}
+
+.slex-standalone-playground-splitter {
+  position: relative;
+  background: var(--border);
+  touch-action: none;
+  transition: background-color 120ms ease;
+}
+
+.slex-standalone-playground-splitter:focus-visible {
+  background: color-mix(in oklab, var(--ring) 28%, var(--border));
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.slex-standalone-playground-splitter.dragging {
+  background: var(--ring);
+  outline: none;
+}
+
+.slex-standalone-playground-surface--split.horizontal .slex-standalone-playground-splitter {
+  width: 100%;
+  height: 100%;
+}
+
+.slex-standalone-playground-surface--split.vertical .slex-standalone-playground-splitter {
+  width: 100%;
+  height: 100%;
+}
+
+.slex-standalone-playground-code,
+.slex-standalone-playground-preview {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.slex-standalone-playground-code {
+  background: var(--background);
+}
+
+.slex-standalone-playground-code .codemirror {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.slex-standalone-playground-editor {
+  --slex-code-keyword: color-mix(in oklab, var(--info) 82%, var(--foreground));
+  --slex-code-name: color-mix(in oklab, var(--foreground) 84%, var(--muted-foreground));
+  --slex-code-string: color-mix(in oklab, var(--success) 82%, var(--foreground));
+  --slex-code-literal: color-mix(in oklab, var(--warning) 82%, var(--foreground));
+  --slex-code-function: color-mix(in oklab, var(--info) 64%, var(--foreground));
+  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
+  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 76%, transparent);
+  --slex-code-heading: color-mix(in oklab, var(--foreground) 92%, var(--info));
+  --slex-code-link: color-mix(in oklab, var(--info) 86%, var(--foreground));
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  border: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  outline: none;
+}
+
+.dark .slex-standalone-playground-editor {
+  --slex-code-keyword: color-mix(in oklab, var(--info) 72%, var(--foreground));
+  --slex-code-name: color-mix(in oklab, var(--foreground) 88%, var(--info));
+  --slex-code-string: color-mix(in oklab, var(--success) 76%, var(--foreground));
+  --slex-code-literal: color-mix(in oklab, var(--warning) 72%, var(--foreground));
+  --slex-code-function: color-mix(in oklab, var(--info) 82%, var(--foreground));
+  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 88%, var(--foreground));
+  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 82%, transparent);
+  --slex-code-heading: color-mix(in oklab, var(--foreground) 94%, var(--info));
+  --slex-code-link: color-mix(in oklab, var(--info) 76%, var(--foreground));
+}
+
+.slex-standalone-playground-editor .cm-editor {
+  height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.8125rem;
+}
+
+.slex-standalone-playground-editor .cm-editor.cm-focused .cm-cursor {
+  border-left-color: var(--foreground);
+}
+
+.slex-standalone-playground-editor .cm-editor.cm-focused .cm-selectionBackground,
+.slex-standalone-playground-editor .cm-editor .cm-selectionBackground,
+.slex-standalone-playground-editor .cm-editor.cm-focused .cm-content ::selection {
+  background: color-mix(in oklab, var(--foreground) 18%, transparent) !important;
+}
+
+.slex-standalone-playground-editor .cm-scroller {
+  padding-top: 0.75rem;
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  line-height: 1.55;
+}
+
+.slex-standalone-playground-editor .cm-gutters {
+  border-right: 1px solid var(--border);
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.slex-standalone-playground-editor .cm-activeLine,
+.slex-standalone-playground-editor .cm-activeLineGutter {
+  background: color-mix(in oklab, var(--muted) 58%, transparent);
+}
+
+.slex-standalone-playground-editor .cm-content {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.slex-standalone-playground-preview {
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+  padding: 4rem 1.25rem 1.25rem;
+  background-color: var(--background);
+  background-image: radial-gradient(color-mix(in oklab, var(--border) 78%, transparent) 1px, transparent 1px);
+  background-position: 0 0;
+  background-size: 18px 18px;
+}
+
+.slex-standalone-playground-preview-inner {
+  display: grid;
+  gap: var(--slex-preview-document-gap, 1rem);
+  align-content: center;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.slex-standalone-playground-shell[data-mode="render"] .slex-standalone-playground-preview-inner {
+  max-width: 900px;
+}
+
+@media (max-width: 640px) {
+  .slex-playground {
+    border-radius: 0.75rem;
+  }
+
+  .slex-playground-chrome {
+    padding: 0;
+  }
+
+  .slex-playground-actions .slex-button {
+    width: var(--slex-playground-toolbar-height);
+    height: var(--slex-playground-toolbar-height);
+  }
+
+  .slex-playground-preview-pane {
+    padding: 1.25rem;
+    padding-top: calc(var(--slex-playground-toolbar-height) + 1.25rem);
+  }
+
+  .slex-playground-live-pane {
+    grid-template-columns: 1fr;
+  }
+
+  .slex-playground-live-code {
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  }
+
+  .slex-playground-live-preview {
+    padding: calc(var(--slex-playground-toolbar-height) + 1.25rem) 1.25rem 1.25rem;
+  }
+
+  .slex-playground-source-picker {
+    width: 6.75rem;
+    min-width: 6.75rem;
+  }
+
+  .slex-playground-code-lines {
+    padding-top: calc(var(--slex-playground-toolbar-height) + 1rem);
+  }
+
+  .slex-standalone-playground {
+    padding: 0;
+  }
+
+  .slex-standalone-playground-shell {
+    height: 100svh;
+    min-height: 100svh;
+    border-width: 0;
+    border-radius: 0;
+  }
+
+  .slex-standalone-playground-toolbar {
+    right: 0.5rem;
+  }
+
+  .slex-standalone-playground-button {
+    width: 2.375rem;
+  }
+
+  .slex-standalone-playground-surface {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .slex-standalone-playground-editor {
+    min-height: 100%;
+  }
+
+  .slex-standalone-playground-editor .cm-scroller {
+    padding-top: 0.75rem;
+  }
+
+  .slex-standalone-playground-editor .cm-content {
+    padding: 0 1rem 1rem;
+  }
+}

@@ -1,0 +1,1222 @@
+.slex-page {
+  display: grid;
+  width: calc(100% - 2rem);
+  min-width: 0;
+  gap: 3rem;
+  margin: 0 auto;
+  padding: 3rem 0;
+}
+
+.slex-page[data-density="compact"] {
+  gap: 2rem;
+}
+
+.slex-heading,
+.slex-section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.slex-heading-eyebrow,
+.slex-section-eyebrow {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.slex-heading-meta {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.slex-heading-title,
+.slex-section-title {
+  margin: 0;
+  color: var(--foreground);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.slex-heading[data-level="1"] .slex-heading-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1;
+}
+
+.slex-heading[data-level="2"] .slex-heading-title,
+.slex-section-title {
+  font-size: 1.5rem;
+}
+
+.slex-heading[data-level="3"] .slex-heading-title {
+  font-size: 1.25rem;
+}
+
+.slex-heading[data-level="4"] .slex-heading-title,
+.slex-heading[data-level="5"] .slex-heading-title,
+.slex-heading[data-level="6"] .slex-heading-title {
+  font-size: 1rem;
+}
+
+.slex-heading-subtitle,
+.slex-section-subtitle,
+.slex-paragraph {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.slex-paragraph[data-tone="lead"] {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.slex-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.slex-list-description {
+  display: block;
+  margin-top: 0.125rem;
+  color: var(--muted-foreground);
+}
+
+.slex-hero {
+  display: grid;
+  min-width: 0;
+  align-items: center;
+  gap: 2rem;
+}
+
+.slex-hero[data-align="split"] {
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+}
+
+.slex-hero[data-align="center"] {
+  justify-items: center;
+  text-align: center;
+}
+
+.slex-hero-copy {
+  min-width: 0;
+}
+
+.slex-hero-eyebrow {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.slex-hero-title {
+  margin: 0.75rem 0 0;
+  color: var(--foreground);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.slex-hero-subtitle {
+  max-width: 38rem;
+  margin: 1rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+.slex-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 1.75rem;
+}
+
+.slex-hero[data-align="center"] .slex-hero-actions {
+  justify-content: center;
+}
+
+.slex-hero-action {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.slex-hero-action--primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.slex-hero-action--primary:hover {
+  background: color-mix(in oklab, var(--primary) 90%, var(--background));
+}
+
+.slex-hero-action--secondary {
+  border-color: var(--input);
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-hero-action--secondary:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.slex-hero-action:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 24%, transparent);
+}
+
+.slex-hero-media {
+  min-width: 0;
+}
+
+.slex-page--site-home .slex-hero {
+  gap: clamp(1.5rem, 3vw, 2.25rem);
+  min-height: clamp(620px, calc(100svh - 7rem), 760px);
+}
+
+@media (min-width: 1024px) {
+  .slex-page--site-home .slex-hero[data-align="split"] {
+    grid-template-columns: minmax(320px, 0.66fr) minmax(600px, 1.34fr);
+  }
+}
+
+.slex-page--site-home .slex-hero-eyebrow {
+  text-transform: none;
+}
+
+.slex-page--site-home .slex-hero-media {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+.slex-page--site-home .slex-playground {
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--border) 62%, transparent);
+  border-radius: calc(var(--radius) + 6px);
+  background: var(--background);
+  box-shadow: 0 14px 44px color-mix(in oklab, var(--foreground) 7%, transparent);
+}
+
+.slex-page--site-home .slex-playground,
+.slex-page--site-home .slex-playground-preview-pane,
+.slex-page--site-home .slex-playground-code-pane,
+.slex-page--site-home .slex-playground-code,
+.slex-page--site-home .slex-playground-live-pane,
+.slex-page--site-home .slex-playground-code-scroll {
+  height: auto;
+  min-height: 0 !important;
+}
+
+.slex-page--site-home .slex-playground-editor,
+.slex-page--site-home .slex-playground-editor.codemirror,
+.slex-page--site-home .slex-playground-editor .cm-editor,
+.slex-page--site-home .slex-playground-editor .cm-scroller {
+  height: 100%;
+}
+
+.slex-page--site-home .slex-playground-preview-pane {
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--muted) 38%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg, color-mix(in oklab, var(--muted) 38%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+  overflow: visible;
+  padding: 2.5rem 1.5rem 1.5rem;
+}
+
+.slex-page--site-home .slex-playground-live-code,
+.slex-page--site-home .slex-playground-live-preview {
+  min-height: 0;
+}
+
+.slex-page--site-home .slex-playground-preview {
+  width: min(100%, 980px);
+}
+
+.slex-formula-line {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--muted) 72%, transparent);
+  padding: 0.75rem 0.875rem;
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.slex-rule-mark {
+  display: block;
+  width: 3.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--primary);
+  font-size: 0;
+  line-height: 0;
+}
+
+.slex-rule-mark--success {
+  background: var(--success);
+}
+
+.slex-rule-mark--warning {
+  background: var(--warning);
+}
+
+.slex-skeleton-mark {
+  display: block;
+  height: 2rem;
+  border-radius: calc(var(--radius) - 2px);
+  background:
+    linear-gradient(90deg, var(--muted) 0 31%, transparent 31% 34%, var(--muted) 34% 65%, transparent 65% 68%, var(--muted) 68% 100%);
+  font-size: 0;
+  line-height: 0;
+}
+
+.slex-diagram,
+.slex-swatch {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(var(--radius) + 2px);
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+.slex-swatch {
+  height: 4rem;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--primary);
+}
+
+.slex-swatch[data-tone="info"] { background: var(--info); }
+.slex-swatch[data-tone="success"] { background: var(--success); }
+.slex-swatch[data-tone="warning"] { background: var(--warning); }
+.slex-swatch[data-tone="destructive"] { background: var(--destructive); }
+.slex-swatch[data-tone="neutral"] { background: var(--muted); }
+
+.slex-diagram[data-kind="philosophy"] {
+  min-height: 10rem;
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(circle at 50% 50%, var(--primary) 0 0.45rem, transparent 0.5rem),
+    radial-gradient(circle at 28% 36%, color-mix(in oklab, var(--info) 85%, white) 0 0.35rem, transparent 0.4rem),
+    radial-gradient(circle at 72% 36%, color-mix(in oklab, var(--success) 85%, white) 0 0.35rem, transparent 0.4rem),
+    radial-gradient(circle at 50% 76%, color-mix(in oklab, var(--warning) 85%, white) 0 0.35rem, transparent 0.4rem),
+    repeating-radial-gradient(circle at 50% 50%, transparent 0 2.35rem, color-mix(in oklab, var(--border) 70%, transparent) 2.4rem 2.45rem),
+    var(--background);
+}
+
+.slex-diagram[data-kind="philosophy"]::before,
+.slex-diagram[data-kind="philosophy"]::after {
+  position: absolute;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.slex-diagram[data-kind="philosophy"]::before {
+  content: "RUNNABLE";
+  left: 1rem;
+  top: 1rem;
+}
+
+.slex-diagram[data-kind="philosophy"]::after {
+  content: "CONVERGENT";
+  right: 1rem;
+  bottom: 1rem;
+}
+
+.slex-diagram[data-kind="markdown"],
+.slex-diagram[data-kind="fence"],
+.slex-diagram[data-kind="cards"] {
+  height: 4.75rem;
+  background: var(--muted);
+}
+
+.slex-diagram[data-kind="type"],
+.slex-diagram[data-kind="icon"],
+.slex-diagram[data-kind="font-sample"],
+.slex-diagram[data-kind="alignment"] {
+  min-height: 3.25rem;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--muted);
+}
+
+.slex-diagram[data-kind="type"]::before,
+.slex-diagram[data-kind="type"]::after,
+.slex-diagram[data-kind="alignment"]::before,
+.slex-diagram[data-kind="alignment"]::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.slex-diagram[data-kind="type"]::before {
+  top: 0.75rem;
+  width: 4rem;
+  height: 0.5rem;
+}
+
+.slex-diagram[data-kind="type"]::after {
+  top: 1.5rem;
+  width: 3rem;
+  height: 0.45rem;
+  background: var(--muted-foreground);
+  box-shadow: 0 0.75rem 0 -0.05rem var(--muted-foreground);
+}
+
+.slex-diagram[data-kind="alignment"]::before {
+  top: 1rem;
+  width: 8rem;
+  height: 0.4rem;
+}
+
+.slex-diagram[data-kind="alignment"]::after {
+  top: 1.75rem;
+  width: 6rem;
+  height: 0.35rem;
+  background: var(--muted-foreground);
+}
+
+.slex-diagram[data-kind="icon"]::before {
+  content: "<> check close";
+  position: absolute;
+  left: 0.75rem;
+  top: 0.9rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.slex-diagram[data-kind="font-sample"] {
+  display: grid;
+  min-height: 6.5rem;
+  align-content: center;
+  gap: 0.45rem;
+  padding: 1rem;
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.slex-diagram[data-kind="font-sample"]::before,
+.slex-diagram[data-kind="font-sample"]::after {
+  display: block;
+  letter-spacing: 0;
+}
+
+.slex-diagram[data-kind="font-sample"]::before {
+  content: "SlexKit";
+  font-size: 2rem;
+  font-weight: 760;
+}
+
+.slex-diagram[data-kind="font-sample"]::after {
+  content: "文档即工具，工具即文档";
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.slex-diagram[data-kind="state"] {
+  height: 7rem;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(var(--muted-foreground), var(--muted-foreground)) left 1rem top 1rem / 7rem 0.45rem no-repeat,
+    linear-gradient(var(--info), var(--info)) left 10rem top 1rem / 7rem 0.45rem no-repeat,
+    linear-gradient(var(--success), var(--success)) left 19rem top 1rem / 7rem 0.45rem no-repeat,
+    linear-gradient(var(--border), var(--border)) left 1rem top 2.35rem / calc(100% - 2rem) 1px no-repeat,
+    linear-gradient(var(--muted), var(--muted)) left 1rem top 3.15rem / calc(100% - 2rem) 0.8rem no-repeat,
+    linear-gradient(var(--muted), var(--muted)) left 1rem top 4.55rem / calc(100% - 2rem) 0.8rem no-repeat,
+    var(--background);
+}
+
+.slex-diagram[data-kind="markdown"]::before,
+.slex-diagram[data-kind="fence"]::before,
+.slex-diagram[data-kind="cards"]::before {
+  content: "";
+  position: absolute;
+  inset: 0.9rem;
+  border-radius: var(--radius);
+}
+
+.slex-diagram[data-kind="markdown"]::before {
+  background:
+    linear-gradient(var(--foreground), var(--foreground)) left 0 top 0 / 42% 0.45rem no-repeat,
+    linear-gradient(var(--muted-foreground), var(--muted-foreground)) left 0 top 1.1rem / 82% 0.32rem no-repeat,
+    linear-gradient(var(--muted-foreground), var(--muted-foreground)) left 0 top 1.8rem / 68% 0.32rem no-repeat;
+}
+
+.slex-diagram[data-kind="fence"]::before {
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(var(--info), var(--info)) left 0.7rem top 0.75rem / 4.5rem 0.38rem no-repeat,
+    linear-gradient(var(--muted-foreground), var(--muted-foreground)) left 0.7rem top 1.65rem / 72% 0.28rem no-repeat,
+    linear-gradient(var(--muted-foreground), var(--muted-foreground)) left 0.7rem top 2.3rem / 58% 0.28rem no-repeat,
+    var(--background);
+}
+
+.slex-diagram[data-kind="cards"]::before {
+  background:
+    linear-gradient(var(--background), var(--background)) left 0 top 0 / 31% 100% no-repeat,
+    linear-gradient(var(--background), var(--background)) left 50% top 0 / 31% 100% no-repeat,
+    linear-gradient(var(--background), var(--background)) right 0 top 0 / 31% 100% no-repeat;
+}
+
+.slex-card--dashboard-shell {
+  width: 100%;
+  min-height: 30rem;
+  padding: 1.5rem;
+  border-radius: calc(var(--radius) + 6px);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--muted) 55%, transparent) 0 13rem, transparent 13rem),
+    var(--card);
+}
+
+.slex-card--dashboard-shell > .slex-card-body {
+  gap: 1.25rem;
+}
+
+.slex-card--dashboard-shell .slex-grid > * {
+  min-width: 0;
+}
+
+.slex-card--dashboard-shell .slex-demo-span-2 {
+  grid-column: span 2;
+}
+
+.slex-card--dashboard-shell .slex-stat {
+  min-width: 0;
+  padding: 0.875rem;
+}
+
+.slex-card--dashboard-shell .slex-stat-value {
+  font-size: 1.35rem;
+}
+
+.slex-card--dashboard-shell .slex-stat-number {
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.slex-demo-topbar {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.slex-card--dashboard-panel {
+  min-width: 0;
+  min-height: 12rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+}
+
+.slex-card--dashboard-panel .slex-card-title {
+  margin-bottom: 0.625rem;
+  padding-bottom: 0;
+  border-bottom: 0;
+  font-size: 0.9375rem;
+}
+
+.slex-card--dashboard-panel .slex-table {
+  font-size: 0.8125rem;
+}
+
+.slex-dashboard-side {
+  display: grid;
+  min-width: 0;
+  gap: 0.875rem;
+}
+
+@media (max-width: 767px) {
+  .slex-card--dashboard-shell .slex-demo-span-2 {
+    grid-column: auto;
+  }
+}
+
+.slex-page--site-home .slex-section-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.slex-page--site-home .slex-section-action {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: end;
+}
+
+.slex-page--site-home .slex-section-title,
+.slex-page--site-design .slex-section-title {
+  font-size: 1.5rem;
+}
+
+.slex-page--site-design {
+  gap: 0;
+}
+
+.slex-design-shell {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .slex-design-shell {
+    grid-template-columns: 13.75rem minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .slex-design-sidebar {
+    position: sticky;
+    top: 5rem;
+  }
+}
+
+.slex-design-content {
+  display: grid;
+  gap: 2.5rem;
+  min-width: 0;
+}
+
+.slex-page--site-design .slex-section {
+  scroll-margin-top: 5.5rem;
+}
+
+.slex-card--rule,
+.slex-card--swatch,
+.slex-card--sample,
+.slex-card--evidence,
+.slex-page--site-home .slex-section .slex-card {
+  min-height: 11rem;
+}
+
+.slex-card--rule .slex-card-title,
+.slex-card--swatch .slex-card-title,
+.slex-card--sample .slex-card-title,
+.slex-card--evidence .slex-card-title,
+.slex-page--site-home .slex-section .slex-card .slex-card-title {
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 0;
+  padding-bottom: 0;
+  font-size: 1rem;
+}
+
+.slex-card--swatch .slex-card-body {
+  gap: 0.75rem;
+}
+
+.slex-card--evidence {
+  background: color-mix(in oklab, var(--card) 88%, var(--muted));
+}
+
+.slex-card--evidence .slex-text--eyebrow {
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  text-transform: none;
+}
+
+@media (max-width: 900px) {
+  .slex-hero[data-align="split"] {
+    grid-template-columns: 1fr;
+  }
+}
+
+.slex-doc-detail {
+  min-width: 0;
+  color: var(--foreground);
+}
+
+.slex-doc-detail-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1.25rem;
+}
+
+.slex-doc-detail-title {
+  margin: 0.75rem 0 0;
+  color: var(--foreground);
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.slex-doc-detail-summary {
+  max-width: 45rem;
+  margin: 0.5rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.slex-doc-prose {
+  min-width: 0;
+  max-width: 54rem;
+  color: var(--foreground);
+}
+
+.slex-page--site-design .slex-doc-prose {
+  max-width: none;
+}
+
+.slex-doc-streamdown {
+  min-width: 0;
+}
+
+.slex-doc-streamdown li > p {
+  display: inline;
+  margin: 0;
+}
+
+.slex-doc-streamdown li > p + :is(.katex-display, pre, blockquote, ul, ol) {
+  margin-top: 0.5rem;
+}
+
+.slex-doc-prose .slex-doc-slexkit-demo {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 1rem 0 1.5rem !important;
+}
+
+.slex-doc-prose .slex-doc-slexkit-demo--playground {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  background: var(--card) !important;
+  padding: 1rem !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-doc-prose .slex-doc-slexkit-demo--component {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.slex-page--site-design .slex-doc-prose .slex-doc-slexkit-demo,
+.slex-doc-prose [data-markdown-doc="design"] .slex-doc-slexkit-demo {
+  margin: 1rem 0 1.75rem !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none;
+}
+
+.slex-doc-prose .slex-doc-slexkit-demo [data-streamdown="code-block-header"],
+.slex-doc-prose .slex-doc-slexkit-demo .slex-streamdown-toolbar {
+  display: none !important;
+}
+
+.slex-doc-prose .slex-doc-slexkit-demo .slex-streamdown-body {
+  padding: 0;
+}
+
+.slex-doc-prose .slex-doc-slexkit-demo .slexkit-root {
+  min-width: 0;
+}
+
+.slex-page--site-design .slex-doc-prose h1 {
+  max-width: 48rem;
+  margin: 0 0 0.625rem;
+  color: var(--foreground);
+  font-size: 1.75rem;
+  font-weight: 760;
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+.slex-page--site-design .slex-doc-prose h2 {
+  margin-top: 2.25rem;
+  font-size: 1.45rem;
+}
+
+.slex-page--site-design .slex-doc-prose p {
+  max-width: 58rem;
+  font-size: 0.9375rem;
+}
+
+.slex-page--site-design .slex-doc-slexkit-demo .slex-card {
+  min-height: 0;
+  border-color: color-mix(in oklab, var(--border) 78%, transparent);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 1rem;
+  box-shadow: none;
+}
+
+.slex-page--site-design .slex-doc-slexkit-demo .slex-card:hover {
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+.slex-page--site-design .slex-doc-slexkit-demo .slex-card .slex-card-body {
+  gap: 0.75rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-card-title {
+  margin: 0;
+  border-bottom: 0;
+  padding-bottom: 0;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-swatch {
+  order: -1;
+  height: 4.5rem;
+  border-radius: calc(var(--radius) - 2px);
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-diagram[data-kind="type"],
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-diagram[data-kind="icon"],
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-diagram[data-kind="font-sample"],
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-diagram[data-kind="alignment"] {
+  min-height: 4.25rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-diagram[data-kind="font-sample"] {
+  min-height: 6.5rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-text,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-column .slex-text {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-heading-eyebrow {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-heading {
+  gap: 0.35rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-heading-title {
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-heading-meta {
+  color: color-mix(in oklab, var(--muted-foreground) 72%, transparent);
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-diagram[data-kind="philosophy"] + .slex-grid .slex-card .slex-card-body {
+  gap: 0.5rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-card-title {
+  margin-bottom: 0.75rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-stat {
+  min-height: 0;
+  padding: 0.7rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-stat-label {
+  font-size: 0.7rem;
+  text-transform: none;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-stat-value {
+  font-size: 1.125rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-stat-unit {
+  font-size: 0.72rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-diagram[data-kind="philosophy"] + .slex-grid {
+  margin-top: 0.75rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-badge {
+  margin-top: 0.125rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--mini,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--gate,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--tone,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--swatch-mini {
+  min-height: 0;
+  padding: 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--gate,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--tone {
+  min-height: 9.25rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--mini .slex-card-body,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--gate .slex-card-body,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--tone .slex-card-body,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--swatch-mini .slex-card-body {
+  gap: 0.75rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--mini .slex-card-title,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--gate .slex-card-title,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--tone .slex-card-title,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--swatch-mini .slex-card-title {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--mini .slex-text,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--gate .slex-text,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--tone .slex-text,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--swatch-mini .slex-text {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--swatch-mini .slex-swatch {
+  height: 3.25rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-card--tone .slex-badge {
+  margin-top: 0.125rem;
+}
+
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-grid + .slex-grid,
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-grid + .slex-diagram {
+  margin-top: 0.75rem;
+}
+
+.slex-doc-prose .slex-doc-streamdown [data-streamdown="code-block"] {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 1rem 0 !important;
+  gap: 0.375rem !important;
+  border-color: var(--border) !important;
+  border-radius: var(--radius) !important;
+  background: var(--card) !important;
+  padding: 0.5rem !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-doc-playground-inline {
+  display: block;
+  width: 100%;
+  margin: 1rem 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-doc-prose .slex-doc-streamdown [data-streamdown="code-block-header"] {
+  height: auto !important;
+  min-height: 1.5rem;
+  padding: 0 0.25rem;
+  color: var(--muted-foreground) !important;
+  font-size: 0.75rem !important;
+}
+
+.slex-doc-prose .slex-doc-streamdown [data-streamdown="code-block-body"] {
+  border-color: var(--border) !important;
+  border-radius: calc(var(--radius) - 2px) !important;
+  background: var(--muted) !important;
+  padding: 0.875rem !important;
+}
+
+.slex-doc-prose .slex-doc-streamdown [data-streamdown="code-block"] pre {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+.slex-doc-prose h2 {
+  margin: 2rem 0 0.75rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+  color: var(--foreground);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.slex-doc-prose h2:first-child {
+  margin-top: 0;
+}
+
+.slex-doc-prose h3 {
+  margin: 1.25rem 0 0.5rem;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.slex-doc-prose p,
+.slex-doc-prose li {
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.slex-doc-prose p {
+  max-width: 48rem;
+  margin: 0.75rem 0;
+}
+
+.slex-doc-prose ul,
+.slex-doc-prose ol {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.75rem 0;
+  padding-left: 1.25rem;
+}
+
+.slex-doc-prose pre {
+  overflow: auto;
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+  color: var(--foreground);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.slex-doc-prose pre.slex-markdown-code {
+  --slex-code-keyword: color-mix(in oklab, var(--info) 82%, var(--foreground));
+  --slex-code-name: color-mix(in oklab, var(--foreground) 84%, var(--muted-foreground));
+  --slex-code-string: color-mix(in oklab, var(--success) 82%, var(--foreground));
+  --slex-code-literal: color-mix(in oklab, var(--warning) 82%, var(--foreground));
+  --slex-code-function: color-mix(in oklab, var(--info) 64%, var(--foreground));
+  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
+  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 76%, transparent);
+}
+
+.slex-doc-prose .slex-markdown-code .hljs {
+  display: block;
+  overflow-x: auto;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.slex-doc-prose .slex-markdown-code :where(.hljs-comment, .hljs-quote) {
+  color: var(--slex-code-comment);
+  font-style: italic;
+}
+
+.slex-doc-prose .slex-markdown-code :where(.hljs-keyword, .hljs-selector-tag, .hljs-built_in, .hljs-type) {
+  color: var(--slex-code-keyword);
+}
+
+.slex-doc-prose .slex-markdown-code :where(.hljs-title, .hljs-title.function_, .hljs-title.class_, .hljs-section) {
+  color: var(--slex-code-function);
+}
+
+.slex-doc-prose .slex-markdown-code :where(.hljs-name, .hljs-attribute, .hljs-attr, .hljs-property, .hljs-variable) {
+  color: var(--slex-code-name);
+}
+
+.slex-doc-prose .slex-markdown-code :where(.hljs-number, .hljs-literal, .hljs-symbol, .hljs-bullet) {
+  color: var(--slex-code-literal);
+}
+
+.slex-doc-prose .slex-markdown-code :where(.hljs-string, .hljs-regexp, .hljs-link) {
+  color: var(--slex-code-string);
+}
+
+.slex-doc-prose .slex-markdown-code :where(.hljs-punctuation, .hljs-operator, .hljs-subst) {
+  color: var(--slex-code-punctuation);
+}
+
+.slex-doc-prose code {
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.8125rem;
+}
+
+.slex-doc-prose :not(pre) > code {
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 4px);
+  background: var(--muted);
+  color: var(--foreground);
+  padding: 0.0625rem 0.25rem;
+}
+
+.slex-doc-prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  width: 100%;
+  margin: 1rem 0;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font-size: 0.875rem;
+}
+
+.slex-doc-prose th,
+.slex-doc-prose td {
+  border: 1px solid var(--border);
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.slex-doc-prose th {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-weight: 650;
+}
+
+@media (max-width: 640px) {
+  .slex-heading[data-level="1"] .slex-heading-title,
+  .slex-hero-title {
+    font-size: 2.5rem;
+  }
+
+  .slex-hero {
+    gap: 1.5rem;
+  }
+
+  .slex-hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .slex-hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .slex-hero-action {
+    width: 100%;
+  }
+
+  .slex-page--site-home .slex-hero {
+    min-height: auto;
+  }
+
+  .slex-page--site-home .slex-section-header {
+    grid-template-columns: 1fr;
+  }
+
+  .slex-page--site-home .slex-section-action {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+
+  .slex-doc-detail-title {
+    font-size: 1.5rem;
+  }
+
+  .slex-doc-prose pre {
+    padding: 0.875rem;
+  }
+
+  .slex-page--site-design .slex-doc-slexkit-demo .slex-row--balanced-tiles[data-tile-kind="stat"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .slex-page--site-design .slex-doc-slexkit-demo .slex-row--balanced-tiles[data-tile-kind="stat"] > .slex-stat {
+    grid-column: auto !important;
+  }
+
+  .slex-page--site-design
+    .slex-doc-slexkit-demo
+    .slex-row--balanced-tiles[data-tile-kind="stat"]
+    > .slex-stat:last-child:nth-child(odd) {
+    grid-column: 1 / -1 !important;
+  }
+
+  .slex-diagram[data-kind="philosophy"] {
+    background:
+      radial-gradient(circle at 50% 50%, var(--primary) 0 0.45rem, transparent 0.5rem),
+      radial-gradient(circle at 28% 38%, color-mix(in oklab, var(--info) 85%, white) 0 0.35rem, transparent 0.4rem),
+      radial-gradient(circle at 72% 38%, color-mix(in oklab, var(--success) 85%, white) 0 0.35rem, transparent 0.4rem),
+      radial-gradient(circle at 50% 75%, color-mix(in oklab, var(--warning) 85%, white) 0 0.35rem, transparent 0.4rem),
+      radial-gradient(
+        circle at 50% 50%,
+        transparent 0 1.85rem,
+        color-mix(in oklab, var(--border) 70%, transparent) 1.9rem 1.95rem,
+        transparent 2rem 3.7rem,
+        color-mix(in oklab, var(--border) 70%, transparent) 3.75rem 3.8rem,
+        transparent 3.85rem 5.45rem,
+        color-mix(in oklab, var(--border) 70%, transparent) 5.5rem 5.55rem,
+        transparent 5.6rem
+      ),
+      var(--background);
+  }
+
+  .slex-diagram[data-kind="state"] {
+    background:
+      linear-gradient(var(--muted-foreground), var(--muted-foreground)) left 1rem top 1rem / 28% 0.45rem no-repeat,
+      linear-gradient(var(--info), var(--info)) center top 1rem / 28% 0.45rem no-repeat,
+      linear-gradient(var(--success), var(--success)) right 1rem top 1rem / 28% 0.45rem no-repeat,
+      linear-gradient(var(--border), var(--border)) left 1rem top 2.35rem / calc(100% - 2rem) 1px no-repeat,
+      linear-gradient(var(--muted), var(--muted)) left 1rem top 3.15rem / calc(100% - 2rem) 0.8rem no-repeat,
+      linear-gradient(var(--muted), var(--muted)) left 1rem top 4.55rem / calc(100% - 2rem) 0.8rem no-repeat,
+      var(--background);
+  }
+}

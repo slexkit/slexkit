@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SlexKit ToolHost example</title>
+    <link rel="stylesheet" href="/dist/slexkit.css">
+    <link rel="stylesheet" href="/shared/examples.css">
+  </head>
+  <body>
+    <main class="example-shell">
+      <header class="example-header">
+        <div class="example-kicker">ToolHost</div>
+        <h1 class="example-title">Structured tool-call UI</h1>
+        <p class="example-description">
+          ToolHost compiles structured tool requests into standard SlexKit UI and
+          resolves a submitted or ignored result for the host.
+        </p>
+      </header>
+      <section class="example-grid two">
+        <div class="example-panel">
+          <h2>Tool calls</h2>
+          <div class="example-actions">
+            <button class="example-button primary" data-tool="confirm-action">Confirm</button>
+            <button class="example-button" data-tool="choose-options">Choose options</button>
+            <button class="example-button" data-tool="fill-form">Fill form</button>
+            <button class="example-button" data-tool="custom-template">Custom template</button>
+          </div>
+          <div id="tool"></div>
+        </div>
+        <div class="example-panel">
+          <h2>Result</h2>
+          <pre id="result" class="example-output">No result yet.</pre>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+.slexkit-root {
+  color: var(--foreground, #111827);
+  background: transparent;
+  font-family: var(
+    --font-sans,
+    "Geist",
+    "Geist Sans",
+    "Noto Sans SC",
+    "Noto Sans",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif
+  );
+}
+
+.slexkit-theme-host-shadcn {
+  --slex-primary-50: color-mix(in srgb, var(--primary, #4A90E2) 8%, white);
+  --slex-primary-100: color-mix(in srgb, var(--primary, #4A90E2) 14%, white);
+  --slex-primary-200: color-mix(in srgb, var(--primary, #4A90E2) 25%, white);
+  --slex-primary-300: color-mix(in srgb, var(--primary, #4A90E2) 38%, white);
+  --slex-primary-400: color-mix(in srgb, var(--primary, #4A90E2) 62%, white);
+  --slex-primary-500: var(--primary, #4A90E2);
+  --slex-primary-600: color-mix(in srgb, var(--primary, #4A90E2) 82%, black);
+  --slex-primary-700: color-mix(in srgb, var(--primary, #4A90E2) 74%, black);
+  --slex-primary-800: color-mix(in srgb, var(--primary, #4A90E2) 65%, black);
+  --slex-primary-900: color-mix(in srgb, var(--primary, #4A90E2) 56%, black);
+  --slex-primary-950: color-mix(in srgb, var(--primary, #4A90E2) 44%, black);
+}

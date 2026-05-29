@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SlexKit secure fetch example</title>
+    <link rel="stylesheet" href="/dist/slexkit.css">
+    <link rel="stylesheet" href="/shared/examples.css">
+  </head>
+  <body>
+    <main class="example-shell">
+      <header class="example-header">
+        <div class="example-kicker">Secure runtime</div>
+        <h1 class="example-title">Policy-gated fetch in a sandbox frame</h1>
+        <p class="example-description">
+          The Slex source runs in a sandbox iframe. Network access is exposed only
+          through `api.fetch`, and the host policy decides what is allowed.
+        </p>
+      </header>
+      <section class="example-grid two">
+        <div class="example-panel">
+          <h2>Sandbox frame</h2>
+          <div id="app"></div>
+        </div>
+        <div class="example-panel">
+          <h2>Host network log</h2>
+          <pre id="network-log" class="example-output">No requests yet.</pre>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
