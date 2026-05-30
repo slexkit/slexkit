@@ -3,7 +3,7 @@ title: 单位换算实验台
 category: 科学与教育
 status: published
 order: 61
-summary: 在长度、质量和温度类别间快速换算，支持精确输入和 slider 快速探索。
+summary: 在长度、质量和温度类别间快速换算，支持动态单位选项切换。
 tags: unit, conversion, lab
 components: card, input, select, slider, stat, grid
 difficulty: 入门
@@ -55,4 +55,4 @@ slexkitRenderMode: component
 
 Fallback：1 m → 100 cm。
 
-核心技术价值：select 的 **动态 options**——`g.unitOptions()` 根据类别自动生成选项。
+切换长度/质量/温度类别后，源单位和目标单位的选项会自动更新。

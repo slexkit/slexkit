@@ -3,7 +3,7 @@ title: BMI 计算器
 category: 科学与教育
 status: published
 order: 63
-summary: 通过身高和体重实时计算 BMI 并显示体重分类，支持 slider 快速探索和 input 精确输入。
+summary: 通过身高和体重实时计算 BMI 并显示体重分类。
 tags: health, bmi, calculator
 components: card, input, slider, formula, stat, badge, grid, column
 difficulty: 入门

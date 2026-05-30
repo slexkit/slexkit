@@ -3,7 +3,7 @@ title: 决策记录卡
 category: 产品与协作
 status: draft
 order: 45
-summary: 展示“决策记录卡”如何从静态说明变成可调、可复制、可被 AI 学习的 SlexKit 交互块。
+summary: 决策记录的交互式评估与确认，上下文、备选方案和最终决策跨段落联动。
 tags: adr, decision, product
 components: card, badge, table
 difficulty: 入门

@@ -3,7 +3,7 @@ title: 会议纪要行动项
 category: 产品与协作
 status: draft
 order: 43
-summary: 展示“会议纪要行动项”如何从静态说明变成可调、可复制、可被 AI 学习的 SlexKit 交互块。
+summary: 会议纪要中行动项的交互式确认与追踪，支持跨段落状态共享。
 tags: meeting, action, collaboration
 components: card, checkbox, progress
 difficulty: 入门

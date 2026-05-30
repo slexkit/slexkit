@@ -3,7 +3,7 @@ title: KaTeX 计算实验台
 category: 物理与化学
 status: published
 order: 50
-summary: 用 SlexKit 状态生成 KaTeX 公式源码，拖动参数时公式本身随交互重新渲染，展示热力学热容计算。
+summary: 拖动参数时 KaTeX 公式数字实时变化，展示热力学热容计算。
 tags: physics, thermodynamics, katex, math
 components: card, input, slider, formula, stat, progress, callout, grid, column
 difficulty: 进阶
@@ -41,8 +41,8 @@ $$Q = mc\Delta T \quad\quad P = \frac{Q}{t}$$
         "column:deltaField": { "input:delta": { label: "温升 ΔT", "$value": "g.delta", type: "number", unit: "°C", onchange: "g.delta = Number($event || 0)" }, "slider:delta": { label: "ΔT", "$value": "g.delta", min: 5, max: 90, step: 5, unit: "°C", onchange: "g.delta = Number($event)" } },
         "column:timeField": { "input:seconds": { label: "加热时间 t", "$value": "g.seconds", type: "number", unit: "s", onchange: "g.seconds = Number($event || 0)" }, "slider:seconds": { label: "t", "$value": "g.seconds", min: 30, max: 600, step: 30, unit: "s", onchange: "g.seconds = Number($event)" } }
       },
-      "formula:energy": { "$tex": "'Q = mc\\\\Delta T = ' + g.mass.toFixed(1) + ' \\\\times ' + g.heat + ' \\\\times ' + g.delta + ' = ' + Math.round(g.energy()).toLocaleString() + '\\\\text{ J}'" },
-      "formula:power": { "$tex": "'P = \\\\frac{Q}{t} = \\\\frac{' + Math.round(g.energy()).toLocaleString() + '}{' + g.seconds + '} = ' + Math.round(g.power()) + '\\\\text{ W}'" },
+      "formula:energyEquation": { "$tex": "'Q = mc\\\\Delta T = ' + g.mass.toFixed(1) + ' \\\\times ' + g.heat + ' \\\\times ' + g.delta + ' = ' + Math.round(g.energy()).toLocaleString() + '\\\\text{ J}'" },
+      "formula:powerEquation": { "$tex": "'P = \\\\frac{Q}{t} = \\\\frac{' + Math.round(g.energy()).toLocaleString() + '}{' + g.seconds + '} = ' + Math.round(g.power()) + '\\\\text{ W}'" },
       "grid:results": {
         columns: 1, mdColumns: 3,
         "stat:energy": { label: "热量 Q", "$value": "Math.round(g.energy()).toLocaleString()", unit: "J" },
@@ -57,13 +57,4 @@ $$Q = mc\Delta T \quad\quad P = \frac{Q}{t}$$
 
 Fallback：0.5kg 水升温 35°C → Q ≈ 73,255 J, 180 秒 → P ≈ 407 W。
 
-## SlexKit + KaTeX 协作
-
-| 角色 | 负责 |
-|------|------|
-| Markdown | 静态推导 $Q = mc\Delta T$ |
-| g 对象 | 存储参数和计算结果 |
-| formula 组件 | 动态生成 TeX 源码 `"$tex": "'Q = ' + ..."` |
-| KaTeX | 浏览器端渲染数学公式 |
-
-`$tex` 中的表达式在 `g` 变化时重新求值 → 生成新 TeX → KaTeX 重新渲染。
+比热容 $c = 4186 \text{ J/(kg·°C)}$（常压水），随温度变化约 0.1%/°C，工程计算常忽略。

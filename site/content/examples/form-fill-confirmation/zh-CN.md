@@ -3,7 +3,7 @@ title: 表单补全确认
 category: AI 与 Agent 工作流
 status: draft
 order: 8
-summary: 展示“表单补全确认”如何从静态说明变成可调、可复制、可被 AI 学习的 SlexKit 交互块。
+summary: 表单补全结果的人工确认流程，字段逐项核对后提交。
 tags: form, confirmation, agent
 components: card, input, submit
 difficulty: 入门

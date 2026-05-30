@@ -3,7 +3,7 @@ title: RC 低通滤波器
 category: 电子工程
 status: published
 order: 10
-summary: 用电阻和电容搭建的频率选择电路，通过 slider 快速探索、input 精确输入感受截止频率与增益变化。
+summary: 用电阻和电容搭建的频率选择电路，计算截止频率和任意频率下的增益衰减。
 tags: electronics, circuit, filter, rc
 components: card, input, slider, formula, stat, table, callout, badge
 difficulty: 进阶
@@ -27,8 +27,6 @@ $$f_c = \frac{1}{2\pi RC}$$
 $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
 
 ## 参数区
-
-slider 快速体验变化趋势，input 精确输入工程值。两者同时操作同一个参数，互相同步：
 
 ```slex
 {
@@ -62,8 +60,6 @@ slider 快速体验变化趋势，input 精确输入工程值。两者同时操�
 Fallback：默认参数 $R=10\text{k}\Omega$、$C=100\text{nF}$ 下截止频率约 159Hz。
 
 ## 计算结果
-
-下面的交互块读取参数区的状态，展示完整的计算过程和增益：
 
 ```slex
 {

@@ -72,7 +72,7 @@ Fallback：开头交互用于建立阅读状态；普通 Markdown 环境仍能�
           ["降级文本", "每个交互块后保留 fallback"]
         ]
       },
-      "checkbox:evidence": { label: "我已核验证据表", "$checked": "g.evidenceChecked", onchange: "g.evidenceChecked = Boolean($event)" },
+      "checkbox:evidenceChecked": { label: "我已核验证据表", "$checked": "g.evidenceChecked", onchange: "g.evidenceChecked = Boolean($event)" },
       "progress:score": { label: "综合分", "$value": "g.score()" },
       "callout:hint": { "$tone": "g.evidenceChecked ? 'success' : 'warning'", "$text": "g.evidenceChecked ? '证据区已确认，末尾结论会同步更新。' : '还没有确认中段证据，末尾结论应保持谨慎。'" }
     }

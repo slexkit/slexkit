@@ -3,7 +3,7 @@ title: 组件选型助手
 category: 知识库与文档
 status: draft
 order: 16
-summary: 展示“组件选型助手”如何从静态说明变成可调、可复制、可被 AI 学习的 SlexKit 交互块。
+summary: 按使用场景选择合适的 SlexKit 接入方式，展示对应代码片段。
 tags: component, choice, docs
 components: card, select, callout
 difficulty: 入门
