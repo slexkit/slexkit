@@ -165,7 +165,7 @@ export function createSlexKitMarkdownRuntimeHost(
       const __target = { slex: "0.1", namespace: __artifactPrefix + "default", g: {}, layout: {} };
       const __layouts = [];
       for (const __entry of __sources) {
-        const __script = __entry.kind === "json" ? JSON.parse(__entry.source) : (0, eval)(__entry.source);
+        const __script = __entry.kind === "json" ? JSON.parse(__entry.source) : (0, eval)("(" + __entry.source + ")");
         if (!__isRecord(__script)) continue;
         if ("slex" in __script) __target.slex = String(__script.slex || "0.1");
         if ("namespace" in __script) __target.namespace = __artifactPrefix + String(__script.namespace || "default");

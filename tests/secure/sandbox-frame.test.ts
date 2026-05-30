@@ -116,11 +116,17 @@ describe("secure sandbox frame", () => {
       expect(getSlexKitRuntimeUrl()).toBe("/dist/slexkit.runtime.js");
       expect(iframe.getAttribute("sandbox")).toBe("allow-scripts");
       expect(iframe.getAttribute("referrerpolicy")).toBe("no-referrer");
+      expect(iframe.style.display).toBe("block");
+      expect(iframe.style.width).toBe("100%");
+      expect(iframe.style.border).toBe("0px");
+      expect(iframe.style.background).toBe("transparent");
       expect(iframe.srcdoc).toContain("Content-Security-Policy");
       expect(iframe.srcdoc).toContain("'unsafe-eval'");
       expect(iframe.srcdoc).toContain("connect-src 'none'");
       expect(iframe.srcdoc).toContain("startSlexKitSandboxRunner");
       expect(iframe.srcdoc).toContain("/dist/slexkit.runtime.js");
+      expect(iframe.srcdoc).toContain('rel="stylesheet"');
+      expect(iframe.srcdoc).toContain("/dist/slexkit.css");
       expect(container.querySelector(".slexkit-root")).toBeNull();
 
       cleanup();
@@ -207,10 +213,115 @@ describe("secure sandbox frame", () => {
       expect(iframe.srcdoc).toContain("connect-src 'none'");
       expect(iframe.srcdoc).toContain("startSlexKitSandboxRunner");
       expect(iframe.srcdoc).toContain("/dist/slexkit.runtime.js");
+      expect(iframe.srcdoc).toContain("/dist/slexkit.css");
       expect(container.querySelector(".slexkit-root")).toBeNull();
+
+      const posted: unknown[] = [];
+      Object.defineProperty(iframe.contentWindow, "postMessage", {
+        configurable: true,
+        value: (message: unknown) => posted.push(message),
+      });
+      const readyEvent = new window.MessageEvent("message", {
+        data: { channel: "slexkit-secure", type: "ready" },
+      });
+      Object.defineProperty(readyEvent, "source", {
+        configurable: true,
+        value: iframe.contentWindow,
+      });
+      window.dispatchEvent(readyEvent);
+      const mountMessage = posted.find((message) =>
+        !!message && typeof message === "object" && (message as { type?: unknown }).type === "mount"
+      ) as { id: string; token: string };
+      const sizeEvent = new window.MessageEvent("message", {
+        data: {
+          channel: "slexkit-secure",
+          type: "frame-size",
+          id: mountMessage.id,
+          token: mountMessage.token,
+          height: 640.2,
+        },
+      });
+      Object.defineProperty(sizeEvent, "source", {
+        configurable: true,
+        value: iframe.contentWindow,
+      });
+      window.dispatchEvent(sizeEvent);
+      expect(iframe.style.height).toBe("641px");
 
       cleanup();
       expect(container.querySelector("iframe")).toBeNull();
+    });
+
+
+    it("allows sandbox runner frame stylesheet injection to be disabled", () => {
+      const container = setup();
+      const cleanup = mountSecureArtifact("({ namespace: 'unstyled_runner_frame', layout: {} })", container, {
+        policy,
+        frame: {
+          runtimeUrl: "/dist/slexkit.runtime.js",
+          styleUrl: false,
+        },
+      });
+
+      const iframe = container.querySelector("iframe[data-slexkit-secure-frame='true']") as HTMLIFrameElement;
+      expect(iframe).toBeTruthy();
+      expect(iframe.srcdoc).toContain("/dist/slexkit.runtime.js");
+      expect(iframe.srcdoc).not.toContain('rel="stylesheet"');
+      expect(iframe.srcdoc).not.toContain("slexkit.css");
+
+      cleanup();
+    });
+
+
+    it("sizes a single secure artifact slot to the sandbox content height", () => {
+      document.body.innerHTML = '<div id="anchor"></div><div id="slot"></div>';
+      const anchor = document.getElementById("anchor")!;
+      const slot = document.getElementById("slot")!;
+      const cleanup = mountSecureArtifact("({ namespace: 'single_slot_frame', layout: {} })", anchor, {
+        policy,
+        frame: {
+          runtimeUrl: "/dist/slexkit.runtime.js",
+        },
+        artifactSlots: [{ id: "slot_0", container: slot }],
+      });
+
+      const iframe = anchor.querySelector("iframe[data-slexkit-secure-frame='true']") as HTMLIFrameElement;
+      const posted: unknown[] = [];
+      Object.defineProperty(iframe.contentWindow, "postMessage", {
+        configurable: true,
+        value: (message: unknown) => posted.push(message),
+      });
+      const readyEvent = new window.MessageEvent("message", {
+        data: { channel: "slexkit-secure", type: "ready" },
+      });
+      Object.defineProperty(readyEvent, "source", {
+        configurable: true,
+        value: iframe.contentWindow,
+      });
+      window.dispatchEvent(readyEvent);
+      const mountMessage = posted.find((message) =>
+        !!message && typeof message === "object" && (message as { type?: unknown }).type === "mount"
+      ) as { id: string; token: string };
+      const sizeEvent = new window.MessageEvent("message", {
+        data: {
+          channel: "slexkit-secure",
+          type: "slot-size",
+          id: mountMessage.id,
+          token: mountMessage.token,
+          slotId: "slot_0",
+          height: 572.4,
+        },
+      });
+      Object.defineProperty(sizeEvent, "source", {
+        configurable: true,
+        value: iframe.contentWindow,
+      });
+      window.dispatchEvent(sizeEvent);
+
+      expect(slot.style.minHeight).toBe("573px");
+      expect(iframe.style.height).toBe("573px");
+
+      cleanup();
     });
 
 

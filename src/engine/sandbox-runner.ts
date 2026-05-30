@@ -265,6 +265,7 @@ export function startSlexKitSandboxRunner(): void {
   let activeId: string | undefined;
   let activeToken: string | undefined;
   let heartbeatTimer: ReturnType<typeof globalThis.setInterval> | undefined;
+  let rootResizeObserver: ResizeObserver | undefined;
   let slotResizeObserver: ResizeObserver | undefined;
 
   function clearHeartbeat(): void {
@@ -290,6 +291,8 @@ export function startSlexKitSandboxRunner(): void {
   function dispose(id?: string): void {
     if (id && activeId && id !== activeId) return;
     clearHeartbeat();
+    rootResizeObserver?.disconnect();
+    rootResizeObserver = undefined;
     slotResizeObserver?.disconnect();
     slotResizeObserver = undefined;
     cleanup?.();
@@ -323,6 +326,46 @@ export function startSlexKitSandboxRunner(): void {
       slotId,
       height,
     });
+  }
+
+  function reportFrameSize(): void {
+    if (!activeId || !activeToken) return;
+    const root = frameRoot();
+    const rootRect = root.getBoundingClientRect();
+    let contentBottom = rootRect.height;
+    for (const child of root.querySelectorAll<HTMLElement>("*")) {
+      const rect = child.getBoundingClientRect();
+      contentBottom = Math.max(contentBottom, rect.bottom - rootRect.top);
+    }
+    const height = Math.max(
+      root.scrollHeight,
+      root.getBoundingClientRect().height,
+      contentBottom,
+      document.body?.scrollHeight ?? 0,
+      document.documentElement?.scrollHeight ?? 0,
+      1,
+    );
+    post({
+      channel: "slexkit-secure",
+      type: "frame-size",
+      id: activeId,
+      token: activeToken,
+      height,
+    });
+  }
+
+  function observeFrameSize(): void {
+    rootResizeObserver?.disconnect();
+    rootResizeObserver = typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(() => reportFrameSize())
+      : undefined;
+    const root = frameRoot();
+    rootResizeObserver?.observe(root);
+    for (const child of root.children) {
+      rootResizeObserver?.observe(child);
+    }
+    reportFrameSize();
+    schedulingSnapshot.requestAnimationFrame?.(() => reportFrameSize());
   }
 
   function applySlotRects(slots: SandboxSlotsMessage["slots"]): void {
@@ -385,6 +428,7 @@ export function startSlexKitSandboxRunner(): void {
       api: runtime.api as unknown as Record<string, unknown>,
     });
     startHeartbeat(message.policy, message.id, message.token);
+    observeFrameSize();
     post({
       channel: "slexkit-secure",
       type: "mounted",

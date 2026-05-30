@@ -2,6 +2,8 @@ import { describe, expect, it } from "bun:test";
 import {
   currentLocale,
   docHrefForPath,
+  exampleHrefForPath,
+  isExamplesRoute,
   localizeSiteNavigationPath,
   navHref,
   pathWithoutLocale,
@@ -46,6 +48,8 @@ describe("site locale routing", () => {
     expect(navHref("/")).toBe("/zh-CN/");
     expect(localizeSiteNavigationPath("/")).toBe("/zh-CN/");
     expect(localizeSiteNavigationPath("/docs/guides/intro")).toBe("/zh-CN/docs/guides/intro");
+    expect(localizeSiteNavigationPath("/examples")).toBe("/zh-CN/examples");
+    expect(localizeSiteNavigationPath("/examples/tool-approval-panel")).toBe("/zh-CN/examples/tool-approval-panel");
     expect(localizeSiteNavigationPath("/components")).toBe("/zh-CN/docs/components/accordion");
     expect(localizeSiteNavigationPath("/components/card")).toBe("/zh-CN/docs/components/card");
     expect(localizeSiteNavigationPath("/docs/components/card.md")).toBe("/docs/components/card.md");
@@ -55,6 +59,15 @@ describe("site locale routing", () => {
     setPath("/zh-CN/docs/components/card");
 
     expect(localizeSiteNavigationPath("/zh-CN/docs/guides/intro")).toBe("/zh-CN/docs/guides/intro");
+    expect(localizeSiteNavigationPath("/zh-CN/examples/tool-approval-panel")).toBe("/zh-CN/examples/tool-approval-panel");
     expect(localizeSiteNavigationPath("/en-US/docs/guides/intro")).toBe("/docs/guides/intro");
+  });
+
+  it("recognizes examples as localized site routes", () => {
+    setPath("/zh-CN/examples/tool-approval-panel");
+
+    expect(isExamplesRoute()).toBe(true);
+    expect(exampleHrefForPath()).toBe("/zh-CN/examples/tool-approval-panel");
+    expect(localizeSiteNavigationPath("/examples/queue-backlog-diagnosis")).toBe("/zh-CN/examples/queue-backlog-diagnosis");
   });
 });
