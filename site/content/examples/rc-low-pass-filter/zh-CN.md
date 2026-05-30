@@ -44,12 +44,12 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
   layout: {
     "card:params": {
       title: "参数输入",
-      "slider:r": { label: "电阻 R", "$value": "g.r", min: 100, max: 100000, step: 100, unit: "Ω", onchange: "g.r = Number($event)" },
-      "input:r": { label: "电阻精确值", "$value": "g.r", type: "number", unit: "Ω", onchange: "g.r = Number($event || 0)" },
-      "slider:c": { label: "电容 C", "$value": "g.c", min: 1, max: 1000, step: 1, unit: "nF", onchange: "g.c = Number($event)" },
-      "input:c": { label: "电容精确值", "$value": "g.c", type: "number", unit: "nF", onchange: "g.c = Number($event || 0)" },
-      "slider:f": { label: "输入频率", "$value": "g.f", min: 1, max: 100000, step: 1, unit: "Hz", onchange: "g.f = Number($event)" },
-      "input:f": { label: "频率精确值", "$value": "g.f", type: "number", unit: "Hz", onchange: "g.f = Number($event || 0)" },
+      "grid:inputs": {
+        columns: 1, mdColumns: 2,
+        "column:rField": { "input:r": { label: "电阻 R", "$value": "g.r", type: "number", unit: "Ω", onchange: "g.r = Number($event || 0)" }, "slider:r": { label: "R", "$value": "g.r", min: 100, max: 100000, step: 100, unit: "Ω", onchange: "g.r = Number($event)" } },
+        "column:cField": { "input:c": { label: "电容 C", "$value": "g.c", type: "number", unit: "nF", onchange: "g.c = Number($event || 0)" }, "slider:c": { label: "C", "$value": "g.c", min: 1, max: 1000, step: 1, unit: "nF", onchange: "g.c = Number($event)" } },
+        "column:fField": { "input:f": { label: "输入频率 f", "$value": "g.f", type: "number", unit: "Hz", onchange: "g.f = Number($event || 0)" }, "slider:f": { label: "f", "$value": "g.f", min: 1, max: 100000, step: 1, unit: "Hz", onchange: "g.f = Number($event)" } }
+      },
       "stat:fc": { label: "截止频率", "$value": "g.cutoff().toFixed(1)", unit: "Hz" },
       "badge:regime": { "$label": "g.regimeLabel()", "$tone": "g.f < g.cutoff() * 0.1 ? 'success' : g.f > g.cutoff() * 10 ? 'danger' : 'warning'" }
     }

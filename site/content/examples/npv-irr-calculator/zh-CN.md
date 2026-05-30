@@ -44,10 +44,7 @@ $$NPV = -I_0 + \sum_{t=1}^{5} \frac{CF_t}{(1 + r)^t}$$
         "input:cashFlow4": { label: "第 4 年 CF", "$value": "g.cashFlow4", type: "number", unit: "元", onchange: "g.cashFlow4 = Number($event || 0)" },
         "input:cashFlow5": { label: "第 5 年 CF", "$value": "g.cashFlow5", type: "number", unit: "元", onchange: "g.cashFlow5 = Number($event || 0)" }
       },
-      "grid:discount": {
-        columns: 1, mdColumns: 3,
-        "column:rField": { "input:discountRate": { label: "折现率 r", "$value": "g.discountRate", type: "number", unit: "%", onchange: "g.discountRate = Number($event || 0)" }, "slider:discountRate": { label: "折现率", "$value": "g.discountRate", min: 1, max: 30, step: 0.5, unit: "%", onchange: "g.discountRate = Number($event)" } }
-      },
+      "column:rField": { "input:discountRate": { label: "折现率 r", "$value": "g.discountRate", type: "number", unit: "%", onchange: "g.discountRate = Number($event || 0)" }, "slider:discountRate": { label: "r", "$value": "g.discountRate", min: 1, max: 30, step: 0.5, unit: "%", onchange: "g.discountRate = Number($event)" } },
       "formula:eq": { "$tex": "'NPV = -' + g.initialInvestment.toLocaleString() + ' + \\\\sum_{t=1}^{5} \\\\frac{CF_t}{(1+' + (g.discountRate/100).toFixed(2) + ')^t}'" },
       "grid:results": {
         columns: 1, mdColumns: 3,

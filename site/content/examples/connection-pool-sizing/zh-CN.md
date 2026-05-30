@@ -38,12 +38,13 @@ slexkitRenderMode: component
     "card:pool": {
       title: "连接池估算",
       "grid:params": {
-        columns: 1, mdColumns: 2,
-        "column:qpsField": { "input:qps": { label: "目标 QPS", "$value": "g.qps", type: "number", unit: "queries/s", onchange: "g.qps = Number($event || 0)" }, "slider:qps": { label: "QPS", "$value": "g.qps", min: 10, max: 10000, step: 10, unit: "q/s", onchange: "g.qps = Number($event)" } },
-        "column:timeField": { "input:queryTimeMs": { label: "平均查询时间", "$value": "g.queryTimeMs", type: "number", unit: "ms", onchange: "g.queryTimeMs = Number($event || 0)" }, "slider:queryTimeMs": { label: "查询时间", "$value": "g.queryTimeMs", min: 1, max: 500, step: 1, unit: "ms", onchange: "g.queryTimeMs = Number($event)" } },
-        "column:cpuField": { "input:cpuCores": { label: "数据库 CPU 核数", "$value": "g.cpuCores", type: "number", unit: "核", onchange: "g.cpuCores = Number($event || 0)" }, "slider:targetUtil": { label: "目标利用率", "$value": "g.targetUtil", min: 0.3, max: 0.95, step: 0.05, onchange: "g.targetUtil = Number($event)" } },
-        "column:diskField": { "input:diskCount": { label: "SSD 数量", "$value": "g.diskCount", type: "number", unit: "个", onchange: "g.diskCount = Number($event || 0)" } }
+        columns: 1, mdColumns: 4,
+        "input:qps": { label: "目标 QPS", "$value": "g.qps", type: "number", unit: "q/s", onchange: "g.qps = Number($event || 0)" },
+        "input:queryTimeMs": { label: "平均查询时间", "$value": "g.queryTimeMs", type: "number", unit: "ms", onchange: "g.queryTimeMs = Number($event || 0)" },
+        "input:cpuCores": { label: "CPU 核数", "$value": "g.cpuCores", type: "number", unit: "核", onchange: "g.cpuCores = Number($event || 0)" },
+        "input:diskCount": { label: "SSD 数量", "$value": "g.diskCount", type: "number", unit: "个", onchange: "g.diskCount = Number($event || 0)" }
       },
+      "slider:targetUtil": { label: "目标利用率", "$value": "g.targetUtil", min: 0.3, max: 0.95, step: 0.05, onchange: "g.targetUtil = Number($event)" },
       "formula:queue": { "$tex": "'N_{queue} = \\\\frac{' + g.qps + ' \\\\times ' + g.queryTimeSec().toFixed(3) + '}{1 - ' + g.targetUtil + '} = ' + g.poolByQueue() + '\\\\text{ 连接}'" },
       "grid:results": {
         columns: 1, mdColumns: 3,
