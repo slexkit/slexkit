@@ -63,10 +63,11 @@
   const activeRuntimeHost = $derived(runtimeHost ?? (useGlobalRuntimeHost && runtimeApi ? runtimeApi.getSlexKitMarkdownRuntimeHost() : undefined));
   const activeRuntimeMode = $derived(activeRuntimeHost?.getMode());
   const isSecureRuntime = $derived(runtime === "secure");
+  const usesRuntimeHost = $derived(!!activeRuntimeHost);
   const delegatesToSecureHost = $derived(activeRuntimeMode === "secure");
   const parsedSource = $derived(isSlexKit && runtimeApi && !isSecureRuntime && !delegatesToSecureHost ? runtimeApi.parseSlexSource(text) : null);
   const sourceKind = $derived(parsedSource?.ok && isStateOnlySource(parsedSource.value) ? "state-only" : "renderable");
-  const runtimeInput = $derived(isSecureRuntime || delegatesToSecureHost ? text : scopedSlexKitInput(text, parsedSource?.ok ? parsedSource.value : undefined, domain));
+  const runtimeInput = $derived(isSecureRuntime || usesRuntimeHost ? text : scopedSlexKitInput(text, parsedSource?.ok ? parsedSource.value : undefined, domain));
   const effectiveRenderMode = $derived(resolveRenderMode(info.meta, renderMode));
   const parseError = $derived(parsedSource && !parsedSource.ok ? parsedSource.error : null);
   const displayError = $derived(parseError ?? runtimeError ?? runtimeLoadError);
@@ -121,6 +122,21 @@
   $effect(() => {
     runtimeError = null;
     if (!runtimeApi || !isSlexKit || isSecureRuntime || delegatesToSecureHost || sourceKind !== "state-only") return;
+    if (activeRuntimeHost) {
+      const container = document.createElement("span");
+      try {
+        const cleanup = activeRuntimeHost.mountBlock({
+          artifactId: domain,
+          source: runtimeInput,
+          container,
+          ...runtimeMountOptions(),
+        });
+        return cleanup;
+      } catch (error) {
+        runtimeError = error;
+        return;
+      }
+    }
     if (!runtimeApi.ingest(runtimeInput)) {
       runtimeError = new Error("Failed to parse Slex state block.");
     }

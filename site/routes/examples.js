@@ -1,4 +1,4 @@
-import { createSlexKitMarkdownRuntimeHost, ingest } from "../../src/engine/index";
+import { ingest } from "../../src/engine/index";
 import { loadExampleDocs } from "../data/examples.js";
 import { siteUiLabelsForLocale } from "../data/component-docs.js";
 import { renderMarkdown } from "../markdown/svelte-renderer.js";
@@ -78,6 +78,23 @@ function shellDoc(example) {
     href: withSiteBase(example.href),
     markdownHref: withSiteBase(example.markdownHref),
     bodyHtml: `<div class="slex-docs-markdown" data-markdown-doc="${escapeAttribute(example.slug)}"></div>`,
+  };
+}
+
+function securePolicyForExample(example) {
+  if (example?.slug !== "network-policy-fetch-card") return {};
+  return {
+    network: {
+      enabled: true,
+      methods: ["GET", "POST"],
+      allowOrigins: ["https://jsonplaceholder.typicode.com"],
+      allowHeaders: ["content-type"],
+      allowContentTypes: ["application/json"],
+      credentials: "omit",
+      timeoutMs: 8000,
+      maxBodyBytes: 4096,
+      maxResponseBytes: 65536,
+    },
   };
 }
 
@@ -177,24 +194,16 @@ export function createExamplesRoute({
     await Promise.resolve();
     const markdownHost = page.querySelector("[data-markdown-doc]");
     if (markdownHost) {
-      const secureRuntimeHost = doc.runtime === "secure"
-        ? createSlexKitMarkdownRuntimeHost({
-            mode: "secure",
-            secureFrame: {
-              runtimeUrl: withSiteBase("/slexkit.js"),
-            },
-          })
-        : undefined;
       const cleanup = renderMarkdown(doc.markdown, markdownHost, {
         domain: `example:${example.slug}`,
         slexkitRenderMode: doc.slexkitRenderMode ?? "component",
         slexkitRuntime: doc.runtime === "secure" ? "secure" : "trusted",
-        slexkitRuntimeHost: secureRuntimeHost,
+        slexkitSecurePolicy: securePolicyForExample(doc),
+        slexkitSecureFrame: {
+          runtimeUrl: withSiteBase("/slexkit.js"),
+        },
       });
-      addMarkdownCleanup(() => {
-        cleanup();
-        secureRuntimeHost?.disposeAll();
-      });
+      addMarkdownCleanup(cleanup);
     }
 
     document.title = `${doc.title} - SlexKit`;

@@ -89,7 +89,7 @@ describe("site playground markdown renderer", () => {
     expect(css).toContain(".slex-home-playground .slex-playground-live-pane");
     expect(css).toContain(".slex-home-playground .slex-playground-live-code");
     expect(css).toContain("width: min(100%, 72rem)");
-    expect(css).toContain(".slex-home-playground .slex-playground-preview-pane {\n  overflow: visible;");
+    expect(css.replaceAll("\r\n", "\n")).toContain(".slex-home-playground .slex-playground-preview-pane {\n  overflow: visible;");
     expect(css).not.toContain("height: min(78svh, 48rem)");
     expect(css).not.toContain("height: 80svh");
     expect(homeRoute).toContain("function mountHomePlayground(root)");
@@ -196,6 +196,8 @@ describe("site playground markdown renderer", () => {
     const staticExport = await Bun.file("site/scripts/export-static.ts").text();
 
     expect(renderer).toContain("mount(MarkdownRenderer");
+    expect(renderer).toContain("createSlexKitMarkdownRuntimeHost");
+    expect(renderer).toContain("runtimeHost.disposeArtifact(domain)");
     expect(renderer).not.toContain("createRoot");
     expect(markdownComponent).toContain("@humanspeak/svelte-markdown");
     expect(markdownComponent).toContain("normalizeHeadingAnchors(content)");
@@ -208,6 +210,7 @@ describe("site playground markdown renderer", () => {
     expect(slexkitRenderer).toContain("slex-doc-slexkit-demo--playground");
     expect(slexkitRenderer).toContain('sourceType: "slex"');
     expect(slexkitRenderer).toContain("mountSecureArtifact");
+    expect(slexkitRenderer).toContain("activeRuntimeHost.mountBlock");
     expect(slexkitRenderer).toContain("getSlexKitMarkdownRuntimeHost");
     expect(slexkitRenderer).toContain("HighlightedMarkdownCode");
     expect(highlightedCode).toContain("svelte-highlight");

@@ -16,6 +16,7 @@ type ReadableValue = {
 type SeenComponentState = {
   type: string;
   path: string;
+  stateBinding?: string;
 };
 
 function isReadableValue(value: unknown): value is ReadableValue {
@@ -309,6 +310,35 @@ function warnDuplicateState(
   }
 }
 
+function dynamicStateBinding(type: string, props: Record<string, unknown>): string | undefined {
+  const mode = getComponentStateMode(type);
+  const value = mode === "checked"
+    ? props.$checked ?? props.$value
+    : mode === "enabled"
+      ? props.$enabled
+      : props.$value;
+  return typeof value === "string" ? value.trim() : undefined;
+}
+
+function isMirroredValueControlPair(previousType: string, currentType: string): boolean {
+  return (previousType === "input" && currentType === "slider") || (previousType === "slider" && currentType === "input");
+}
+
+function shouldWarnDuplicateState(
+  currentType: string,
+  currentBinding: string | undefined,
+  previous: SeenComponentState,
+): boolean {
+  if (
+    currentBinding &&
+    previous.stateBinding === currentBinding &&
+    isMirroredValueControlPair(previous.type, currentType)
+  ) {
+    return false;
+  }
+  return true;
+}
+
 function warnForState(ns: string, name: string, path: string): void {
   console.warn(
     `[SlexKit][${ns}] Component state '${name}' is used with $for at ${path}; repeated items share one namespace-level instance state.`,
@@ -332,9 +362,15 @@ function prepareComponentStatesInner(
     const props = val as Record<string, unknown>;
     const path = parentPath ? `${parentPath}.${key}` : key;
     if (name && isStatefulComponent(type)) {
+      const stateBinding = dynamicStateBinding(type, props);
       const previous = seen.get(name);
-      if (previous) warnDuplicateState(ns, name, type, path, previous);
-      else seen.set(name, { type, path });
+      if (previous) {
+        if (shouldWarnDuplicateState(type, stateBinding, previous)) {
+          warnDuplicateState(ns, name, type, path, previous);
+        }
+      } else {
+        seen.set(name, { type, path, stateBinding });
+      }
       if (props.$for && isWritableComponent(type)) warnForState(ns, name, path);
 
       const state = ensureComponentState(name, type, components, componentTypes);

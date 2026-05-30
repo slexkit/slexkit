@@ -140,6 +140,54 @@ describe("secure markdown artifact bridge", () => {
     });
 
 
+    it("keeps matching trusted namespaces isolated across markdown artifacts", () => {
+      const runtime = createSlexKitMarkdownRuntimeHost();
+      const firstState = document.createElement("div");
+      const secondState = document.createElement("div");
+      const first = setup();
+      const second = document.createElement("div");
+      document.body.appendChild(second);
+
+      runtime.mountBlock({
+        artifactId: "page-a",
+        container: firstState,
+        stateOnly: true,
+        source: `({ namespace: "shared", g: { saved: 1 } })`,
+      });
+      runtime.mountBlock({
+        artifactId: "page-a",
+        container: first,
+        source: `({ namespace: "shared", layout: { "text:value": { $text: "'a:' + g.saved" } } })`,
+      });
+      runtime.mountBlock({
+        artifactId: "page-b",
+        container: secondState,
+        stateOnly: true,
+        source: `({ namespace: "shared", g: { saved: 2 } })`,
+      });
+      runtime.mountBlock({
+        artifactId: "page-b",
+        container: second,
+        source: `({ namespace: "shared", layout: { "text:value": { $text: "'b:' + g.saved" } } })`,
+      });
+
+      expect(first.textContent).toContain("a:1");
+      expect(second.textContent).toContain("b:2");
+
+      runtime.disposeArtifact("page-a");
+      runtime.mountBlock({
+        artifactId: "page-a",
+        container: first,
+        source: `({ namespace: "shared", layout: { "text:value": { $text: "'a:' + String(g.saved)" } } })`,
+      });
+
+      expect(first.textContent).toContain("a:undefined");
+      expect(second.textContent).toContain("b:2");
+      runtime.disposeAll();
+      second.remove();
+    });
+
+
     it("uses one secure sandbox frame for all blocks in the same markdown artifact", () => {
       const runtime = createSlexKitMarkdownRuntimeHost({
         mode: "secure",
