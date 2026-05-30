@@ -22,6 +22,7 @@ import { createPage as createDocsPage } from "../../site/pages/docs.slex.js";
 import { createDocsPage as createDocsVmPage } from "../../site/routes/docs-page.js";
 import { normalizeRoutePath } from "../../site/app/site-routes.js";
 import { normalizeSiteBase, stripSiteBase, withSiteBase } from "../../site/app/site-base.js";
+import { componentTitleForLocale } from "../../site/data/doc-metadata.js";
 
 function parseGeneratedSpecAttrs(markdown: string, kind: "spec-api" | "spec-example", component: string) {
   const pattern = new RegExp(`<!--\\s*slex:${kind}:start\\s+([^>]*)-->`, "g");
@@ -133,6 +134,11 @@ slexkitRenderMode: playground
     expect(defaultGuide.slexkitRenderMode).toBe("playground");
     expect(componentGuide.slexkitRenderMode).toBe("component");
     expect(playgroundComponent.slexkitRenderMode).toBe("playground");
+  });
+
+  it("keeps component navigation titles localized", () => {
+    expect(componentTitleForLocale("formula", "Formula", "zh-CN")).toBe("Formula 公式");
+    expect(componentTitleForLocale("formula", "Formula 公式", "en-US")).toBe("Formula");
   });
 
   it("keeps the page toc aligned with rendered markdown heading anchors", () => {
