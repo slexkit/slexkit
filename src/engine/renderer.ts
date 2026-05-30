@@ -3,6 +3,7 @@ import { evalRead, execWrite } from "./eval";
 import { createComponentAccessor, disposeComponent, renderComponent } from "./component-scope";
 import { applyComponentEventState, bindInputStateProps, buildComponentEvalContext, prepareComponentStates, syncComponentProps } from "./component-state";
 import { asReactiveValue, createEffect, createMemo, createRoot, createSignal, onCleanup } from "./reactive";
+import { slexkitStd } from "./stdlib";
 import type { LayoutNode, ForContext, RenderContext, ForSlot, ComponentRenderer, MountOptions, ComponentStateMap, ComponentTypeMap } from "./types";
 
 const FALLBACK_CSS = "background:var(--muted);border:1px solid var(--border);border-radius:calc(var(--radius) - 2px);padding:0.5rem;text-align:center;font-size:0.75rem;color:var(--muted-foreground)";
@@ -246,6 +247,7 @@ function renderIfNode(
           };
           currentEl = renderWithFallback(renderer, innerProps, name, {
             g,
+            std: slexkitStd,
             api,
             dir: options.dir,
             labels: options.labels,
@@ -349,6 +351,7 @@ function renderAndMountSlot(
 
     el = renderWithFallback(renderer, innerProps, name, {
       g,
+      std: slexkitStd,
       api,
       dir: options.dir,
       labels: options.labels,
@@ -536,6 +539,7 @@ function renderNormalNode(
 
   const el = renderWithFallback(renderer, nodeProps, name, {
     g,
+    std: slexkitStd,
     api,
     dir: options.dir,
     labels: options.labels,

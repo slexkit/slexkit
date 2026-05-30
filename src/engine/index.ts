@@ -29,6 +29,14 @@ export {
   parseSlexKitDsl,
 } from "./diagnostics";
 export type { SlexKitParseResult, SlexKitSourceDiagnostic } from "./diagnostics";
+export { validateSlexSource } from "./validation";
+export type {
+  SlexKitValidationMode,
+  SlexKitValidationOptions,
+  SlexKitValidationResult,
+  SlexKitValidationWarning,
+  SlexKitValidationWarningCode,
+} from "./validation";
 export type {
   ComponentRegistrationOptions,
   ComponentRenderer,
@@ -45,6 +53,20 @@ export {
   SlexKitRuntimeError,
   serializeRuntimeError,
 } from "./secure-runtime";
+export { slexkitStd } from "./stdlib";
+export type { SlexKitStdlib } from "./stdlib";
+export {
+  slexkitExpressionContext,
+  slexkitRuntimeCapabilities,
+  slexkitRuntimeCapabilityNames,
+  slexkitStdlibDocs,
+  slexkitStdlibFunctionNames,
+} from "./capabilities";
+export type {
+  SlexKitRuntimeCapabilityDoc,
+  SlexKitStdlibFunctionDoc,
+  SlexKitStdlibNamespaceDoc,
+} from "./capabilities";
 export {
   createSlexKitMarkdownRuntimeHost,
   getSlexKitMarkdownRuntimeHost,

@@ -36,6 +36,8 @@ type MountOptions = {
 
 Calling `mount()` again on the same `container` clears the old root first, then appends a new root. The returned cleanup only unmounts the current root; it does not delete the namespace store.
 
+Every expression receives `std`, SlexKit's pure deterministic standard library. Hosts can still inject capability objects through `api`, but network, timers, animation, and canvas should remain policy-gated in secure mode.
+
 ### `ingest(input)`
 
 Ingests state-only Slex: updates `g` without rendering UI. Used by the Markdown runtime host for state-only fences. Returns `true` if parsing succeeded.

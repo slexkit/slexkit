@@ -23,6 +23,7 @@ SlexKit 遵循 assistant-ui 的信息架构：提供清晰的索引、完整上�
       "link:full": { href: "/llms-full.txt", text: "/llms-full.txt - 完整英文上下文", icon: "book-open-text" },
       "link:components": { href: "/llms-components.txt", text: "/llms-components.txt - 组件与 API", icon: "puzzle-piece" },
       "link:runtime": { href: "/llms-runtime.txt", text: "/llms-runtime.txt - runtime 与 host", icon: "cpu" },
+      "link:capabilities": { href: "/llms-capabilities.txt", text: "/llms-capabilities.txt - std 与 api 能力", icon: "function" },
       "link:toolhost": { href: "/llms-toolhost.txt", text: "/llms-toolhost.txt - 结构化输入", icon: "cursor-click" },
       "link:authoring": { href: "/llms-authoring.txt", text: "/llms-authoring.txt - slex fence 写作规则", icon: "pencil-simple" },
       "link:manifest": { href: "/slexkit-ai-manifest.json", text: "/slexkit-ai-manifest.json - 机器可读索引", icon: "brackets-curly" },
@@ -37,8 +38,9 @@ SlexKit 遵循 assistant-ui 的信息架构：提供清晰的索引、完整上�
 1. 先读 [`/llms.txt`](/llms.txt)，拿到分组索引。
 2. 需要全量上下文时读 [`/llms-full.txt`](/llms-full.txt)。
 3. 写组件时读 [`/llms-components.txt`](/llms-components.txt) 和对应 raw `.md` 页面。
-4. 集成 host 或安全运行时时读 [`/llms-runtime.txt`](/llms-runtime.txt)。
-5. 只有需要用户提交结构化结果时读 [`/llms-toolhost.txt`](/llms-toolhost.txt)。
+4. 需要 `std.*` 标准库或 policy-gated `api.*` 能力时读 [`/llms-capabilities.txt`](/llms-capabilities.txt)。
+5. 集成 host 或安全运行时时读 [`/llms-runtime.txt`](/llms-runtime.txt)。
+6. 只有需要用户提交结构化结果时读 [`/llms-toolhost.txt`](/llms-toolhost.txt)。
 
 SlexKit 原始文档为普通 `.md` 文件，包含显式 `slex` fence。无 `.mdx` 路由，`slex` fence 即交互层。
 
@@ -56,6 +58,7 @@ Documentation: https://slexkit.dev/llms-full.txt
 Key patterns:
 - Display UI uses explicit `slex` fenced blocks plus Markdown fallback.
 - Slex source uses `{ slex, namespace, g, layout }`; 当前公开协议使用 `slex: "0.1"`。
+- Use `std.*` for common calculations, formatting, units, and small statistics.
 - ToolHost is only for structured user input flows.
 - Untrusted or agent-generated source should use the secure runtime.
 - Raw docs are `.md` files with `slex` fences, not `.mdx`.

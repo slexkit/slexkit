@@ -59,6 +59,7 @@ export type MountOptions = {
 
 export type RenderContext = {
   g: Record<string, unknown>;
+  std: import("./stdlib").SlexKitStdlib;
   api?: Record<string, unknown>;
   dir: Exclude<DirectionMode, "auto">;
   labels: RuntimeLabels;

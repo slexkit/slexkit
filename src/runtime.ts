@@ -11,6 +11,7 @@ import {
   mountSecureArtifact,
   parseSlexSource,
   parseSlexKitDsl,
+  validateSlexSource,
   createSecureRuntime,
   SlexKitRuntimeError,
   getSlexKitRuntimeUrl,
@@ -18,6 +19,7 @@ import {
   createSlexKitMarkdownRuntimeHost,
   getSlexKitMarkdownRuntimeHost,
   installSlexKitMarkdownRuntimeHost,
+  slexkitStd,
 } from "./engine/index";
 import {
   attachComponentDisposer,
@@ -32,6 +34,13 @@ import {
 } from "./version";
 export type { BootOptions } from "./engine/index";
 export type { SlexKitParseResult, SlexKitSourceDiagnostic } from "./engine/index";
+export type {
+  SlexKitValidationMode,
+  SlexKitValidationOptions,
+  SlexKitValidationResult,
+  SlexKitValidationWarning,
+  SlexKitValidationWarningCode,
+} from "./engine/index";
 export type {
   ComponentRenderer,
   ComponentRegistrationOptions,
@@ -65,6 +74,7 @@ export type {
   SecureRuntimeHandle,
   SerializedRuntimeError,
   TimerId,
+  SlexKitStdlib,
 } from "./engine/index";
 export type {
   SlexKitMarkdownBlock,
@@ -87,6 +97,7 @@ const formatSlexKitDiagnosticApi = formatSlexKitDiagnostic;
 const mountSecureArtifactApi = mountSecureArtifact;
 const parseSlexSourceApi = parseSlexSource;
 const parseSlexKitDslApi = parseSlexKitDsl;
+const validateSlexSourceApi = validateSlexSource;
 const createSecureRuntimeApi = createSecureRuntime;
 const SlexKitRuntimeErrorApi = SlexKitRuntimeError;
 const getSlexKitRuntimeUrlApi = getSlexKitRuntimeUrl;
@@ -94,6 +105,7 @@ const setSlexKitRuntimeUrlApi = setSlexKitRuntimeUrl;
 const createSlexKitMarkdownRuntimeHostApi = createSlexKitMarkdownRuntimeHost;
 const getSlexKitMarkdownRuntimeHostApi = getSlexKitMarkdownRuntimeHost;
 const installSlexKitMarkdownRuntimeHostApi = installSlexKitMarkdownRuntimeHost;
+const slexkitStdApi = slexkitStd;
 const attachComponentDisposerApi = attachComponentDisposer;
 const configureComponentScopeApi = configureComponentScope;
 const startSlexKitSandboxRunnerApi = startSlexKitSandboxRunner;
@@ -116,6 +128,7 @@ export {
   mountSecureArtifactApi as mountSecureArtifact,
   parseSlexSourceApi as parseSlexSource,
   parseSlexKitDslApi as parseSlexKitDsl,
+  validateSlexSourceApi as validateSlexSource,
   createSecureRuntimeApi as createSecureRuntime,
   SlexKitRuntimeErrorApi as SlexKitRuntimeError,
   getSlexKitRuntimeUrlApi as getSlexKitRuntimeUrl,
@@ -123,6 +136,7 @@ export {
   createSlexKitMarkdownRuntimeHostApi as createSlexKitMarkdownRuntimeHost,
   getSlexKitMarkdownRuntimeHostApi as getSlexKitMarkdownRuntimeHost,
   installSlexKitMarkdownRuntimeHostApi as installSlexKitMarkdownRuntimeHost,
+  slexkitStdApi as slexkitStd,
   attachComponentDisposerApi as attachComponentDisposer,
   configureComponentScopeApi as configureComponentScope,
   startSlexKitSandboxRunnerApi as startSlexKitSandboxRunner,

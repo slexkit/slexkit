@@ -51,7 +51,7 @@ v0/beta 阶段：当前实现可能调整，但协议版本（v0.1）独立于�
 - `name` 用于 component instance state、lifecycle hooks 和表达式上下文。
 - 同一 namespace 下相同 `type:name` 代表同一命名组件 state。
 
-保留上下文名称：`g`、`api`、`$event`、`$item`、`$index`、`$key`。
+保留上下文名称：`g`、`std`、`api`、`$event`、`$item`、`$index`、`$key`。
 
 ## 3. Props classification
 
@@ -109,6 +109,7 @@ Handler 可访问 `$event`。Writable components 会在 handler 执行前同步�
 | Variable | Type | Scope |
 |---|---|---|
 | `g` | 响应式 state proxy | 始终可用 |
+| `std` | SlexKit 纯标准库 | 始终可用 |
 | Component state | 如 `slider.value` | 命名组件 |
 | `api` | 宿主注入对象 | 存在 `api` option 时 |
 | `$event` | 事件数据 | `on*` handler |
@@ -116,6 +117,8 @@ Handler 可访问 `$event`。Writable components 会在 handler 执行前同步�
 | `$index` | 当前数组索引 | `$for` context |
 | `$key` | 当前项 key | `$for` context |
 | 命名 `$for` 别名 | 如 `"card:user"` 可用 `user` | `$for` context |
+
+`std` 提供确定性的 math、format、units 和 stats helpers。网络、timer、animation、canvas 等敏感能力仍通过宿主注入的 `api.*` 暴露，并可能受 secure runtime policy 限制。
 
 Trusted mode 使用 `new Function()` 求值。Secure mode 在 sandbox iframe 内求值，并通过 policy-gated `api.*` 暴露能力。
 

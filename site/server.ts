@@ -466,6 +466,7 @@ Bun.serve({
       url.pathname === "/llms-full.txt" ||
       url.pathname === "/llms-components.txt" ||
       url.pathname === "/llms-runtime.txt" ||
+      url.pathname === "/llms-capabilities.txt" ||
       url.pathname === "/llms-toolhost.txt" ||
       url.pathname === "/llms-authoring.txt" ||
       url.pathname === "/slexkit-ai-manifest.json"

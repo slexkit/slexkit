@@ -2,12 +2,18 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { componentSpecs, publicComponentTypes } from "../src/components/spec-registry";
 import { parseSlexSource } from "../src/engine/diagnostics";
+import {
+  slexkitExpressionContext,
+  slexkitRuntimeCapabilities,
+  slexkitStdlibDocs,
+} from "../src/engine/capabilities";
 
 export const aiDocFilenames = [
   "llms.txt",
   "llms-full.txt",
   "llms-components.txt",
   "llms-runtime.txt",
+  "llms-capabilities.txt",
   "llms-toolhost.txt",
   "llms-authoring.txt",
 ] as const;
@@ -35,6 +41,9 @@ export type SlexKitAiManifest = {
   generatedAt: string;
   docs: Record<AiDocFilename, { path: string; title: string; summary: string; hash: string }>;
   pages: DocPage[];
+  expressionContext: typeof slexkitExpressionContext;
+  stdlib: typeof slexkitStdlibDocs;
+  capabilities: typeof slexkitRuntimeCapabilities;
   components: Array<{
     type: string;
     title: string;
@@ -215,6 +224,93 @@ function componentsText(): string {
   ].join("\n");
 }
 
+function capabilitiesText(): string {
+  const stdCalculator = `{
+  slex: "0.1",
+  namespace: "std_calculator",
+  g: { done: 7, total: 12, samples: [120, 95, 143, 110], bytes: 1536000 },
+  layout: {
+    "card:summary": {
+      title: "Stdlib calculator",
+      "stat:progress": { label: "Progress", "$value": "std.format.percent(std.math.safeDivide(g.done, g.total), 1)" },
+      "stat:average": { label: "Average", "$value": "std.format.fixed(std.stats.mean(g.samples), 1)", unit: "ms" },
+      "stat:payload": { label: "Payload", "$value": "std.units.bytes(g.bytes)" }
+    }
+  }
+}`;
+
+  const networkCard = `{
+  slex: "0.1",
+  namespace: "secure_network_card",
+  g: {
+    status: "idle",
+    async load() {
+      this.status = "loading";
+      try {
+        var result = await api.get("https://api.example.com/status", { credentials: "omit" });
+        this.status = "HTTP " + result.status;
+      } catch (error) {
+        this.status = api.isPolicyError(error) ? "blocked by policy" : api.errorMessage(error);
+      }
+    }
+  },
+  layout: {
+    "card:network": {
+      title: "Secure network card",
+      "button:load": { label: "Load", onclick: "g.load()" },
+      "text:status": { "$text": "g.status" }
+    }
+  }
+}`;
+
+  const context = slexkitExpressionContext
+    .map((item) => `- \`${item.name}\` (${item.scope}): ${item.summary}`)
+    .join("\n");
+  const stdlib = slexkitStdlibDocs
+    .map((namespace) => [
+      `## std.${namespace.name}`,
+      "",
+      namespace.summary,
+      "",
+      ...namespace.functions.map((fn) => `- \`${fn.name}${fn.signature.slice(fn.signature.indexOf("("))}\`: ${fn.summary} Example: \`${fn.example}\``),
+    ].join("\n"))
+    .join("\n\n");
+  const capabilities = slexkitRuntimeCapabilities
+    .map((capability) => `- \`${capability.name}${capability.signature.slice(capability.signature.indexOf("("))}\` (${capability.policy}, secure default: ${capability.secureDefault}): ${capability.summary}`)
+    .join("\n");
+
+  return [
+    "# SlexKit Capabilities for LLMs",
+    "",
+    "Use `std.*` for pure deterministic calculations and formatting. Use `api.*` only for host-injected or secure-runtime capabilities that may require policy.",
+    "",
+    "## Expression Context",
+    "",
+    context,
+    "",
+    stdlib,
+    "",
+    "## Policy-Gated Runtime API",
+    "",
+    capabilities,
+    "",
+    "Secure mode blocks native `fetch`, `XMLHttpRequest`, `WebSocket`, `setTimeout`, `setInterval`, and `requestAnimationFrame`. Use `api.get`, `api.post`, `api.fetch`, `api.setTimeout`, `api.setInterval`, and `api.raf` when host policy enables them.",
+    "",
+    "## Recipe: Std Calculator",
+    "",
+    fencedBlock("slex", stdCalculator),
+    "",
+    "## Recipe: Secure Network Card",
+    "",
+    fencedBlock("slex", networkCard),
+    "",
+    "## Recipe: Timer and Animation Policy",
+    "",
+    "- Timers are disabled in secure mode unless `policy.timer.enabled` is true.",
+    "- Use `api.setTimeout` and `api.setInterval`; do not use native scheduling globals.",
+    "- Animation is disabled unless `policy.animation.enabled` is true; use `api.raf`.",
+  ].join("\n");
+}
 function authoringText(): string {
   const statusExample = `{
   slex: "0.1",
@@ -239,6 +335,7 @@ function authoringText(): string {
     "- Emit explicit `slex` fenced code blocks for display-oriented interactive UI.",
     "- Use a Slex expression envelope: `slex`, `namespace`, `g`, and `layout`.",
     "- Put mutable state and helper functions in `g`; put component structure in `layout`.",
+    "- Use `std.*` for common calculations, formatting, units, and small statistics.",
     "- Use component keys in `type:identifier` form, such as `card:summary`.",
     "- Use `$` read-pipes for dynamic props and `on*` write-pipes for event handlers.",
     "- Include readable Markdown fallback text after the fence.",
@@ -250,6 +347,7 @@ function authoringText(): string {
     "- Do not ask hosts to scan plain JavaScript, JSON, or untagged code blocks.",
     "- Do not wrap ordinary status cards or summaries in ToolHost.",
     "- Do not bypass the sandbox for untrusted source.",
+    "- Do not use native `fetch`, `XMLHttpRequest`, `WebSocket`, `setTimeout`, or `requestAnimationFrame` in secure mode; use policy-gated `api.*` instead.",
     "- Do not invent `.mdx` routes for SlexKit docs.",
     "",
     "## Display UI Example",
@@ -369,6 +467,7 @@ function indexText(version: string, pages: AiDocPage[]): string {
     "- [Full documentation](/llms-full.txt): all canonical English docs pages in one text file.",
     "- [Component reference](/llms-components.txt): component docs index plus generated props/state reference.",
     "- [Runtime docs](/llms-runtime.txt): runtime, host integration, and secure rendering docs.",
+    "- [Capabilities](/llms-capabilities.txt): expression context, `std.*` standard library, and policy-gated `api.*`.",
     "- [ToolHost docs](/llms-toolhost.txt): structured user-input UI docs.",
     "- [Authoring rules](/llms-authoring.txt): concise rules for Markdown `slex` fences.",
     "- [AI manifest](/slexkit-ai-manifest.json): structured page, component, and hash metadata.",
@@ -443,6 +542,7 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
       "",
       ...runtimePages.flatMap((page) => [`## ${page.title}`, "", `Raw Markdown: ${page.rawHref}`, "", page.body, "", "---", ""]),
     ].join("\n").trim(),
+    "llms-capabilities.txt": capabilitiesText(),
     "llms-toolhost.txt": [
       "# SlexKit ToolHost for LLMs",
       "",
@@ -485,6 +585,9 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
       generatedAt,
       docs: docsFileMetadata(files),
       pages,
+      expressionContext: slexkitExpressionContext,
+      stdlib: slexkitStdlibDocs,
+      capabilities: slexkitRuntimeCapabilities,
       components,
       sourceHashes: {
         ...sourceHashes,

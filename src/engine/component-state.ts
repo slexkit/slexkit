@@ -4,6 +4,7 @@ import { isEngineeringNumberResult, parseEngineeringNumber } from "./engineering
 import { createComponentAccessor } from "./component-scope";
 import { onCleanup } from "./reactive";
 import type { ComponentState, ComponentStateMap, ComponentTypeMap, ForContext, LayoutNode } from "./types";
+import { slexkitStd } from "./stdlib";
 
 const IDENTIFIER = /^[A-Za-z_$][\w$]*$/;
 const componentStateProxies = new WeakMap<ComponentState, ComponentState>();
@@ -360,8 +361,12 @@ export function buildComponentEvalContext(
   api?: Record<string, unknown>,
   forCtx?: ForContext,
 ): Record<string, unknown> {
-  const ctx: Record<string, unknown> = { g: createGProxy(g, components, componentTypes) };
+  const ctx: Record<string, unknown> = {
+    g: createGProxy(g, components, componentTypes),
+    std: slexkitStd,
+  };
   for (const name of Object.keys(rawRecord(components))) {
+    if (name === "std") continue;
     if (IDENTIFIER.test(name)) {
       ctx[name] = publicComponentState(name, components[name], componentTypes);
     }
@@ -369,6 +374,7 @@ export function buildComponentEvalContext(
   if (api) ctx.api = api;
   if (forCtx) {
     for (const k of Object.keys(forCtx)) {
+      if (k === "std") continue;
       Object.defineProperty(ctx, k, {
         get: () => {
           const current = forCtx[k];

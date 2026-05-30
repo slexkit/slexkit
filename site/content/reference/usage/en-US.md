@@ -213,6 +213,7 @@ The `RenderContext` provides:
 | Property | Type | Description |
 |----------|------|-------------|
 | `g` | reactive proxy | Global state |
+| `std` | `SlexKitStdlib` | Pure deterministic helpers |
 | `api` | `Record<string, unknown>` | Host-injected capabilities |
 | `dir` | `"ltr"` or `"rtl"` | Resolved direction |
 | `labels` | `Partial<Record<string, string>>` | Runtime labels |

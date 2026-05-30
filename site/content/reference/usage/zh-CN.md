@@ -214,6 +214,7 @@ register("custom", (props, name, ctx) => {
 | Property | Type | Description |
 |----------|------|-------------|
 | `g` | reactive proxy | 全局状态 |
+| `std` | `SlexKitStdlib` | 纯确定性 helper |
 | `api` | `Record<string, unknown>` | 宿主注入能力 |
 | `dir` | `"ltr"` 或 `"rtl"` | 解析后的方向 |
 | `labels` | `Partial<Record<string, string>>` | 运行时文案 |
