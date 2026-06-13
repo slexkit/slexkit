@@ -1,11 +1,11 @@
 ---
-title: "AI 数据分析报告"
-category: "聊天消息场景"
+title: AI 数据分析报告
+category: 聊天消息场景
 status: published
 order: 8
-summary: "AI 分析数据后生成交互式报告，用户可调整参数重新计算"
+summary: AI 分析数据后生成交互式报告，用户调整参数后数据实时联动。
 tags: ai, data, analysis, interactive
-components: card, slider, stat, callout, badge, section, grid, tabs
+components: section, grid, select, slider, stat, callout, badge
 difficulty: 进阶
 runtime: trusted
 featured: true
@@ -14,11 +14,7 @@ slexkitRenderMode: component
 
 # AI 数据分析报告
 
-数据分析场景中，AI 生成的报告往往需要用户交互——调整时间范围、切换指标维度、对比不同数据。下面的示例展示了一个可交互的数据分析面板，用户调整参数后数据会实时联动。
-
----
-
-## 数据概览
+AI 分析完数据后，不是给你一张静态图，而是一个可操作的面板——拖滑块改时间范围、选指标维度，数字和趋势实时联动。
 
 ```slex
 {
@@ -33,20 +29,26 @@ slexkitRenderMode: component
       conversion: [2.1, 2.3, 2.5, 2.7, 2.9, 3.1, 3.3, 3.5, 3.7, 3.9, 4.1, 4.3]
     },
     currentValue: function () {
-      const d = this.data[this.metric];
+      var d = this.data[this.metric];
       return d ? d[this.timeRange - 1] : 0;
     },
     growth: function () {
-      const d = this.data[this.metric];
+      var d = this.data[this.metric];
       if (!d || this.timeRange < 2) return 0;
       return ((d[this.timeRange - 1] - d[this.timeRange - 2]) / d[this.timeRange - 2] * 100).toFixed(1);
+    },
+    metricLabel: function () { return { revenue: "当前收入", users: "当前用户", conversion: "当前转化率" }[this.metric] || ""; },
+    formatValue: function (v) {
+      if (this.metric === "revenue") return "¥" + v.toLocaleString();
+      if (this.metric === "users") return v.toLocaleString() + "人";
+      return v + "%";
     }
   },
   layout: {
     "section:overview": {
       eyebrow: "AI 数据分析",
       title: "业务指标监控面板",
-      subtitle: "调整时间范围和指标维度查看详细数据。",
+      subtitle: "AI 分析完成，调整参数查看详细数据。",
       "grid:controls": {
         columns: 1, mdColumns: 2,
         "select:metric": {
@@ -69,35 +71,26 @@ slexkitRenderMode: component
           onchange: "g.timeRange = Number($event)"
         }
       },
-      "grid:stats": {
-        columns: 1, mdColumns: 3,
-        "stat:current": {
-          "$label": "g.metric === 'revenue' ? '当前收入' : g.metric === 'users' ? '当前用户' : '当前转化率'",
-          "$value": "g.metric === 'revenue' ? '¥' + g.currentValue().toLocaleString() : g.metric === 'users' ? g.currentValue().toLocaleString() : g.currentValue() + '%'"
-        },
-        "stat:growth": {
-          label: "环比增长",
-          "$value": "g.growth() + '%'",
-          "$tone": "Number(g.growth()) > 0 ? 'success' : Number(g.growth()) < 0 ? 'danger' : 'info'"
-        },
-        "stat:period": {
-          label: "分析周期",
-          "$value": "g.timeRange + ' 个月'"
-        }
+      "stat:current": {
+        "$label": "g.metricLabel()",
+        "$value": "g.formatValue(g.currentValue())"
+      },
+      "stat:growth": {
+        label: "环比增长",
+        "$value": "g.growth() + '%'",
+        "$tone": "Number(g.growth()) > 0 ? 'success' : Number(g.growth()) < 0 ? 'danger' : 'info'"
+      },
+      "badge:period": {
+        "$label": "g.timeRange + ' 个月'",
+        tone: "info"
       },
       "callout:aiInsight": {
-        tone: "info",
-        "$text": "g.metric === 'revenue' ? '收入增长稳定，建议继续优化产品定价策略。' : g.metric === 'users' ? '用户增长符合预期，可考虑扩大推广渠道。' : '转化率持续提升，建议优化用户引导流程。'"
+        "$tone": "Number(g.growth()) > 5 ? 'success' : Number(g.growth()) > 0 ? 'info' : 'warning'",
+        "$text": "Number(g.growth()) > 5 ? 'AI 洞察：增长强劲，建议继续优化。' : Number(g.growth()) > 0 ? 'AI 洞察：平稳增长，可考虑扩大投入。' : 'AI 洞察：增长放缓，需关注。'"
       }
     }
   }
 }
 ```
 
-调整滑块或切换指标后，所有 stat 和 callout 都会自动更新。
-
----
-
-### Fallback
-
-不支持 SlexKit 的环境会显示原始 DSL 代码块。
+Fallback：收入 ¥255,000（第 12 个月），环比 +6.3%。

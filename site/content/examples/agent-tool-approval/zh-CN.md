@@ -1,9 +1,9 @@
 ---
-title: "AI 代理工具审批"
-category: "聊天消息场景"
+title: AI 代理工具审批
+category: 聊天消息场景
 status: published
 order: 7
-summary: "AI 代理执行敏感操作时的审批界面"
+summary: AI 代理请求执行敏感操作，用户在聊天界面中直接审批。
 tags: ai, agent, approval, toolhost
 components: section, card, callout, badge, checkbox, button
 difficulty: 进阶
@@ -14,11 +14,7 @@ slexkitRenderMode: component
 
 # AI 代理工具审批
 
-当 AI 代理需要执行敏感操作（如发送邮件、修改配置、删除数据）时，需要用户批准后才能执行。下面的示例展示了一个工具调用审批界面，用户可以查看操作详情后选择批准或拒绝。
-
----
-
-## 工具调用审批
+AI 要发邮件、改配置、删数据——这些操作不该全自动执行。在聊天消息里嵌入审批面板，用户看一眼就能拍板。
 
 ```slex
 {
@@ -51,22 +47,11 @@ slexkitRenderMode: component
           "$text": "'工具：' + g.toolName + '\\n目标：' + g.toolArgs.to + '\\n内容：' + g.toolArgs.subject"
         }
       },
-      "callout:warning": {
-        tone: "warning",
-        text: "此操作将发送邮件，请确认是否执行。"
-      },
+      "callout:warning": { tone: "warning", text: "此操作将发送邮件，请确认是否执行。" },
       "grid:actions": {
         columns: 1, mdColumns: 2,
-        "button:approve": {
-          label: "批准执行",
-          onclick: "g.approve()",
-          "$disabled": "g.approved || g.rejected"
-        },
-        "button:reject": {
-          label: "拒绝",
-          onclick: "g.reject()",
-          "$disabled": "g.approved || g.rejected"
-        }
+        "button:approve": { label: "批准执行", onclick: "g.approve()", "$disabled": "g.approved || g.rejected" },
+        "button:reject": { label: "拒绝", onclick: "g.reject()", "$disabled": "g.approved || g.rejected" }
       },
       "callout:result": {
         "$tone": "g.approved ? 'success' : g.rejected ? 'danger' : 'info'",
@@ -77,10 +62,12 @@ slexkitRenderMode: component
 }
 ```
 
-点击批准或拒绝后，结果会实时显示在底部。
+Fallback：批准/拒绝后按钮禁用，底部显示结果。
 
----
+## 审批场景
 
-### Fallback
-
-不支持 SlexKit 的环境会显示原始 DSL 代码块。
+| 操作类型 | 风险等级 | 审批要求 |
+|----------|----------|----------|
+| 读取日志、查元数据 | 低 | 自动执行 |
+| 部署 staging、发通知 | 中 | 需审阅 |
+| 生产部署、删除数据、支付 | 高 | 必须批准 |

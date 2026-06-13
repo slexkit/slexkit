@@ -1,9 +1,9 @@
 ---
-title: "安全网络请求"
-category: "安全沙箱场景"
+title: 安全网络请求
+category: 安全沙箱场景
 status: published
 order: 18
-summary: "在安全沙箱中通过 host policy 控制网络访问权限"
+summary: 安全沙箱中的网络请求能力，通过 host policy 控制网络访问权限。
 tags: secure, fetch, network, sandbox
 components: section, card, callout, badge, button, select
 difficulty: 进阶
@@ -14,11 +14,7 @@ slexkitRenderMode: component
 
 # 安全网络请求
 
-安全运行时通过 host policy 控制网络访问权限，不可信内容只能访问授权的网络资源。下面的示例可以配置请求方法和策略模式，测试请求在不同策略下的行为。
-
----
-
-## 网络请求演示
+不可信内容进入 sandbox iframe 后，网络请求默认被阻断。宿主通过 policy 矩阵决定哪些 URL 可以放行——全部拒绝、允许列表、或者完全放开。
 
 ```slex
 {
@@ -27,7 +23,6 @@ slexkitRenderMode: component
   g: {
     url: "https://api.example.com/data",
     method: "GET",
-    policy: "allowlist",
     allowed: true,
     result: null,
     loading: false,
@@ -36,8 +31,6 @@ slexkitRenderMode: component
       this.loading = true;
       this.error = null;
       this.result = null;
-
-      // 模拟网络请求
       var self = this;
       setTimeout(function () {
         self.loading = false;
@@ -56,7 +49,7 @@ slexkitRenderMode: component
     "section:fetch": {
       eyebrow: "安全沙箱 · 网络请求",
       title: "网络请求演示",
-      subtitle: "测试安全沙箱中的网络请求能力。",
+      subtitle: "沙箱内发起请求，host policy 决定是否放行。",
       "grid:config": {
         columns: 1, mdColumns: 2,
         "select:method": {
@@ -70,32 +63,8 @@ slexkitRenderMode: component
           ],
           onchange: "g.method = String($event)"
         },
-        "select:policy": {
-          label: "策略模式",
-          "$value": "g.policy",
-          options: [
-            { label: "允许列表", value: "allowlist" },
-            { label: "拒绝列表", value: "blocklist" },
-            { label: "全部允许", value: "all" }
-          ],
-          onchange: "g.policy = String($event)"
-        }
-      },
-      "callout:url": {
-        tone: "info",
-        "$text": "'目标 URL：' + g.url"
-      },
-      "grid:actions": {
-        columns: 1, mdColumns: 2,
-        "button:send": {
-          label: "发送请求",
-          onclick: "g.sendRequest()",
-          "$disabled": "g.loading"
-        },
-        "button:toggle": {
-          "$label": "g.allowed ? '禁止请求' : '允许请求'",
-          onclick: "g.togglePolicy()"
-        }
+        "button:send": { label: "发送请求", onclick: "g.sendRequest()", "$disabled": "g.loading" },
+        "button:toggle": { "$label": "g.allowed ? '禁止请求' : '允许请求'", onclick: "g.togglePolicy()" }
       },
       "callout:status": {
         "$tone": "g.loading ? 'info' : g.error ? 'danger' : g.result ? 'success' : 'info'",
@@ -106,10 +75,13 @@ slexkitRenderMode: component
 }
 ```
 
-点击「禁止请求」后，再发送请求会模拟被 host policy 拦截的效果。
+Fallback：允许模式下返回 200，禁止模式下返回 policy 拒绝错误。
 
----
+## 安全沙箱能力矩阵
 
-### Fallback
-
-不支持 SlexKit 的环境会显示原始 DSL 代码块。
+| 能力 | 默认策略 | 宿主责任 |
+|------|----------|----------|
+| DOM | 隔离在 iframe | 限制可见容器和销毁生命周期 |
+| 网络 | 默认不直连 | 通过 allowlist 与超时策略代理 |
+| 存储 | 只读 | 限制写入范围 |
+| 工具调用 | 默认不执行 | 转成审批事件而不是直接调用 |

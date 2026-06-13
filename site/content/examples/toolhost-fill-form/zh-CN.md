@@ -1,9 +1,9 @@
 ---
-title: "ToolHost 表单模板"
-category: "AI 代理场景"
+title: ToolHost 表单模板
+category: AI 代理场景
 status: published
 order: 17
-summary: "使用 fill-form 模板构建信息收集表单"
+summary: AI 收集用户信息的表单模板，支持多种输入类型和验证。
 tags: toolhost, fill-form, ai, agent
 components: toolhost, card, callout, badge, section, grid, input, select
 difficulty: 进阶
@@ -14,11 +14,7 @@ slexkitRenderMode: component
 
 # ToolHost 表单模板
 
-AI 需要收集用户信息来完成任务时（如创建账户、配置服务、提交工单），ToolHost 的 fill-form 模板提供了标准化的表单界面，支持输入框、下拉选择等表单控件。
-
----
-
-## 信息收集表单
+AI 要你填项目名称、选类型、定优先级——fill-form 模板把字段摊开，用户填完点提交。
 
 ```slex
 {
@@ -44,24 +40,11 @@ AI 需要收集用户信息来完成任务时（如创建账户、配置服务�
       eyebrow: "ToolHost · 表单模板",
       title: "信息收集表单",
       subtitle: "AI 需要收集用户信息来完成任务。",
-      "callout:formTitle": {
-        tone: "info",
-        "$text": "g.formTitle"
-      },
+      "callout:formTitle": { tone: "info", "$text": "g.formTitle" },
       "grid:fields": {
         columns: 1, mdColumns: 2,
-        "input:name": {
-          label: "项目名称",
-          "$value": "g.fields.name",
-          placeholder: "请输入项目名称",
-          onchange: "g.fields.name = String($event)"
-        },
-        "input:description": {
-          label: "项目描述",
-          "$value": "g.fields.description",
-          placeholder: "请输入项目描述",
-          onchange: "g.fields.description = String($event)"
-        },
+        "input:name": { label: "项目名称", "$value": "g.fields.name", placeholder: "请输入项目名称", onchange: "g.fields.name = String($event)" },
+        "input:description": { label: "项目描述", "$value": "g.fields.description", placeholder: "请输入项目描述", onchange: "g.fields.description = String($event)" },
         "select:type": {
           label: "项目类型",
           "$value": "g.fields.type",
@@ -83,11 +66,7 @@ AI 需要收集用户信息来完成任务时（如创建账户、配置服务�
           onchange: "g.fields.priority = String($event)"
         }
       },
-      "button:submit": {
-        label: "提交",
-        onclick: "g.submit()",
-        "$disabled": "g.submitted || !g.fields.name || !g.fields.description"
-      },
+      "button:submit": { label: "提交", onclick: "g.submit()", "$disabled": "g.submitted || !g.fields.name || !g.fields.description" },
       "callout:result": {
         "$tone": "g.submitted ? 'success' : 'info'",
         "$text": "g.submitted ? '项目创建成功！' : '请填写所有必填字段'"
@@ -97,10 +76,4 @@ AI 需要收集用户信息来完成任务时（如创建账户、配置服务�
 }
 ```
 
-必填字段（名称和描述）为空时，提交按钮为禁用状态。
-
----
-
-### Fallback
-
-不支持 SlexKit 的环境会显示原始 DSL 代码块。
+Fallback：提交后显示成功提示。

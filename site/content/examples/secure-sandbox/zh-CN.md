@@ -1,11 +1,11 @@
 ---
-title: "安全沙箱演示"
-category: "安全沙箱场景"
+title: 安全沙箱演示
+category: 安全沙箱场景
 status: published
 order: 20
-summary: "测试安全沙箱对 DOM、网络、存储等操作的隔离效果"
+summary: 沙箱隔离效果演示，测试不同操作在沙箱内外的访问权限差异。
 tags: secure, sandbox, isolation, security
-components: card, callout, badge, section, grid, button
+components: section, card, callout, badge, grid, button
 difficulty: 进阶
 runtime: secure
 featured: true
@@ -14,11 +14,7 @@ slexkitRenderMode: component
 
 # 安全沙箱演示
 
-安全运行时将不可信内容隔离在沙箱 iframe 中，防止恶意代码影响宿主页面。下面的示例可以测试 DOM 访问、网络请求、存储操作在沙箱中的隔离状态。
-
----
-
-## 沙箱隔离演示
+不可信内容进入 sandbox iframe 后，DOM、网络、存储都被隔离——这个面板让你测试不同操作的访问权限，直观感受沙箱的隔离效果。
 
 ```slex
 {
@@ -26,10 +22,9 @@ slexkitRenderMode: component
   namespace: "secure_sandbox",
   g: {
     sandboxEnabled: true,
-    content: "这段内容运行在沙箱中",
     testResults: [],
     runTest: function (testName) {
-      const result = {
+      var result = {
         name: testName,
         status: this.sandboxEnabled ? "隔离" : "未隔离",
         timestamp: new Date().toLocaleTimeString()
@@ -38,31 +33,26 @@ slexkitRenderMode: component
     },
     clearResults: function () {
       this.testResults = [];
+    },
+    toggleSandbox: function () {
+      this.sandboxEnabled = !this.sandboxEnabled;
     }
   },
   layout: {
     "section:sandbox": {
       eyebrow: "安全沙箱 · 隔离演示",
       title: "沙箱隔离效果",
-      subtitle: "直观展示不可信内容的隔离效果。",
+      subtitle: "测试不同操作在沙箱内外的访问权限差异。",
       "grid:controls": {
+        columns: 1, mdColumns: 3,
+        "button:testDom": { label: "测试 DOM 访问", onclick: "g.runTest('DOM')" },
+        "button:testNetwork": { label: "测试网络请求", onclick: "g.runTest('Network')" },
+        "button:testStorage": { label: "测试存储访问", onclick: "g.runTest('Storage')" }
+      },
+      "grid:actions": {
         columns: 1, mdColumns: 2,
-        "button:testDom": {
-          label: "测试 DOM 访问",
-          onclick: "g.runTest('DOM')"
-        },
-        "button:testNetwork": {
-          label: "测试网络请求",
-          onclick: "g.runTest('Network')"
-        },
-        "button:testStorage": {
-          label: "测试存储访问",
-          onclick: "g.runTest('Storage')"
-        },
-        "button:clear": {
-          label: "清除结果",
-          onclick: "g.clearResults()"
-        }
+        "button:toggle": { "$label": "g.sandboxEnabled ? '禁用沙箱' : '启用沙箱'", onclick: "g.toggleSandbox()" },
+        "button:clear": { label: "清除结果", onclick: "g.clearResults()" }
       },
       "callout:status": {
         "$tone": "g.sandboxEnabled ? 'success' : 'warning'",
@@ -80,10 +70,13 @@ slexkitRenderMode: component
 }
 ```
 
-点击测试按钮后，结果会记录到下方列表中，显示每项操作的隔离状态和时间戳。
+Fallback：启用沙箱时，DOM/网络/存储访问被隔离；禁用时，直接访问宿主环境。
 
----
+## 沙箱隔离能力
 
-### Fallback
-
-不支持 SlexKit 的环境会显示原始 DSL 代码块。
+| 操作 | 沙箱内 | 沙箱外 |
+|------|--------|--------|
+| DOM 访问 | 隔离在 iframe | 直接访问 |
+| 网络请求 | 被 host policy 控制 | 自由访问 |
+| 存储访问 | 受限 | 自由读写 |
+| 代码执行 | 受限 | 自由执行 |

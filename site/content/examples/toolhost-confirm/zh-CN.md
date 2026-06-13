@@ -1,9 +1,9 @@
 ---
-title: "ToolHost 确认模板"
-category: "AI 代理场景"
+title: ToolHost 确认模板
+category: AI 代理场景
 status: published
 order: 15
-summary: "使用 confirm-action 模板构建工具调用确认界面"
+summary: AI 执行敏感操作前，用户在确认面板中查看详情并决定是否放行。
 tags: toolhost, confirm, ai, agent
 components: toolhost, card, callout, badge, section
 difficulty: 进阶
@@ -14,11 +14,7 @@ slexkitRenderMode: component
 
 # ToolHost 确认模板
 
-AI 执行删除文件、发送邮件等敏感操作前，通常需要用户确认。ToolHost 的 confirm-action 模板提供了标准化的确认界面，包含操作详情、警告提示和确认/取消按钮。
-
----
-
-## 工具调用确认
+AI 要删除文件、发邮件、改配置——这些操作不该自动执行。ToolHost 的 confirm-action 模板把操作详情摊开，让用户看清楚再拍板。
 
 ```slex
 {
@@ -47,32 +43,15 @@ AI 执行删除文件、发送邮件等敏感操作前，通常需要用户确�
         title: "工具信息",
         "grid:details": {
           columns: 1, mdColumns: 2,
-          "stat:toolName": {
-            label: "工具名称",
-            "$value": "g.toolName"
-          },
-          "stat:args": {
-            label: "参数",
-            "$value": "JSON.stringify(g.toolArgs)"
-          }
+          "stat:toolName": { label: "工具名称", "$value": "g.toolName" },
+          "stat:args": { label: "参数", "$value": "JSON.stringify(g.toolArgs)" }
         }
       },
-      "callout:warning": {
-        tone: "warning",
-        text: "此操作将删除文件，请确认是否执行。"
-      },
+      "callout:warning": { tone: "warning", text: "此操作将删除文件，请确认是否执行。" },
       "grid:actions": {
         columns: 1, mdColumns: 2,
-        "button:confirm": {
-          label: "确认执行",
-          onclick: "g.confirm()",
-          "$disabled": "g.confirmed"
-        },
-        "button:reject": {
-          label: "取消",
-          onclick: "g.reject()",
-          "$disabled": "g.confirmed"
-        }
+        "button:confirm": { label: "确认执行", onclick: "g.confirm()", "$disabled": "g.confirmed" },
+        "button:reject": { label: "取消", onclick: "g.reject()", "$disabled": "g.confirmed" }
       },
       "callout:result": {
         "$tone": "g.result ? (g.result.includes('已删除') ? 'success' : 'info') : 'info'",
@@ -83,10 +62,12 @@ AI 执行删除文件、发送邮件等敏感操作前，通常需要用户确�
 }
 ```
 
-确认或取消后，按钮变为禁用状态，底部显示操作结果。
+Fallback：确认后按钮禁用，底部显示结果。
 
----
+## ToolHost 三种模板
 
-### Fallback
-
-不支持 SlexKit 的环境会显示原始 DSL 代码块。
+| 模板 | 用途 | 典型场景 |
+|------|------|----------|
+| confirm-action | 确认/拒绝 | 删除文件、发送邮件、部署上线 |
+| choose-options | 多选一 | 选择数据库、选择部署环境、选择模板 |
+| fill-form | 填写表单 | 创建账户、配置服务、提交工单 |

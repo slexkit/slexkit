@@ -1,11 +1,11 @@
 ---
-title: "安全策略配置"
-category: "安全沙箱场景"
+title: 安全策略配置
+category: 安全沙箱场景
 status: published
 order: 19
-summary: "配置安全沙箱中不同操作的权限控制策略"
+summary: 配置安全沙箱的权限策略，控制网络、存储、DOM、代码执行的访问权限。
 tags: secure, policy, sandbox, security
-components: card, callout, badge, section, grid, checkbox, select
+components: section, card, callout, badge, grid, checkbox, select
 difficulty: 进阶
 runtime: secure
 featured: true
@@ -14,11 +14,7 @@ slexkitRenderMode: component
 
 # 安全策略配置
 
-安全运行时需要对网络访问、存储、DOM 操作、代码执行等能力分别配置权限。下面的示例提供了一个策略矩阵界面，可以为每种操作启用或禁用权限，并选择具体的策略模式。
-
----
-
-## 策略矩阵
+不可信内容进入 sandbox 后，网络、存储、DOM、代码执行——每一项都需要宿主显式授权。这个面板让你逐项开关和配置策略模式。
 
 ```slex
 {
@@ -36,6 +32,9 @@ slexkitRenderMode: component
     },
     setMode: function (name, mode) {
       this.policies[name].mode = mode;
+    },
+    enabledCount: function () {
+      return Object.values(this.policies).filter(function (p) { return p.enabled; }).length;
     }
   },
   layout: {
@@ -47,11 +46,7 @@ slexkitRenderMode: component
         columns: 1, mdColumns: 2,
         "card:network": {
           title: "网络访问",
-          "checkbox:enabled": {
-            label: "启用",
-            "$checked": "g.policies.network.enabled",
-            onchange: "g.togglePolicy('network')"
-          },
+          "checkbox:enabled": { label: "启用", "$checked": "g.policies.network.enabled", onchange: "g.togglePolicy('network')" },
           "select:mode": {
             label: "模式",
             "$value": "g.policies.network.mode",
@@ -65,11 +60,7 @@ slexkitRenderMode: component
         },
         "card:storage": {
           title: "存储访问",
-          "checkbox:enabled": {
-            label: "启用",
-            "$checked": "g.policies.storage.enabled",
-            onchange: "g.togglePolicy('storage')"
-          },
+          "checkbox:enabled": { label: "启用", "$checked": "g.policies.storage.enabled", onchange: "g.togglePolicy('storage')" },
           "select:mode": {
             label: "模式",
             "$value": "g.policies.storage.mode",
@@ -83,11 +74,7 @@ slexkitRenderMode: component
         },
         "card:dom": {
           title: "DOM 操作",
-          "checkbox:enabled": {
-            label: "启用",
-            "$checked": "g.policies.dom.enabled",
-            onchange: "g.togglePolicy('dom')"
-          },
+          "checkbox:enabled": { label: "启用", "$checked": "g.policies.dom.enabled", onchange: "g.togglePolicy('dom')" },
           "select:mode": {
             label: "模式",
             "$value": "g.policies.dom.mode",
@@ -101,11 +88,7 @@ slexkitRenderMode: component
         },
         "card:eval": {
           title: "代码执行",
-          "checkbox:enabled": {
-            label: "启用",
-            "$checked": "g.policies.eval.enabled",
-            onchange: "g.togglePolicy('eval')"
-          },
+          "checkbox:enabled": { label: "启用", "$checked": "g.policies.eval.enabled", onchange: "g.togglePolicy('eval')" },
           "select:mode": {
             label: "模式",
             "$value": "g.policies.eval.mode",
@@ -120,17 +103,20 @@ slexkitRenderMode: component
       },
       "callout:summary": {
         tone: "info",
-        "$text": "'当前策略：网络 ' + (g.policies.network.enabled ? '启用' : '禁用') + '，存储 ' + (g.policies.storage.enabled ? '启用' : '禁用') + '，DOM ' + (g.policies.dom.enabled ? '启用' : '禁用') + '，代码执行 ' + (g.policies.eval.enabled ? '启用' : '禁用')"
+        "$text": "'已启用 ' + g.enabledCount() + '/4 项策略'"
       }
     }
   }
 }
 ```
 
-切换任意操作的启用状态或模式后，底部的策略摘要会实时更新。
+Fallback：网络 allowlist 启用，存储禁用，DOM restricted 启用，代码执行禁用。
 
----
+## 安全策略参考
 
-### Fallback
-
-不支持 SlexKit 的环境会显示原始 DSL 代码块。
+| 策略 | 默认值 | 风险等级 | 说明 |
+|------|--------|----------|------|
+| 网络 | 禁用 | 高 | 沙箱内默认禁止网络请求 |
+| 存储 | 只读 | 中 | 可读取但不可写入 |
+| DOM | 受限 | 中 | 仅限指定容器 |
+| 代码执行 | 禁用 | 高 | 默认禁止 eval |
