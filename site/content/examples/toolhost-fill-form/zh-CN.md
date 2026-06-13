@@ -3,7 +3,7 @@ title: "ToolHost 表单模板"
 category: "AI 代理场景"
 status: published
 order: 17
-summary: "展示 ToolHost fill-form 模板，AI 收集用户信息的典型场景。"
+summary: "使用 fill-form 模板构建信息收集表单"
 tags: toolhost, fill-form, ai, agent
 components: toolhost, card, callout, badge, section, grid, input, select
 difficulty: 进阶
@@ -14,9 +14,7 @@ slexkitRenderMode: component
 
 # ToolHost 表单模板
 
-这是 AI 代理场景中的典型应用：**AI 收集用户信息**。
-
-当 AI 需要收集用户信息时（如创建账户、配置服务、提交工单），ToolHost 的 fill-form 模板提供了标准化的表单界面。
+AI 需要收集用户信息来完成任务时（如创建账户、配置服务、提交工单），ToolHost 的 fill-form 模板提供了标准化的表单界面，支持输入框、下拉选择等表单控件。
 
 ---
 
@@ -99,14 +97,10 @@ slexkitRenderMode: component
 }
 ```
 
-**关键点：**
-- 展示 ToolHost fill-form 模板的典型用法
-- AI 收集用户信息的场景
-- 表单字段的状态管理
-- 提交和验证逻辑
+必填字段（名称和描述）为空时，提交按钮为禁用状态。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

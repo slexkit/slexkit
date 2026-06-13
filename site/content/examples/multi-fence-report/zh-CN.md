@@ -3,7 +3,7 @@ title: "多 fence 联动报告"
 category: "高级示例"
 status: published
 order: 24
-summary: "展示 AI 生成的长篇报告中，多个 fence 联动的终极能力。"
+summary: "多个 fence 共享状态，实现长篇报告中的跨段落联动"
 tags: multi-fence, report, advanced, cross-fence
 components: section, card, slider, select, stat, badge, callout, grid, tabs
 difficulty: 高级
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 多 fence 联动报告
 
-这是高级示例的高潮：**AI 生成的长篇报告中，多个 fence 联动的终极能力**。
+在长篇报告中，参数控制、数据分析、结论建议往往分段呈现。通过多个 slex fence 共享同一个 namespace，可以在报告的不同部分实现状态联动——修改顶部的参数，下方的分析和结论自动更新。
 
 ---
 
@@ -165,14 +165,10 @@ slexkitRenderMode: component
 }
 ```
 
-**关键点：**
-- 三个独立的 slex fence，共享同一个 namespace
-- 参数控制 → 数据分析 → 结论建议，全程联动
-- 展示跨 fence 状态共享的高级应用
-- 适合长篇报告、多维度分析、复杂决策
+三个 fence 通过共享 namespace `multi_fence_report` 实现状态同步，修改顶部参数后下方数据自动更新。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

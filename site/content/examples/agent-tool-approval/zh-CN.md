@@ -3,7 +3,7 @@ title: "AI 代理工具审批"
 category: "聊天消息场景"
 status: published
 order: 7
-summary: "展示 AI 代理工具调用的审批流程，用户可以批准或拒绝 AI 的操作请求。"
+summary: "AI 代理执行敏感操作时的审批界面"
 tags: ai, agent, approval, toolhost
 components: section, card, callout, badge, checkbox, button
 difficulty: 进阶
@@ -14,9 +14,7 @@ slexkitRenderMode: component
 
 # AI 代理工具审批
 
-这是聊天消息场景中的典型应用：**AI 代理工具调用的审批流程**。
-
-当 AI 需要执行敏感操作时（如发送邮件、修改配置、删除数据），需要用户批准。这个示例展示了如何用 SlexKit 构建一个审批界面。
+当 AI 代理需要执行敏感操作（如发送邮件、修改配置、删除数据）时，需要用户批准后才能执行。下面的示例展示了一个工具调用审批界面，用户可以查看操作详情后选择批准或拒绝。
 
 ---
 
@@ -79,14 +77,10 @@ slexkitRenderMode: component
 }
 ```
 
-**关键点：**
-- 展示 AI 代理工具调用的审批流程
-- 用户可以批准或拒绝 AI 的操作请求
-- 审批状态的实时反馈
-- 适合需要人工确认的敏感操作
+点击批准或拒绝后，结果会实时显示在底部。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

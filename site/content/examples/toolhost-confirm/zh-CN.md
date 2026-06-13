@@ -3,7 +3,7 @@ title: "ToolHost 确认模板"
 category: "AI 代理场景"
 status: published
 order: 15
-summary: "展示 ToolHost confirm-action 模板，AI 工具调用确认的典型场景。"
+summary: "使用 confirm-action 模板构建工具调用确认界面"
 tags: toolhost, confirm, ai, agent
 components: toolhost, card, callout, badge, section
 difficulty: 进阶
@@ -14,9 +14,7 @@ slexkitRenderMode: component
 
 # ToolHost 确认模板
 
-这是 AI 代理场景中的典型应用：**AI 工具调用确认**。
-
-当 AI 需要执行敏感操作（如删除文件、发送邮件、修改配置）时，需要用户确认。ToolHost 的 confirm-action 模板提供了标准化的确认界面。
+AI 执行删除文件、发送邮件等敏感操作前，通常需要用户确认。ToolHost 的 confirm-action 模板提供了标准化的确认界面，包含操作详情、警告提示和确认/取消按钮。
 
 ---
 
@@ -85,14 +83,10 @@ slexkitRenderMode: component
 }
 ```
 
-**关键点：**
-- 展示 ToolHost confirm-action 模板的典型用法
-- AI 工具调用需要用户确认的场景
-- 确认/取消按钮的状态管理
-- 操作结果的反馈展示
+确认或取消后，按钮变为禁用状态，底部显示操作结果。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

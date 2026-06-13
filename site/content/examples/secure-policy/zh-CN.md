@@ -3,7 +3,7 @@ title: "安全策略配置"
 category: "安全沙箱场景"
 status: published
 order: 19
-summary: "展示安全策略矩阵，配置不同操作的权限控制。"
+summary: "配置安全沙箱中不同操作的权限控制策略"
 tags: secure, policy, sandbox, security
 components: card, callout, badge, section, grid, checkbox, select
 difficulty: 进阶
@@ -14,9 +14,7 @@ slexkitRenderMode: component
 
 # 安全策略配置
 
-这是安全沙箱场景中的典型应用：**配置安全策略矩阵**。
-
-SlexKit 的安全运行时允许你精细控制不可信内容的权限。下面是一个安全策略配置界面。
+安全运行时需要对网络访问、存储、DOM 操作、代码执行等能力分别配置权限。下面的示例提供了一个策略矩阵界面，可以为每种操作启用或禁用权限，并选择具体的策略模式。
 
 ---
 
@@ -129,14 +127,10 @@ SlexKit 的安全运行时允许你精细控制不可信内容的权限。下面
 }
 ```
 
-**关键点：**
-- 展示安全策略矩阵的配置界面
-- 不同操作的权限控制
-- 策略的启用/禁用和模式切换
-- 安全沙箱的灵活性
+切换任意操作的启用状态或模式后，底部的策略摘要会实时更新。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

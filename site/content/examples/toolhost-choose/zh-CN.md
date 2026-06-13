@@ -3,7 +3,7 @@ title: "ToolHost 选择模板"
 category: "AI 代理场景"
 status: published
 order: 16
-summary: "展示 ToolHost choose-options 模板，AI 提供多个选项供用户选择的典型场景。"
+summary: "使用 choose-options 模板构建多选项选择界面"
 tags: toolhost, choose, options, ai, agent
 components: toolhost, card, callout, badge, section, grid
 difficulty: 进阶
@@ -14,9 +14,7 @@ slexkitRenderMode: component
 
 # ToolHost 选择模板
 
-这是 AI 代理场景中的典型应用：**AI 提供多个选项供用户选择**。
-
-当 AI 需要用户做出选择时（如选择数据库、选择部署环境、选择模板），ToolHost 的 choose-options 模板提供了标准化的选择界面。
+AI 需要用户做出选择时（如选择数据库、部署环境、模板），ToolHost 的 choose-options 模板提供了标准化的选择界面。每个选项以卡片形式展示，选中后有明确的状态反馈。
 
 ---
 
@@ -95,14 +93,10 @@ slexkitRenderMode: component
 }
 ```
 
-**关键点：**
-- 展示 ToolHost choose-options 模板的典型用法
-- AI 提供多个选项供用户选择
-- 选项的视觉区分和状态管理
-- 选择结果的反馈展示
+选中某个选项后，对应的按钮变为禁用，底部显示选择结果。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

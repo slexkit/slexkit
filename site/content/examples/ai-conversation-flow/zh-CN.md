@@ -3,7 +3,7 @@ title: "AI 多轮对话状态管理"
 category: "高级示例"
 status: published
 order: 25
-summary: "展示 AI 多轮对话中的状态管理，用户可回溯和调整对话流程。"
+summary: "多步骤对话中的状态管理和流程控制"
 tags: ai, conversation, multi-turn, state-management
 components: section, card, slider, select, stat, badge, callout, grid, tabs, button
 difficulty: 高级
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # AI 多轮对话状态管理
 
-这是高级示例中的 AI 回答场景：**AI 多轮对话中的状态管理**。
+多步骤的交互式对话（如配置向导、问卷调查）需要维护每一步的状态，并支持前进、后退、重置。下面的示例展示了一个四步对话流程，每步选择答案后自动进入下一步，用户可以随时回溯修改。
 
 ---
 
@@ -76,7 +76,7 @@ slexkitRenderMode: component
     "section:conversation": {
       eyebrow: "高级示例 · AI 对话",
       title: "AI 项目咨询对话",
-      subtitle: "AI 引导你完成项目配置，多步骤联动。",
+      subtitle: "逐步完成项目配置，多步骤联动。",
       "grid:progress": {
         columns: 1, mdColumns: 4,
         "stat:step1": {
@@ -148,14 +148,10 @@ slexkitRenderMode: component
 }
 ```
 
-**关键点：**
-- 展示 AI 多轮对话的状态管理
-- 用户可回溯和调整对话流程
-- 步骤进度和答案的实时联动
-- 适合配置向导、问卷调查、交互式教程
+选择答案后自动跳到下一步，顶部进度条实时反映各步骤的完成状态。全部完成后底部显示汇总。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

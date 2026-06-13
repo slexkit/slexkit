@@ -3,7 +3,7 @@ title: "AI 数据分析报告"
 category: "聊天消息场景"
 status: published
 order: 8
-summary: "AI 分析数据后生成交互式报告，用户可调整参数重新计算，展示 AI 输出增强的核心价值。"
+summary: "AI 分析数据后生成交互式报告，用户可调整参数重新计算"
 tags: ai, data, analysis, interactive
 components: card, slider, stat, callout, badge, section, grid, tabs
 difficulty: 进阶
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # AI 数据分析报告
 
-这是一个典型的 AI 数据分析场景：**AI 分析数据后生成交互式报告，用户可调整参数重新计算**。
+数据分析场景中，AI 生成的报告往往需要用户交互——调整时间范围、切换指标维度、对比不同数据。下面的示例展示了一个可交互的数据分析面板，用户调整参数后数据会实时联动。
 
 ---
 
@@ -46,7 +46,7 @@ slexkitRenderMode: component
     "section:overview": {
       eyebrow: "AI 数据分析",
       title: "业务指标监控面板",
-      subtitle: "AI 分析完成，以下是关键指标。调整时间范围和指标维度查看详细数据。",
+      subtitle: "调整时间范围和指标维度查看详细数据。",
       "grid:controls": {
         columns: 1, mdColumns: 2,
         "select:metric": {
@@ -87,21 +87,17 @@ slexkitRenderMode: component
       },
       "callout:aiInsight": {
         tone: "info",
-        "$text": "g.metric === 'revenue' ? 'AI 洞察：收入增长稳定，建议继续优化产品定价策略。' : g.metric === 'users' ? 'AI 洞察：用户增长符合预期，可考虑扩大推广渠道。' : 'AI 洞察：转化率持续提升，建议优化用户引导流程。'"
+        "$text": "g.metric === 'revenue' ? '收入增长稳定，建议继续优化产品定价策略。' : g.metric === 'users' ? '用户增长符合预期，可考虑扩大推广渠道。' : '转化率持续提升，建议优化用户引导流程。'"
       }
     }
   }
 }
 ```
 
-**关键点：**
-- AI 分析完成后生成交互式报告
-- 用户可调整时间范围和指标维度
-- 数据实时联动，AI 洞察动态更新
-- 展示"AI 输出增强"的核心价值
+调整滑块或切换指标后，所有 stat 和 callout 都会自动更新。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

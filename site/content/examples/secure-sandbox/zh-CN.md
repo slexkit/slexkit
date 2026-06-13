@@ -3,7 +3,7 @@ title: "安全沙箱演示"
 category: "安全沙箱场景"
 status: published
 order: 20
-summary: "直观展示安全沙箱的隔离效果，不可信内容在隔离环境中运行。"
+summary: "测试安全沙箱对 DOM、网络、存储等操作的隔离效果"
 tags: secure, sandbox, isolation, security
 components: card, callout, badge, section, grid, button
 difficulty: 进阶
@@ -14,9 +14,7 @@ slexkitRenderMode: component
 
 # 安全沙箱演示
 
-这是安全沙箱场景中的典型应用：**不可信内容的隔离渲染**。
-
-SlexKit 的安全运行时将不可信内容隔离在沙箱 iframe 中，防止恶意代码影响宿主页面。
+安全运行时将不可信内容隔离在沙箱 iframe 中，防止恶意代码影响宿主页面。下面的示例可以测试 DOM 访问、网络请求、存储操作在沙箱中的隔离状态。
 
 ---
 
@@ -82,14 +80,10 @@ SlexKit 的安全运行时将不可信内容隔离在沙箱 iframe 中，防止�
 }
 ```
 
-**关键点：**
-- 直观展示安全沙箱的隔离效果
-- 测试不同操作的隔离状态
-- 沙箱启用/禁用的对比
-- 安全运行时的价值
+点击测试按钮后，结果会记录到下方列表中，显示每项操作的隔离状态和时间戳。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

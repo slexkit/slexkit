@@ -3,7 +3,7 @@ title: "AI 聊天消息中的交互片段"
 category: "聊天消息场景"
 status: published
 order: 6
-summary: "展示 AI 聊天输出中嵌入 slex fence 的完整形态，包括 Markdown 叙事 + 交互组件 + fallback 文本。"
+summary: "在AI聊天消息中嵌入交互式数据面板"
 tags: ai, chat, message, interactive
 components: section, grid, select, slider, stat, callout
 difficulty: 入门
@@ -14,12 +14,9 @@ slexkitRenderMode: component
 
 # AI 聊天消息中的交互片段
 
-这是 SlexKit 的首要场景：**在 AI 聊天输出中嵌入交互式组件**。
+AI 聊天回复通常只有纯文本。如果回复中能嵌入可交互的数据面板，用户就可以直接调整参数、查看不同维度的结果，而不需要切换到其他工具。
 
-下面是一个模拟的 AI 回复，包含：
-1. **Markdown 叙事** - AI 的分析文字
-2. **slex fence** - 交互式数据面板
-3. **fallback 文本** - 不支持 SlexKit 时的降级显示
+下面的示例模拟了一条 AI 回复，包含 Markdown 叙事文本和一个嵌入的 slex fence 交互面板。
 
 ---
 
@@ -72,16 +69,10 @@ slexkitRenderMode: component
 }
 ```
 
-**关键点：**
-- AI 生成的分析文字（Markdown）
-- 嵌入的交互式数据面板（slex fence）
-- 用户可调整参数重新计算
-- 不支持 SlexKit 时显示 fallback 文本
-
-这就是 SlexKit 的核心价值：**让 AI 的输出变得可交互**。
+面板中的指标维度和时间范围都可以交互调整，stat 和 callout 会根据用户的选择实时更新。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

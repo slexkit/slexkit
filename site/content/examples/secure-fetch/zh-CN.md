@@ -3,7 +3,7 @@ title: "安全网络请求"
 category: "安全沙箱场景"
 status: published
 order: 18
-summary: "展示安全沙箱中的网络请求能力，通过 host policy 控制网络访问权限。"
+summary: "在安全沙箱中通过 host policy 控制网络访问权限"
 tags: secure, fetch, network, sandbox
 components: section, card, callout, badge, button, select
 difficulty: 进阶
@@ -14,9 +14,7 @@ slexkitRenderMode: component
 
 # 安全网络请求
 
-这是安全沙箱场景中的典型应用：**安全沙箱中的网络请求能力**。
-
-SlexKit 的安全运行时通过 host policy 控制网络访问权限，确保不可信内容只能访问授权的网络资源。
+安全运行时通过 host policy 控制网络访问权限，不可信内容只能访问授权的网络资源。下面的示例可以配置请求方法和策略模式，测试请求在不同策略下的行为。
 
 ---
 
@@ -58,7 +56,7 @@ SlexKit 的安全运行时通过 host policy 控制网络访问权限，确保�
     "section:fetch": {
       eyebrow: "安全沙箱 · 网络请求",
       title: "网络请求演示",
-      subtitle: "展示安全沙箱中的网络请求能力。",
+      subtitle: "测试安全沙箱中的网络请求能力。",
       "grid:config": {
         columns: 1, mdColumns: 2,
         "select:method": {
@@ -108,14 +106,10 @@ SlexKit 的安全运行时通过 host policy 控制网络访问权限，确保�
 }
 ```
 
-**关键点：**
-- 展示安全沙箱中的网络请求能力
-- 通过 host policy 控制网络访问权限
-- 支持不同的策略模式（允许列表、拒绝列表、全部允许）
-- 请求结果的实时反馈
+点击「禁止请求」后，再发送请求会模拟被 host policy 拦截的效果。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。

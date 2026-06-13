@@ -3,7 +3,7 @@ title: "技术白皮书：参数选择 + 分析 + 结论"
 category: "文档场景"
 status: published
 order: 9
-summary: "展示跨 fence 状态共享的真实应用——长篇技术文档中，顶部选参数，中间分析，底部结论，全程联动。"
+summary: "多个 fence 共享状态，实现跨段落的参数联动"
 tags: whitepaper, cross-fence, state-sharing, document
 components: section, card, slider, select, stat, badge, callout, grid
 difficulty: 进阶
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 技术白皮书：参数选择 + 分析 + 结论
 
-这是 SlexKit 在文档场景中的典型应用：**长篇技术文档中，顶部选参数，中间分析，底部结论，全程联动**。
+长篇技术文档中，参数选择、分析、结论往往分散在不同段落。通过多个 slex fence 共享同一个 namespace，可以在文档顶部选参数，中间自动分析，底部给出结论，全程联动。
 
 ---
 
@@ -168,14 +168,10 @@ slexkitRenderMode: component
 }
 ```
 
-**关键点：**
-- 三个独立的 slex fence，共享同一个 namespace
-- 顶部选参数，中间分析，底部结论，全程联动
-- 展示跨 fence 状态共享的真实应用
-- 适合长篇技术文档、项目评估报告、技术方案书
+三个 fence 通过共享 namespace `tech_whitepaper` 实现状态同步。
 
 ---
 
-### Fallback 文本
+### Fallback
 
-如果不支持 SlexKit，上面的代码块会显示为普通代码块，用户可以看到原始的 DSL 定义。这就是"Markdown 原生"的意义——降级优雅，不影响阅读。
+不支持 SlexKit 的环境会显示原始 DSL 代码块。
