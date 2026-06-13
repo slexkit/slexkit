@@ -8,31 +8,38 @@ const publicComponentSlugs = new Set(publicComponentTypes);
 const exampleSourceLocale = "zh-CN";
 
 const allowedExampleSlugs = new Set([
+  // 学习路径（5 个）
   "hello-slexkit",
   "first-interaction",
-  "tabs-and-branching",
   "multi-input-coordination",
-  "form-wizard-steps",
-  "ai-chat-message",
-  "ai-data-analysis",
-  "form-submit-workflow",
-  "technical-whitepaper",
+  "tabs-and-branching",
   "cross-doc-state-lab",
-  "retrieval-evidence-card",
-  "baud-rate-calculator",
-  "buck-converter-calculator",
+  // 聊天消息场景（3 个）
+  "ai-chat-message",
+  "agent-tool-approval",
+  "ai-data-analysis",
+  // 文档场景（3 个）
+  "technical-whitepaper",
+  "project-dashboard",
+  "search-filter-table",
+  // 工程计算场景（3 个）
+  "voltage-divider",
   "rc-low-pass-filter",
+  "baud-rate-calculator",
+  // AI 代理场景（3 个）
   "toolhost-confirm",
   "toolhost-choose",
   "toolhost-fill-form",
+  // 安全沙箱场景（3 个）
+  "secure-fetch",
   "secure-policy",
   "secure-sandbox",
+  // 高级示例（5 个）
   "network-policy-fetch-card",
+  "form-wizard-steps",
+  "roi-estimator",
   "multi-fence-report",
   "ai-conversation-flow",
-  "multi-card-coordination",
-  "project-dashboard",
-  "search-filter-table",
 ]);
 
 function titleFromSlug(slug) {
