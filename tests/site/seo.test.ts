@@ -11,6 +11,7 @@ describe("site SEO metadata", () => {
     const seo = await createSeoIndex({ siteRoot: "site" });
     const intro = seo.pageForPath("/docs/guides/intro");
     const zhIntro = seo.pageForPath("/zh-CN/docs/guides/intro");
+    const example = seo.pageForPath("/zh-CN/examples/hello-slexkit");
 
     expect(intro).toMatchObject({
       path: "/docs/guides/intro",
@@ -24,6 +25,11 @@ describe("site SEO metadata", () => {
       path: "/zh-CN/docs/guides/intro",
       locale: "zh-CN",
       canonicalPath: "/zh-CN/docs/guides/intro",
+    });
+    expect(example).toMatchObject({
+      path: "/zh-CN/examples/hello-slexkit",
+      locale: "zh-CN",
+      kind: "article",
     });
   });
 
@@ -54,6 +60,7 @@ describe("site SEO metadata", () => {
     expect(robots).toContain("User-agent: *");
     expect(robots).toContain("Sitemap: https://slexkit.github.io/slexkit/sitemap.xml");
     expect(sitemap).toContain("<loc>https://slexkit.github.io/slexkit/docs/guides/intro</loc>");
+    expect(sitemap).toContain("<loc>https://slexkit.github.io/slexkit/examples/hello-slexkit</loc>");
     expect(sitemap).toContain('hreflang="zh-CN" href="https://slexkit.github.io/slexkit/zh-CN/docs/guides/intro"');
     expect(sitemap).not.toContain(".md</loc>");
   });

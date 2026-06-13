@@ -5,6 +5,35 @@ import { docsHref, normalizeLocale, sourceLocale, supportedLocales } from "./loc
 import { siteUiLabelsForLocale } from "./ui-labels.js";
 
 const publicComponentSlugs = new Set(publicComponentTypes);
+const exampleSourceLocale = "zh-CN";
+
+const allowedExampleSlugs = new Set([
+  "hello-slexkit",
+  "first-interaction",
+  "tabs-and-branching",
+  "multi-input-coordination",
+  "form-wizard-steps",
+  "ai-chat-message",
+  "ai-data-analysis",
+  "form-submit-workflow",
+  "technical-whitepaper",
+  "cross-doc-state-lab",
+  "retrieval-evidence-card",
+  "baud-rate-calculator",
+  "buck-converter-calculator",
+  "rc-low-pass-filter",
+  "toolhost-confirm",
+  "toolhost-choose",
+  "toolhost-fill-form",
+  "secure-policy",
+  "secure-sandbox",
+  "network-policy-fetch-card",
+  "multi-fence-report",
+  "ai-conversation-flow",
+  "multi-card-coordination",
+  "project-dashboard",
+  "search-filter-table",
+]);
 
 function titleFromSlug(slug) {
   return slug
@@ -194,6 +223,43 @@ export async function discoverComponentMarkdown({ siteRoot, locale }) {
         fallbackPath: `content/components/${slug}/${sourceLocale}.md`,
       }),
     ),
+  );
+  return docs.filter(Boolean);
+}
+
+export async function discoverExampleMarkdown({ siteRoot, locale }) {
+  const nextLocale = normalizeLocale(locale);
+  const root = join(siteRoot, "content", "examples");
+  const slugs = (await directorySlugs(root)).filter((slug) => allowedExampleSlugs.has(slug));
+  const docs = await Promise.all(
+    slugs.map(async (slug) => {
+      const sourcePath = `content/examples/${slug}/${nextLocale}.md`;
+      const content = await readOptional(siteRoot, sourcePath);
+      if (content !== null) {
+        return {
+          kind: "example",
+          slug,
+          locale: nextLocale,
+          contentLocale: nextLocale,
+          isFallback: false,
+          path: sourcePath,
+          content,
+        };
+      }
+
+      const fallbackPath = `content/examples/${slug}/${exampleSourceLocale}.md`;
+      const fallback = await readOptional(siteRoot, fallbackPath);
+      if (fallback === null) return null;
+      return {
+        kind: "example",
+        slug,
+        locale: nextLocale,
+        contentLocale: exampleSourceLocale,
+        isFallback: true,
+        path: fallbackPath,
+        content: fallback,
+      };
+    }),
   );
   return docs.filter(Boolean);
 }
