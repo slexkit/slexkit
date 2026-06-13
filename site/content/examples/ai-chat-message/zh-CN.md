@@ -5,7 +5,7 @@ status: published
 order: 6
 summary: "展示 AI 聊天输出中嵌入 slex fence 的完整形态，包括 Markdown 叙事 + 交互组件 + fallback 文本。"
 tags: ai, chat, message, interactive
-components: card, slider, stat, callout, badge, section, grid
+components: section, grid, select, slider, stat, callout
 difficulty: 入门
 runtime: trusted
 featured: true
@@ -31,7 +31,7 @@ slexkitRenderMode: component
 {
   slex: "0.1",
   namespace: "ai_chat_message",
-  g: { metric: "revenue", period: "monthly", value: 125000 },
+  g: { metric: "revenue", period: 1, value: 125000 },
   layout: {
     "section:analysis": {
       eyebrow: "AI 数据分析",
