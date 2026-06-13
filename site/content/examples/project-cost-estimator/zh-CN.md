@@ -84,15 +84,16 @@ slexkitRenderMode: component
   layout: {
     "card:breakdown": {
       title: "成本构成",
-      "table:detail": {
-        columns: ["项目", "计算方式", "金额"],
-        rows: [
-          ["人力成本", "g.teamSize() + '人 × ' + g.salary + '元 × ' + g.months + '月'", "g.laborCost().toFixed(0)"],
-          ["设备成本", "g.teamSize() + '人 × 5,000元（电脑显示器）'", "g.equipmentCost().toFixed(0)"],
-          ["办公成本", "g.teamSize() + '人 × 2,000元 × ' + g.months + '月'", "g.officeCost().toFixed(0)"],
-          ["风险缓冲", "小计 × 15%", "g.riskBuffer().toFixed(0)"],
-          ["总计", "", "g.totalCost().toFixed(0)"]
-        ]
+      "grid:costs": {
+        columns: 1, mdColumns: 3,
+        "stat:labor": { label: "人力成本", "$value": "g.laborCost().toFixed(0)", unit: "元" },
+        "stat:equipment": { label: "设备成本", "$value": "g.equipmentCost().toFixed(0)", unit: "元" },
+        "stat:office": { label: "办公成本", "$value": "g.officeCost().toFixed(0)", unit: "元" }
+      },
+      "grid:extra": {
+        columns: 1, mdColumns: 2,
+        "stat:risk": { label: "风险缓冲（15%）", "$value": "g.riskBuffer().toFixed(0)", unit: "元" },
+        "stat:total": { label: "总计", "$value": "g.totalCost().toFixed(0)", unit: "元" }
       },
       "callout:tip": {
         tone: "info",

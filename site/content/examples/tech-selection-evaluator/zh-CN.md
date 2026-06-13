@@ -83,14 +83,12 @@ slexkitRenderMode: component
           "slider:maintenance": { label: "维护成本（25%）", "$value": "g.maintenance", min: 0, max: 100, step: 5, onchange: "g.maintenance = Number($event)" }
         }
       },
-      "table:weights": {
-        columns: ["维度", "权重", "得分", "加权分"],
-        rows: [
-          ["性能", "30%", "g.performance", "g.performance * 0.3"],
-          ["生态系统", "25%", "g.ecosystem", "g.ecosystem * 0.25"],
-          ["学习曲线", "20%", "g.learning", "g.learning * 0.2"],
-          ["维护成本", "25%", "g.maintenance", "g.maintenance * 0.25"]
-        ]
+      "grid:weights": {
+        columns: 1, mdColumns: 4,
+        "stat:perf": { label: "性能（30%）", "$value": "g.performance", unit: "分" },
+        "stat:eco": { label: "生态（25%）", "$value": "g.ecosystem", unit: "分" },
+        "stat:learn": { label: "学习（20%）", "$value": "g.learning", unit: "分" },
+        "stat:maint": { label: "维护（25%）", "$value": "g.maintenance", unit: "分" }
       }
     }
   }

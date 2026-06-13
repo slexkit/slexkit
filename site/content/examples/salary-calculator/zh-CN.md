@@ -81,20 +81,23 @@ slexkitRenderMode: component
   layout: {
     "card:detail": {
       title: "各项明细",
-      "table:breakdown": {
-        columns: ["险种", "个人比例", "个人金额", "单位比例", "单位金额"],
-        rows: [
-          ["养老保险", "8%", "g.base * 0.08", "16%", "g.base * 0.16"],
-          ["医疗保险", "2%", "g.base * 0.02", "8%", "g.base * 0.08"],
-          ["失业保险", "0.5%", "g.base * 0.005", "0.5%", "g.base * 0.005"],
-          ["工伤保险", "—", "0", "0.2%", "g.base * 0.002"],
-          ["生育保险", "—", "0", "0.8%", "g.base * 0.008"],
-          ["公积金", "g.currentRate().housing + '%'", "g.base * g.currentRate().housing / 100", "g.currentRate().housing + '%'", "g.base * g.currentRate().housing / 100"]
-        ]
+      "grid:personal": {
+        columns: 1, mdColumns: 4,
+        "stat:pension_p": { label: "养老（8%）", "$value": "(g.base * 0.08).toFixed(0)", unit: "元" },
+        "stat:medical_p": { label: "医疗（2%）", "$value": "(g.base * 0.02).toFixed(0)", unit: "元" },
+        "stat:unemployment_p": { label: "失业（0.5%）", "$value": "(g.base * 0.005).toFixed(0)", unit: "元" },
+        "stat:housing_p": { label: "公积金", "$value": "(g.base * g.currentRate().housing / 100).toFixed(0)", unit: "元" }
+      },
+      "grid:company": {
+        columns: 1, mdColumns: 4,
+        "stat:pension_c": { label: "养老（16%）", "$value": "(g.base * 0.16).toFixed(0)", unit: "元" },
+        "stat:medical_c": { label: "医疗（8%）", "$value": "(g.base * 0.08).toFixed(0)", unit: "元" },
+        "stat:unemployment_c": { label: "失业（0.5%）", "$value": "(g.base * 0.005).toFixed(0)", unit: "元" },
+        "stat:other_c": { label: "工伤+生育", "$value": "(g.base * 0.01).toFixed(0)", unit: "元" }
       },
       "callout:note": {
         tone: "info",
-        "$text": "g.cityLabel() + '：个人缴 ' + g.personalRate() + '%，公司缴 ' + g.companyRate() + '%，到手 ' + g.takeHome().toFixed(0) + ' 元'"
+        "$text": "g.cityLabel() + '：个人缴 ' + g.personalRate() + '%（' + g.personalTotal().toFixed(0) + '元），公司缴 ' + g.companyRate() + '%（' + g.companyTotal().toFixed(0) + '元）'"
       }
     }
   }
