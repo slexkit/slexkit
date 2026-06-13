@@ -62,7 +62,18 @@ slexkitRenderMode: component
       "card:step4": {
         "$if": "g.step === 4",
         title: "步骤 4：确认发布",
-        "table:summary": { columns: ["配置项", "值"], rows: [["环境", "g.env"], ["区域", "g.region"], ["CPU", "g.cores + ' 核'"], ["内存", "g.memory + ' GB'"], ["认证", "g.enableAuth ? '已启用' : '未启用'"], ["日志", "g.enableLogging ? '已启用' : '未启用'"]] },
+        "grid:summary": {
+          columns: 1, mdColumns: 3,
+          "stat:env": { label: "环境", "$value": "g.env" },
+          "stat:region": { label: "区域", "$value": "g.region" },
+          "stat:cpu": { label: "CPU", "$value": "g.cores + ' 核'" }
+        },
+        "grid:summary2": {
+          columns: 1, mdColumns: 3,
+          "stat:memory": { label: "内存", "$value": "g.memory + ' GB'" },
+          "stat:auth": { label: "认证", "$value": "g.enableAuth ? '已启用' : '未启用'" },
+          "stat:logging": { label: "日志", "$value": "g.enableLogging ? '已启用' : '未启用'" }
+        },
         "submit:confirm": { label: "确认并发布", onclick: "g.submit()" }
       },
       "grid:nav": {
