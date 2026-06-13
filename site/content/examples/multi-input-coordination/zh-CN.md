@@ -1,8 +1,8 @@
 ---
 title: "多输入协同：两个滑块联动"
-category: "学习路径"
+category: "入门教程"
 status: published
-order: 73
+order: 3
 summary: "两个 slider 相互影响，引入 g 方法、formula 组件和条件渲染。"
 tags: reactive, coordinated, formula
 components: section, slider, input, stat, formula, badge, callout, grid, column

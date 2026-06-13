@@ -1,8 +1,8 @@
 ---
 title: "多步骤配置向导"
-category: "真实场景"
+category: "配置向导"
 status: published
-order: 201
+order: 12
 summary: "多步骤表单配方——分步填写、进度追踪、步骤校验、最终确认的完整工作流。"
 tags: form, wizard, multi-step, validation
 components: section, card, input, select, checkbox, submit, progress, toast, badge, callout, grid, column, radio-group

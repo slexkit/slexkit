@@ -1,8 +1,8 @@
 ---
 title: JSONPlaceholder 网络请求实验台
-category: 平台能力与安全运行时
+category: 平台能力
 status: published
-order: 52
+order: 16
 summary: 用 JSONPlaceholder 演示 secure runtime 如何把用户触发的网络请求交给 host policy 审核和代理。
 tags: network, fetch, host-policy, jsonplaceholder
 components: card, select, slider, stat, code-block, callout, button, table, grid, row

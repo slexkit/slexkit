@@ -1,8 +1,8 @@
 ---
 title: 波特率误差计算器
-category: 电子工程
+category: 计算器
 status: published
-order: 12
+order: 9
 summary: 输入晶振频率和目标波特率，计算 UART 波特率误差百分比，判断通信可靠性。
 tags: electronics, uart, baud-rate, serial, crystal
 components: card, input, select, formula, stat, table, badge, callout, grid

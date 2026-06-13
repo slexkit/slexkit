@@ -1,8 +1,8 @@
 ---
 title: "搜索与过滤表格"
-category: "真实场景"
+category: "数据浏览"
 status: published
-order: 204
+order: 10
 summary: "搜索输入框实时过滤表格行，点击行展开详情，展示 input + 动态 table + collapsible 组合。"
 tags: search, filter, table, collapsible
 components: section, card, input, table, collapsible, badge, callout, stat

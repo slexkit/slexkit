@@ -1,8 +1,8 @@
-﻿---
+---
 title: RC 低通滤波器
-category: 电子工程
+category: 计算器
 status: published
-order: 10
+order: 8
 summary: 用电阻和电容搭建的频率选择电路，计算截止频率和任意频率下的增益衰减。
 tags: electronics, circuit, filter, rc
 components: card, input, slider, formula, stat, table, callout, badge

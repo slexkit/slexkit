@@ -1,8 +1,8 @@
 ---
 title: 技术选型评估
-category: 真实场景
+category: 决策辅助
 status: published
-order: 16
+order: 13
 summary: 评估不同技术方案的优劣，通过跨 fence 联动实现参数选择、评分分析和结论推荐。
 tags: tech, selection, evaluation, decision
 components: card, select, slider, stat, table, callout, badge, grid

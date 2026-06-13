@@ -1,8 +1,8 @@
 ---
 title: "第一个交互：滑块操控数据"
-category: "学习路径"
+category: "入门教程"
 status: published
-order: 72
+order: 2
 summary: "为 SlexKit 卡片引入 g 对象和第一个滑块交互，体验响应式数据绑定。"
 tags: beginner, reactive, slider
 components: section, slider, stat, callout, badge, column

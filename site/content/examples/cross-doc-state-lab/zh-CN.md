@@ -1,8 +1,8 @@
 ---
 title: "跨文档状态实验室"
-category: "平台能力与安全运行时"
+category: "平台能力"
 status: published
-order: 301
+order: 15
 summary: "展示 SlexKit 最独特的跨 fence 状态共享——文档不同位置的多块 slex 代码共享同一个响应式 g 对象。"
 tags: cross-document, state-sharing, namespace, multi-fence
 components: section, card, slider, input, select, stat, badge, callout, grid, column, tabs

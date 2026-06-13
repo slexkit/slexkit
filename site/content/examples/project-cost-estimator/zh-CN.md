@@ -1,8 +1,8 @@
 ---
 title: 软件项目成本估算器
-category: 真实场景
+category: 计算器
 status: published
-order: 15
+order: 6
 summary: 输入团队规模、开发周期和人员成本，计算项目总成本和人均成本。
 tags: project, cost, estimation, management
 components: card, input, slider, stat, table, callout, badge, grid, column

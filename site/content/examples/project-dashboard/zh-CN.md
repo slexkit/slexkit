@@ -1,8 +1,8 @@
 ---
 title: "项目仪表盘"
-category: "真实场景"
+category: "仪表盘"
 status: published
-order: 202
+order: 11
 summary: "用 section + grid 搭建信息仪表盘，覆盖 Sprint 进度、质量指标和团队健康度的多卡片联动。"
 tags: dashboard, sprint, metrics, team
 components: section, card, stat, progress, badge, table, select, slider, callout, grid, column

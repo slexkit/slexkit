@@ -1,8 +1,8 @@
 ---
 title: 五险一金计算器
-category: 真实场景
+category: 计算器
 status: published
-order: 14
+order: 5
 summary: 输入工资基数和城市，计算五险一金明细，显示个人缴纳、单位缴纳和总计。
 tags: salary, insurance, calculator, hr
 components: card, input, slider, select, stat, table, callout, badge, grid
