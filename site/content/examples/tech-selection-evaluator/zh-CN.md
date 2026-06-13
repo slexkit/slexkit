@@ -14,9 +14,7 @@ slexkitRenderMode: component
 
 # 技术选型评估
 
-技术选型时，需要从多个维度评估不同方案：性能、生态、学习曲线、维护成本。这个示例用跨 fence 联动，开头选技术栈，中间打分，结尾自动算出综合评分和推荐。
-
-## 选择技术栈
+团队要选前端框架，React、Vue、Svelte、Angular，各有各的好。性能、生态、学习曲线、维护成本——怎么量化比较？这里用跨 fence 联动，选一个技术栈，下面的评分和结论自动跟着变。
 
 ```slex
 {
@@ -57,7 +55,7 @@ slexkitRenderMode: component
         onchange: "g.tech = String($event); var s = g.scores(); g.performance = s.performance; g.ecosystem = s.ecosystem; g.learning = s.learning; g.maintenance = s.maintenance;"
       },
       "badge:current": {
-        "$label": "'当前选择：' + g.techLabel()",
+        "$label": "'当前：' + g.techLabel() + '（综合 ' + g.totalScore() + ' 分）'",
         tone: "info"
       }
     }
@@ -65,7 +63,7 @@ slexkitRenderMode: component
 }
 ```
 
-## 评分维度
+选了React，觉得性能分太低？拖一下滑块调整，下面的推荐和风险等级实时更新。这就是跨 fence 联动的价值——三个独立的代码块，共享同一份状态。
 
 ```slex
 {
@@ -73,16 +71,16 @@ slexkitRenderMode: component
   namespace: "example_tech_selection",
   layout: {
     "card:scoring": {
-      title: "评分维度（拖动调整）",
+      title: "评分调整",
       "grid:sliders": {
         columns: 1, mdColumns: 2,
         "column:left": {
-          "slider:performance": { label: "性能", "$value": "g.performance", min: 0, max: 100, step: 5, onchange: "g.performance = Number($event)" },
-          "slider:ecosystem": { label: "生态系统", "$value": "g.ecosystem", min: 0, max: 100, step: 5, onchange: "g.ecosystem = Number($event)" }
+          "slider:performance": { label: "性能（30%）", "$value": "g.performance", min: 0, max: 100, step: 5, onchange: "g.performance = Number($event)" },
+          "slider:ecosystem": { label: "生态系统（25%）", "$value": "g.ecosystem", min: 0, max: 100, step: 5, onchange: "g.ecosystem = Number($event)" }
         },
         "column:right": {
-          "slider:learning": { label: "学习曲线", "$value": "g.learning", min: 0, max: 100, step: 5, onchange: "g.learning = Number($event)" },
-          "slider:maintenance": { label: "维护成本", "$value": "g.maintenance", min: 0, max: 100, step: 5, onchange: "g.maintenance = Number($event)" }
+          "slider:learning": { label: "学习曲线（20%）", "$value": "g.learning", min: 0, max: 100, step: 5, onchange: "g.learning = Number($event)" },
+          "slider:maintenance": { label: "维护成本（25%）", "$value": "g.maintenance", min: 0, max: 100, step: 5, onchange: "g.maintenance = Number($event)" }
         }
       },
       "table:weights": {
@@ -99,8 +97,6 @@ slexkitRenderMode: component
 }
 ```
 
-## 综合评估
-
 ```slex
 {
   slex: "0.1",
@@ -116,25 +112,20 @@ slexkitRenderMode: component
       },
       "callout:advice": {
         "$tone": "parseFloat(g.totalScore()) >= 85 ? 'success' : parseFloat(g.totalScore()) >= 75 ? 'info' : 'warning'",
-        "$text": "parseFloat(g.totalScore()) >= 85 ? g.techLabel() + ' 综合评分优秀，强烈推荐采用。' : parseFloat(g.totalScore()) >= 75 ? g.techLabel() + ' 综合评分良好，推荐采用。' : g.techLabel() + ' 综合评分一般，建议谨慎评估。'"
+        "$text": "parseFloat(g.totalScore()) >= 85 ? g.techLabel() + ' 综合优秀，强烈推荐。' : parseFloat(g.totalScore()) >= 75 ? g.techLabel() + ' 综合良好，推荐采用。' : g.techLabel() + ' 综合一般，建议谨慎。'"
       }
     }
   }
 }
 ```
 
-## 技术栈对比参考
+默认评分参考：
 
-| 技术栈 | 性能 | 生态 | 学习曲线 | 维护成本 | 综合评分 |
-|--------|------|------|----------|----------|----------|
+| 技术栈 | 性能 | 生态 | 学习 | 维护 | 综合 |
+|--------|------|------|------|------|------|
 | React | 85 | 95 | 70 | 80 | 82.5 |
 | Vue | 80 | 85 | 85 | 85 | 83.75 |
 | Svelte | 95 | 70 | 90 | 90 | 85.5 |
 | Angular | 80 | 80 | 60 | 75 | 73.75 |
 
-**工程笔记**：
-
-- 性能权重 30%：运行时性能、包大小、渲染效率
-- 生态权重 25%：社区活跃度、第三方库、工具链
-- 学习曲线权重 20%：上手难度、文档质量、培训成本
-- 维护成本权重 25%：长期维护、升级难度、团队熟悉度
+权重分配：性能30%、生态25%、学习曲线20%、维护成本25%。可以按团队实际情况调整。
