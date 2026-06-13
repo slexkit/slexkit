@@ -68,6 +68,6 @@ describe("site locale routing", () => {
 
     expect(isExamplesRoute()).toBe(true);
     expect(exampleHrefForPath()).toBe("/zh-CN/examples/tool-approval-panel");
-    expect(localizeSiteNavigationPath("/examples/queue-backlog-diagnosis")).toBe("/zh-CN/examples/queue-backlog-diagnosis");
+    expect(localizeSiteNavigationPath("/examples/tool-approval-panel")).toBe("/zh-CN/examples/tool-approval-panel");
   });
 });
