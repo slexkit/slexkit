@@ -52,15 +52,19 @@ slexkitRenderMode: component
       eyebrow: "ToolHost · 对话演示",
       title: "AI 对话中的工具调用",
       subtitle: "点击按钮模拟 AI 发起工具调用，填写表单后查看返回结果。",
+
       "callout:ai-message": {
         tone: "info",
         text: "AI：我需要为你创建一个新项目，请告诉我项目的基本信息。"
       },
+
       "button:start": {
         label: "填写项目信息",
         onclick: "g.startToolHost()"
       },
+
       "card:form": {
+        "$if": "g.stage === 'form'",
         title: "创建新项目",
         "grid:fields": {
           columns: 1, mdColumns: 2,
@@ -92,16 +96,22 @@ slexkitRenderMode: component
           "button:cancel": { label: "取消", onclick: "g.reset()" }
         }
       },
+
       "callout:result": {
-        "$tone": "g.result ? 'success' : 'info'",
-        "$text": "g.result ? 'AI：收到，正在为你创建项目...' : '等待提交...'"
+        "$if": "g.stage === 'result'",
+        tone: "success",
+        text: "AI：收到，正在为你创建项目..."
       },
+
       "code-block:toolresult": {
+        "$if": "g.stage === 'result'",
         title: "ToolResult",
         language: "json",
         "$code": "g.result ? JSON.stringify(g.result, null, 2) : '// 提交后显示 ToolResult'"
       },
+
       "button:reset": {
+        "$if": "g.stage === 'result'",
         label: "重新演示",
         onclick: "g.reset()"
       }
