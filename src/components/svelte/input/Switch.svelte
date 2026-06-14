@@ -10,7 +10,7 @@
   let lastHapticAt = 0;
   $effect(() => bindPropStore(props, (next) => {
     p = next;
-    enabled = !!next.enabled;
+    enabled = !!(next.enabled ?? next.checked ?? next.value);
   }));
 
   function toggle(event: Event): void {

@@ -142,4 +142,25 @@ describe("disclosure components", () => {
       expect(content.getAttribute("data-state")).toBe("open");
       expect(content.getAttribute("aria-hidden")).toBe("false");
     });
+
+  it("collapsible renders children without duplicating content prop text", () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mount(
+      {
+        namespace: unique("collapsible_no_dup"),
+        g: {},
+        layout: {
+          "collapsible:panel": {
+            trigger: "Toggle",
+            content: "Should not appear when children exist",
+            "text:child": { text: "Child content" },
+          },
+        },
+      },
+      document.getElementById("app")!,
+    );
+    const inner = document.querySelector(".slex-collapsible-content-inner");
+    expect(inner?.textContent).toBe("Child content");
+    expect(inner?.textContent).not.toContain("Should not appear");
+  });
 });

@@ -401,9 +401,10 @@ export function buildComponentEvalContext(
     g: createGProxy(g, components, componentTypes),
     std: slexkitStd,
   };
+  const gKeys = new Set(Object.keys(rawRecord(g)));
   for (const name of Object.keys(rawRecord(components))) {
-    if (name === "std") continue;
-    if (IDENTIFIER.test(name)) {
+    if (name === "std" || name === "g" || name === "api") continue;
+    if (IDENTIFIER.test(name) && !gKeys.has(name)) {
       ctx[name] = publicComponentState(name, components[name], componentTypes);
     }
   }

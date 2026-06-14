@@ -249,12 +249,14 @@ describe("page structure components", () => {
     expect(Array.from(document.querySelectorAll(".slex-doc-detail-actions--content .slex-doc-detail-action")).map((node) => node.textContent)).toEqual([
       "复制页面",
       "Markdown",
+      "以 Live 模式打开",
     ]);
     expect(Array.from(document.querySelectorAll(".slex-doc-detail-actions--rail .slex-doc-detail-action")).map((node) => node.textContent)).toEqual([
       "复制页面",
       "Markdown",
+      "以 Live 模式打开",
     ]);
-    expect(document.querySelectorAll(".slex-doc-detail-actions--rail .slex-doc-detail-action svg")).toHaveLength(2);
+    expect(document.querySelectorAll(".slex-doc-detail-actions--rail .slex-doc-detail-action svg")).toHaveLength(3);
     expect((document.querySelector(".slex-doc-detail-action[href]") as HTMLAnchorElement).pathname).toBe("/docs/components/button.md");
     (document.querySelector(".slex-doc-detail-action") as HTMLButtonElement).click();
     await sleep();

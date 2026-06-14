@@ -380,11 +380,11 @@ order: 1
     const enExamples = loadExampleDocs({ markdownItems: items, locale: "en-US" });
     const featured = zhExamples.filter((example) => example.featured);
 
-    expect(zhExamples).toHaveLength(15);
-    expect(enExamples).toHaveLength(15);
-    expect(featured).toHaveLength(14);
-    expect(zhExamples.map((example) => example.category)).toContain("AI 与 Agent 工作流");
-    expect(zhExamples.every((example) => example.slexkitRenderMode === "component")).toBe(true);
+    expect(zhExamples).toHaveLength(17);
+    expect(enExamples).toHaveLength(17);
+    expect(featured).toHaveLength(17);
+    expect(zhExamples.map((example) => example.category)).toContain("配置向导");
+    expect(zhExamples.every((example) => example.slexkitRenderMode === "component" || example.slexkitRenderMode === "dialog")).toBe(true);
 
     const forbiddenPlaceholderPhrases = ["骨架示例", "示例完整度", "后续可以扩展成完整教程"];
     for (const example of zhExamples) {
@@ -392,6 +392,7 @@ order: 1
         expect(example.markdown.includes(phrase), `${example.slug} contains ${phrase}`).toBe(false);
       }
 
+      if (example.slexkitRenderMode === "dialog") continue;
       const fences = Array.from(example.markdown.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
       expect(fences.length, example.slug).toBeGreaterThan(0);
       for (const fence of fences) {

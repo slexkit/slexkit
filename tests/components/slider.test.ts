@@ -205,4 +205,31 @@ describe("slider component", () => {
 
     expect(vibrateCalls).toEqual([8]);
   });
+
+  it("does not shadow g properties when component name matches a g key", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mount(
+      {
+        namespace: unique("slider_no_shadow"),
+        g: { color: "blue", size: 16 },
+        layout: {
+          "slider:size": {
+            $value: "g.size",
+            min: 8,
+            max: 48,
+            unit: "px",
+            onchange: "g.size = Number($event)",
+          },
+        },
+      },
+      document.getElementById("app")!,
+    );
+
+    const sliderValue = document.querySelector(".slex-slider-value")!;
+    expect(sliderValue.textContent).toBe("16px");
+
+    const input = document.querySelector(".slex-slider") as HTMLInputElement;
+    expect(input.value).toBe("16");
+    expect(input.style.getPropertyValue("--slex-slider-progress")).toBe("20%");
+  });
 });

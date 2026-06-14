@@ -76,7 +76,8 @@ export function readColumnLabel(column: unknown, fallback: string): string {
   return text(column, fallback);
 }
 
-export function readCell(row: unknown, column: string): string {
+export function readCell(row: unknown, column: string, index?: number): string {
+  if (Array.isArray(row)) return text(typeof index === "number" ? row[index] : undefined);
   if (row && typeof row === "object") return text((row as Record<string, unknown>)[column]);
   return text(row);
 }
@@ -105,6 +106,7 @@ export function catalogGroups(value: unknown): Array<{ label: string; items: Rec
 
 export function renderChildren(node: HTMLElement, ctx: RenderContext) {
   if (ctx.children && Object.keys(ctx.children).length > 0) {
+    node.replaceChildren();
     ctx.renderTree(ctx.children, node, ctx.forCtx);
   }
   return {
@@ -116,6 +118,59 @@ export function renderChildren(node: HTMLElement, ctx: RenderContext) {
 
 export function emit(ctx: RenderContext, event: string, data?: unknown): void {
   ctx.emit(event, data);
+}
+
+export type ScheduledFrame = {
+  kind: "api" | "native" | "microtask";
+  id?: unknown;
+  canceled: boolean;
+};
+
+export function scheduleFrame(ctx: RenderContext, fn: (time?: number) => void): ScheduledFrame {
+  const handle: ScheduledFrame = { kind: "microtask", canceled: false };
+  const run = (time?: number) => {
+    if (!handle.canceled) fn(time);
+  };
+  const apiRaf = ctx.api?.raf;
+  if (typeof apiRaf === "function") {
+    try {
+      handle.kind = "api";
+      handle.id = apiRaf(run);
+      return handle;
+    } catch {
+      handle.kind = "microtask";
+      handle.id = undefined;
+    }
+  }
+
+  const ownerWindow = ctx.document.defaultView;
+  if (ownerWindow && typeof ownerWindow.requestAnimationFrame === "function") {
+    try {
+      handle.kind = "native";
+      handle.id = ownerWindow.requestAnimationFrame(run);
+      return handle;
+    } catch {
+      handle.kind = "microtask";
+      handle.id = undefined;
+    }
+  }
+
+  queueMicrotask(() => run());
+  return handle;
+}
+
+export function cancelScheduledFrame(ctx: RenderContext, handle: ScheduledFrame | undefined): void {
+  if (!handle || handle.canceled) return;
+  handle.canceled = true;
+  if (handle.kind === "api" && typeof ctx.api?.cancelRaf === "function") {
+    try {
+      ctx.api.cancelRaf(handle.id);
+    } catch {
+      // The runtime may already be disposed; cancellation is best effort.
+    }
+  } else if (handle.kind === "native" && typeof handle.id === "number") {
+    ctx.document.defaultView?.cancelAnimationFrame(handle.id);
+  }
 }
 
 function formatScriptKey(key: string): string {

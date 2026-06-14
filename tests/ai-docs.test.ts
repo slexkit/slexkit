@@ -27,6 +27,7 @@ describe("AI documentation generation", () => {
     expect(build.files["llms.txt"]).toContain("/llms-capabilities.txt");
     expect(build.files["llms.txt"]).toContain("/slexkit-ai-manifest.json");
     expect(build.files["llms.txt"]).toContain("### Guides");
+    expect(build.files["llms.txt"]).toContain("### Examples");
     expect(build.files["llms.txt"]).toContain("### Components");
     expect(build.files["llms.txt"]).toContain("### Reference");
     expect(build.files["llms.txt"]).toContain("### Releases");
