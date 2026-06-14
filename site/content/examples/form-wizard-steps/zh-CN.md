@@ -5,7 +5,7 @@ status: published
 order: 12
 summary: "AI 对话过程中突然需要收集用户信息，弹出表单卡片等待用户提交，提交后显示结果。"
 tags: toolhost, form, ai, conversation
-components: section, card, input, select, checkbox, submit, progress, toast, callout, grid, column
+components: section, card, input, select, checkbox, submit, progress, toast, callout, code-block, grid, column
 difficulty: 进阶
 runtime: trusted
 featured: true
@@ -108,9 +108,10 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
           "stat:priority": { label: "优先级", "$value": "g.formData.priority" },
           "stat:time": { label: "提交时间", "$value": "g.formData.timestamp" }
         },
-        "callout:data": {
-          tone: "info",
-          "$text": "'提交数据：' + JSON.stringify(g.formData)"
+        "code-block:return": {
+          title: "返回给 AI 的 ToolResult",
+          language: "json",
+          "$code": "JSON.stringify({ toolCallId: 'call_abc123', toolName: 'create-project', status: 'submitted', value: g.formData }, null, 2)"
         }
       }
     }
