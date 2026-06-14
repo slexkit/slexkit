@@ -5,7 +5,7 @@ status: published
 order: 4
 summary: "用 tabs + select 实现场景切换，展示 UI = f(state) 的分支渲染模式。"
 tags: tabs, select, branching, conditional
-components: section, tabs, select, input, slider, stat, callout, badge, column
+components: section, tabs, select, input, slider, stat, callout, column
 difficulty: 进阶
 runtime: trusted
 featured: true

@@ -5,7 +5,7 @@ status: published
 order: 10
 summary: "搜索输入框实时过滤表格行，点击行展开详情，展示 input + 动态 table + collapsible 组合。"
 tags: search, filter, table, collapsible
-components: section, card, input, table, collapsible, badge, callout, stat
+components: section, card, input, table, collapsible, callout, stat
 difficulty: 进阶
 runtime: trusted
 featured: true

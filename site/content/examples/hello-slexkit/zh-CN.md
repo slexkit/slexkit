@@ -5,7 +5,7 @@ status: published
 order: 1
 summary: "零交互、纯展示的静态卡片，展示 SlexKit 声明式 DSL 的渲染效果。"
 tags: beginner, static, overview
-components: section, grid, stat, table, callout, badge
+components: section, grid, stat, table, callout
 difficulty: 入门
 runtime: trusted
 featured: true

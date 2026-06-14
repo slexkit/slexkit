@@ -59,7 +59,7 @@ slexkitRenderMode: component
         onchange: "g.tech = String($event); var s = g.scores(); g.performance = s.performance; g.ecosystem = s.ecosystem; g.learning = s.learning; g.maintenance = s.maintenance;"
       },
       "badge:current": {
-        "$label": "'当前：' + g.techLabel() + '（综合 ' + g.totalScore() + ' 分）'",
+        "$label": "'当前：' + g.techLabel()",
         tone: "info"
       }
       }

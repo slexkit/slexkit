@@ -79,7 +79,7 @@ slexkitRenderMode: component
         columns: 1, mdColumns: 3,
         "stat:buildScore": { label: "自建综合得分", "$value": "g.buildTotal().toFixed(1)" },
         "stat:buyScore": { label: "外购综合得分", "$value": "g.buyTotal().toFixed(1)" },
-        "badge:winner": { "$label": "'建议：' + g.recommendation()", "$tone": "g.recommendation() === '自建' || g.recommendation().startsWith('自建') ? 'info' : 'success'" }
+        "badge:winner": { "$label": "g.recommendation().startsWith('自建') ? '建议自建' : '建议外购'", "$tone": "g.diff() < 10 ? 'warning' : g.recommendation().startsWith('自建') ? 'info' : 'success'" }
       },
       "callout:advice": {
         "$tone": "g.diff() < 10 ? 'warning' : 'info'",

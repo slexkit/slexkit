@@ -60,7 +60,7 @@ slexkitRenderMode: component
           onchange: "g.theme = String($event)"
         }
       },
-      "badge:note": { "$label": "'当前样式：' + g.color + ' / ' + g.size + 'px'", tone: "info" }
+      "badge:note": { "$label": "'样式 ' + g.color + ' ' + g.size + 'px'", tone: "info" }
     }
   }
 }
@@ -100,7 +100,7 @@ slexkitRenderMode: component
         "stat:sz": { label: "字号", "$value": "g.size", unit: "px" },
         "stat:th": { label: "主题", "$value": "g.theme" }
       },
-      "badge:sync": { "$label": "'同步正常 · ' + g.color + ' / ' + g.size + 'px'", "$tone": "g.color === 'blue' ? 'info' : g.color === 'green' ? 'success' : g.color === 'orange' ? 'warning' : 'info'" }
+      "badge:sync": { "$label": "'已同步 ' + g.color", "$tone": "g.color === 'blue' ? 'info' : g.color === 'green' ? 'success' : g.color === 'orange' ? 'warning' : 'info'" }
     }
   }
 }

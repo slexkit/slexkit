@@ -52,7 +52,7 @@ slexkitRenderMode: component
         "stat:ratio": { label: "宽高比", "$value": "g.ratio()" },
         "badge:orientation": {
           "$label": "g.isLandscape() ? '横向' : g.width === g.height ? '正方形' : '纵向'",
-          "$tone": "g.isLandscape() ? 'info' : 'success'"
+          "$tone": "g.isLandscape() ? 'info' : g.width === g.height ? 'success' : 'warning'"
         }
       },
       "formula:areaEq": { "$tex": "'\\\\text{面积} = ' + g.width + ' \\\\times ' + g.height + ' = ' + g.area() + '\\\\text{ px}^2'" },

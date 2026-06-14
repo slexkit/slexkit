@@ -5,7 +5,7 @@ status: published
 order: 6
 summary: 输入团队规模、开发周期和人员成本，计算项目总成本和人均成本。
 tags: project, cost, estimation, management
-components: card, input, slider, stat, table, callout, badge, grid, column
+components: card, input, slider, stat, table, callout, grid, column
 difficulty: 入门
 runtime: trusted
 featured: true

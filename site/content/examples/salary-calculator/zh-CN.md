@@ -5,7 +5,7 @@ status: published
 order: 5
 summary: 输入工资基数和城市，计算五险一金明细，显示个人缴纳、单位缴纳和总计。
 tags: salary, insurance, calculator, hr
-components: card, input, slider, select, stat, callout, badge, grid
+components: card, input, slider, select, stat, callout, grid
 difficulty: 入门
 runtime: trusted
 featured: true
