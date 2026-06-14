@@ -4,6 +4,7 @@ import { siteUiLabelsForLocale } from "../data/component-docs.js";
 import { renderMarkdown } from "../markdown/svelte-renderer.js";
 import { createPage as createExamplesShellPage } from "../pages/examples.slex.js";
 import { siteFetch, withSiteBase } from "../app/site-base.js";
+import DialogShell from "../components/DialogShell.svelte";
 
 function escapeAttribute(value) {
   return String(value ?? "")
@@ -196,10 +197,8 @@ export function createExamplesRoute({
     if (markdownHost) {
       if (doc.slexkitRenderMode === "dialog") {
         // Render dialog shell instead of markdown
-        import("../components/DialogShell.svelte").then(({ default: DialogShell }) => {
-          const instance = mount(DialogShell, { target: markdownHost });
-          addMarkdownCleanup(() => unmount(instance));
-        });
+        const instance = mount(DialogShell, { target: markdownHost });
+        addMarkdownCleanup(() => unmount(instance));
       } else {
         const cleanup = renderMarkdown(doc.markdown, markdownHost, {
           domain: `example:${example.slug}`,
