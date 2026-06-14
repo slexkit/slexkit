@@ -4,7 +4,22 @@ import { siteUiLabelsForLocale } from "../data/component-docs.js";
 import { renderMarkdown } from "../markdown/svelte-renderer.js";
 import { createPage as createExamplesShellPage } from "../pages/examples.slex.js";
 import { siteFetch, withSiteBase } from "../app/site-base.js";
-import DialogShell from "../components/DialogShell.svelte";
+
+function renderDialogDemo(container) {
+  container.innerHTML = `
+    <div style="border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;">
+      <div style="padding:1rem; max-height:400px; overflow-y:auto;" id="dialog-messages">
+        <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+          <div style="width:2rem;height:2rem;border-radius:50%;background:var(--primary);color:var(--primary-foreground);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;">AI</div>
+          <div style="max-width:80%;padding:0.75rem 1rem;border-radius:var(--radius);background:var(--muted);">你好！我是 AI 助手。我可以帮你创建项目。点击下方按钮发起工具调用。</div>
+        </div>
+      </div>
+      <div style="padding:1rem; border-top:1px solid var(--border);" id="dialog-actions">
+        <button id="dialog-start-btn" style="padding:0.5rem 1rem;background:var(--primary);color:var(--primary-foreground);border:none;border-radius:var(--radius);cursor:pointer;">发起工具调用</button>
+      </div>
+    </div>
+  `;
+}
 
 function escapeAttribute(value) {
   return String(value ?? "")
@@ -196,9 +211,9 @@ export function createExamplesRoute({
     const markdownHost = page.querySelector("[data-markdown-doc]");
     if (markdownHost) {
       if (doc.slexkitRenderMode === "dialog") {
-        // Render dialog shell instead of markdown
-        const instance = mount(DialogShell, { target: markdownHost });
-        addMarkdownCleanup(() => unmount(instance));
+        // Render dialog shell directly with DOM
+        renderDialogDemo(markdownHost);
+        addMarkdownCleanup(() => { markdownHost.innerHTML = ""; });
       } else {
         const cleanup = renderMarkdown(doc.markdown, markdownHost, {
           domain: `example:${example.slug}`,
