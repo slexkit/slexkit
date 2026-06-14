@@ -42,8 +42,12 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
     regimeLabel: function () { return this.f < this.cutoff() * 0.1 ? "通带" : this.f > this.cutoff() * 10 ? "阻带" : "过渡带"; }
   },
   layout: {
-    "card:params": {
-      title: "参数输入",
+    "section:params": {
+      eyebrow: "计算器",
+      title: "RC 低通滤波器",
+      subtitle: "一个电阻加一个电容，把高频噪声滤掉。",
+      "card:params": {
+        title: "参数输入",
       "grid:inputs": {
         columns: 1, mdColumns: 2,
         "column:rField": { "input:r": { label: "电阻 R", "$value": "g.r", type: "number", unit: "Ω", onchange: "g.r = Number($event || 0)" }, "slider:r": { label: "R", "$value": "g.r", min: 100, max: 100000, step: 100, unit: "Ω", onchange: "g.r = Number($event)" } },
@@ -52,6 +56,7 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
       },
       "stat:fc": { label: "截止频率", "$value": "g.cutoff().toFixed(1)", unit: "Hz" },
       "badge:regime": { "$label": "g.regimeLabel()", "$tone": "g.f < g.cutoff() * 0.1 ? 'success' : g.f > g.cutoff() * 10 ? 'danger' : 'warning'" }
+      }
     }
   }
 }

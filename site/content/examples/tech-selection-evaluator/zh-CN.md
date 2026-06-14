@@ -41,8 +41,12 @@ slexkitRenderMode: component
     }
   },
   layout: {
-    "card:select": {
-      title: "选择技术栈",
+    "section:select": {
+      eyebrow: "决策辅助",
+      title: "技术选型评估",
+      subtitle: "选一个技术栈，下面的评分和结论自动跟着变。",
+      "card:select": {
+        title: "选择技术栈",
       "select:tech": {
         label: "技术栈",
         "$value": "g.tech",
@@ -57,6 +61,7 @@ slexkitRenderMode: component
       "badge:current": {
         "$label": "'当前：' + g.techLabel() + '（综合 ' + g.totalScore() + ' 分）'",
         tone: "info"
+      }
       }
     }
   }
@@ -116,6 +121,8 @@ slexkitRenderMode: component
   }
 }
 ```
+
+Fallback：React 综合评分 82.5，推荐采用。调整评分后结论实时更新。
 
 默认评分参考：
 

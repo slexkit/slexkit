@@ -125,8 +125,12 @@ slexkitRenderMode: component
     }
   },
   layout: {
-    "card:network": {
-      title: "JSONPlaceholder 请求实验台",
+    "section:network": {
+      eyebrow: "平台能力",
+      title: "JSONPlaceholder 网络请求实验台",
+      subtitle: "在沙盒内选择网络任务，请求通过 host policy 代理。",
+      "card:network": {
+        title: "JSONPlaceholder 请求实验台",
       "callout:intent": { tone: "info", "$text": "g.description()" },
       "grid:controls": {
         columns: 1,
@@ -169,6 +173,7 @@ slexkitRenderMode: component
         "$rows": "g.policyRows()"
       },
       "callout:policy_note": { "$tone": "g.status === 'Policy 拦截' ? 'warning' : 'success'", "$text": "g.riskText()" }
+      }
     }
   }
 }

@@ -39,8 +39,12 @@ $$Error = \frac{|BR_{actual} - BR_{target}|}{BR_{target}} \times 100\%$$
     tone: function () { var e = this.error(); return e < 0.5 ? "success" : e < 2 ? "info" : e < 5 ? "warning" : "danger"; }
   },
   layout: {
-    "card:baud": {
+    "section:baud": {
+      eyebrow: "计算器",
       title: "波特率误差计算器",
+      subtitle: "输入晶振频率和目标波特率，计算误差。",
+      "card:baud": {
+        title: "波特率误差计算器",
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:freqField": {
@@ -65,6 +69,7 @@ $$Error = \frac{|BR_{actual} - BR_{target}|}{BR_{target}} \times 100\%$$
         "stat:regValue": { label: "寄存器值", "$value": "g.regValue()" }
       },
       "callout:advice": { "$tone": "g.tone()", "$text": "g.error() < 0.5 ? '误差极小，通信可靠。' : g.error() < 2 ? '误差在可接受范围内（<2%），绝大多数场景可用。' : g.error() < 5 ? '误差偏大，长帧通信可能失败，建议更换晶振或降低波特率。' : '误差过大，通信不可靠。请选择能整除的晶振频率。'" }
+      }
     }
   }
 }

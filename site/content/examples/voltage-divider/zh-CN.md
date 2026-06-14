@@ -38,8 +38,12 @@ slexkitRenderMode: component
     loadWarning: function () { return this.impedanceRatio() < 10 ? "负载效应显著，增大 RL 或减小 R1/R2" : "分压器阻抗足够低"; }
   },
   layout: {
-    "card:divider": {
+    "section:divider": {
+      eyebrow: "计算器",
       title: "分压器计算器",
+      subtitle: "两个电阻串联，从中间引出电压。",
+      "card:divider": {
+        title: "分压器计算器",
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:r1Field": { "input:r1": { label: "R1", "$value": "g.r1", type: "number", unit: "Ω", onchange: "g.r1 = Number($event || 0)" }, "slider:r1": { label: "R1", "$value": "g.r1", min: 100, max: 1000000, step: 100, unit: "Ω", onchange: "g.r1 = Number($event)" } },
@@ -59,6 +63,7 @@ slexkitRenderMode: component
         "badge:ratio": { "$label": "g.impedanceRatio() < 10 ? '⚠ 负载效应' : '✓ 匹配良好'", "$tone": "g.impedanceRatio() < 10 ? 'warning' : 'success'" }
       },
       "callout:warning": { "$tone": "g.impedanceRatio() < 10 ? 'warning' : 'info'", "$text": "g.loadWarning()" }
+      }
     }
   }
 }
