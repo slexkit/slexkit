@@ -18,6 +18,7 @@ const allowedExampleSlugs = new Set([
   "project-dashboard",
   "search-filter-table",
   "form-wizard-steps",
+  "toolhost-demo",
   // 电子工程
   "voltage-divider",
   "rc-low-pass-filter",
