@@ -1,22 +1,20 @@
 ---
-title: "AI 对话中的表单提问"
+title: "ToolHost 表单提问"
 category: "配置向导"
 status: published
 order: 12
 summary: "AI 对话过程中突然需要收集用户信息，弹出表单卡片等待用户提交，提交后显示结果。"
 tags: toolhost, form, ai, conversation
-components: section, card, input, select, submit, toast, callout, code-block, grid, column
+components: section, card, input, select, submit, callout, code-block, grid, column
 difficulty: 进阶
 runtime: trusted
 featured: true
 slexkitRenderMode: component
 ---
 
-# AI 对话中的表单提问
+# ToolHost 表单提问
 
 AI 对话过程中，有时需要收集用户信息——创建项目、配置服务、提交工单。这时候 AI 会弹出一个表单卡片，用户填写后提交，AI 继续处理。
-
-下面模拟这个流程：AI 需要帮你创建一个新项目，弹出表单让你填写基本信息。
 
 ```slex
 {
@@ -24,8 +22,8 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
   namespace: "example_form_wizard",
   g: {
     submitted: false,
-    fields: { name: "", description: "", type: "web", priority: "medium" },
     formData: null,
+    fields: { name: "", description: "", type: "web", priority: "medium" },
     submit: function () {
       this.submitted = true;
       this.formData = { name: this.fields.name, description: this.fields.description, type: this.fields.type, priority: this.fields.priority, timestamp: new Date().toLocaleString() };
@@ -69,50 +67,20 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
         submitLabel: "提交",
         ignoreLabel: "跳过",
         returnKeys: ["name", "description", "type", "priority"]
-      }
-    }
-  }
-}
-```
-
-提交后，表单下方会显示提交结果和返回给 AI 的 ToolResult。
-
-```slex
-{
-  slex: "0.1",
-  namespace: "example_form_wizard",
-  layout: {
-    "section:result": {
-      eyebrow: "ToolHost · 提交结果",
-      title: "提交结果",
-      subtitle: "表单提交后，显示返回给 AI 的 ToolResult。",
-      "callout:aiResponse": {
-        tone: "success",
-        text: "AI：收到，正在为你创建项目..."
       },
-      "grid:submitted": {
-        columns: 1, mdColumns: 2,
-        "stat:res_name": { label: "项目名称", "$value": "g.formData ? g.formData.name : '-'" },
-        "stat:res_type": { label: "项目类型", "$value": "g.formData ? g.formData.type : '-'" },
-        "stat:res_priority": { label: "优先级", "$value": "g.formData ? g.formData.priority : '-'" },
-        "stat:res_time": { label: "提交时间", "$value": "g.formData ? g.formData.timestamp : '-'" }
+      "callout:result": {
+        "$tone": "g.submitted ? 'success' : 'info'",
+        "$text": "g.submitted ? '已提交：' + g.formData.name + '（' + g.formData.type + '）' : '等待用户填写...'"
       },
       "code-block:toolresult": {
         title: "返回给 AI 的 ToolResult",
         language: "json",
-        "$code": "g.formData ? JSON.stringify({ toolCallId: 'call_abc123', toolName: 'create-project', status: 'submitted', value: g.formData }, null, 2) : '{\"toolCallId\": \"call_abc123\", \"toolName\": \"create-project\", \"status\": \"submitted\", \"value\": null}'"
+        "$code": "g.submitted ? JSON.stringify({ toolCallId: 'call_abc123', toolName: 'create-project', status: 'submitted', value: g.formData }, null, 2) : '// 提交后显示 ToolResult'"
       }
     }
   }
 }
 ```
-
-**这个示例展示了 ToolHost 的核心流程：**
-
-1. **AI 发起提问** — callout 显示 AI 的请求
-2. **弹出表单卡片** — 用户填写项目信息
-3. **用户提交** — submit 返回 ToolResult 给 AI
-4. **结果显示** — code-block 展示返回给 AI 的 JSON 数据
 
 ---
 
