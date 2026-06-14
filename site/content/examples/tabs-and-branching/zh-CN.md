@@ -65,33 +65,4 @@ slexkitRenderMode: component
 
 ---
 
-还可以用 **tabs** 代替 select 来切换，特别是当选项较少且有详细的描述文字时：
-
-```slex
-{
-  slex: "0.1",
-  namespace: "learn_tabs_example",
-  g: { tab: "overview" },
-  layout: {
-    "card:demo-tabs": {
-      title: "Tabs 切换示例",
-      "tabs:main": {
-        "$value": "g.tab",
-        tabs: [
-          { value: "overview", label: "概览" },
-          { value: "detail", label: "详情" },
-          { value: "compare", label: "对比" }
-        ],
-        onchange: "g.tab = String($event)"
-      },
-      "stat:selected": { "$label": "'当前 Tab'", "$value": "g.tab" },
-      "callout:content": {
-        "$tone": "g.tab === 'compare' ? 'warning' : 'info'",
-        "$text": "g.tab === 'overview' ? '概览模式：显示核心指标摘要。' : g.tab === 'detail' ? '详情模式：展示完整参数列表。' : '对比模式：并排比较多个方案。'"
-      }
-    }
-  }
-}
-```
-
-两张卡片共享同一个 namespace，第二个只是一个独立示例。实际的项目中你可以组合使用 tabs + select + 多个 card 来构建复杂的控制面板。
+实际项目中你可以组合使用 tabs + select + 多个 card 来构建复杂的控制面板。例如：tabs 切换视图模式，select 过滤数据，card 展示结果。
