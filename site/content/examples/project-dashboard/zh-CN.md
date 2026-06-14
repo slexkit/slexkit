@@ -59,7 +59,7 @@ slexkitRenderMode: component
           columns: ["任务", "负责人", "状态", "耗时"],
           rows: [["API 重构", "张三", "已完成", "3d"], ["前端组件", "李四", "进行中", "2d"], ["集成测试", "王五", "代码审查", "1.5d"], ["性能优化", "赵六", "待开始", "—"]]
         },
-        "callout:help": { "$tone": "g.bugRate() < 80 ? 'warning' : 'success'", "$text": "g.bugRate() < 80 ? '缺陷修复率低于80%，建议优先处理高优先级缺陷。' : '缺陷修复率良好，项目质量可控。'" } }
+        "callout:help": { "$tone": "g.bugRate() < 80 ? 'warning' : 'success'", "$text": "g.bugRate() < 80 ? '缺陷修复率低于80%，建议优先处理高优先级缺陷。' : '缺陷修复率良好，项目质量可控。'" }
       }
     }
   }
