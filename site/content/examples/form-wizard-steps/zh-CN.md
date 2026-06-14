@@ -81,15 +81,6 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
 {
   slex: "0.1",
   namespace: "example_form_wizard",
-  g: {
-    submitted: false,
-    fields: { name: "", description: "", type: "web", priority: "medium" },
-    formData: null,
-    submit: function () {
-      this.submitted = true;
-      this.formData = { name: this.fields.name, description: this.fields.description, type: this.fields.type, priority: this.fields.priority, timestamp: new Date().toLocaleString() };
-    }
-  },
   layout: {
     "section:result": {
       eyebrow: "ToolHost · 提交结果",
