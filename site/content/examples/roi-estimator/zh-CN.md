@@ -3,7 +3,7 @@ title: 自建还是外购决策
 category: 决策辅助
 status: published
 order: 14
-summary: Build vs Buy 决策矩阵——功能覆盖、成本对比、时间线、风险四维度评估，自动推荐方案。
+summary: 自建还是外购决策矩阵——功能覆盖、成本对比、时间线、风险四维度评估，自动推荐方案。
 tags: build-vs-buy, decision, procurement, cost
 components: section, card, select, slider, checkbox, badge, callout, accordion, table, grid, column
 difficulty: 入门
@@ -97,6 +97,8 @@ slexkitRenderMode: component
   }
 }
 ```
+
+Fallback：核心业务功能，自建综合得分 72.3，外购综合得分 71.7，建议自建。
 
 **Build vs Buy 决策模型的要点：**
 

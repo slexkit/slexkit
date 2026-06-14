@@ -39,7 +39,7 @@ slexkitRenderMode: component
   },
   layout: {
     "section:branching": {
-      eyebrow: "学习路径 · 4/6",
+      eyebrow: "入门教程 · 4/4",
       title: "分支与切换：模式选择器",
       subtitle: "切换下面的模式，输入的参数和计算结果会跟着变化。一种模式 = 一种 UI 状态。",
       "select:mode": {
@@ -64,5 +64,7 @@ slexkitRenderMode: component
 ```
 
 ---
+
+Fallback：默认长度模式，100cm → 100cm。切换模式后结果自动更新。
 
 实际项目中你可以组合使用 tabs + select + 多个 card 来构建复杂的控制面板。例如：tabs 切换视图模式，select 过滤数据，card 展示结果。

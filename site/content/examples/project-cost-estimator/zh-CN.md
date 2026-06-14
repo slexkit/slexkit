@@ -35,8 +35,12 @@ slexkitRenderMode: component
     monthlyBurn: function () { return this.months > 0 ? this.totalCost() / this.months : 0; }
   },
   layout: {
-    "card:estimator": {
-      title: "项目成本估算",
+    "section:estimator": {
+      eyebrow: "计算器",
+      title: "软件项目成本估算器",
+      subtitle: "输入团队配置和周期，成本自动算出来。",
+      "card:estimator": {
+        title: "项目成本估算",
       "grid:team": {
         columns: 1, mdColumns: 4,
         "column:fe": {
@@ -72,6 +76,7 @@ slexkitRenderMode: component
       }
     }
   }
+  }
 }
 ```
 
@@ -103,6 +108,8 @@ slexkitRenderMode: component
   }
 }
 ```
+
+Fallback：7 人团队、6 个月、人均 15000 元/月 → 总成本约 92 万元。
 
 常见配置参考：
 

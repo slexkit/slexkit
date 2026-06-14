@@ -32,7 +32,7 @@ slexkitRenderMode: component
   },
   layout: {
     "section:coordinated": {
-      eyebrow: "学习路径 · 3/6",
+      eyebrow: "入门教程 · 3/4",
       title: "多输入协同：矩形尺寸联动",
       subtitle: "同时调整宽和高，面积和宽高比自动重新计算。这就是 g 方法的力量。",
       "grid:params": {
@@ -79,5 +79,7 @@ slexkitRenderMode: component
 | 条件渲染 | `"$if": "g.width === g.height"` | 只有表达式返回 true 时该组件才渲染 |
 
 ---
+
+Fallback：宽 120px、高 80px → 面积 9600px²，宽高比 1.50，横向。
 
 注意：`g.method()` 必须有括号调用——它是一个函数，不是属性。另外 `$if` 控制的组件需要有唯一的 key（如 `callout:squareTip`），不能和同类型组件重名。

@@ -32,8 +32,8 @@ slexkitRenderMode: component
   },
   layout: {
     "section:control": {
-      eyebrow: "Namespace: example_cross_doc_lab",
-      title: "主控面板",
+      eyebrow: "平台能力",
+      title: "跨文档状态实验室 · 主控面板",
       subtitle: "修改以下任何参数——下方两个独立 fence 块的卡片会同步更新。",
       "grid:controls": {
         columns: 1, mdColumns: 3,
@@ -127,5 +127,7 @@ slexkitRenderMode: component
 - **技术白皮书**：顶部选参数，中间分析，底部结论，全程联动
 - **项目协作文档**：状态跟踪表格在顶部，各团队任务卡片散布在正文中
 - **AI 输出增强**：模型生成的多个可视化节点共享同一份推理结果
+
+Fallback：默认蓝色、16px、明亮主题。修改控制面板后，两个观察面板实时同步。
 
 都是极其强大的模式。这不是一个 "组件库" 能做到的——这是 SlexKit 的核心设计。

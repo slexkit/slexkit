@@ -5,7 +5,7 @@ status: published
 order: 5
 summary: 输入工资基数和城市，计算五险一金明细，显示个人缴纳、单位缴纳和总计。
 tags: salary, insurance, calculator, hr
-components: card, input, slider, select, stat, table, callout, badge, grid
+components: card, input, slider, select, stat, callout, badge, grid
 difficulty: 入门
 runtime: trusted
 featured: true
@@ -39,8 +39,10 @@ slexkitRenderMode: component
     cityLabel: function () { return { beijing: "北京", shanghai: "上海", guangzhou: "广州", shenzhen: "深圳" }[this.city] || this.city; }
   },
   layout: {
-    "card:salary": {
+    "section:salary": {
+      eyebrow: "计算器",
       title: "五险一金计算器",
+      subtitle: "输入税前工资和城市，实时计算五险一金明细。",
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:baseField": {
@@ -110,3 +112,5 @@ slexkitRenderMode: component
 | 上海 | 8% | 2% | 0.5% | 7% | 17.5% |
 | 广州 | 8% | 2% | 0.5% | 5% | 15.5% |
 | 深圳 | 8% | 2% | 0.5% | 5% | 15.5% |
+
+Fallback：北京月薪 20000 元 → 个人扣除 5963 元，公司缴纳 9938 元，到手 14038 元。

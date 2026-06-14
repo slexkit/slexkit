@@ -8,7 +8,7 @@ tags: electronics, voltage-divider, resistor, circuit
 components: card, input, slider, formula, stat, badge, callout, grid, column
 difficulty: 入门
 runtime: trusted
-featured: false
+featured: true
 slexkitRenderMode: component
 ---
 

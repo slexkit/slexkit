@@ -22,7 +22,7 @@ SlexKit 的核心思想：**用声明式 JSON 描述 UI，而不仅是 Markdown*
   namespace: "learn_hello_slexkit",
   layout: {
     "section:hello": {
-      eyebrow: "学习路径 · 1/6",
+      eyebrow: "入门教程 · 1/4",
       title: "你的第一个 SlexKit 卡片",
       subtitle: "所有内容都是声明式的——数字、颜色、布局，全部来自 DSL。",
       "grid:top-stats": {
@@ -51,5 +51,7 @@ SlexKit 的核心思想：**用声明式 JSON 描述 UI，而不仅是 Markdown*
 只看不动，感受一下结构和布局语法。下一节我们给卡片加上第一条响应式数据。
 
 ---
+
+Fallback：静态卡片，所有数据直接写在 DSL 中。无交互，纯展示。
 
 思考：如果 `"12,847"` 需要从里面计算出来，显然直接写死字符串不够。这就需要引入 **`g` 对象**——下一节的主角。

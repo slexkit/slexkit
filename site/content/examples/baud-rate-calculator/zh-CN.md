@@ -8,7 +8,7 @@ tags: electronics, uart, baud-rate, serial, crystal
 components: card, input, select, formula, stat, table, badge, callout, grid
 difficulty: 入门
 runtime: trusted
-featured: false
+featured: true
 slexkitRenderMode: component
 ---
 

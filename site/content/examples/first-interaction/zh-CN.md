@@ -27,7 +27,7 @@ slexkitRenderMode: component
   g: { count: 42 },
   layout: {
     "section:interact": {
-      eyebrow: "学习路径 · 2/6",
+      eyebrow: "入门教程 · 2/4",
       title: "第一个交互：滑块操控数据",
       subtitle: "滑动下面的滑块，stat 和 callout 会跟着变。这就是 SlexKit 的响应式核心。",
       "column:controls": {
@@ -63,5 +63,7 @@ slexkitRenderMode: component
 这就是 **单向数据流** + **响应式重渲染**。不需要手动 `setState`，不需要 DOM 操作。
 
 ---
+
+Fallback：初始值 count=42，拖动滑块后 stat 和 callout 自动更新。
 
 关键是 `g.count = 42` 里的 `42` 是 "初始值"。你拖动滑块，`g.count` 变化，所有挂载了 `"$value": "g.count"` 的组件会自动刷新。试试看。

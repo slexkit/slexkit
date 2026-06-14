@@ -74,4 +74,6 @@ slexkitRenderMode: component
 - 底部放一个详情 card，展示表格数据（任务列表）
 - 通过 `$text` 和 `$tone` 在 callout 中做条件提示
 
+Fallback：Sprint 24，进度 72%，缺陷修复率 75%，团队负载正常。
+
 这个模式适用于：技术 Leader 周报面板、发布质检看板、团队 OKR 追踪、SRE 服务大盘。
