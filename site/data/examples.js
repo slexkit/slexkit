@@ -31,6 +31,7 @@ function normalizeSlexKitRenderMode(value, fallback = "component") {
   const mode = String(value ?? "").toLowerCase();
   if (mode === "component" || mode === "render" || mode === "preview") return "component";
   if (mode === "playground" || mode === "editor" || mode === "workbench") return "playground";
+  if (mode === "dialog") return "dialog";
   return fallback;
 }
 
