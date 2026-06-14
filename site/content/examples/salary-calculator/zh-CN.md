@@ -96,8 +96,8 @@ slexkitRenderMode: component
         "stat:other_c": { label: "工伤+生育", "$value": "(g.base * 0.01).toFixed(0)", unit: "元" }
       },
       "callout:note": {
-        tone: "info",
-        "$text": "g.cityLabel() + '：个人缴 ' + g.personalRate() + '%（' + g.personalTotal().toFixed(0) + '元），公司缴 ' + g.companyRate() + '%（' + g.companyTotal().toFixed(0) + '元）'"
+        "$tone": "g.personalTotal() > 3000 ? 'warning' : 'info'",
+        "$text": "g.personalTotal() > 3000 ? '个人扣除超过3000元，到手工资可能低于预期。' : '公积金比例越高，到手工资越少，但公积金可以提取使用。'"
       }
     }
   }

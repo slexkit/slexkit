@@ -96,8 +96,8 @@ slexkitRenderMode: component
         "stat:total": { label: "总计", "$value": "g.totalCost().toFixed(0)", unit: "元" }
       },
       "callout:tip": {
-        tone: "info",
-        "$text": "g.teamSize() + '人团队，' + g.months + '个月，人均' + g.salary + '元/月，总计' + g.totalCost().toFixed(0) + '元'"
+        "$tone": "g.months > 12 ? 'warning' : 'info'",
+        "$text": "g.months > 12 ? '项目周期超过1年，建议分阶段交付以降低风险。' : '风险缓冲15%是经验值，复杂项目可调高到20-25%。'"
       }
     }
   }

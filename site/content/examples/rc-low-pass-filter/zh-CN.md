@@ -100,7 +100,7 @@ Fallback：1000Hz 输入下增益约 0.157，衰减约 -16.1 dB。
           ["10 kΩ", "1 nF", "15915 Hz", "高频噪声抑制"]
         ]
       },
-      "callout:tip": { tone: "info", "$text": "'当前参数：R=' + (g.r/1000).toFixed(1) + 'kΩ, C=' + g.c + 'nF, fc=' + g.cutoff().toFixed(1) + 'Hz'" }
+      "callout:tip": { "$tone": "g.cutoff() < 100 ? 'info' : g.cutoff() > 10000 ? 'warning' : 'success'", "$text": "g.cutoff() < 100 ? '低截止频率适合电源滤波和慢信号。' : g.cutoff() > 10000 ? '高截止频率可能无法有效滤除高频噪声。' : '当前截止频率适合大多数应用场景。'" }
     }
   }
 }
