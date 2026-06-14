@@ -106,7 +106,7 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
         "stat:res_priority": { label: "优先级", "$value": "g.formData ? g.formData.priority : '-'" },
         "stat:res_time": { label: "提交时间", "$value": "g.formData ? g.formData.timestamp : '-'" }
       },
-      "code-block:return": {
+      "code-block:toolresult": {
         title: "返回给 AI 的 ToolResult",
         language: "json",
         "$code": "g.formData ? JSON.stringify({ toolCallId: 'call_abc123', toolName: 'create-project', status: 'submitted', value: g.formData }, null, 2) : '{\"toolCallId\": \"call_abc123\", \"toolName\": \"create-project\", \"status\": \"submitted\", \"value\": null}'"
