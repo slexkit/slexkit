@@ -1,102 +1,132 @@
 ---
-title: "多步骤配置向导"
+title: "AI 对话中的表单提问"
 category: "配置向导"
 status: published
 order: 12
-summary: "多步骤表单配方——分步填写、进度追踪、步骤校验、最终确认的完整工作流。"
-tags: form, wizard, multi-step, validation
-components: section, card, input, select, checkbox, submit, progress, toast, callout, grid, column, radio-group
+summary: "AI 对话过程中突然需要收集用户信息，弹出表单卡片等待用户提交，提交后显示结果。"
+tags: toolhost, form, ai, conversation
+components: section, card, input, select, checkbox, submit, progress, toast, callout, grid, column
 difficulty: 进阶
 runtime: trusted
 featured: true
 slexkitRenderMode: component
 ---
 
-# 多步骤配置向导
+# AI 对话中的表单提问
 
-很多产品配置不是填一个表单就能完成的——开发环境选择、资源配置、安全策略、发布确认，每一步需要不同的输入。可以用 `g.step` 追踪当前步骤 + `$if` 按步骤渲染组件。
+AI 对话过程中，有时需要收集用户信息——创建项目、配置服务、提交工单。这时候 AI 会弹出一个表单卡片，用户填写后提交，AI 继续处理。
+
+下面模拟这个流程：AI 需要帮你创建一个新项目，弹出表单让你填写基本信息。
 
 ```slex
 {
   slex: "0.1",
   namespace: "example_form_wizard",
   g: {
-    step: 1, env: "staging", region: "us-east-1", cores: 2, memory: 4,
-    enableAuth: true, enableLogging: true, confirmed: false,
+    step: 1,
+    submitted: false,
+    formData: null,
+    fields: {
+      name: "",
+      description: "",
+      type: "web",
+      priority: "medium"
+    },
     stepValid: function () {
-      if (this.step === 1) return Boolean(this.env && this.region);
-      if (this.step === 2) return this.cores >= 1 && this.memory >= 1;
+      if (this.step === 1) return this.fields.name.trim().length > 0;
       return true;
     },
-    next: function () { if (this.stepValid() && this.step < 4) { this.step = this.step + 1; } },
-    prev: function () { if (this.step > 1) { this.step = this.step - 1; } },
-    progress: function () { return (this.step - 1) / 3 * 100; },
-    submit: function () { this.confirmed = true; }
+    next: function () {
+      if (this.stepValid() && this.step < 2) this.step++;
+    },
+    submit: function () {
+      this.submitted = true;
+      this.formData = {
+        name: this.fields.name,
+        description: this.fields.description,
+        type: this.fields.type,
+        priority: this.fields.priority,
+        timestamp: new Date().toLocaleString()
+      };
+    }
   },
   layout: {
-    "section:wizard": {
-      eyebrow: "配置向导",
-      title: "新建部署环境",
-      subtitle: "共 4 步：基础信息 → 资源配置 → 安全策略 → 确认发布。",
-      "progress:steps": { label: "步骤进度", "$value": "g.progress()" },
-      "card:step1": {
-        "$if": "g.step === 1",
-        title: "步骤 1：基础信息",
-        "input:env": { label: "环境名称", "$value": "g.env", type: "text", placeholder: "staging / production", onchange: "g.env = String($event || '')" },
-        "select:region": { label: "部署区域", "$value": "g.region", options: [{ label: "美东 (us-east-1)", value: "us-east-1" }, { label: "美西 (us-west-2)", value: "us-west-2" }, { label: "亚太 (ap-southeast-1)", value: "ap-southeast-1" }], onchange: "g.region = String($event)" }
+    "section:toolhost": {
+      eyebrow: "ToolHost · 表单提问",
+      title: "AI 需要收集信息",
+      subtitle: "AI 弹出表单，用户填写后提交，AI 继续处理。",
+      "callout:context": {
+        tone: "info",
+        text: "AI：我需要为你创建一个新项目，请填写以下信息。"
       },
-      "card:step2": {
-        "$if": "g.step === 2",
-        title: "步骤 2：资源配置",
-        "slider:cores": { label: "CPU 核心", "$value": "g.cores", min: 1, max: 16, step: 1, unit: "核", onchange: "g.cores = Number($event)" },
-        "slider:memory": { label: "内存", "$value": "g.memory", min: 1, max: 64, step: 1, unit: "GB", onchange: "g.memory = Number($event)" },
-        "callout:cost": { tone: "info", "$text": "'预估月成本约 $' + (g.cores * 15 + g.memory * 3) + '。'" }
-      },
-      "card:step3": {
-        "$if": "g.step === 3",
-        title: "步骤 3：安全策略",
-        "checkbox:auth": { label: "启用身份认证", "$checked": "g.enableAuth", onchange: "g.enableAuth = Boolean($event)" },
-        "checkbox:logging": { label: "启用审计日志", "$checked": "g.enableLogging", onchange: "g.enableLogging = Boolean($event)" },
-        "callout:sec": { "$tone": "g.enableAuth ? 'success' : 'warning'", "$text": "g.enableAuth ? '认证已启用，推荐配置。' : '建议启用身份认证。'" }
-      },
-      "card:step4": {
-        "$if": "g.step === 4",
-        title: "步骤 4：确认发布",
-        "grid:summary": {
-          columns: 1, mdColumns: 3,
-          "stat:env": { label: "环境", "$value": "g.env" },
-          "stat:region": { label: "区域", "$value": "g.region" },
-          "stat:cpu": { label: "CPU", "$value": "g.cores + ' 核'" }
+      "card:form": {
+        "$if": "!g.submitted",
+        title: "创建新项目",
+        "grid:fields": {
+          columns: 1, mdColumns: 2,
+          "input:name": { label: "项目名称", "$value": "g.fields.name", placeholder: "my-project", onchange: "g.fields.name = String($event || '')" },
+          "input:description": { label: "项目描述", "$value": "g.fields.description", placeholder: "简短描述项目用途", onchange: "g.fields.description = String($event || '')" },
+          "select:type": {
+            label: "项目类型",
+            "$value": "g.fields.type",
+            options: [
+              { label: "Web 应用", value: "web" },
+              { label: "API 服务", value: "api" },
+              { label: "CLI 工具", value: "cli" }
+            ],
+            onchange: "g.fields.type = String($event)"
+          },
+          "select:priority": {
+            label: "优先级",
+            "$value": "g.fields.priority",
+            options: [
+              { label: "低", value: "low" },
+              { label: "中", value: "medium" },
+              { label: "高", value: "high" }
+            ],
+            onchange: "g.fields.priority = String($event)"
+          }
         },
-        "grid:summary2": {
-          columns: 1, mdColumns: 3,
-          "stat:memory": { label: "内存", "$value": "g.memory + ' GB'" },
-          "stat:auth": { label: "认证", "$value": "g.enableAuth ? '已启用' : '未启用'" },
-          "stat:logging": { label: "日志", "$value": "g.enableLogging ? '已启用' : '未启用'" }
+        "submit:actions": {
+          submitLabel: "提交",
+          ignoreLabel: "跳过",
+          "$disabled": "!g.stepValid()",
+          returnKeys: ["name", "description", "type", "priority"]
+        }
+      },
+      "card:result": {
+        "$if": "g.submitted",
+        title: "提交结果",
+        "callout:aiResponse": {
+          tone: "success",
+          text: "AI：收到，正在为你创建项目..."
         },
-        "submit:confirm": { label: "确认并发布", onclick: "g.submit()" }
-      },
-      "grid:nav": {
-        columns: 2,
-        "submit:prev": { "$if": "g.step > 1", label: "上一步", onclick: "g.prev()" },
-        "submit:next": { "$if": "g.step < 4", "$disabled": "!g.stepValid()", label: "下一步", onclick: "g.next()" }
-      },
-      "toast:done": { "$if": "g.confirmed", type: "success", title: "部署已提交", icon: "check-circle", "$description": "'环境 ' + g.env + ' 将在 ' + g.region + ' 区域创建。'" }
+        "grid:submitted": {
+          columns: 1, mdColumns: 2,
+          "stat:name": { label: "项目名称", "$value": "g.formData.name" },
+          "stat:type": { label: "项目类型", "$value": "g.formData.type" },
+          "stat:priority": { label: "优先级", "$value": "g.formData.priority" },
+          "stat:time": { label: "提交时间", "$value": "g.formData.timestamp" }
+        },
+        "callout:data": {
+          tone: "info",
+          "$text": "'提交数据：' + JSON.stringify(g.formData)"
+        }
+      }
     }
   }
 }
 ```
 
-**这个示例展示了分步骤设计的关键技巧：**
+**这个示例展示了 ToolHost 的核心流程：**
 
-- `g.step` 是步骤指针，`$if` 按步骤显示对应 card
-- `stepValid()` 校验当前步骤是否可进入下一步
-- `progress()` 计算总进度给 progress 组件
-- `prev()` / `next()` 方法通过 onclick 驱动步骤切换
-- 最终确认步骤用 submit 提交，触发 toast 通知
+1. **AI 发起提问** — callout 显示 AI 的请求
+2. **弹出表单卡片** — 用户填写项目信息
+3. **用户提交** — 表单消失，显示提交结果
+4. **AI 继续处理** — callout 显示 AI 的响应
 
-这种模式广泛适用于：部署配置向导、问卷调研、多页注册、课程注册选课。
+提交的数据会显示在结果卡片中，模拟返回给 AI 的过程。
 
 ---
 
-Fallback：环境选 staging，区域选美东，2 核 4GB，启用认证和日志。多步骤逐步引导用户完成配置。
+Fallback：项目名称 my-project，类型 Web 应用，优先级中。AI 弹出表单收集信息，用户提交后 AI 继续处理。
