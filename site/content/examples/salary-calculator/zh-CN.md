@@ -24,14 +24,14 @@ slexkitRenderMode: component
     base: 20000,
     city: "beijing",
     rates: {
-      beijing: { pension: 8, medical: 2, unemployment: 0.5, injury: 0, maternity: 0, housing: 12 },
-      shanghai: { pension: 8, medical: 2, unemployment: 0.5, injury: 0, maternity: 0, housing: 7 },
-      guangzhou: { pension: 8, medical: 2, unemployment: 0.5, injury: 0, maternity: 0, housing: 5 },
-      shenzhen: { pension: 8, medical: 2, unemployment: 0.5, injury: 0, maternity: 0, housing: 5 }
+      beijing: { pensionP: 8, medicalP: 2, unemploymentP: 0.5, pensionC: 16, medicalC: 8, unemploymentC: 0.5, injury: 0.2, maternity: 0.8, housing: 12 },
+      shanghai: { pensionP: 8, medicalP: 2, unemploymentP: 0.5, pensionC: 16, medicalC: 8, unemploymentC: 0.5, injury: 0.2, maternity: 0.8, housing: 7 },
+      guangzhou: { pensionP: 8, medicalP: 2, unemploymentP: 0.5, pensionC: 16, medicalC: 8, unemploymentC: 0.5, injury: 0.2, maternity: 0.8, housing: 5 },
+      shenzhen: { pensionP: 8, medicalP: 2, unemploymentP: 0.5, pensionC: 16, medicalC: 8, unemploymentC: 0.5, injury: 0.2, maternity: 0.8, housing: 5 }
     },
     currentRate: function () { return this.rates[this.city] || this.rates.beijing; },
-    personalRate: function () { var r = this.currentRate(); return r.pension + r.medical + r.unemployment + r.housing; },
-    companyRate: function () { var r = this.currentRate(); return r.pension + r.medical + r.unemployment + r.injury + r.maternity + r.housing; },
+    personalRate: function () { var r = this.currentRate(); return r.pensionP + r.medicalP + r.unemploymentP + r.housing; },
+    companyRate: function () { var r = this.currentRate(); return r.pensionC + r.medicalC + r.unemploymentC + r.injury + r.maternity + r.housing; },
     personalTotal: function () { return this.base * this.personalRate() / 100; },
     companyTotal: function () { return this.base * this.companyRate() / 100; },
     total: function () { return this.personalTotal() + this.companyTotal(); },
