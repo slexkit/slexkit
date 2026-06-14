@@ -63,10 +63,10 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
           onchange: "g.fields.priority = String($event)"
         }
       },
-      "submit:actions": {
-        submitLabel: "提交",
-        ignoreLabel: "跳过",
-        returnKeys: ["name", "description", "type", "priority"]
+      "grid:actions": {
+        columns: 2,
+        "button:submit": { label: "提交", onclick: "g.submit()" },
+        "button:skip": { label: "跳过" }
       },
       "callout:result": {
         "$tone": "g.submitted ? 'success' : 'info'",
