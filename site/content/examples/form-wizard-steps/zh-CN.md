@@ -60,7 +60,7 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
         text: "AI：我需要为你创建一个新项目，请填写以下信息。"
       },
       "card:form": {
-        "$if": "!g.submitted",
+        "$if": "g.submitted === false",
         title: "创建新项目",
         "grid:fields": {
           columns: 1, mdColumns: 2,
@@ -90,7 +90,7 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
         "submit:actions": {
           submitLabel: "提交",
           ignoreLabel: "跳过",
-          "$disabled": "!g.stepValid()",
+          "$disabled": "g.stepValid() === false",
           returnKeys: ["name", "description", "type", "priority"]
         }
       },
@@ -103,10 +103,10 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
         },
         "grid:submitted": {
           columns: 1, mdColumns: 2,
-          "stat:name": { label: "项目名称", "$value": "g.formData.name" },
-          "stat:type": { label: "项目类型", "$value": "g.formData.type" },
-          "stat:priority": { label: "优先级", "$value": "g.formData.priority" },
-          "stat:time": { label: "提交时间", "$value": "g.formData.timestamp" }
+          "stat:res_name": { label: "项目名称", "$value": "g.formData.name" },
+          "stat:res_type": { label: "项目类型", "$value": "g.formData.type" },
+          "stat:res_priority": { label: "优先级", "$value": "g.formData.priority" },
+          "stat:res_time": { label: "提交时间", "$value": "g.formData.timestamp" }
         },
         "code-block:return": {
           title: "返回给 AI 的 ToolResult",
