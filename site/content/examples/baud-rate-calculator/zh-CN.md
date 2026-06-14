@@ -5,7 +5,7 @@ status: published
 order: 9
 summary: 输入晶振频率和目标波特率，计算 UART 波特率误差百分比，判断通信可靠性。
 tags: electronics, uart, baud-rate, serial, crystal
-components: card, input, select, formula, stat, table, badge, callout, grid
+components: card, input, select, formula, stat, table, callout, grid
 difficulty: 入门
 runtime: trusted
 featured: true
@@ -65,7 +65,7 @@ $$Error = \frac{|BR_{actual} - BR_{target}|}{BR_{target}} \times 100\%$$
         columns: 1, mdColumns: 4,
         "stat:actualBaud": { label: "实际波特率", "$value": "g.actualBaud().toFixed(0)", unit: "bps" },
         "stat:error": { label: "误差", "$value": "g.error().toFixed(2)", unit: "%" },
-        "badge:reliability": { "$label": "g.reliability()", "$tone": "g.tone()" },
+        "stat:reliability": { label: "可靠性", "$value": "g.reliability()", "$tone": "g.tone()" },
         "stat:regValue": { label: "寄存器值", "$value": "g.regValue()" }
       },
       "callout:advice": { "$tone": "g.tone()", "$text": "g.error() < 0.5 ? '误差极小，通信可靠。' : g.error() < 2 ? '误差在可接受范围内（<2%），绝大多数场景可用。' : g.error() < 5 ? '误差偏大，长帧通信可能失败，建议更换晶振或降低波特率。' : '误差过大，通信不可靠。请选择能整除的晶振频率。'" }
