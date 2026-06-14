@@ -109,7 +109,6 @@ slexkitRenderMode: component
 }
 ```
 
-Fallback：7 人团队、6 个月、人均 15000 元/月 → 总成本约 92 万元。
 
 常见配置参考：
 

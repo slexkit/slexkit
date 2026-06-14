@@ -1,20 +1,20 @@
 ---
-title: "分支与切换：用 tabs 管理多视图"
+title: "分支与切换：模式选择器"
 category: "入门教程"
 status: published
 order: 4
-summary: "用 tabs + select 实现场景切换，展示 UI = f(state) 的分支渲染模式。"
-tags: tabs, select, branching, conditional
-components: section, tabs, select, input, slider, stat, callout, column
+summary: "用 select 实现场景切换，展示 UI = f(state) 的分支渲染模式。"
+tags: select, branching, conditional
+components: section, select, input, slider, stat, callout, column
 difficulty: 进阶
 runtime: trusted
 featured: true
 slexkitRenderMode: component
 ---
 
-# 分支与切换：用 tabs 管理多视图
+# 分支与切换：模式选择器
 
-上一节是一个场景内的协同。现实中有多个场景需要在同一空间内切换——这时候用 **tabs** 和 **select**。
+上一节是一个场景内的协同。现实中有多个场景需要在同一空间内切换——这时候用 **select** 实现分支。
 
 核心思想：**UI = f(state)**。切换 `mode` 状态变量，整个视图区域自动切换。
 
@@ -24,10 +24,10 @@ slexkitRenderMode: component
   namespace: "learn_tabs_branching",
   g: {
     mode: "length",
-    value: 100, unit: "cm",
+    value: 100,
     convert: function () {
-      if (this.mode === "length") return this.value + " " + this.unit;
-      if (this.mode === "weight") return this.value * 2.20462 + " 磅 (lbs)";
+      if (this.mode === "length") return (this.value / 100).toFixed(2) + " m";
+      if (this.mode === "weight") return (this.value * 2.20462).toFixed(2) + " 磅 (lbs)";
       if (this.mode === "temp") return (this.value * 9 / 5 + 32).toFixed(1) + " °F";
       return "—";
     },
@@ -62,9 +62,3 @@ slexkitRenderMode: component
   }
 }
 ```
-
----
-
-Fallback：默认长度模式，100cm → 100cm。切换模式后结果自动更新。
-
-实际项目中你可以组合使用 tabs + select + 多个 card 来构建复杂的控制面板。例如：tabs 切换视图模式，select 过滤数据，card 展示结果。

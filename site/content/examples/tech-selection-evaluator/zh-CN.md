@@ -122,7 +122,6 @@ slexkitRenderMode: component
 }
 ```
 
-Fallback：React 综合评分 82.5，推荐采用。调整评分后结论实时更新。
 
 默认评分参考：
 

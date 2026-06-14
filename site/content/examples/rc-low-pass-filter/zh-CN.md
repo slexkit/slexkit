@@ -62,7 +62,6 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
 }
 ```
 
-Fallback：默认参数 $R=10\text{k}\Omega$、$C=100\text{nF}$ 下截止频率约 159Hz。
 
 ## 计算结果
 
@@ -82,7 +81,6 @@ Fallback：默认参数 $R=10\text{k}\Omega$、$C=100\text{nF}$ 下截止频率�
 }
 ```
 
-Fallback：1000Hz 输入下增益约 0.157，衰减约 -16.1 dB。
 
 ## 选型参考
 
@@ -111,7 +109,6 @@ Fallback：1000Hz 输入下增益约 0.157，衰减约 -16.1 dB。
 }
 ```
 
-Fallback：$R=10\text{k}\Omega$、$C=100\text{nF}$ 对应截止频率约 159Hz。
 
 ## 工程笔记
 

@@ -98,7 +98,6 @@ slexkitRenderMode: component
 }
 ```
 
-Fallback：核心业务功能，自建综合得分 72.3，外购综合得分 71.7，建议自建。
 
 **Build vs Buy 决策模型的要点：**
 

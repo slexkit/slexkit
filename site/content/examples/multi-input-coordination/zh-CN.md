@@ -15,7 +15,6 @@ slexkitRenderMode: component
 # 多输入协同：两个滑块联动
 
 真实场景中往往有多个输入变量，它们相互影响。这需要引入两样新东西：
-
 1. **`g.method()`** — 依赖其他状态的计算值（类似 Vue computed）
 2. **`$if`** — 条件渲染（根据状态决定显示或隐藏组件）
 
@@ -77,9 +76,3 @@ slexkitRenderMode: component
 | g 方法 | `area: function() { return this.width * this.height; }` | `this` 指向 g 对象本身，返回动态计算值 |
 | 动态公式 | `"$tex": "'...' + g.width + '...'"` | formula 组件可根据 g 值实时渲染 KaTeX |
 | 条件渲染 | `"$if": "g.width === g.height"` | 只有表达式返回 true 时该组件才渲染 |
-
----
-
-Fallback：宽 120px、高 80px → 面积 9600px²，宽高比 1.50，横向。
-
-注意：`g.method()` 必须有括号调用——它是一个函数，不是属性。另外 `$if` 控制的组件需要有唯一的 key（如 `callout:squareTip`），不能和同类型组件重名。

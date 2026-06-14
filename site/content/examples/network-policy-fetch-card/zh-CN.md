@@ -179,4 +179,3 @@ slexkitRenderMode: component
 }
 ```
 
-Fallback：如果宿主没有开启网络 policy，或者用户请求了 allowlist 外的 origin，界面应该保留最后一次请求意图、展示 policy 错误，并提示用户由宿主审批或改用缓存快照。

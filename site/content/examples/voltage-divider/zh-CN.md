@@ -3,7 +3,7 @@ title: 分压器计算器
 category: 计算器
 status: published
 order: 7
-summary: 输入输入电压和两个电阻值，计算分压输出，并评估负载效应带来的误差。
+summary: 输入电压和两个电阻值，计算分压输出，并评估负载效应带来的误差。
 tags: electronics, voltage-divider, resistor, circuit
 components: card, input, slider, formula, stat, badge, callout, grid, column
 difficulty: 入门
@@ -69,7 +69,6 @@ slexkitRenderMode: component
 }
 ```
 
-Fallback：5V 经 10kΩ+10kΩ 分压 → 空载 2.5V，RL=100kΩ 时误差 4.76%。
 
 ## 工程笔记
 

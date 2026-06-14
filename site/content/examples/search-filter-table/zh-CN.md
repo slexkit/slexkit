@@ -108,4 +108,3 @@ slexkitRenderMode: component
 
 ---
 
-Fallback：默认显示全部 8 个组件。输入关键词过滤。表格行通过 `$rows` 动态计算。无匹配时 callout 提示。

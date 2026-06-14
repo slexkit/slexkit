@@ -75,7 +75,6 @@ $$Error = \frac{|BR_{actual} - BR_{target}|}{BR_{target}} \times 100\%$$
 }
 ```
 
-Fallback：8MHz 晶振 @ 115200bps → 寄存器值 4, 实际波特率 125000, 误差 8.51%。
 
 ## 常用晶振频率与波特率误差表
 

@@ -3,7 +3,7 @@ title: "第一个交互：滑块操控数据"
 category: "入门教程"
 status: published
 order: 2
-summary: "为 SlexKit 卡片引入 g 对象和第一个滑块交互，体验响应式数据绑定。"
+summary: "在 SlexKit 卡片引入 g 对象和第一个滑块交互，体验响应式数据绑定。"
 tags: beginner, reactive, slider
 components: section, slider, stat, callout, badge, column
 difficulty: 入门
@@ -18,7 +18,7 @@ slexkitRenderMode: component
 
 1. **`g` 对象** — 响应式状态容器
 2. **`$value` / `$label` / `$tone`** — 读表达式（从 g 取值渲染）
-3. **`onchange`** — 写表达式（用户操作写回 g）
+3. **`onchange`** — 写表达式（用户操作写入 g）
 
 ```slex
 {
@@ -55,15 +55,8 @@ slexkitRenderMode: component
 ```
 
 核心公式：
-
 ```
-用户操作 → onchange 写 g → SlexKit 检测变化 → 所有 $value/$tone/$text 自动重算 → UI 更新
+用户操作 → onchange → g → SlexKit 检测变化 → 所有 $value/$tone/$text 自动重算 → UI 更新
 ```
 
-这就是 **单向数据流** + **响应式重渲染**。不需要手动 `setState`，不需要 DOM 操作。
-
----
-
-Fallback：初始值 count=42，拖动滑块后 stat 和 callout 自动更新。
-
-关键是 `g.count = 42` 里的 `42` 是 "初始值"。你拖动滑块，`g.count` 变化，所有挂载了 `"$value": "g.count"` 的组件会自动刷新。试试看。
+这就是**单向数据流** + **响应式重渲染**。不需要手动 `setState`，不需要 DOM 操作。
