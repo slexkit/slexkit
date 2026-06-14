@@ -9,7 +9,7 @@ components: section, card, input, select, button, callout, code-block, grid, bad
 difficulty: 进阶
 runtime: trusted
 featured: true
-slexkitRenderMode: component
+slexkitRenderMode: dialog
 ---
 
 # ToolHost 对话演示

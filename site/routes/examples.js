@@ -194,16 +194,24 @@ export function createExamplesRoute({
     await Promise.resolve();
     const markdownHost = page.querySelector("[data-markdown-doc]");
     if (markdownHost) {
-      const cleanup = renderMarkdown(doc.markdown, markdownHost, {
-        domain: `example:${example.slug}`,
-        slexkitRenderMode: doc.slexkitRenderMode ?? "component",
-        slexkitRuntime: doc.runtime === "secure" ? "secure" : "trusted",
-        slexkitSecurePolicy: securePolicyForExample(doc),
-        slexkitSecureFrame: {
-          runtimeUrl: withSiteBase("/slexkit.js"),
-        },
-      });
-      addMarkdownCleanup(cleanup);
+      if (doc.slexkitRenderMode === "dialog") {
+        // Render dialog shell instead of markdown
+        import("../components/DialogShell.svelte").then(({ default: DialogShell }) => {
+          const instance = mount(DialogShell, { target: markdownHost });
+          addMarkdownCleanup(() => unmount(instance));
+        });
+      } else {
+        const cleanup = renderMarkdown(doc.markdown, markdownHost, {
+          domain: `example:${example.slug}`,
+          slexkitRenderMode: doc.slexkitRenderMode ?? "component",
+          slexkitRuntime: doc.runtime === "secure" ? "secure" : "trusted",
+          slexkitSecurePolicy: securePolicyForExample(doc),
+          slexkitSecureFrame: {
+            runtimeUrl: withSiteBase("/slexkit.js"),
+          },
+        });
+        addMarkdownCleanup(cleanup);
+      }
     }
 
     document.title = `${doc.title} - SlexKit`;
