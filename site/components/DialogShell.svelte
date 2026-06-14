@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { mount } from "../../src/engine/index";
-
   interface Message {
     role: "user" | "ai" | "tool";
     content: string;
@@ -12,82 +10,34 @@
   ]);
 
   let showForm = $state(false);
-  let container: HTMLElement;
-  let formContainer: HTMLElement;
-  let cleanupSlex: (() => void) | null = null;
+  let fields = $state({ name: "", type: "web", priority: "medium" });
 
   function startToolCall() {
     showForm = true;
     messages = [...messages, { role: "user", content: "帮我创建一个新项目" }];
+  }
 
-    // 用 slex fence 渲染表单
-    setTimeout(() => {
-      if (!formContainer) return;
-      if (cleanupSlex) cleanupSlex();
-      
-      const formData = { name: "", type: "web", priority: "medium" };
-      
-      cleanupSlex = mount({
-        slex: "0.1",
-        namespace: "dialog_toolhost_" + Date.now(),
-        g: {
-          fields: formData,
-          submitted: false,
-          submit: function() {
-            this.submitted = true;
-            showForm = false;
-            const result = {
-              toolCallId: "call_" + Math.random().toString(36).slice(2, 8),
-              toolName: "create-project",
-              status: "submitted",
-              value: { ...this.fields, timestamp: new Date().toISOString() }
-            };
-            messages = [...messages,
-              { role: "tool", content: "ToolResult", toolResult: result },
-              { role: "ai", content: "收到！正在为你创建项目：" + this.fields.name }
-            ];
-          }
-        },
-        layout: {
-          "card:form": {
-            title: "创建新项目",
-            "grid:fields": {
-              columns: 1, mdColumns: 2,
-              "input:name": { label: "项目名称", "$value": "g.fields.name", placeholder: "my-project", onchange: "g.fields.name = String($event || '')" },
-              "select:type": {
-                label: "项目类型",
-                "$value": "g.fields.type",
-                options: [
-                  { label: "Web 应用", value: "web" },
-                  { label: "API 服务", value: "api" },
-                  { label: "CLI 工具", value: "cli" }
-                ],
-                onchange: "g.fields.type = String($event)"
-              },
-              "select:priority": {
-                label: "优先级",
-                "$value": "g.fields.priority",
-                options: [
-                  { label: "低", value: "low" },
-                  { label: "中", value: "medium" },
-                  { label: "高", value: "high" }
-                ],
-                onchange: "g.fields.priority = String($event)"
-              }
-            },
-            "grid:actions": {
-              columns: 2,
-              "button:submit": { label: "提交", onclick: "g.submit()" },
-              "button:cancel": { label: "取消", onclick: "g.submitted = false; showForm = false" }
-            }
-          }
-        }
-      }, formContainer);
-    }, 50);
+  function submitForm() {
+    const result = {
+      toolCallId: "call_" + Math.random().toString(36).slice(2, 8),
+      toolName: "create-project",
+      status: "submitted",
+      value: { ...fields, timestamp: new Date().toISOString() }
+    };
+    showForm = false;
+    messages = [...messages,
+      { role: "tool", content: "ToolResult", toolResult: result },
+      { role: "ai", content: "收到！正在为你创建项目：" + fields.name }
+    ];
+  }
+
+  function cancelForm() {
+    showForm = false;
+    messages = [...messages, { role: "tool", content: "操作已取消" }];
   }
 </script>
 
-<div class="dialog-shell" bind:this={container}>
+<div class="dialog-shell">
   <div class="dialog-messages">
     {#each messages as msg}
       <div class="dialog-message dialog-message--{msg.role}">
@@ -104,7 +54,35 @@
     {/each}
 
     {#if showForm}
-      <div bind:this={formContainer} class="dialog-form-container"></div>
+      <div class="dialog-form">
+        <div class="dialog-form-title">创建新项目</div>
+        <div class="dialog-form-fields">
+          <label>
+            项目名称
+            <input type="text" bind:value={fields.name} placeholder="my-project" />
+          </label>
+          <label>
+            项目类型
+            <select bind:value={fields.type}>
+              <option value="web">Web 应用</option>
+              <option value="api">API 服务</option>
+              <option value="cli">CLI 工具</option>
+            </select>
+          </label>
+          <label>
+            优先级
+            <select bind:value={fields.priority}>
+              <option value="low">低</option>
+              <option value="medium">中</option>
+              <option value="high">高</option>
+            </select>
+          </label>
+        </div>
+        <div class="dialog-form-actions">
+          <button onclick={submitForm}>提交</button>
+          <button onclick={cancelForm} class="secondary">取消</button>
+        </div>
+      </div>
     {/if}
   </div>
 
@@ -163,6 +141,7 @@
     border-radius: calc(var(--radius) - 2px);
     font-size: 0.75rem;
     overflow-x: auto;
+    white-space: pre-wrap;
   }
   .dialog-input {
     padding: 1rem;
@@ -177,10 +156,53 @@
     cursor: pointer;
     font-size: 0.875rem;
   }
-  .dialog-input button:hover {
-    opacity: 0.9;
-  }
-  .dialog-form-container {
+  .dialog-input button:hover { opacity: 0.9; }
+  .dialog-form {
     margin-top: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .dialog-form-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  .dialog-form-fields {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .dialog-form-fields label {
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+  .dialog-form-fields input,
+  .dialog-form-fields select {
+    padding: 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    background: var(--background);
+    font-size: 0.875rem;
+  }
+  .dialog-form-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .dialog-form-actions button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.875rem;
+  }
+  .dialog-form-actions button:first-child {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  .dialog-form-actions button.secondary {
+    background: var(--muted);
+    color: var(--foreground);
   }
 </style>
