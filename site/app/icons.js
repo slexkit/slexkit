@@ -8,6 +8,7 @@ import ListRegular from "@phosphor-icons/core/assets/regular/list.svg?raw";
 import MarkdownLogoRegular from "@phosphor-icons/core/assets/regular/markdown-logo.svg?raw";
 import MoonRegular from "@phosphor-icons/core/assets/regular/moon.svg?raw";
 import SquaresFourRegular from "@phosphor-icons/core/assets/regular/squares-four.svg?raw";
+import SquareSplitHorizontalRegular from "@phosphor-icons/core/assets/regular/square-split-horizontal.svg?raw";
 import TagRegular from "@phosphor-icons/core/assets/regular/tag.svg?raw";
 import SunRegular from "@phosphor-icons/core/assets/regular/sun.svg?raw";
 import TranslateRegular from "@phosphor-icons/core/assets/regular/translate.svg?raw";
@@ -22,6 +23,7 @@ import ListDuotone from "@phosphor-icons/core/assets/duotone/list-duotone.svg?ra
 import MarkdownLogoDuotone from "@phosphor-icons/core/assets/duotone/markdown-logo-duotone.svg?raw";
 import MoonDuotone from "@phosphor-icons/core/assets/duotone/moon-duotone.svg?raw";
 import SquaresFourDuotone from "@phosphor-icons/core/assets/duotone/squares-four-duotone.svg?raw";
+import SquareSplitHorizontalDuotone from "@phosphor-icons/core/assets/duotone/square-split-horizontal-duotone.svg?raw";
 import TagDuotone from "@phosphor-icons/core/assets/duotone/tag-duotone.svg?raw";
 import SunDuotone from "@phosphor-icons/core/assets/duotone/sun-duotone.svg?raw";
 import TranslateDuotone from "@phosphor-icons/core/assets/duotone/translate-duotone.svg?raw";
@@ -38,6 +40,7 @@ const regularIcons = {
   "markdown-logo": MarkdownLogoRegular,
   moon: MoonRegular,
   "squares-four": SquaresFourRegular,
+  "square-split-horizontal": SquareSplitHorizontalRegular,
   tag: TagRegular,
   sun: SunRegular,
   translate: TranslateRegular,
@@ -55,6 +58,7 @@ const duotoneIcons = {
   "markdown-logo": MarkdownLogoDuotone,
   moon: MoonDuotone,
   "squares-four": SquaresFourDuotone,
+  "square-split-horizontal": SquareSplitHorizontalDuotone,
   tag: TagDuotone,
   sun: SunDuotone,
   translate: TranslateDuotone,

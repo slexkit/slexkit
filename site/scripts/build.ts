@@ -3,7 +3,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { compile, compileModule } from "svelte/compiler";
 import { exportComponentSpecManifest, supportedLocales } from "../data/component-docs.js";
-import { discoverWikiMarkdown } from "../data/content-discovery.js";
+import { discoverExampleMarkdown, discoverWikiMarkdown } from "../data/content-discovery.js";
 
 import { copyFile } from "node:fs/promises";
 
@@ -91,6 +91,11 @@ export async function buildSiteAssets({ clean = true } = {}) {
 
 async function writeStaticWikiDocs() {
   await writeFile(join(outDir, "wiki-docs.json"), JSON.stringify({ markdown: await discoverWikiMarkdown({ siteRoot }) }), "utf-8");
+  await writeFile(
+    join(outDir, "examples-docs.json"),
+    JSON.stringify({ markdown: (await Promise.all(supportedLocales.map((locale) => discoverExampleMarkdown({ siteRoot, locale })))).flat() }),
+    "utf-8",
+  );
   await mkdir(join(outDir, "spec"), { recursive: true });
   for (const locale of supportedLocales) {
     await writeFile(

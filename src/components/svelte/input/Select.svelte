@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { bindPropStore } from "../bindProps";
-  import { emit, label, list, text } from "../helpers";
+  import { emit, label, list, scheduleFrame, text } from "../helpers";
   import InlineIcon from "../InlineIcon.svelte";
   import type { PropValues, SvelteComponentProps } from "../types";
 
@@ -97,7 +97,7 @@
   function close(focusTrigger = true): void {
     open = false;
     activeIndex = selectedIndex();
-    if (focusTrigger) requestAnimationFrame(() => triggerEl?.focus());
+    if (focusTrigger) scheduleFrame(ctx, () => triggerEl?.focus());
   }
 
   function toggle(): void {

@@ -285,6 +285,12 @@ function currentOrigin(): string {
 
 function resolveUrl(url: string): URL {
   try {
+    return new URL(url);
+  } catch {
+    // Relative URLs still need a base origin. In opaque sandbox iframes
+    // location.origin is "null", so absolute URLs must be parsed first.
+  }
+  try {
     return new URL(url, currentOrigin());
   } catch {
     throw new SlexKitRuntimeError("policy", "invalid_url", "Invalid request URL.");

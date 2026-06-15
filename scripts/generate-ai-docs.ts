@@ -7,6 +7,8 @@ import {
   slexkitRuntimeCapabilities,
   slexkitStdlibDocs,
 } from "../src/engine/capabilities";
+import { discoverExampleMarkdown } from "../site/data/content-discovery.js";
+import { loadExampleDocs } from "../site/data/examples.js";
 
 export const aiDocFilenames = [
   "llms.txt",
@@ -22,7 +24,7 @@ export type AiDocFilename = (typeof aiDocFilenames)[number];
 
 export type DocPage = {
   id: string;
-  group: "Guides" | "Components" | "Reference" | "Releases";
+  group: "Guides" | "Examples" | "Components" | "Reference" | "Releases";
   title: string;
   summary: string;
   href: string;
@@ -102,7 +104,7 @@ const releasePages = [
   ["changelog", "Changelog", "Release notes and notable changes for SlexKit."],
 ] as const;
 
-const groupOrder: DocPage["group"][] = ["Guides", "Components", "Reference", "Releases"];
+const groupOrder: DocPage["group"][] = ["Guides", "Examples", "Components", "Reference", "Releases"];
 const groupRank = new Map(groupOrder.map((group, index) => [group, index]));
 
 function hashText(source: string): string {
@@ -311,6 +313,7 @@ function capabilitiesText(): string {
     "- Animation is disabled unless `policy.animation.enabled` is true; use `api.raf`.",
   ].join("\n");
 }
+
 function authoringText(): string {
   const statusExample = `{
   slex: "0.1",
@@ -388,6 +391,22 @@ async function collectPages(): Promise<{ pages: DocPage[]; sourcePages: SourcePa
       order: order++,
     });
     sourceHashes[sourcePath] = hashText(body);
+  }
+
+  const exampleMarkdown = await discoverExampleMarkdown({ siteRoot: join(root, "site"), locale: "zh-CN" });
+  for (const example of loadExampleDocs({ markdownItems: exampleMarkdown, locale: "zh-CN" })) {
+    sourcePages.push({
+      id: `examples/${example.slug}`,
+      group: "Examples",
+      title: example.title,
+      summary: example.summary,
+      href: example.href,
+      rawHref: example.markdownHref,
+      sourcePath: example.sourcePath,
+      body: example.markdown,
+      order: order++,
+    });
+    sourceHashes[example.sourcePath] = hashText(example.markdown);
   }
 
   for (const [slug, title, summary] of referencePages) {

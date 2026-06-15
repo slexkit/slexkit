@@ -8,7 +8,9 @@ import {
   createSiteRouter,
   currentLocale,
   docHrefForPath,
+  exampleHrefForPath,
   isDocsRoute,
+  isExamplesRoute,
   localizedPath,
   navHref,
   routePath,
@@ -18,6 +20,7 @@ import { createSiteShell, hydratePhosphorIcons } from "./app/shell.js";
 import { withSiteBase } from "./app/site-base.js";
 import { registerSiteComponents } from "./app/site-components.js";
 import { createDocsRoute } from "./routes/docs.js";
+import { createExamplesRoute } from "./routes/examples.js";
 import { createHomeRoute } from "./routes/home.js";
 
 const siteRoot = document.getElementById("siteRoot");
@@ -63,6 +66,7 @@ const shell = createSiteShell({
   defaultLocale,
   docHrefForPath,
   isDocsRoute,
+  isExamplesRoute,
   localizedPath,
   navHref,
   renderRoute,
@@ -98,10 +102,22 @@ const docsRoute = createDocsRoute({
   siteRoot,
 });
 
+const examplesRoute = createExamplesRoute({
+  addMarkdownCleanup,
+  clearMarkdown,
+  clearMobileContext: mobileNav.clearContext,
+  currentLocale,
+  exampleHrefForPath,
+  mount,
+  replaceRoot,
+  setSiteMount,
+});
+
 router = createSiteRouter({
   closeLanguageMenu: () => shell.setLanguageMenuOpen(false),
   closeMobileNav: mobileNav.closeMobileNav,
   renderDocs: docsRoute.renderDocs,
+  renderExamples: examplesRoute.renderExamples,
   renderHome: homeRoute.renderHome,
   scrollToTarget: docsRoute.scrollToTarget,
   setActiveRoute: shell.setActiveRoute,

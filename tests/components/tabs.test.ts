@@ -68,6 +68,41 @@ describe("tabs component", () => {
     expect(triggers[1].classList.contains("slex-tabs-trigger--selected")).toBe(true);
   });
 
+  it("does not require native requestAnimationFrame to update selection", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const originalRaf = window.requestAnimationFrame;
+    window.requestAnimationFrame = (() => {
+      throw new Error("Native raf is disabled inside the SlexKit sandbox.");
+    }) as typeof requestAnimationFrame;
+
+    try {
+      mount(
+        {
+          namespace: unique("tabs_no_native_raf"),
+          g: { active: "tab1" },
+          layout: {
+            "tabs:tb": {
+              $value: "g.active",
+              onchange: "g.active = $event",
+              tabs: [
+                { value: "tab1", label: "Tab 1" },
+                { value: "tab2", label: "Tab 2" },
+              ],
+            },
+          },
+        },
+        document.getElementById("app")!,
+      );
+
+      const triggers = document.querySelectorAll(".slex-tabs-trigger");
+      expect(() => (triggers[1] as HTMLElement).click()).not.toThrow();
+      await sleep(50);
+      expect(triggers[1].classList.contains("slex-tabs-trigger--selected")).toBe(true);
+    } finally {
+      window.requestAnimationFrame = originalRaf;
+    }
+  });
+
   it("renders rich component content inside tab panels", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const ns = unique("tabs_content");

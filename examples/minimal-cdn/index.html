@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" class="light">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SlexKit minimal CDN example</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slexkit@0.2.0/dist/slexkit.css">
+</head>
+
+<body class="slexkit-theme-uno"
+  style="margin: 0; min-height: 100vh; background: var(--background); color: var(--foreground); font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+  <main style="max-width: 780px; margin: 0 auto; padding: 2rem 1rem;">
+    <div id="app"></div>
+  </main>
+
+  <script id="slex-source" type="application/slex">
+({
+  namespace: "example_minimal_cdn",
+  layout: {
+    "card:divider": {
+      title: "Voltage divider",
+      "grid:inputs": {
+        columns: 1,
+        mdColumns: 3,
+        "input:vin": {
+          type: "engineering",
+          label: "Input voltage",
+          value: "5V",
+          step: 1,
+          min: 0,
+        },
+        "input:r1": {
+          type: "engineering",
+          label: "R1",
+          value: "10kΩ",
+          step: 1000,
+          min: 0.1,
+        },
+        "input:r2": {
+          type: "engineering",
+          label: "R2",
+          value: "2.2kΩ",
+          step: 1000,
+          min: 0.1,
+        },
+      },
+      "grid:outputs": {
+        columns: 1,
+        mdColumns: 3,
+        "stat:vout": {
+          label: "Output voltage",
+          "$value": "vin.valid && r1.valid && r2.valid ? (vin.number * r2.number / (r1.number + r2.number)).toFixed(4) : 'Invalid'",
+          "$unit": "vin.valid ? (vin.unit || 'V') : ''",
+        },
+        "stat:current": {
+          label: "Divider current",
+          "$value": "vin.valid && r1.valid && r2.valid ? (vin.number / (r1.number + r2.number) * 1000).toFixed(4) : 'Invalid'",
+          unit: "mA",
+          tone: "info",
+        },
+        "stat:ratio": {
+          label: "Divider ratio",
+          "$value": "vin.valid && r1.valid && r2.valid ? (r2.number / (r1.number + r2.number) * 100).toFixed(1) : 'Invalid'",
+          unit: "%",
+          tone: "success",
+        },
+      },
+    },
+  },
+})
+    </script>
+  <script type="module">
+    import { mount } from "https://cdn.jsdelivr.net/npm/slexkit@0.2.0/dist/slexkit.js";
+
+    const source = document.getElementById("slex-source").textContent;
+    mount(source, document.getElementById("app"));
+  </script>
+</body>
+
+</html>

@@ -122,7 +122,7 @@ describe("input component", () => {
 
     const field = document.querySelector(".slex-input-field") as HTMLElement;
     const input = document.querySelector(".slex-input") as HTMLInputElement;
-    const [decrement, increment] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
+    const [increment, decrement] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
     expect(input.type).toBe("number");
     expect(input.value).toBe("3.3");
     expect(field.querySelector(".slex-input-controls")).toBeTruthy();
@@ -352,7 +352,7 @@ describe("input component", () => {
     }, document.getElementById("app")!);
 
     const input = document.querySelector(".slex-input") as HTMLInputElement;
-    const [, increment] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
+    const [increment] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
     increment.click();
     await sleep();
 
@@ -381,7 +381,7 @@ describe("input component", () => {
     }, document.getElementById("app")!);
 
     const input = document.querySelector(".slex-input") as HTMLInputElement;
-    const [, increment] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
+    const [increment] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
     increment.click();
     await sleep();
 

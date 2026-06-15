@@ -866,7 +866,7 @@
   margin-top: 2rem;
 }
 
-.slex-docs-markdown table {
+.slex-docs-markdown table:not(.slex-table) {
   display: block;
   width: 100%;
   max-width: 100%;
@@ -877,15 +877,15 @@
   font-size: 0.875rem;
 }
 
-.slex-docs-markdown th,
-.slex-docs-markdown td {
+.slex-docs-markdown table:not(.slex-table) th,
+.slex-docs-markdown table:not(.slex-table) td {
   border: 1px solid var(--border);
   padding: 0.625rem 0.75rem;
   text-align: left;
   vertical-align: top;
 }
 
-.slex-docs-markdown th {
+.slex-docs-markdown table:not(.slex-table) th {
   background: var(--muted);
   color: var(--muted-foreground);
   font-weight: 650;

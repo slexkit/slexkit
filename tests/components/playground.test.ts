@@ -365,6 +365,120 @@ describe("playground component", () => {
 
 
 
+    it("does not render Markdown frontmatter in the playground preview", async () => {
+
+      document.body.innerHTML = '<div id="app"></div>';
+
+      const cleanup = mount(
+
+        {
+
+          namespace: "playground_markdown_frontmatter_test",
+
+          g: {},
+
+          layout: {
+
+            "playground:demo": {
+
+              mode: "render",
+
+              sourceType: "markdown",
+
+              previewMinHeight: "160px",
+
+              source: `---
+title: 任务分解看板
+category: AI 与 Agent 工作流
+status: draft
+---
+
+# 任务分解看板
+
+正文内容
+`,
+
+            },
+
+          },
+
+        },
+
+        document.getElementById("app")!,
+
+      );
+
+      await sleep();
+
+      const preview = document.querySelector(".slex-playground-preview-pane");
+      expect(preview?.textContent).toContain("任务分解看板");
+      expect(preview?.textContent).toContain("正文内容");
+      expect(preview?.textContent).not.toContain("category:");
+      expect(preview?.textContent).not.toContain("status: draft");
+
+      cleanup();
+
+    });
+
+
+
+
+    it("normalizes Markdown heading anchors and table styling in the playground preview", async () => {
+
+      document.body.innerHTML = '<div id="app"></div>';
+
+      const cleanup = mount(
+
+        {
+
+          namespace: "playground_markdown_docs_style_test",
+
+          g: {},
+
+          layout: {
+
+            "playground:demo": {
+
+              mode: "render",
+
+              sourceType: "markdown",
+
+              previewMinHeight: "180px",
+
+              source: `# Accordion
+
+## API Reference {#api}
+
+| Field | Type | Description |
+|---|---|---|
+| value | string | Current expanded item value. |
+`,
+
+            },
+
+          },
+
+        },
+
+        document.getElementById("app")!,
+
+      );
+
+      await sleep();
+
+      const preview = document.querySelector(".slex-playground-preview-pane");
+      expect(preview?.textContent).toContain("API Reference");
+      expect(preview?.textContent).not.toContain("{#api}");
+      expect(preview?.querySelector("#api")).toBeTruthy();
+      expect(preview?.querySelector(".slex-doc-prose table")).toBeTruthy();
+
+      cleanup();
+
+    });
+
+
+
+
     it("clears the live splitter dragging state after pointer release", async () => {
 
       document.body.innerHTML = '<div id="app"></div>';

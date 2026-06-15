@@ -1105,7 +1105,7 @@
   padding: 0.0625rem 0.25rem;
 }
 
-.slex-doc-prose table {
+.slex-doc-prose table:not(.slex-table) {
   display: block;
   max-width: 100%;
   overflow-x: auto;
@@ -1116,15 +1116,15 @@
   font-size: 0.875rem;
 }
 
-.slex-doc-prose th,
-.slex-doc-prose td {
+.slex-doc-prose table:not(.slex-table) th,
+.slex-doc-prose table:not(.slex-table) td {
   border: 1px solid var(--border);
   padding: 0.625rem 0.75rem;
   text-align: left;
   vertical-align: top;
 }
 
-.slex-doc-prose th {
+.slex-doc-prose table:not(.slex-table) th {
   background: var(--muted);
   color: var(--muted-foreground);
   font-weight: 650;

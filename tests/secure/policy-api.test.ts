@@ -129,6 +129,35 @@ describe("secure runtime policy api", () => {
       runtime.dispose();
     });
 
+    it("accepts absolute URLs when the sandbox has an opaque origin", async () => {
+      const originalLocation = globalThis.location;
+      Object.defineProperty(globalThis, "location", {
+        configurable: true,
+        value: { origin: "null" },
+      });
+      const runtime = createSecureRuntime(policy, {
+        fetch: async (request) => ({
+          ok: true,
+          status: 200,
+          statusText: "OK",
+          url: request.url,
+          headers: {},
+          data: { url: request.url },
+          elapsedMs: 1,
+        }),
+      });
+
+      try {
+        const result = await runtime.api.get("https://example.com/posts?_limit=5");
+        expect(result.status).toBe(200);
+        expect(result.url).toBe("https://example.com/posts?_limit=5");
+      } finally {
+        runtime.dispose();
+        if (originalLocation === undefined) delete (globalThis as { location?: Location }).location;
+        else Object.defineProperty(globalThis, "location", { configurable: true, value: originalLocation });
+      }
+    });
+
 
     it("does not treat origin prefix wildcards as trusted domains", async () => {
       const runtime = createSecureRuntime({

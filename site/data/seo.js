@@ -1,6 +1,7 @@
 import { loadWikiDocs, supportedLocales } from "./component-docs.js";
 import { defaultLocale } from "./locales.js";
-import { discoverWikiMarkdown } from "./content-discovery.js";
+import { discoverExampleMarkdown, discoverWikiMarkdown } from "./content-discovery.js";
+import { loadExampleDocs } from "./examples.js";
 
 const siteName = "SlexKit";
 const defaultDescription =
@@ -96,6 +97,18 @@ function docsIndexPage(locale) {
   });
 }
 
+function examplesIndexPage(locale) {
+  return createPage({
+    path: localizedPath("/examples", locale),
+    locale,
+    title: locale === "zh-CN" ? "示例中心 - SlexKit" : "Examples - SlexKit",
+    description: locale === "zh-CN"
+      ? "浏览 SlexKit 面向 AI 输出、工程文档和交互式知识表达的高质量示例。"
+      : "Browse high-quality SlexKit examples for AI output, engineering docs, and interactive knowledge surfaces.",
+    canonicalPath: "/examples",
+  });
+}
+
 function legacyPage(path, canonicalPath, locale = defaultLocale) {
   return createPage({
     path: localizedPath(path, locale),
@@ -119,12 +132,15 @@ function docPage(doc) {
 
 export async function createSeoIndex({ siteRoot }) {
   const markdown = await discoverWikiMarkdown({ siteRoot });
+  const exampleMarkdown = (await Promise.all(supportedLocales.map((locale) => discoverExampleMarkdown({ siteRoot, locale })))).flat();
   const pages = [];
 
   for (const locale of supportedLocales) {
-    pages.push(homePage(locale), docsIndexPage(locale));
+    pages.push(homePage(locale), docsIndexPage(locale), examplesIndexPage(locale));
     const docs = await loadWikiDocs({ markdownItems: markdown, locale });
     pages.push(...docs.map(docPage));
+    const examples = loadExampleDocs({ markdownItems: exampleMarkdown, locale });
+    pages.push(...examples.map(docPage));
   }
 
   for (const locale of supportedLocales) {

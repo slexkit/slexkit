@@ -44,7 +44,7 @@
   }
 
   function hasActions() {
-    return canCopy() || Boolean(text(p.markdownHref));
+    return canCopy() || Boolean(text(p.markdownHref)) || Boolean(text(p.playgroundHref ?? p.liveHref));
   }
 </script>
 
@@ -77,6 +77,11 @@
       {#if text(p.markdownHref)}
         <a class="slex-doc-detail-action" title={text(p.viewMarkdownLabel, "查看 Markdown")} href={text(p.markdownHref)} target="_blank" rel="noreferrer">
           <span class="slex-doc-detail-action-icon" aria-hidden="true">{@html getPhosphorIcon("markdown-logo")}</span>{text(p.markdownLabel, "Markdown")}
+        </a>
+      {/if}
+      {#if text(p.playgroundHref ?? p.liveHref)}
+        <a class="slex-doc-detail-action" title={text(p.openLiveLabel, "以 Live 模式打开")} href={text(p.playgroundHref ?? p.liveHref)} target="_blank" rel="noreferrer">
+          <span class="slex-doc-detail-action-icon" aria-hidden="true">{@html getPhosphorIcon("square-split-horizontal")}</span>{text(p.openLiveLabel, "以 Live 模式打开")}
         </a>
       {/if}
     </div>
