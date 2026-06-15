@@ -1,6 +1,6 @@
 {
   "name": "@slexkit/obsidian",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Obsidian readonly renderer for SlexKit fenced UI blocks.",
   "author": "SlexKit contributors",
   "type": "commonjs",
@@ -33,7 +33,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "slexkit": "^0.2.0"
+    "slexkit": "^0.3.0"
   },
   "peerDependenciesMeta": {
     "slexkit": {
