@@ -2,6 +2,32 @@
 
 All notable changes to SlexKit.
 
+## Unreleased
+
+### Added
+- English translations for all 17 example pages
+- Component state eval context shadowing test suite (`component-state-shadowing.test.ts`)
+- Collapsible and Callout double-rendering regression tests
+- Slider component name shadowing regression test
+
+### Fixed
+- Eval context shadowing: component names `g` and `api` no longer overwrite reserved context keys
+- `renderChildren` now clears existing content when children are present, preventing double rendering in Collapsible and Callout
+- Switch component now accepts `checked`/`value` props for initialization consistency with Checkbox
+- Voltage divider summary typo ("输入输入电压")
+- Salary calculator fallback numbers to match actual calculator output
+- Tabs-and-branching: title and length conversion mismatch
+- 4 pre-existing test failures (ai-docs, page-structure, theme, markdown-content)
+- Toolhost test: added setup import to fix `document is not defined`
+
+### Removed
+- Dead "Fallback" copywriting from all 17 example files
+- Post-slex explanatory text from 4 example files
+- Orphaned `test-if` example directory
+- Agent-generated `docs/compose` planning files
+- Temporary `screenshot-*.png` files
+- Unused `DialogShell.svelte` component
+
 ## v0.2.0 - First public release
 
 ### Added
