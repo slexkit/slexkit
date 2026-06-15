@@ -179,17 +179,17 @@
         <button
           class="slex-input-step"
           type="button"
-          aria-label={`Decrease ${controlLabel}`}
-          disabled={decrementDisabled}
-          onclick={() => stepBy(-1)}
-        >-</button>
-        <button
-          class="slex-input-step"
-          type="button"
           aria-label={`Increase ${controlLabel}`}
           disabled={incrementDisabled}
           onclick={() => stepBy(1)}
         >+</button>
+        <button
+          class="slex-input-step"
+          type="button"
+          aria-label={`Decrease ${controlLabel}`}
+          disabled={decrementDisabled}
+          onclick={() => stepBy(-1)}
+        >-</button>
       </span>
     {/if}
   </div>

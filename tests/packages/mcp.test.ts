@@ -116,12 +116,13 @@ describe("@slexkit/mcp stdio server", () => {
         method: "tools/call",
         params: {
           name: "slexkitDocs",
-          arguments: { query: "runtime" },
+          arguments: { query: "runtime", includeCapabilities: true },
         },
       });
       const docs = await waitForLine(proc);
       const pages = (docs.result as { structuredContent: { pages: unknown[] } }).structuredContent.pages;
       expect(pages.length).toBeGreaterThan(0);
+      expect((docs.result as { structuredContent: { capabilities: { stdlib: unknown[]; capabilities: unknown[] } } }).structuredContent.capabilities.stdlib.length).toBeGreaterThan(0);
 
       write({
         jsonrpc: "2.0",
@@ -139,10 +140,37 @@ describe("@slexkit/mcp stdio server", () => {
           valid: true,
         },
       });
+      expect((example.result as { structuredContent: { source: string } }).structuredContent.source).toContain("std.math.round");
 
       write({
         jsonrpc: "2.0",
-        id: 7,
+        id: 8,
+        method: "tools/call",
+        params: {
+          name: "slexkitValidate",
+          arguments: {
+            source: `{ slex: "0.1", namespace: "warn", g: { load() { fetch('/x'); api.socket(); return std.math.nope(1); } }, layout: { "text:message": { madeUp: true, "$text": "std.format.fixed(1, 1)" } } }`,
+          },
+        },
+      });
+      const warned = await waitForLine(proc);
+      expect(warned.result).toMatchObject({
+        structuredContent: {
+          ok: true,
+          warnings: expect.arrayContaining([
+            expect.objectContaining({ code: "unknown_std_member" }),
+            expect.objectContaining({ code: "unknown_api_member" }),
+            expect.objectContaining({ code: "unknown_prop" }),
+            expect.objectContaining({ code: "native_secure_capability" }),
+          ]),
+          stdlibUsage: expect.arrayContaining(["std.format.fixed", "std.math.nope"]),
+          apiUsage: expect.arrayContaining(["api.socket"]),
+        },
+      });
+
+      write({
+        jsonrpc: "2.0",
+        id: 9,
         method: "tools/call",
         params: {
           name: "missingTool",

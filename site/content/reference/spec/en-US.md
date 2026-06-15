@@ -45,7 +45,7 @@ ComponentKey = ComponentType ":" Identifier
 - Named components use `Identifier` for instance state and lifecycle hooks.
 - Keys without `:` are not rendered as component nodes.
 
-Reserved context names: `g`, `api`, `$event`, `$item`, `$index`, `$key`.
+Reserved context names: `g`, `std`, `api`, `$event`, `$item`, `$index`, `$key`.
 
 ## 3. Props classification
 
@@ -102,6 +102,7 @@ Expressions can access these variables:
 | Variable           | Type                          | Scope                    |
 | ------------------ | ----------------------------- | ------------------------ |
 | `g`                | Reactive state proxy          | Always                   |
+| `std`              | Pure SlexKit standard library | Always                   |
 | Component state    | e.g. `slider.value`           | Named components         |
 | `api`              | Host-injected object          | If `api` option provided |
 | `$event`           | Event data                    | `on*` handlers only      |
@@ -109,6 +110,8 @@ Expressions can access these variables:
 | `$index`           | Current array index           | `$for` context only      |
 | `$key`             | Current item key              | `$for` context only      |
 | Named `$for` alias | e.g. `user` for `"card:user"` | `$for` context only      |
+
+`std` contains deterministic helpers for math, formatting, units, and small statistics. Sensitive capabilities stay under host-injected `api.*` and may require secure runtime policy.
 
 Expression evaluation errors are caught and produce a warning with namespace and path information. The last known value is returned as a fallback.
 

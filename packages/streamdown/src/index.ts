@@ -26,7 +26,7 @@ import {
 } from "slexkit";
 
 const DEFAULT_LANGUAGES = ["slex"] as const;
-const STREAMDOWN_RENDERER_VERSION = "0.2.0";
+const STREAMDOWN_RENDERER_VERSION = "0.3.0";
 const DEFAULT_SECURE_POLICY: HostRuntimePolicy = {};
 
 export type SlexKitRendererOptions = {
@@ -312,8 +312,8 @@ export function SlexKitRenderer({
   }, [delegatesToSecureHost, isIncomplete, isSecureRuntime, parsedSource]);
   const isStateOnly = sourceKind === "state-only";
   const runtimeInput = useMemo(
-    () => isSecureRuntime || delegatesToSecureHost ? String(code) : scopedSlexKitInput(code, parsedSource?.ok ? parsedSource.value : undefined, domain),
-    [code, delegatesToSecureHost, domain, isSecureRuntime, parsedSource],
+    () => isSecureRuntime || activeRuntimeHost ? String(code) : scopedSlexKitInput(code, parsedSource?.ok ? parsedSource.value : undefined, domain),
+    [code, activeRuntimeHost, domain, isSecureRuntime, parsedSource],
   );
   const effectiveRenderMode = useMemo(
     () => resolveRenderMode(meta, renderMode),
@@ -331,6 +331,21 @@ export function SlexKitRenderer({
       return;
     }
     if (isStateOnly) {
+      if (activeRuntimeHost) {
+        const container = document.createElement("span");
+        try {
+          const cleanup = activeRuntimeHost.mountBlock({
+            artifactId: domain,
+            source: runtimeInput,
+            container,
+          });
+          return cleanup;
+        } catch (err) {
+          setError(err);
+          onError?.(err, String(code));
+          return;
+        }
+      }
       if (!ingest(runtimeInput)) {
         const err = new Error("Failed to parse Slex state block.");
         setError(err);
@@ -384,6 +399,7 @@ export function SlexKitRenderer({
     code,
     activeRuntimeHost,
     delegatesToSecureHost,
+    domain,
     effectiveRenderMode,
     hostAdapter,
     isIncomplete,

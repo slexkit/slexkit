@@ -24,8 +24,10 @@ describe("AI documentation generation", () => {
     expect(build.files["llms.txt"]).toContain("Version:");
     expect(build.files["llms.txt"]).toContain("/llms-full.txt");
     expect(build.files["llms.txt"]).toContain("/llms-components.txt");
+    expect(build.files["llms.txt"]).toContain("/llms-capabilities.txt");
     expect(build.files["llms.txt"]).toContain("/slexkit-ai-manifest.json");
     expect(build.files["llms.txt"]).toContain("### Guides");
+    expect(build.files["llms.txt"]).toContain("### Examples");
     expect(build.files["llms.txt"]).toContain("### Components");
     expect(build.files["llms.txt"]).toContain("### Reference");
     expect(build.files["llms.txt"]).toContain("### Releases");
@@ -37,6 +39,11 @@ describe("AI documentation generation", () => {
     expect(build.manifest.pages.some((page) => page.rawHref === "/docs/reference/spec.md")).toBe(true);
     expect(build.manifest.pages.some((page) => page.rawHref === "/docs/releases/changelog.md")).toBe(true);
     expect(build.files["llms-components.txt"]).toContain(`Public component count: ${publicComponentTypes.length}`);
+    expect(build.files["llms-capabilities.txt"]).toContain("std.math.clamp");
+    expect(build.files["llms-capabilities.txt"]).toContain("api.fetch");
+    expect(build.manifest.expressionContext.some((item) => item.name === "std")).toBe(true);
+    expect(build.manifest.stdlib.some((namespace) => namespace.name === "math")).toBe(true);
+    expect(build.manifest.capabilities.some((capability) => capability.name === "api.fetch")).toBe(true);
     expect(build.manifest.components).toHaveLength(publicComponentTypes.length);
     expect(build.manifest.pages.every((page) => page.rawHref.endsWith(".md"))).toBe(true);
   });

@@ -29,6 +29,8 @@ function mount(
 
 `MountOptions` 支持 `theme`、`dir`、`labels`、`api`。同一 `container` 再次调用 `mount()` 会先清空旧 root，再追加新 root。cleanup 只卸载当前 root，不会删除 namespace store。
 
+每个表达式都会收到 `std`，也就是 SlexKit 的纯确定性标准库。宿主仍然可以通过 `api` 注入能力对象；但网络、timer、animation 和 canvas 在 secure mode 中应继续由 policy 控制。
+
 ### `ingest(input)`
 
 导入 state-only Slex：更新 `g`，不渲染 UI。Markdown runtime host 用它处理 state-only fences。

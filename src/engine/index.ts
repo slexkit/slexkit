@@ -29,6 +29,14 @@ export {
   parseSlexKitDsl,
 } from "./diagnostics";
 export type { SlexKitParseResult, SlexKitSourceDiagnostic } from "./diagnostics";
+export { validateSlexSource } from "./validation";
+export type {
+  SlexKitValidationMode,
+  SlexKitValidationOptions,
+  SlexKitValidationResult,
+  SlexKitValidationWarning,
+  SlexKitValidationWarningCode,
+} from "./validation";
 export type {
   ComponentRegistrationOptions,
   ComponentRenderer,
@@ -45,6 +53,20 @@ export {
   SlexKitRuntimeError,
   serializeRuntimeError,
 } from "./secure-runtime";
+export { slexkitStd } from "./stdlib";
+export type { SlexKitStdlib } from "./stdlib";
+export {
+  slexkitExpressionContext,
+  slexkitRuntimeCapabilities,
+  slexkitRuntimeCapabilityNames,
+  slexkitStdlibDocs,
+  slexkitStdlibFunctionNames,
+} from "./capabilities";
+export type {
+  SlexKitRuntimeCapabilityDoc,
+  SlexKitStdlibFunctionDoc,
+  SlexKitStdlibNamespaceDoc,
+} from "./capabilities";
 export {
   createSlexKitMarkdownRuntimeHost,
   getSlexKitMarkdownRuntimeHost,
@@ -313,14 +335,20 @@ function createSecureFrameTarget(
   iframe.title = options.title ?? "SlexKit secure artifact";
   iframe.setAttribute("data-slexkit-secure-frame", "true");
   iframe.setAttribute("referrerpolicy", "no-referrer");
+  iframe.style.display = "block";
+  iframe.style.width = "100%";
+  iframe.style.border = "0";
+  iframe.style.background = "transparent";
   const runtimeUrl = options.runtimeUrl ?? options.runnerUrl ?? defaultRuntimeUrl;
   if (runtimeUrl) {
     const resolvedRuntimeUrl = resolveRuntimeUrl(runtimeUrl);
+    const styleUrl = options.styleUrl === false ? "" : (options.styleUrl ?? defaultSecureFrameStyleUrl(resolvedRuntimeUrl));
+    const resolvedStyleUrl = styleUrl ? resolveRuntimeUrl(styleUrl) : undefined;
     assertSandboxCloneable(input);
     iframe.setAttribute("sandbox", secureSandboxAttribute(options));
     container.replaceChildren(iframe);
     const bridge = createSandboxBridge(input, container, iframe, mountOptions);
-    iframe.srcdoc = secureRunnerSrcdoc(resolvedRuntimeUrl);
+    iframe.srcdoc = secureRunnerSrcdoc(resolvedRuntimeUrl, resolvedStyleUrl);
     return bridge;
   }
   if (frame) {
@@ -386,6 +414,19 @@ function cspSourceForRuntime(runtimeUrl: string): string {
   }
 }
 
+function defaultSecureFrameStyleUrl(runtimeUrl: string): string {
+  try {
+    const url = new URL(runtimeUrl);
+    if (url.protocol === "blob:" || url.protocol === "data:") return "";
+    url.pathname = url.pathname.replace(/[^/]+$/, "slexkit.css");
+    url.search = "";
+    url.hash = "";
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
 function escapeHtmlAttribute(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -394,20 +435,22 @@ function escapeHtmlAttribute(value: string): string {
     .replace(/>/g, "&gt;");
 }
 
-function secureRunnerSrcdoc(runtimeUrl: string): string {
+function secureRunnerSrcdoc(runtimeUrl: string, styleUrl?: string): string {
   const nonce = randomToken(12);
+  const styleSource = styleUrl ? ` ${cspSourceForRuntime(styleUrl)}` : "";
   const csp = [
     "default-src 'none'",
     `script-src 'nonce-${nonce}' 'unsafe-eval' ${cspSourceForRuntime(runtimeUrl)}`,
     "connect-src 'none'",
     "img-src data: blob:",
-    "style-src 'unsafe-inline'",
+    `style-src 'unsafe-inline'${styleSource}`,
     "font-src data:",
     "form-action 'none'",
     "base-uri 'none'",
   ].join("; ");
   const style = "html,body{margin:0;min-height:100%;overflow:hidden;}#slexkit-secure-root{min-height:100%;}";
-  return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${escapeHtmlAttribute(csp)}"><style>${style}</style></head><body><div id="slexkit-secure-root"></div><script type="module" nonce="${nonce}">import { startSlexKitSandboxRunner } from ${JSON.stringify(runtimeUrl)}; startSlexKitSandboxRunner();</script></body></html>`;
+  const stylesheet = styleUrl ? `<link rel="stylesheet" href="${escapeHtmlAttribute(styleUrl)}">` : "";
+  return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${escapeHtmlAttribute(csp)}">${stylesheet}<style>${style}</style></head><body><div id="slexkit-secure-root"></div><script type="module" nonce="${nonce}">import { startSlexKitSandboxRunner } from ${JSON.stringify(runtimeUrl)}; startSlexKitSandboxRunner();</script></body></html>`;
 }
 
 function secureFrameLoadTimeout(options: SecureMountOptions): number {
@@ -689,8 +732,18 @@ function createSandboxBridge(
     if (data.type === "slot-size" && data.id === id && data.token === token && typeof data.slotId === "string") {
       const slot = artifactSlots.find((item) => item.id === data.slotId);
       if (slot && typeof (data as { height?: unknown }).height === "number" && Number.isFinite((data as { height: number }).height)) {
-        slot.container.style.minHeight = `${Math.max(0, Math.ceil((data as { height: number }).height))}px`;
+        const height = Math.max(0, Math.ceil((data as { height: number }).height));
+        slot.container.style.minHeight = `${height}px`;
+        if (artifactSlots.length === 1) {
+          iframe.style.height = `${Math.max(1, height)}px`;
+        }
         requestArtifactSlotSync();
+      }
+      return;
+    }
+    if (data.type === "frame-size" && data.id === id && data.token === token) {
+      if (artifactSlots.length <= 1 && typeof data.height === "number" && Number.isFinite(data.height)) {
+        iframe.style.height = `${Math.max(1, Math.ceil(data.height))}px`;
       }
       return;
     }

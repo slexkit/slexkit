@@ -1,4 +1,5 @@
 import { mount, unmount } from "svelte";
+import { createSlexKitMarkdownRuntimeHost } from "../../src/engine/index";
 import MarkdownRenderer from "./MarkdownRenderer.svelte";
 
 let markdownDomainId = 0;
@@ -12,14 +13,22 @@ function containerDomain(container) {
 }
 
 export function renderMarkdown(content, container, options = {}) {
+  const domain = options.domain ?? containerDomain(container);
+  const ownsRuntimeHost = !options.slexkitRuntimeHost;
+  const runtimeHost = options.slexkitRuntimeHost ?? createSlexKitMarkdownRuntimeHost({
+    mode: options.slexkitRuntime ?? "trusted",
+    policy: options.slexkitSecurePolicy ?? {},
+    hostAdapter: options.slexkitHostAdapter,
+    secureFrame: options.slexkitSecureFrame ?? true,
+  });
   const app = mount(MarkdownRenderer, {
     target: container,
     props: {
       content,
-      domain: options.domain ?? containerDomain(container),
+      domain,
       slexkitRenderMode: options.slexkitRenderMode ?? "component",
       slexkitRuntime: options.slexkitRuntime ?? "trusted",
-      slexkitRuntimeHost: options.slexkitRuntimeHost,
+      slexkitRuntimeHost: runtimeHost,
       slexkitUseGlobalRuntimeHost: options.slexkitUseGlobalRuntimeHost ?? false,
       slexkitSecurePolicy: options.slexkitSecurePolicy ?? {},
       slexkitHostAdapter: options.slexkitHostAdapter,
@@ -29,5 +38,7 @@ export function renderMarkdown(content, container, options = {}) {
 
   return () => {
     void unmount(app);
+    runtimeHost.disposeArtifact(domain);
+    if (ownsRuntimeHost) runtimeHost.disposeAll();
   };
 }

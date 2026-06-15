@@ -79,4 +79,25 @@ describe("feedback components", () => {
       await sleep();
       expect(document.querySelector(".slex-toast")).toBeNull();
     });
+
+  it("callout renders children without duplicating text prop", () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mount(
+      {
+        namespace: unique("callout_no_dup"),
+        g: {},
+        layout: {
+          "callout:info": {
+            tone: "info",
+            text: "Fallback text",
+            "text:child": { text: "Child content" },
+          },
+        },
+      },
+      document.getElementById("app")!,
+    );
+    const body = document.querySelector(".slex-callout-body");
+    expect(body?.textContent).toBe("Child content");
+    expect(body?.textContent).not.toContain("Fallback text");
+  });
 });

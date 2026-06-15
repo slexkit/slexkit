@@ -2,7 +2,7 @@
   import FlowbiteTabs from "../../../../node_modules/flowbite-svelte/dist/tabs/Tabs.svelte";
   import FlowbiteTabItem from "../../../../node_modules/flowbite-svelte/dist/tabs/TabItem.svelte";
   import { bindPropStore } from "../bindProps";
-  import { emit, list, text } from "../helpers";
+  import { cancelScheduledFrame, emit, list, scheduleFrame, text, type ScheduledFrame } from "../helpers";
   import InlineIcon from "../InlineIcon.svelte";
   import type { PropValues, SvelteComponentProps } from "../types";
 
@@ -55,14 +55,14 @@
   }
 
   function annotateTabs(node: HTMLElement) {
-    let raf: number | undefined;
+    let frame: ScheduledFrame | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let indicatorReady = false;
 
     function scheduleIndicatorUpdate(list: HTMLElement, selectedTrigger: HTMLElement | undefined) {
-      if (raf !== undefined) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        raf = undefined;
+      cancelScheduledFrame(ctx, frame);
+      frame = scheduleFrame(ctx, () => {
+        frame = undefined;
         if (!selectedTrigger) {
           list.style.setProperty("--slex-tabs-indicator-opacity", "0");
           return;
@@ -96,7 +96,7 @@
         list.style.setProperty("--slex-tabs-indicator-opacity", "1");
         if (!indicatorReady) {
           indicatorReady = true;
-          requestAnimationFrame(() => {
+          scheduleFrame(ctx, () => {
             list.dataset.indicatorReady = "true";
           });
         }
@@ -137,7 +137,7 @@
         apply();
       },
       destroy() {
-        if (raf !== undefined) cancelAnimationFrame(raf);
+        cancelScheduledFrame(ctx, frame);
         resizeObserver?.disconnect();
       },
     };

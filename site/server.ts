@@ -3,7 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { buildSiteAssets } from "./scripts/build";
 import { sourceLocale } from "./data/component-docs.js";
-import { discoverWikiMarkdown } from "./data/content-discovery.js";
+import { discoverExampleMarkdown, discoverWikiMarkdown } from "./data/content-discovery.js";
 import { createSeoIndex, injectSeoHead, renderRobotsTxt, renderSitemapXml } from "./data/seo.js";
 
 const hostname = Bun.env.HOST ?? "0.0.0.0";
@@ -65,6 +65,12 @@ async function wikiDocsResponse() {
   return Response.json({ markdown: await discoverWikiMarkdown({ siteRoot }) });
 }
 
+async function examplesDocsResponse() {
+  return Response.json({
+    markdown: (await Promise.all(["en-US", "zh-CN"].map((locale) => discoverExampleMarkdown({ siteRoot, locale })))).flat(),
+  });
+}
+
 async function assetResponse(pathname: string) {
   const relative = pathname.replace(/^\/assets\//, "");
   if (!relative || relative.includes("..")) return new Response("Not found", { status: 404 });
@@ -91,9 +97,11 @@ async function runtimeResponse(pathname: string) {
     ? "slexkit.css"
     : pathname.endsWith("tooling.js")
       ? "tooling.js"
-      : pathname.endsWith("runtime.js")
-        ? "runtime.js"
-        : "slexkit.js";
+      : pathname.endsWith("slexkit.runtime.js")
+        ? "slexkit.js"
+        : pathname.endsWith("runtime.js")
+          ? "runtime.js"
+          : "slexkit.js";
   const path = join(projectRoot, "dist", filename);
   try {
     const headers: Record<string, string> = {
@@ -322,12 +330,28 @@ async function markdownAssetResponse(pathname: string) {
     relative = `content/releases/changelog/${locale}.md`;
   }
 
+  const exampleDocMatch = relative.match(/^examples\/([^/]+)\.md$/);
+  if (exampleDocMatch) {
+    relative = `content/examples/${exampleDocMatch[1]}/${locale}.md`;
+  }
+
   const path = join(siteRoot, relative);
   try {
     return new Response(await readFile(path, "utf-8"), {
       headers: { "content-type": contentType(path) },
     });
   } catch {
+    if (relative.startsWith("content/examples/") && !relative.endsWith("/zh-CN.md")) {
+      const fallback = relative.replace(/\/(en-US|zh-CN)\.md$/, "/zh-CN.md");
+      const fallbackPath = join(siteRoot, fallback);
+      try {
+        return new Response(await readFile(fallbackPath, "utf-8"), {
+          headers: { "content-type": contentType(fallbackPath) },
+        });
+      } catch {
+        return new Response("Not found", { status: 404 });
+      }
+    }
     if (locale !== sourceLocale) {
       const fallback = relative.replace(`/${locale}.md`, `/${sourceLocale}.md`);
       const fallbackPath = join(siteRoot, fallback);
@@ -348,6 +372,9 @@ function isAppRoute(pathname: string) {
   return (
     path === "/" ||
     path === "/index.html" ||
+    path === "/examples" ||
+    path === "/examples/" ||
+    path.startsWith("/examples/") ||
     path === "/docs" ||
     path === "/docs/" ||
     path.startsWith("/docs/") ||
@@ -385,6 +412,10 @@ Bun.serve({
   idleTimeout: 255,
   async fetch(request) {
     const url = new URL(request.url);
+    if (url.hostname === "0.0.0.0") {
+      url.hostname = "localhost";
+      return Response.redirect(url, 307);
+    }
 
     const legacyPath = legacyDocsPath(url.pathname);
     if (legacyPath) {
@@ -393,6 +424,7 @@ Bun.serve({
 
     if (enableLiveReload && url.pathname === "/__slexkit/reload") return liveReloadResponse();
     if (url.pathname === "/api/wiki-docs") return wikiDocsResponse();
+    if (url.pathname === "/api/examples-docs") return examplesDocsResponse();
     if (
       url.pathname === "/slexkit.js" ||
       url.pathname === "/dist/slexkit.js" ||
@@ -434,6 +466,7 @@ Bun.serve({
       url.pathname === "/llms-full.txt" ||
       url.pathname === "/llms-components.txt" ||
       url.pathname === "/llms-runtime.txt" ||
+      url.pathname === "/llms-capabilities.txt" ||
       url.pathname === "/llms-toolhost.txt" ||
       url.pathname === "/llms-authoring.txt" ||
       url.pathname === "/slexkit-ai-manifest.json"
@@ -458,5 +491,6 @@ Bun.serve({
 });
 
 if (enableLiveReload) watchRuntimeOutputs();
-const displayHost = hostname.includes(":") ? `[${hostname}]` : hostname;
+const browserHost = hostname === "0.0.0.0" ? "localhost" : hostname;
+const displayHost = browserHost.includes(":") ? `[${browserHost}]` : browserHost;
 console.log(`slexkit-site listening on http://${displayHost}:${port}`);

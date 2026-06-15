@@ -42,6 +42,7 @@ for (const file of [
   "llms-full.txt",
   "llms-components.txt",
   "llms-runtime.txt",
+  "llms-capabilities.txt",
   "llms-toolhost.txt",
   "llms-authoring.txt",
 ]) {

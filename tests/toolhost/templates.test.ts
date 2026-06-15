@@ -1,4 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
+import "../../tests/setup.ts";
 import { boot, mount } from "../../src/engine/index";
 import { renderToolCall, registerToolTemplate } from "../../src/toolhost/index";
 import type { ToolTemplateCompiler } from "../../src/toolhost/index";

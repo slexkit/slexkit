@@ -401,10 +401,13 @@
 }
 
 .slex-input-control {
+  position: relative;
   display: flex;
   align-items: stretch;
   width: 100%;
   min-width: 0;
+  border-radius: var(--radius);
+  transition: box-shadow 150ms ease;
 }
 
 .slex-input {
@@ -458,11 +461,11 @@
 .slex-input-controls {
   box-sizing: border-box;
   display: inline-grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
   align-items: stretch;
   flex: 0 0 auto;
-  width: 3.75rem;
-  min-width: 3.75rem;
+  width: 1.875rem;
+  min-width: 1.875rem;
   min-height: 2.5625rem;
   overflow: hidden;
   border: 1px solid var(--input);
@@ -479,15 +482,15 @@
   justify-content: center;
   width: 100%;
   min-width: 0;
-  min-height: 100%;
+  min-height: 0;
   padding: 0;
   border: 0;
-  border-left: 1px solid var(--input);
+  border-top: 1px solid var(--input);
   border-radius: 0;
   background: transparent;
   color: var(--foreground);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
@@ -495,7 +498,7 @@
 }
 
 .slex-input-step:first-child {
-  border-left: 0;
+  border-top: 0;
 }
 
 .slex-input-step:last-child {
@@ -508,9 +511,9 @@
 
 .slex-input-step:focus-visible {
   z-index: 1;
-  border-color: var(--ring);
   outline: none;
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+  background: color-mix(in oklab, var(--muted) 58%, var(--background));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ring) 34%, transparent);
 }
 
 .slex-input-step:disabled {
@@ -524,7 +527,7 @@
 
 .slex-input:focus {
   border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+  box-shadow: none;
 }
 
 .slex-input[type="number"] {
@@ -548,21 +551,21 @@
 
 .slex-input-field[data-invalid="true"] .slex-input:focus {
   border-color: var(--destructive);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+  box-shadow: none;
 }
 
-.slex-input-control:focus-within .slex-input-unit {
-  border-color: var(--ring);
+.slex-input-control:focus-within {
   box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+}
+
+.slex-input-control:focus-within .slex-input,
+.slex-input-control:focus-within .slex-input-unit,
+.slex-input-control:focus-within .slex-input-controls {
+  border-color: var(--ring);
 }
 
 .slex-input-control:focus-within .slex-input-step {
   border-color: var(--ring);
-}
-
-.slex-input-control:focus-within .slex-input-controls {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-unit {
@@ -578,18 +581,15 @@
   border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
 }
 
-.slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-unit {
-  border-color: var(--destructive);
+.slex-input-field[data-invalid="true"] .slex-input-control:focus-within {
   box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
 }
 
+.slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input,
+.slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-unit,
+.slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-controls,
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-step {
   border-color: var(--destructive);
-}
-
-.slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-controls {
-  border-color: var(--destructive);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
 }
 
 .slex-input[disabled] {

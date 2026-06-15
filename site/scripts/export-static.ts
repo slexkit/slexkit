@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { defaultLocale, sourceLocale, supportedLocales } from "../data/component-docs.js";
 import {
   discoverComponentMarkdown,
+  discoverExampleMarkdown,
   discoverGuideMarkdown,
   discoverReferenceMarkdown,
   discoverReleaseMarkdown,
@@ -83,11 +84,19 @@ async function copyReleaseMarkdown(locale: string, baseDir = localeOutDir(locale
   );
 }
 
+async function copyExampleMarkdown(locale: string, baseDir = localeOutDir(locale)) {
+  await writeMarkdownItems(
+    await discoverExampleMarkdown({ siteRoot, locale }),
+    join(baseDir, "examples"),
+  );
+}
+
 async function copyCanonicalMarkdown() {
   await copyGuideMarkdown(sourceLocale, outDir);
   await copyReferenceMarkdown(sourceLocale, outDir);
   await copyReleaseMarkdown(sourceLocale, outDir);
   await copyComponentMarkdown(sourceLocale, outDir);
+  await copyExampleMarkdown("zh-CN", outDir);
 }
 
 function routeOutputPath(routePath: string) {
@@ -111,11 +120,16 @@ export async function exportStaticSite() {
   await cp(join(projectRoot, "dist", "runtime.js"), join(outDir, "runtime.js"));
   await cp(join(projectRoot, "dist", "tooling.js"), join(outDir, "tooling.js"));
   await cp(join(projectRoot, "dist", "slexkit.css"), join(outDir, "slexkit.css"));
+  await mkdir(join(outDir, "dist"), { recursive: true });
+  await cp(join(projectRoot, "dist", "slexkit.css"), join(outDir, "dist", "slexkit.css"));
+  await writeFile(join(outDir, "slexkit.runtime.js"), 'export * from "./slexkit.js";\n', "utf-8");
+  await writeFile(join(outDir, "dist", "slexkit.runtime.js"), 'export * from "../slexkit.js";\n', "utf-8");
   for (const locale of supportedLocales) {
     await copyComponentMarkdown(locale);
     await copyGuideMarkdown(locale);
     await copyReferenceMarkdown(locale);
     await copyReleaseMarkdown(locale);
+    await copyExampleMarkdown(locale);
   }
   await copyCanonicalMarkdown();
   await cp(join(projectRoot, "README.md"), join(outDir, "README.md"));

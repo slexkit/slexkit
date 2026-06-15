@@ -137,7 +137,7 @@ describe("site dark mode", () => {
 
   it("keeps the global desktop navigation centered without overlapping actions", async () => {
     const html = await Bun.file("site/index.html").text();
-    const css = await Bun.file("site/styles/docs-shell.css").text();
+    const css = (await Bun.file("site/styles/docs-shell.css").text()).replace(/\r\n/g, "\n");
 
     expect(html).toContain("slex-site-nav");
     expect(html).toContain("slex-site-nav-brand");

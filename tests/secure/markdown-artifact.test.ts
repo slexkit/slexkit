@@ -140,6 +140,54 @@ describe("secure markdown artifact bridge", () => {
     });
 
 
+    it("keeps matching trusted namespaces isolated across markdown artifacts", () => {
+      const runtime = createSlexKitMarkdownRuntimeHost();
+      const firstState = document.createElement("div");
+      const secondState = document.createElement("div");
+      const first = setup();
+      const second = document.createElement("div");
+      document.body.appendChild(second);
+
+      runtime.mountBlock({
+        artifactId: "page-a",
+        container: firstState,
+        stateOnly: true,
+        source: `({ namespace: "shared", g: { saved: 1 } })`,
+      });
+      runtime.mountBlock({
+        artifactId: "page-a",
+        container: first,
+        source: `({ namespace: "shared", layout: { "text:value": { $text: "'a:' + g.saved" } } })`,
+      });
+      runtime.mountBlock({
+        artifactId: "page-b",
+        container: secondState,
+        stateOnly: true,
+        source: `({ namespace: "shared", g: { saved: 2 } })`,
+      });
+      runtime.mountBlock({
+        artifactId: "page-b",
+        container: second,
+        source: `({ namespace: "shared", layout: { "text:value": { $text: "'b:' + g.saved" } } })`,
+      });
+
+      expect(first.textContent).toContain("a:1");
+      expect(second.textContent).toContain("b:2");
+
+      runtime.disposeArtifact("page-a");
+      runtime.mountBlock({
+        artifactId: "page-a",
+        container: first,
+        source: `({ namespace: "shared", layout: { "text:value": { $text: "'a:' + String(g.saved)" } } })`,
+      });
+
+      expect(first.textContent).toContain("a:undefined");
+      expect(second.textContent).toContain("b:2");
+      runtime.disposeAll();
+      second.remove();
+    });
+
+
     it("uses one secure sandbox frame for all blocks in the same markdown artifact", () => {
       const runtime = createSlexKitMarkdownRuntimeHost({
         mode: "secure",
@@ -232,6 +280,85 @@ describe("secure markdown artifact bridge", () => {
 
       runtime.disposeArtifact("ordered-secure-doc");
       second.remove();
+    });
+
+
+    it("composes secure cross-document markdown fences with shared state", () => {
+      const runtime = createSlexKitMarkdownRuntimeHost({
+        mode: "secure",
+        policy,
+        secureFrame: {
+          runtimeUrl: "/dist/slexkit.runtime.js",
+          loadTimeoutMs: 0,
+        },
+      });
+      const start = setup();
+      const middle = document.createElement("div");
+      const end = document.createElement("div");
+      document.body.append(middle, end);
+      const posted: unknown[] = [];
+
+      runtime.mountBlock({
+        artifactId: "secure-cross-doc",
+        container: start,
+        source: `({
+          namespace: "cross",
+          g: {
+            confidence: 58,
+            reviewed: false,
+            score: function () { return this.confidence + (this.reviewed ? 22 : 0); },
+          },
+          layout: { "card:start": { "stat:score": { "$value": "g.score()" } } },
+        })`,
+      });
+      runtime.mountBlock({
+        artifactId: "secure-cross-doc",
+        container: middle,
+        source: `{
+          namespace: "cross",
+          layout: { "card:middle": { "checkbox:reviewed": { "$checked": "g.reviewed", "onchange": "g.reviewed = Boolean($event)" } } },
+        }`,
+      });
+      runtime.mountBlock({
+        artifactId: "secure-cross-doc",
+        container: end,
+        source: `({
+          namespace: "cross",
+          layout: { "card:end": { "stat:final": { "$value": "g.score()" } } },
+        })`,
+      });
+
+      const iframe = start.querySelector("iframe[data-slexkit-secure-frame='true']") as HTMLIFrameElement;
+      expect(iframe).toBeTruthy();
+      expect(middle.dataset.slexkitSecureArtifactSlot).toBe("true");
+      expect(end.dataset.slexkitSecureArtifactSlot).toBe("true");
+      expect(document.querySelectorAll("iframe[data-slexkit-secure-frame='true']")).toHaveLength(1);
+
+      Object.defineProperty(iframe.contentWindow, "postMessage", {
+        configurable: true,
+        value: (message: unknown) => posted.push(message),
+      });
+      const readyEvent = new window.MessageEvent("message", {
+        data: { channel: "slexkit-secure", type: "ready" },
+      });
+      Object.defineProperty(readyEvent, "source", {
+        configurable: true,
+        value: iframe.contentWindow,
+      });
+      window.dispatchEvent(readyEvent);
+
+      const mountMessage = posted.find((message) =>
+        !!message && typeof message === "object" && (message as { type?: unknown }).type === "mount"
+      ) as { input: string };
+      const composed = (0, eval)(mountMessage.input) as { namespace: string; g: Record<string, unknown>; layout: Record<string, Record<string, unknown>> };
+      expect(composed.namespace).toBe("secure-cross-doc::cross");
+      expect(composed.g.confidence).toBe(58);
+      expect(typeof composed.g.score).toBe("function");
+      expect(Object.keys(composed.layout["column:artifact"])).toEqual(["column:block_0", "column:block_1", "column:block_2"]);
+
+      runtime.disposeArtifact("secure-cross-doc");
+      middle.remove();
+      end.remove();
     });
 
 

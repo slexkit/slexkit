@@ -27,9 +27,9 @@ The server exposes three read-only tools:
 
 | Tool | Purpose |
 |------|---------|
-| `slexkitDocs` | Search or fetch generated Markdown docs, including runtime, security, package, ToolHost, and component pages. |
-| `slexkitExamples` | Return component examples or generated templates such as `status`, `calculator`, `toolhost-form`, and `host-integration`. |
-| `slexkitValidate` | Parse Slex source and return diagnostics plus detected component usage. |
+| `slexkitDocs` | Search or fetch generated Markdown docs, optionally including `std.*` and `api.*` capability metadata. |
+| `slexkitExamples` | Return component examples or generated templates such as `status`, `calculator`, `stdlib-calculator`, `secure-network-card`, `toolhost-form`, and `host-integration`. |
+| `slexkitValidate` | Parse Slex source and return diagnostics, warnings, component usage, `std.*` usage, and `api.*` usage. |
 
 Example validation request:
 

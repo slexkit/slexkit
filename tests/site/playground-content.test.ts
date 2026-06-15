@@ -89,7 +89,7 @@ describe("site playground markdown renderer", () => {
     expect(css).toContain(".slex-home-playground .slex-playground-live-pane");
     expect(css).toContain(".slex-home-playground .slex-playground-live-code");
     expect(css).toContain("width: min(100%, 72rem)");
-    expect(css).toContain(".slex-home-playground .slex-playground-preview-pane {\n  overflow: visible;");
+    expect(css.replaceAll("\r\n", "\n")).toContain(".slex-home-playground .slex-playground-preview-pane {\n  overflow: visible;");
     expect(css).not.toContain("height: min(78svh, 48rem)");
     expect(css).not.toContain("height: 80svh");
     expect(homeRoute).toContain("function mountHomePlayground(root)");
@@ -193,8 +193,11 @@ describe("site playground markdown renderer", () => {
     const headings = await Bun.file("site/markdown/headings.js").text();
     const runtimeLoader = await Bun.file("site/markdown/runtime-loader.js").text();
     const siteBuild = await Bun.file("site/scripts/build.ts").text();
+    const staticExport = await Bun.file("site/scripts/export-static.ts").text();
 
     expect(renderer).toContain("mount(MarkdownRenderer");
+    expect(renderer).toContain("createSlexKitMarkdownRuntimeHost");
+    expect(renderer).toContain("runtimeHost.disposeArtifact(domain)");
     expect(renderer).not.toContain("createRoot");
     expect(markdownComponent).toContain("@humanspeak/svelte-markdown");
     expect(markdownComponent).toContain("normalizeHeadingAnchors(content)");
@@ -207,6 +210,7 @@ describe("site playground markdown renderer", () => {
     expect(slexkitRenderer).toContain("slex-doc-slexkit-demo--playground");
     expect(slexkitRenderer).toContain('sourceType: "slex"');
     expect(slexkitRenderer).toContain("mountSecureArtifact");
+    expect(slexkitRenderer).toContain("activeRuntimeHost.mountBlock");
     expect(slexkitRenderer).toContain("getSlexKitMarkdownRuntimeHost");
     expect(slexkitRenderer).toContain("HighlightedMarkdownCode");
     expect(highlightedCode).toContain("svelte-highlight");
@@ -217,9 +221,34 @@ describe("site playground markdown renderer", () => {
     expect(slexkitRenderer).not.toMatch(/^\s*import\s+(?!type)[^;]*from "slexkit";/m);
     expect(runtimeLoader).toContain('"/slexkit.js"');
     expect(runtimeLoader).toContain("import(runtimeUrl)");
+    expect(staticExport).toContain('join(outDir, "dist", "slexkit.runtime.js")');
+    expect(staticExport).toContain('export * from "../slexkit.js"');
     expect(slexkitRenderer).not.toContain("import Playground");
     expect(renderer).not.toContain("React.createElement");
     expect(renderer).not.toContain("slex-doc-playground-frame");
+  });
+
+  it("exposes raw docs markdown through the shared rail Live mode action", async () => {
+    const docsShell = await Bun.file("site/components/DocsShell.svelte").text();
+    const docRail = await Bun.file("site/components/navigation/DocRail.svelte").text();
+    const routeExamples = await Bun.file("site/routes/examples.js").text();
+    const siteIcons = await Bun.file("site/app/icons.js").text();
+    const docsPage = createDocsPage({ playgroundHrefBase: "/slexkit/playground.html" });
+    const examplesPage = await Bun.file("site/pages/examples.slex.js").text();
+
+    expect(docsPage.g.playgroundHrefBase).toBe("/slexkit/playground.html");
+    expect(examplesPage).toContain("$playgroundHrefBase");
+    expect(docsShell).toContain("function playgroundHref(doc: DocItem)");
+    expect(docsShell).toContain('mode: "live"');
+    expect(docsShell).toContain('type: "markdown"');
+    expect(docsShell).toContain('src: href');
+    expect(docRail).toContain("p.playgroundHref ?? p.liveHref");
+    expect(docRail).toContain("以 Live 模式打开");
+    expect(routeExamples).toContain('runtimeUrl: withSiteBase("/slexkit.js")');
+    expect(routeExamples).not.toContain("/dist/slexkit.runtime.js");
+    expect(routeExamples).toContain("return examples[0] ?? null");
+    expect(routeExamples).not.toContain("data:text/markdown;charset=utf-8");
+    expect(siteIcons).toContain('"square-split-horizontal": SquareSplitHorizontalRegular');
   });
 
   it("keeps component-mode markdown Slex fences unframed", async () => {

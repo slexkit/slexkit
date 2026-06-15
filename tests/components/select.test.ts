@@ -84,6 +84,46 @@ describe("select component", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 
+  it("does not require native requestAnimationFrame to close after selection", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const originalRaf = window.requestAnimationFrame;
+    window.requestAnimationFrame = (() => {
+      throw new Error("Native raf is disabled inside the SlexKit sandbox.");
+    }) as typeof requestAnimationFrame;
+
+    try {
+      mount(
+        {
+          namespace: uniqueNamespace("sel_no_native_raf"),
+          g: { val: "a" },
+          layout: {
+            "select:sel": {
+              $value: "g.val",
+              onchange: "g.val = $event",
+              options: [
+                { label: "Option A", value: "a" },
+                { label: "Option B", value: "b" },
+              ],
+            },
+          },
+        },
+        document.getElementById("app")!,
+      );
+      const root = document.querySelector(".slex-select")!;
+      const trigger = root.querySelector(".slex-select-trigger") as HTMLButtonElement;
+      trigger.click();
+      await sleep();
+      expect(() => {
+        (Array.from(root.querySelectorAll('[role="option"]')).find((node) => node.textContent?.includes("Option B")) as HTMLElement).click();
+      }).not.toThrow();
+      await sleep();
+      expect(trigger.getAttribute("aria-expanded")).toBe("false");
+      expect(root.querySelector("select")!.value).toBe("b");
+    } finally {
+      window.requestAnimationFrame = originalRaf;
+    }
+  });
+
   it("supports keyboard open, navigation, select, and escape", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const emitted: unknown[] = [];

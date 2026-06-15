@@ -8,6 +8,7 @@ import { codeBlockSpec } from "./code-block.spec";
 import { collapsibleSpec } from "./collapsible.spec";
 import { columnSpec } from "./column.spec";
 import { dividerSpec } from "./divider.spec";
+import { formulaSpec } from "./formula.spec";
 import { gridSpec } from "./grid.spec";
 import { iconSpec } from "./icon.spec";
 import { inputSpec } from "./input.spec";
@@ -38,6 +39,7 @@ export const componentSpecs = [
   collapsibleSpec,
   columnSpec,
   dividerSpec,
+  formulaSpec,
   gridSpec,
   iconSpec,
   inputSpec,

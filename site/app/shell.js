@@ -21,6 +21,7 @@ export function createSiteShell({
   docHrefForPath,
   currentLocale,
   isDocsRoute,
+  isExamplesRoute,
   localizedPath,
   navHref,
   renderRoute,
@@ -81,6 +82,10 @@ export function createSiteShell({
         link.href = navHref("/docs/guides/intro");
         link.textContent = labels.navIntro;
       }
+      if (section === "examples") {
+        link.href = navHref("/examples");
+        link.textContent = labels.navExamples || "Examples";
+      }
       if (section === "components") {
         link.href = navHref("/components");
         link.textContent = labels.navComponents;
@@ -91,6 +96,7 @@ export function createSiteShell({
       if (!(link instanceof HTMLAnchorElement)) continue;
       const target = link.dataset.footerLink;
       if (target === "docs") link.href = navHref("/docs/guides/intro");
+      if (target === "examples") link.href = navHref("/examples");
       if (target === "components") link.href = navHref("/docs/components/accordion");
       if (target === "changelog") link.href = navHref("/docs/releases/changelog");
     }
@@ -98,17 +104,20 @@ export function createSiteShell({
 
   function setActiveRoute() {
     const docsRoute = isDocsRoute();
+    const examplesRoute = isExamplesRoute();
     const route = docsRoute ? docHrefForPath() : "";
     const routeWithoutLocale = localizedPath(route).path;
     for (const link of navLinks) {
       const section = link.dataset.navSection;
-      const active = docsRoute && (
-        section === "components"
-          ? routeWithoutLocale.startsWith("/docs/components/")
-          : section === "guides"
-            ? routeWithoutLocale.startsWith("/docs/guides/")
-            : routePath(new URL(link.href, window.location.origin).pathname) === route
-      );
+      const active = examplesRoute
+        ? section === "examples"
+        : docsRoute && (
+          section === "components"
+            ? routeWithoutLocale.startsWith("/docs/components/")
+            : section === "guides"
+              ? routeWithoutLocale.startsWith("/docs/guides/")
+              : routePath(new URL(link.href, window.location.origin).pathname) === route
+        );
       link.classList.toggle("text-foreground", active);
       link.classList.toggle("font-medium", active);
       link.classList.toggle("text-muted-foreground", !active);

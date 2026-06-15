@@ -47,6 +47,7 @@
       docsLabel: text(next.docsLabel, "\u6587\u6863"),
       copyPage: text(next.copyPage, "\u590d\u5236\u9875\u9762"),
       viewMarkdown: text(next.viewMarkdown, "\u67e5\u770b Markdown"),
+      openLive: text(next.openLive ?? next.openLiveLabel, "\u4ee5 Live \u6a21\u5f0f\u6253\u5f00"),
       copiedPage: text(next.copiedPage, "\u5df2\u590d\u5236\u9875\u9762"),
       copyFailed: text(next.copyFailed, "\u590d\u5236\u5931\u8d25"),
       openDocsNavigation: text(next.openDocsNavigation, "\u6253\u5f00\u6587\u6863\u5bfc\u822a"),
@@ -57,9 +58,25 @@
   }
 
   function markdownHref(doc: DocItem) {
+    if (doc.markdownHref === false) return "";
     const explicitHref = text(doc.markdownHref ?? p.markdownHref);
     if (explicitHref) return explicitHref;
     return `${text(doc.href, "/docs")}.md`;
+  }
+
+  function playgroundHref(doc: DocItem) {
+    const explicitHref = text(doc.playgroundHref ?? doc.liveHref);
+    if (explicitHref) return explicitHref;
+
+    const href = markdownHref(doc);
+    if (!href) return "";
+    const params = new URLSearchParams({
+      mode: "live",
+      type: "markdown",
+      src: href,
+    });
+    const base = text(p.playgroundHrefBase ?? p.playgroundBaseHref, "/playground.html");
+    return `${base}?${params.toString()}`;
   }
 
   function slugId(prefix: string, label: string) {
@@ -305,9 +322,16 @@
                 </button>
                 <span class="slex-doc-detail-copy-feedback" data-state={copyFeedbackState} aria-live="polite">{copyFeedback}</span>
               </span>
-              <a class="slex-doc-detail-action" title={labels().viewMarkdown} href={markdownHref(doc)} target="_blank" rel="noreferrer">
-                <span class="slex-doc-detail-action-icon" aria-hidden="true">{@html getPhosphorIcon("markdown-logo")}</span>Markdown
-              </a>
+              {#if markdownHref(doc)}
+                <a class="slex-doc-detail-action" title={labels().viewMarkdown} href={markdownHref(doc)} target="_blank" rel="noreferrer">
+                  <span class="slex-doc-detail-action-icon" aria-hidden="true">{@html getPhosphorIcon("markdown-logo")}</span>Markdown
+                </a>
+              {/if}
+              {#if playgroundHref(doc)}
+                <a class="slex-doc-detail-action" title={labels().openLive} href={playgroundHref(doc)} target="_blank" rel="noreferrer">
+                  <span class="slex-doc-detail-action-icon" aria-hidden="true">{@html getPhosphorIcon("square-split-horizontal")}</span>{labels().openLive}
+                </a>
+              {/if}
             </div>
           </div>
           <div class="slex-doc-prose">{@html text(doc.bodyHtml ?? doc.html)}</div>
@@ -323,11 +347,13 @@
     {@const railProps = {
       items: doc.toc,
       markdownHref: markdownHref(doc),
+      playgroundHref: playgroundHref(doc),
       label: labels().onThisPage,
       ariaLabel: labels().onThisPageAria,
       actionsLabel: labels().docsLabel,
       copyLabel: labels().copyPage,
       viewMarkdownLabel: labels().viewMarkdown,
+      openLiveLabel: labels().openLive,
       markdownLabel: "Markdown",
       copyFeedback,
       copyFeedbackState,

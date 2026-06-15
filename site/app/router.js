@@ -60,11 +60,19 @@ export function isDocsRoute(pathname = window.location.pathname) {
   return path === "/docs" || path === "/docs/" || path.startsWith("/docs/");
 }
 
+export function isExamplesRoute(pathname = window.location.pathname) {
+  const path = localizedPath(pathname).path;
+  return path === "/examples" || path === "/examples/" || path.startsWith("/examples/");
+}
+
 export function isSiteRoute(pathname) {
   const internalPath = localizedPath(pathname).path;
   if (internalPath.endsWith(".md")) return false;
   return (
     internalPath === "/" ||
+    internalPath === "/examples" ||
+    internalPath === "/examples/" ||
+    internalPath.startsWith("/examples/") ||
     internalPath === "/docs" ||
     internalPath === "/docs/" ||
     internalPath.startsWith("/docs/") ||
@@ -78,6 +86,13 @@ export function docHrefForPath(pathname = window.location.pathname) {
   const localized = localizedPath(pathname);
   const path = localized.path.replace(/\/$/, "");
   if (path === "/docs" || path === "") return withLocalePath("/docs/guides/intro", localized.locale);
+  return withLocalePath(path, localized.locale);
+}
+
+export function exampleHrefForPath(pathname = window.location.pathname) {
+  const localized = localizedPath(pathname);
+  const path = localized.path.replace(/\/$/, "") || "/examples";
+  if (path === "/examples") return withLocalePath("/examples", localized.locale);
   return withLocalePath(path, localized.locale);
 }
 
@@ -104,6 +119,7 @@ export function createSiteRouter({
   closeLanguageMenu,
   closeMobileNav,
   renderDocs,
+  renderExamples,
   renderHome,
   scrollToTarget,
   setActiveRoute,
@@ -115,7 +131,11 @@ export function createSiteRouter({
   async function renderRoute({ scroll = true } = {}) {
     closeMobileNav();
     syncLanguageControls();
-    const nextRouteKey = isDocsRoute() ? `docs:${docHrefForPath()}` : `home:${currentLocale()}`;
+    const nextRouteKey = isDocsRoute()
+      ? `docs:${docHrefForPath()}`
+      : isExamplesRoute()
+        ? `examples:${exampleHrefForPath()}`
+        : `home:${currentLocale()}`;
     setActiveRoute();
     if (nextRouteKey === currentRouteKey) {
       syncPageTocNavigation(window.location.hash);
@@ -125,6 +145,7 @@ export function createSiteRouter({
     currentRouteKey = nextRouteKey;
 
     if (isDocsRoute()) await renderDocs();
+    else if (isExamplesRoute()) await renderExamples();
     else renderHome();
 
     if (!scroll) return;

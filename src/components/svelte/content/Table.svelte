@@ -31,7 +31,7 @@
       {#each rows(p.rows ?? p.items) as row}
         <tr>
           {#if readColumns(p.columns).length}
-            {#each readColumns(p.columns) as column}<td>{readCell(row, column)}</td>{/each}
+            {#each readColumns(p.columns) as column, index}<td>{readCell(row, column, index)}</td>{/each}
           {:else if Array.isArray(row)}
             {#each row as cell}<td>{text(cell)}</td>{/each}
           {:else}

@@ -57,6 +57,68 @@ describe("content components", () => {
     expect(document.querySelectorAll(".slex-table tbody tr")).toHaveLength(2);
   });
 
+  it("renders array rows when columns are provided", () => {
+    document.body.innerHTML = '<div id="app"></div>';
+
+    mount(
+      {
+        namespace: unique("table_arrays"),
+        layout: {
+          "table:evidence": {
+            columns: ["来源", "命中点", "用途"],
+            rows: [
+              ["security.md", "sandbox iframe", "运行边界"],
+              ["integration.md", "runtime host", "宿主接入"],
+            ],
+          },
+        },
+      },
+      document.getElementById("app")!,
+    );
+
+    const table = document.querySelector(".slex-table") as HTMLElement;
+    expect(table.textContent).toContain("security.md");
+    expect(table.textContent).toContain("runtime host");
+    expect(table.querySelectorAll("tbody td")).toHaveLength(6);
+  });
+
+  it("renders SlexKit state through KaTeX formulas", () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const namespace = unique("formula");
+
+    mount(
+      {
+        namespace,
+        g: { energy: 42 },
+        layout: {
+          "formula:energy": {
+            $tex: "'E = ' + g.energy + '\\\\text{ J}'",
+          },
+        },
+      },
+      document.getElementById("app")!,
+    );
+
+    const formula = document.querySelector(".slex-formula") as HTMLElement;
+    expect(formula.querySelector(".katex")).toBeTruthy();
+    expect(formula.textContent?.replace(/\s+/g, "")).toContain("E=42J");
+
+    mount(
+      {
+        namespace,
+        g: { energy: 84 },
+        layout: {
+          "formula:energy": {
+            $tex: "'E = ' + g.energy + '\\\\text{ J}'",
+          },
+        },
+      },
+      document.getElementById("app")!,
+    );
+
+    expect(document.querySelector(".slex-formula")?.textContent?.replace(/\s+/g, "")).toContain("E=84J");
+  });
+
   it("highlights code block content for supported languages", () => {
     document.body.innerHTML = '<div id="app"></div>';
 
@@ -202,6 +264,9 @@ describe("content components", () => {
     const css = await Bun.file("src/styles/content.css").text();
     const calloutCss = css.slice(css.indexOf(".slex-callout {"), css.indexOf(".slex-code-block {"));
     expect(calloutCss).toContain("background: transparent;");
+    expect(calloutCss).toContain("box-sizing: border-box;");
+    expect(calloutCss).toContain("width: 100%;");
+    expect(calloutCss).toContain("max-width: none;");
     expect(calloutCss).not.toContain("color-mix(in oklab, var(--success)");
   });
 

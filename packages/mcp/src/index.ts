@@ -2,7 +2,7 @@
 import { createInterface } from "node:readline";
 import { readFile } from "node:fs/promises";
 
-import { parseSlexSource } from "slexkit/runtime";
+import { parseSlexSource, validateSlexSource } from "slexkit/runtime";
 
 type JsonRpcRequest = {
   jsonrpc?: "2.0";
@@ -30,6 +30,9 @@ type Manifest = {
     sourcePath: string;
     body: string;
   }>;
+  expressionContext: unknown;
+  stdlib: unknown;
+  capabilities: unknown;
   components: Array<{
     type: string;
     title: string;
@@ -62,6 +65,10 @@ function stringArg(args: Record<string, unknown>, key: string): string {
 function optionalStringArg(args: Record<string, unknown>, key: string): string | undefined {
   const value = args[key];
   return typeof value === "string" && value ? value : undefined;
+}
+
+function booleanArg(args: Record<string, unknown>, key: string): boolean {
+  return args[key] === true;
 }
 
 function jsonSchema(properties: Record<string, unknown>, required: string[] = []): Record<string, unknown> {
@@ -109,28 +116,61 @@ function searchPages(args: Record<string, unknown>) {
     .map(({ body: _body, ...page }) => page);
 }
 
-function collectComponentUsage(value: unknown, found = new Set<string>()): string[] {
-  if (!value || typeof value !== "object") return [...found].sort();
-  for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
-    const colon = key.indexOf(":");
-    if (colon > 0) found.add(key.slice(0, colon));
-    collectComponentUsage(child, found);
-  }
-  return [...found].sort();
-}
-
 function sourceFromTemplate(template: string): string {
   if (template === "calculator") {
     return `{
   slex: "0.1",
   namespace: "calculator",
-  g: { a: 10, b: 5 },
+  g: { a: 10, b: 5, samples: [10, 5, 20] },
   layout: {
     "card:calc": {
       title: "Calculator",
       "input:a": { label: "A", "$value": "String(g.a)", onchange: "g.a = Number($event || 0)" },
       "input:b": { label: "B", "$value": "String(g.b)", onchange: "g.b = Number($event || 0)" },
-      "stat:sum": { label: "Sum", "$value": "g.a + g.b" }
+      "stat:sum": { label: "Sum", "$value": "std.math.round(g.a + g.b, 2)" },
+      "stat:mean": { label: "Mean", "$value": "std.format.fixed(std.stats.mean(g.samples), 1)" }
+    }
+  }
+}`;
+  }
+
+  if (template === "stdlib-calculator") {
+    return `{
+  slex: "0.1",
+  namespace: "stdlib_calculator",
+  g: { done: 7, total: 12, payloadBytes: 1536000, latency: [120, 95, 143, 110] },
+  layout: {
+    "card:std": {
+      title: "Stdlib calculator",
+      "stat:progress": { label: "Progress", "$value": "std.format.percent(std.math.safeDivide(g.done, g.total), 1)" },
+      "stat:average": { label: "Avg latency", "$value": "std.format.fixed(std.stats.mean(g.latency), 1)", unit: "ms" },
+      "stat:payload": { label: "Payload", "$value": "std.units.bytes(g.payloadBytes)" }
+    }
+  }
+}`;
+  }
+
+  if (template === "secure-network-card") {
+    return `{
+  slex: "0.1",
+  namespace: "secure_network_card",
+  g: {
+    status: "idle",
+    async load() {
+      this.status = "loading";
+      try {
+        var result = await api.get("https://api.example.com/status", { credentials: "omit" });
+        this.status = "HTTP " + result.status;
+      } catch (error) {
+        this.status = api.isPolicyError(error) ? "blocked by policy" : api.errorMessage(error);
+      }
+    }
+  },
+  layout: {
+    "card:network": {
+      title: "Secure network card",
+      "button:load": { label: "Load", onclick: "g.load()" },
+      "text:status": { "$text": "g.status" }
     }
   }
 }`;
@@ -192,11 +232,19 @@ const tools: ToolDefinition[] = [
       group: { type: "string", description: "Optional group filter: Guides, Components, Runtime, ToolHost, Security, Packages, Icons." },
       slug: { type: "string", description: "Optional page id or slug to fetch, such as components/card or card." },
       url: { type: "string", description: "Optional href or raw .md URL to fetch." },
+      includeCapabilities: { type: "boolean", description: "When true, include expression context, stdlib, and api capability summaries." },
     }),
     handler(args) {
+      const capabilities = booleanArg(args, "includeCapabilities")
+        ? {
+            expressionContext: manifest.expressionContext,
+            stdlib: manifest.stdlib,
+            capabilities: manifest.capabilities,
+          }
+        : undefined;
       const page = findPage(args);
-      if (page) return { version: manifest.version, page };
-      return { version: manifest.version, pages: searchPages(args) };
+      if (page) return { version: manifest.version, page, capabilities };
+      return { version: manifest.version, pages: searchPages(args), capabilities };
     },
   },
   {
@@ -204,7 +252,7 @@ const tools: ToolDefinition[] = [
     description: "Browse SlexKit component examples, ToolHost examples, and host integration snippets.",
     inputSchema: jsonSchema({
       type: { type: "string", description: "Optional component type, such as card, input, stat, or submit." },
-      template: { type: "string", enum: ["status", "calculator", "toolhost-form", "host-integration"], description: "Optional generated example template." },
+      template: { type: "string", enum: ["status", "calculator", "stdlib-calculator", "secure-network-card", "toolhost-form", "host-integration"], description: "Optional generated example template." },
     }),
     handler(args) {
       const template = optionalStringArg(args, "template");
@@ -241,17 +289,10 @@ const tools: ToolDefinition[] = [
     inputSchema: jsonSchema({ source: { type: "string", description: "Slex object literal source." } }, ["source"]),
     handler(args) {
       const source = stringArg(args, "source");
-      const parsed = parseSlexSource(source);
-      if (!parsed.ok) {
-        return {
-          ok: false,
-          diagnostic: parsed.diagnostic,
-        };
-      }
-      return {
-        ok: true,
-        componentUsage: collectComponentUsage(parsed.value),
-      };
+      const validation = validateSlexSource(source, { mode: "secure" });
+      if (!validation.ok) return validation;
+      const { value: _value, ...result } = validation;
+      return result;
     },
   },
 ];

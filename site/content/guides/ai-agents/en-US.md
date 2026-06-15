@@ -23,6 +23,7 @@ SlexKit follows the assistant-ui information architecture: a clear index, a full
       "link:full": { href: "/llms-full.txt", text: "/llms-full.txt - full English context", icon: "book-open-text" },
       "link:components": { href: "/llms-components.txt", text: "/llms-components.txt - components and API", icon: "puzzle-piece" },
       "link:runtime": { href: "/llms-runtime.txt", text: "/llms-runtime.txt - runtime and host integration", icon: "cpu" },
+      "link:capabilities": { href: "/llms-capabilities.txt", text: "/llms-capabilities.txt - std and api capabilities", icon: "function" },
       "link:toolhost": { href: "/llms-toolhost.txt", text: "/llms-toolhost.txt - structured input", icon: "cursor-click" },
       "link:authoring": { href: "/llms-authoring.txt", text: "/llms-authoring.txt - slex fence authoring rules", icon: "pencil-simple" },
       "link:manifest": { href: "/slexkit-ai-manifest.json", text: "/slexkit-ai-manifest.json - machine-readable index", icon: "brackets-curly" },
@@ -37,8 +38,9 @@ Minimal reading path:
 1. Start with [`/llms.txt`](/llms.txt) for the grouped index.
 2. Use [`/llms-full.txt`](/llms-full.txt) when the agent needs broad context.
 3. Use [`/llms-components.txt`](/llms-components.txt) and raw component `.md` pages when authoring UI.
-4. Use [`/llms-runtime.txt`](/llms-runtime.txt) for host and secure runtime integration.
-5. Use [`/llms-toolhost.txt`](/llms-toolhost.txt) only when user input must return structured data to the host.
+4. Use [`/llms-capabilities.txt`](/llms-capabilities.txt) for `std.*` and policy-gated `api.*`.
+5. Use [`/llms-runtime.txt`](/llms-runtime.txt) for host and secure runtime integration.
+6. Use [`/llms-toolhost.txt`](/llms-toolhost.txt) only when user input must return structured data to the host.
 
 SlexKit raw docs are ordinary `.md` pages with explicit `slex` fences. There is no `.mdx` route — `slex` fences are the interactive layer.
 
@@ -56,6 +58,7 @@ Documentation: https://slexkit.dev/llms-full.txt
 Key patterns:
 - Display UI uses explicit `slex` fenced blocks plus Markdown fallback.
 - Slex source uses `{ slex, namespace, g, layout }`; use `slex: "0.1"` for the current public protocol.
+- Use `std.*` for common calculations, formatting, units, and small statistics.
 - ToolHost is only for structured user input flows.
 - Untrusted or agent-generated source should use the secure runtime.
 - Raw docs are `.md` files with `slex` fences, not `.mdx`.

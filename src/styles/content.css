@@ -81,6 +81,7 @@
   width: fit-content;
   min-height: 1.5rem;
   align-items: center;
+  align-self: start;
   gap: 0.25rem;
   border: 1px solid color-mix(in oklab, var(--border) 88%, transparent);
   border-radius: calc(var(--radius) - 2px);
@@ -170,12 +171,34 @@
   font-weight: 500;
 }
 
+.slex-formula {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  color: var(--foreground);
+}
+
+.slex-formula[data-display="block"] {
+  display: block;
+  margin: 0.25rem 0;
+}
+
+.slex-formula[data-display="inline"] {
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
 .slex-callout {
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: 0.25rem minmax(0, 1fr);
   align-items: stretch;
   gap: 0.75rem;
   width: 100%;
+  max-width: none;
   min-height: 4rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);

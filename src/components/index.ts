@@ -25,6 +25,7 @@ import Badge from "./svelte/content/Badge.svelte";
 import Callout from "./svelte/content/Callout.svelte";
 import CodeBlock from "./svelte/content/CodeBlock.svelte";
 import Divider from "./svelte/content/Divider.svelte";
+import Formula from "./svelte/content/Formula.svelte";
 import Link from "./svelte/content/Link.svelte";
 import Table from "./svelte/content/Table.svelte";
 import Section from "./svelte/content/Section.svelte";
@@ -53,6 +54,7 @@ const runtimeComponents = {
   callout: Callout,
   "code-block": CodeBlock,
   divider: Divider,
+  formula: Formula,
   link: Link,
   table: Table,
   section: Section,
@@ -73,6 +75,7 @@ const componentStateModes: Record<string, ComponentStateMode> = {
   callout: "readable",
   "code-block": "readable",
   divider: "readable",
+  formula: "readable",
   link: "readable",
   table: "readable",
   section: "readable",

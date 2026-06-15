@@ -10,6 +10,8 @@ import {
 } from "../../site/data/component-docs.js";
 import { sourceLocale, supportedLocales } from "../../site/data/locales.js";
 import { discoverGuideMarkdown, discoverReferenceMarkdown, discoverReleaseMarkdown } from "../../site/data/content-discovery.js";
+import { discoverExampleMarkdown } from "../../site/data/content-discovery.js";
+import { loadExampleDocs } from "../../site/data/examples.js";
 import { normalizeHeadingAnchors } from "../../site/markdown/headings.js";
 import { localizedComponentSpec, specApiHash, specExampleHash } from "../../site/data/spec-docs.js";
 import {
@@ -22,6 +24,8 @@ import { createPage as createDocsPage } from "../../site/pages/docs.slex.js";
 import { createDocsPage as createDocsVmPage } from "../../site/routes/docs-page.js";
 import { normalizeRoutePath } from "../../site/app/site-routes.js";
 import { normalizeSiteBase, stripSiteBase, withSiteBase } from "../../site/app/site-base.js";
+import { parseSlexSource } from "../../src/engine/diagnostics";
+import { componentTitleForLocale } from "../../site/data/doc-metadata.js";
 
 function parseGeneratedSpecAttrs(markdown: string, kind: "spec-api" | "spec-example", component: string) {
   const pattern = new RegExp(`<!--\\s*slex:${kind}:start\\s+([^>]*)-->`, "g");
@@ -133,6 +137,11 @@ slexkitRenderMode: playground
     expect(defaultGuide.slexkitRenderMode).toBe("playground");
     expect(componentGuide.slexkitRenderMode).toBe("component");
     expect(playgroundComponent.slexkitRenderMode).toBe("playground");
+  });
+
+  it("keeps component navigation titles localized", () => {
+    expect(componentTitleForLocale("formula", "Formula", "zh-CN")).toBe("Formula 公式");
+    expect(componentTitleForLocale("formula", "Formula 公式", "en-US")).toBe("Formula");
   });
 
   it("keeps the page toc aligned with rendered markdown heading anchors", () => {
@@ -360,6 +369,37 @@ order: 1
     expect(changelogDoc?.markdownHref).toBe(
       changelogDoc?.contentLocale === "zh-CN" ? "/zh-CN/docs/releases/changelog.md" : "/docs/releases/changelog.md",
     );
+  });
+
+  it("discovers examples with Chinese source fallback and parseable Slex fences", async () => {
+    const items = [
+      ...(await discoverExampleMarkdown({ siteRoot: "site", locale: "zh-CN" })),
+      ...(await discoverExampleMarkdown({ siteRoot: "site", locale: "en-US" })),
+    ];
+    const zhExamples = loadExampleDocs({ markdownItems: items, locale: "zh-CN" });
+    const enExamples = loadExampleDocs({ markdownItems: items, locale: "en-US" });
+    const featured = zhExamples.filter((example) => example.featured);
+
+    expect(zhExamples).toHaveLength(17);
+    expect(enExamples).toHaveLength(17);
+    expect(featured).toHaveLength(17);
+    expect(zhExamples.map((example) => example.category)).toContain("配置向导");
+    expect(zhExamples.every((example) => example.slexkitRenderMode === "component" || example.slexkitRenderMode === "dialog")).toBe(true);
+
+    const forbiddenPlaceholderPhrases = ["骨架示例", "示例完整度", "后续可以扩展成完整教程"];
+    for (const example of zhExamples) {
+      for (const phrase of forbiddenPlaceholderPhrases) {
+        expect(example.markdown.includes(phrase), `${example.slug} contains ${phrase}`).toBe(false);
+      }
+
+      if (example.slexkitRenderMode === "dialog") continue;
+      const fences = Array.from(example.markdown.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
+      expect(fences.length, example.slug).toBeGreaterThan(0);
+      for (const fence of fences) {
+        const parsed = parseSlexSource(fence);
+        expect(parsed.ok, `${example.slug}\n${fence}`).toBe(true);
+      }
+    }
   });
 
   it("marks locale fallback and stale translated spec blocks", async () => {

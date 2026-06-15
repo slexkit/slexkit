@@ -134,6 +134,7 @@ export type SecureFrameOptions = {
   sandbox?: string;
   unsafeAllowSameOrigin?: boolean;
   runtimeUrl?: string;
+  styleUrl?: string | false;
   loadTimeoutMs?: number;
   /**
    * @deprecated Use runtimeUrl. The runner is now shipped inside the main SlexKit runtime module.
@@ -216,6 +217,14 @@ export type SandboxSlotSizeMessage = {
   height: number;
 };
 
+export type SandboxFrameSizeMessage = {
+  channel: "slexkit-secure";
+  type: "frame-size";
+  id: string;
+  token: string;
+  height: number;
+};
+
 export type SandboxStatusMessage = {
   channel: "slexkit-secure";
   type: "ready" | "mounted" | "heartbeat" | "disposed" | "error";
@@ -232,6 +241,7 @@ export type SandboxHostMessage =
 
 export type SandboxRunnerMessage =
   | SandboxFetchRequestMessage
+  | SandboxFrameSizeMessage
   | SandboxSlotSizeMessage
   | SandboxStatusMessage;
 
@@ -274,6 +284,12 @@ function currentOrigin(): string {
 }
 
 function resolveUrl(url: string): URL {
+  try {
+    return new URL(url);
+  } catch {
+    // Relative URLs still need a base origin. In opaque sandbox iframes
+    // location.origin is "null", so absolute URLs must be parsed first.
+  }
   try {
     return new URL(url, currentOrigin());
   } catch {

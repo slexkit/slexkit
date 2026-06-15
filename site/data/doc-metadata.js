@@ -47,6 +47,7 @@ export const componentTitleLabels = {
   collapsible: "Collapsible 折叠区",
   column: "Column 列",
   divider: "Divider 分割线",
+  formula: "Formula 公式",
   grid: "Grid 网格",
   icon: "Icon 图标",
   input: "Input 输入框",

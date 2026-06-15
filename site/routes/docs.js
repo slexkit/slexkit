@@ -119,6 +119,7 @@ export function createDocsRoute({
       docs: docsShellItems(docs),
       countLabel: `${docs.length} ${siteUiLabelsForLocale(currentLocale()).pagesSuffix}`,
       locale: currentLocale(),
+      playgroundHrefBase: withSiteBase("/playground.html"),
       uiLabels: siteUiLabelsForLocale(currentLocale()),
     };
     let page = docsShellRoot;
@@ -138,6 +139,7 @@ export function createDocsRoute({
           doc: shellState.currentDoc,
           countLabel: shellState.countLabel,
           locale: shellState.locale,
+          playgroundHrefBase: shellState.playgroundHrefBase,
           uiLabels: shellState.uiLabels,
         },
       });

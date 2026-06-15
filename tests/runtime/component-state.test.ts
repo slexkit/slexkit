@@ -311,6 +311,29 @@ describe("component instance state", () => {
     warnSpy.mockRestore();
   });
 
+  it("does not warn for mirrored input and slider controls bound to the same g field", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const warnSpy = spyOn(console, "warn").mockImplementation(() => {});
+
+    mount({
+      namespace: unique("mirrored_controls"),
+      g: { value: 4 },
+      layout: {
+        "column:field": {
+          "input:value": { $value: "g.value", onchange: "g.value = Number($event || 0)" },
+          "slider:value": { $value: "g.value", min: 0, max: 10, onchange: "g.value = Number($event)" },
+        },
+        "text:echo": { $text: "String(g.value)" },
+      },
+    }, document.getElementById("app")!);
+
+    await sleep();
+
+    expect(document.querySelector(".slex-text")?.textContent).toBe("4");
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
   it("keeps legacy $value plus onchange bindings working", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const ns = unique("legacy");

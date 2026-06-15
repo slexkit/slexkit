@@ -5,6 +5,33 @@ import { docsHref, normalizeLocale, sourceLocale, supportedLocales } from "./loc
 import { siteUiLabelsForLocale } from "./ui-labels.js";
 
 const publicComponentSlugs = new Set(publicComponentTypes);
+const exampleSourceLocale = "zh-CN";
+
+const allowedExampleSlugs = new Set([
+  // 学习路径
+  "hello-slexkit",
+  "first-interaction",
+  "multi-input-coordination",
+  "tabs-and-branching",
+  "cross-doc-state-lab",
+  // 真实场景
+  "project-dashboard",
+  "search-filter-table",
+  "form-wizard-steps",
+  "toolhost-demo",
+  // 电子工程
+  "voltage-divider",
+  "rc-low-pass-filter",
+  "baud-rate-calculator",
+  // 金融财务
+  "roi-estimator",
+  // 安全运行时
+  "network-policy-fetch-card",
+  // 新增示例（从用户故事出发）
+  "salary-calculator",
+  "project-cost-estimator",
+  "tech-selection-evaluator",
+]);
 
 function titleFromSlug(slug) {
   return slug
@@ -194,6 +221,43 @@ export async function discoverComponentMarkdown({ siteRoot, locale }) {
         fallbackPath: `content/components/${slug}/${sourceLocale}.md`,
       }),
     ),
+  );
+  return docs.filter(Boolean);
+}
+
+export async function discoverExampleMarkdown({ siteRoot, locale }) {
+  const nextLocale = normalizeLocale(locale);
+  const root = join(siteRoot, "content", "examples");
+  const slugs = (await directorySlugs(root)).filter((slug) => allowedExampleSlugs.has(slug));
+  const docs = await Promise.all(
+    slugs.map(async (slug) => {
+      const sourcePath = `content/examples/${slug}/${nextLocale}.md`;
+      const content = await readOptional(siteRoot, sourcePath);
+      if (content !== null) {
+        return {
+          kind: "example",
+          slug,
+          locale: nextLocale,
+          contentLocale: nextLocale,
+          isFallback: false,
+          path: sourcePath,
+          content,
+        };
+      }
+
+      const fallbackPath = `content/examples/${slug}/${exampleSourceLocale}.md`;
+      const fallback = await readOptional(siteRoot, fallbackPath);
+      if (fallback === null) return null;
+      return {
+        kind: "example",
+        slug,
+        locale: nextLocale,
+        contentLocale: exampleSourceLocale,
+        isFallback: true,
+        path: fallbackPath,
+        content: fallback,
+      };
+    }),
   );
   return docs.filter(Boolean);
 }
