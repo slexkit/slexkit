@@ -2,7 +2,7 @@
 
 All notable changes to SlexKit.
 
-## Unreleased
+## v0.3.0 - Examples overhaul with component audit and i18n
 
 ### Added
 - Example gallery: 17 high-quality examples organized by usage scenario (Getting Started, Calculators, Data Browsing, Dashboards, Config Wizards, Decision Support, Platform Features)
