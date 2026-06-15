@@ -11,6 +11,44 @@ slexkitRenderMode: component
 
 All notable changes to SlexKit.
 
+## v0.3.0 - Examples overhaul with component audit and i18n
+
+### Added
+- Example gallery: 17 high-quality examples organized by usage scenario (Getting Started, Calculators, Data Browsing, Dashboards, Config Wizards, Decision Support, Platform Features)
+- English translations for all 17 example pages
+- `toolhost-demo`: real `renderToolCall` API with chat-style conversation UI
+- Example rendering infrastructure: `site/routes/examples.js`, `site/pages/examples.slex.js`, `site/data/examples.js`
+- Formula component (`src/components/svelte/content/Formula.svelte`) with KaTeX rendering
+- `src/engine/capabilities.ts`: structured capability docs for AI agents
+- `src/engine/validation.ts`: SPEC contract validation
+- `src/engine/stdlib.ts`: standard library with `math.clamp`, `math.safeDivide`, and other utilities
+- `src/engine/sandbox-runner.ts`: sandbox runner for secure runtime
+- Component state eval context shadowing test suite (`component-state-shadowing.test.ts`)
+- Collapsible and Callout double-rendering regression tests
+- Slider component name shadowing regression test
+
+### Changed
+- Examples reduced from 64 to 17 high-quality examples, organized by user story
+- Example source locale: `zh-CN` (with `en-US` translations)
+- `renderChildren` (`helpers.ts`) now clears existing content when children are present
+- Switch component now accepts `checked`/`value` props for initialization consistency with Checkbox
+- Site UI: DocsShell, DocRail, router, shell improvements
+- Components: Input, Select, Tabs, Table, PlaygroundMarkdown refinements
+- CSS: theme-shadcn, text-input, docs-shell styling updates
+
+### Fixed
+- Eval context shadowing: component names `g` and `api` no longer overwrite reserved context keys
+- `renderChildren` double rendering in Collapsible and Callout
+- Voltage divider summary typo ("输入输入电压")
+- Salary calculator fallback numbers to match actual calculator output
+- Tabs-and-branching: title and length conversion mismatch
+- 4 pre-existing test failures (ai-docs, page-structure, theme, markdown-content)
+
+### Removed
+- 47 low-quality/duplicate examples (reduced from 64 to 17)
+- Dead "Fallback" copywriting from all example files
+- Unused `DialogShell.svelte` component
+
 ## v0.2.0 - First public release
 
 ### Added

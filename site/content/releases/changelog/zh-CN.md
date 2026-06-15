@@ -11,6 +11,44 @@ slexkitRenderMode: component
 
 SlexKit 的所有重要变更。
 
+## v0.3.0 - 示例体系重构、组件审计与国际化
+
+### Added
+- 示例画廊：17 个高质量示例，按使用场景分类（入门教程、计算器、数据浏览、仪表盘、配置向导、决策辅助、平台能力）
+- 全部 17 个示例的英文翻译
+- `toolhost-demo`：使用真实 `renderToolCall` API 的对话式 ToolHost 演示
+- 示例渲染基础设施：`site/routes/examples.js`、`site/pages/examples.slex.js`、`site/data/examples.js`
+- Formula 组件（`src/components/svelte/content/Formula.svelte`），支持 KaTeX 渲染
+- `src/engine/capabilities.ts`：面向 AI Agent 的结构化能力文档
+- `src/engine/validation.ts`：SPEC 合约验证
+- `src/engine/stdlib.ts`：标准库，包含 `math.clamp`、`math.safeDivide` 等工具函数
+- `src/engine/sandbox-runner.ts`：安全运行时沙箱执行器
+- 组件状态 eval 上下文遮蔽测试套件（`component-state-shadowing.test.ts`）
+- Collapsible 和 Callout 双重渲染回归测试
+- Slider 组件名遮蔽回归测试
+
+### Changed
+- 示例从 64 个精简为 17 个高质量示例，按用户故事重新组织
+- 示例源语言：`zh-CN`（附 `en-US` 翻译）
+- `renderChildren`（`helpers.ts`）在有子节点时清除已有内容
+- Switch 组件现在接受 `checked`/`value` 属性，与 Checkbox 保持一致
+- 站点 UI：DocsShell、DocRail、路由、Shell 改进
+- 组件：Input、Select、Tabs、Table、PlaygroundMarkdown 优化
+- CSS：theme-shadcn、text-input、docs-shell 样式更新
+
+### Fixed
+- eval 上下文遮蔽：组件名 `g` 和 `api` 不再覆盖保留上下文键
+- `renderChildren` 在 Collapsible 和 Callout 中的双重渲染
+- 分压器摘要错别字（"输入输入电压"）
+- 五险一金计算器 Fallback 数字与实际计算结果不匹配
+- tabs-and-branching 标题和长度转换不匹配
+- 4 个预先存在的测试失败（ai-docs、page-structure、theme、markdown-content）
+
+### Removed
+- 47 个低质量/重复示例（从 64 个精简为 17 个）
+- 所有示例文件中的死文案"Fallback"行
+- 未使用的 `DialogShell.svelte` 组件
+
 ## v0.2.0
 
 ### Added
