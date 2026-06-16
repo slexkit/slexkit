@@ -7,11 +7,14 @@ import {
   discoverGuideMarkdown,
   discoverReferenceMarkdown,
   discoverReleaseMarkdown,
+  discoverWikiMarkdown,
 } from "../data/content-discovery.js";
 import { normalizeSiteBase } from "../app/site-base.js";
 import { buildSiteAssets } from "./build";
 import { generateAiDocs, writeAiRawMarkdown } from "../../scripts/generate-ai-docs";
-import { createSeoIndex, injectSeoHead, renderRobotsTxt, renderSitemapXml } from "../data/seo.js";
+import { createSeoIndex, injectSeoHead, prerenderedHomeHtml, renderRobotsTxt, renderSitemapXml } from "../data/seo.js";
+import { prerenderMarkdown } from "./prerender-markdown.js";
+import { loadExampleDocs } from "../data/examples.js";
 
 const siteRoot = join(import.meta.dir, "..");
 const projectRoot = join(siteRoot, "..");
@@ -34,10 +37,11 @@ function withBase(path: string) {
   return `${cleanBase}${path}`;
 }
 
-function rewriteHtmlForStatic(html: string) {
+function rewriteHtmlForStatic(html: string, locale = "en-US") {
   const baseMeta = `    <meta name="slexkit-site-base" content="${escapeHtmlAttribute(siteBase)}" />`;
   const cleanBase = siteBase === "/" ? "" : siteBase.slice(0, -1);
   return html
+    .replace(/lang="[^"]*"/, `lang="${locale}"`)
     .replace(/(<meta name="viewport"[^>]*>\s*)/i, `$1\n${baseMeta}`)
     .replace(/(href|src)=(["'])(\/(?!\/)[^"']*)\2/g, (match, attr, quote, path) => {
       if (cleanBase && path.startsWith(cleanBase)) return match;
@@ -140,15 +144,60 @@ export async function exportStaticSite() {
   await cp(join(projectRoot, "skills"), join(outDir, "skills"), { recursive: true });
 
   const seoIndex = await createSeoIndex({ siteRoot });
-  const indexTemplate = rewriteHtmlForStatic(await readFile(join(siteRoot, "index.html"), "utf-8"));
-  for (const page of seoIndex.pages) {
-    await writeRouteHtml(page.path, injectSeoHead(indexTemplate, page, { publicBaseUrl }));
+  const rawTemplate = await readFile(join(siteRoot, "index.html"), "utf-8");
+
+  const allWikiMarkdown = await discoverWikiMarkdown({ siteRoot });
+  const allExampleMarkdown = (await Promise.all(
+    supportedLocales.map((locale) => discoverExampleMarkdown({ siteRoot, locale })),
+  )).flat();
+
+  const contentMap = new Map<string, string>();
+  for (const locale of supportedLocales) {
+    const docs = await import("../data/component-docs.js").then((m) => m.loadWikiDocs({ markdownItems: allWikiMarkdown, locale }));
+    for (const doc of docs) {
+      if (doc.markdown) contentMap.set(doc.href, doc.markdown);
+    }
+    const examples = loadExampleDocs({ markdownItems: allExampleMarkdown, locale });
+    for (const ex of examples) {
+      if (ex.markdown) contentMap.set(ex.href, ex.markdown);
+    }
   }
-  const indexHtml = injectSeoHead(indexTemplate, seoIndex.pageForPath("/"), { publicBaseUrl });
+
+  for (const page of seoIndex.pages) {
+    const template = rewriteHtmlForStatic(rawTemplate, page.locale);
+    let html = injectSeoHead(template, page, { publicBaseUrl });
+
+    if (page.unlocalizedPath === "/") {
+      html = html.replace(
+        '<div id="siteRoot"></div>',
+        `<div id="siteRoot">${prerenderedHomeHtml(page.locale)}</div>`,
+      );
+    } else {
+      const rawMd = contentMap.get(page.path);
+      if (rawMd) {
+        const { html: bodyHtml } = prerenderMarkdown(rawMd);
+        html = html.replace(
+          '<div id="siteRoot"></div>',
+          `<div id="siteRoot"><article class="slex-prerendered-content">${bodyHtml}</article></div>`,
+        );
+      }
+    }
+
+    await writeRouteHtml(page.path, html);
+  }
+
+  const indexTemplate = rewriteHtmlForStatic(rawTemplate, "en-US");
+  let indexHtml = injectSeoHead(indexTemplate, seoIndex.pageForPath("/"), { publicBaseUrl });
+  indexHtml = indexHtml.replace(
+    '<div id="siteRoot"></div>',
+    `<div id="siteRoot">${prerenderedHomeHtml("en-US")}</div>`,
+  );
   await writeFile(join(outDir, "index.html"), indexHtml, "utf-8");
   await writeFile(join(outDir, "404.html"), indexHtml, "utf-8");
   await writeFile(join(outDir, "robots.txt"), renderRobotsTxt({ publicBaseUrl }), "utf-8");
-  await writeFile(join(outDir, "sitemap.xml"), renderSitemapXml(seoIndex.pages, { publicBaseUrl }), "utf-8");
+
+  const buildDate = new Date().toISOString().split("T")[0];
+  await writeFile(join(outDir, "sitemap.xml"), renderSitemapXml(seoIndex.pages, { publicBaseUrl, lastmod: buildDate }), "utf-8");
 
   const playgroundHtml = rewriteHtmlForStatic(await readFile(join(siteRoot, "playground.html"), "utf-8"));
   await writeFile(join(outDir, "playground.html"), playgroundHtml, "utf-8");

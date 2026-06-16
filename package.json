@@ -120,6 +120,7 @@
     "flowbite": "^4.0.2",
     "flowbite-svelte": "^1.33.1",
     "katex": "^0.17.0",
+    "marked": "^18.0.5",
     "svelte": "^5.55.9",
     "svelte-highlight": "^7.9.0"
   },

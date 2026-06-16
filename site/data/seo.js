@@ -11,6 +11,108 @@ const homeDescriptions = {
   "zh-CN": "\"文档即工具，工具即文档\"，赋予 Markdown 可交互的能力，让 AI 的输出变得生动。",
 };
 
+export function prerenderedHomeHtml(locale = "en-US") {
+  if (locale === "zh-CN") {
+    return `<main class="slex-home-page slex-prerendered-content">
+  <section class="slex-home-hero">
+    <div class="slex-home-copy">
+      <h1>SlexKit</h1>
+      <p><strong>Streaming Live EXpressions Kit</strong></p>
+      <p class="slex-home-lede">"文档即工具，工具即文档"，赋予 Markdown 可交互的能力，让 AI 的输出变得生动。</p>
+      <p>SlexKit 是一个零构建、Markdown 友好的响应式 UI 运行时，专为 AI 输出设计。它让你在 Markdown 文档中嵌入可交互的组件——表单、图表、计算工具、实时预览——无需任何构建步骤。</p>
+      <h2>核心特性</h2>
+      <ul>
+        <li><strong>零构建</strong> — 直接在 Markdown 中使用 <code>&lt;slex&gt;</code> 代码块，无需 webpack、vite 或任何打包工具</li>
+        <li><strong>流式渲染</strong> — 支持 AI 流式输出，组件随内容到达逐步渲染</li>
+        <li><strong>响应式状态</strong> — 内置响应式系统，组件间可双向绑定数据</li>
+        <li><strong>丰富组件</strong> — 30+ 内置组件：卡片、表单、图表、代码块、手风琴、标签页等</li>
+        <li><strong>安全沙箱</strong> — 可选的安全运行时，隔离执行不受信任的内容</li>
+        <li><strong>工具调用渲染</strong> — ToolHost 系统将 AI 工具调用渲染为可交互的确认对话框和表单</li>
+      </ul>
+      <h2>快速示例</h2>
+      <p>在 Markdown 中写一个交互式计算器：</p>
+      <pre><code>\\\`\\\`\\\`slex
+type:row
+- type:input number:g.price label:"单价" value:99
+- type:input number:g.qty label:"数量" value:3
+- type:stat label:"总价" value:\${g.price * g.qty}
+\\\`\\\`\\\`</code></pre>
+      <h2>开始使用</h2>
+      <ul>
+        <li><a href="/docs/guides/intro">简介</a> — 了解 SlexKit 的设计理念</li>
+        <li><a href="/docs/guides/quick-start">快速开始</a> — 5 分钟上手 SlexKit</li>
+        <li><a href="/docs/components/accordion">组件文档</a> — 浏览所有可用组件</li>
+        <li><a href="/examples">示例中心</a> — 查看真实场景示例</li>
+        <li><a href="https://www.npmjs.com/package/slexkit">npm</a> — 安装 <code>npm install slexkit</code></li>
+        <li><a href="https://github.com/slexkit/slexkit">GitHub</a> — 源码与贡献</li>
+      </ul>
+      <h2>AI / LLM 文档接入</h2>
+      <p>SlexKit 为 AI agent 和 LLM 提供了专门的文档接口：</p>
+      <ul>
+        <li><a href="/llms.txt">/llms.txt</a> — 文档索引，包含所有指南、组件、示例和参考文档的结构化目录</li>
+        <li><a href="/llms-full.txt">/llms-full.txt</a> — 完整英文文档（单文件），包含所有 Markdown 源文件</li>
+        <li><a href="/llms-components.txt">/llms-components.txt</a> — 组件文档与 props/state 参考</li>
+        <li><a href="/llms-runtime.txt">/llms-runtime.txt</a> — 运行时、宿主集成与安全渲染文档</li>
+        <li><a href="/llms-toolhost.txt">/llms-toolhost.txt</a> — ToolHost 结构化用户输入文档</li>
+        <li><a href="/llms-authoring.txt">/llms-authoring.txt</a> — slex fence 编写规则</li>
+        <li><a href="/slexkit-ai-manifest.json">/slexkit-ai-manifest.json</a> — 机器可读的页面与组件元数据</li>
+      </ul>
+      <p>MCP 服务器：<code>npx -y @slexkit/mcp</code>（只读，提供文档查询、示例浏览和 Slex 源码校验）</p>
+    </div>
+  </section>
+</main>`;
+  }
+
+  return `<main class="slex-home-page slex-prerendered-content">
+  <section class="slex-home-hero">
+    <div class="slex-home-copy">
+      <h1>SlexKit</h1>
+      <p><strong>Streaming Live EXpressions Kit</strong></p>
+      <p class="slex-home-lede">"Docs as tools, tools as docs" gives Markdown interactive power, making AI output come alive.</p>
+      <p>SlexKit is a zero-build, Markdown-friendly reactive UI runtime designed for AI output. It lets you embed interactive components—forms, charts, calculators, live previews—inside Markdown documents without any build step.</p>
+      <h2>Key Features</h2>
+      <ul>
+        <li><strong>Zero-build</strong> — Use <code>&lt;slex&gt;</code> code blocks directly in Markdown. No webpack, vite, or bundler required.</li>
+        <li><strong>Streaming</strong> — Renders components as AI output streams in, progressively.</li>
+        <li><strong>Reactive state</strong> — Built-in reactive system with two-way data binding between components.</li>
+        <li><strong>Rich components</strong> — 30+ built-in components: cards, forms, charts, code blocks, accordions, tabs, and more.</li>
+        <li><strong>Secure sandbox</strong> — Optional secure runtime for isolating untrusted content execution.</li>
+        <li><strong>Tool-call rendering</strong> — ToolHost system renders AI tool calls as interactive confirmation dialogs and forms.</li>
+      </ul>
+      <h2>Quick Example</h2>
+      <p>Write an interactive calculator in Markdown:</p>
+      <pre><code>\`\`\`slex
+type:row
+- type:input number:g.price label:"Price" value:99
+- type:input number:g.qty label:"Qty" value:3
+- type:stat label:"Total" value:\${g.price * g.qty}
+\`\`\`</code></pre>
+      <h2>Get Started</h2>
+      <ul>
+        <li><a href="/docs/guides/intro">Introduction</a> — Learn about SlexKit's design philosophy</li>
+        <li><a href="/docs/guides/quick-start">Quick Start</a> — Get up and running in 5 minutes</li>
+        <li><a href="/docs/components/accordion">Component Docs</a> — Browse all available components</li>
+        <li><a href="/examples">Examples</a> — See real-world examples</li>
+        <li><a href="https://www.npmjs.com/package/slexkit">npm</a> — Install with <code>npm install slexkit</code></li>
+        <li><a href="https://github.com/slexkit/slexkit">GitHub</a> — Source code and contributions</li>
+      </ul>
+      <h2>AI / LLM Documentation</h2>
+      <p>SlexKit provides dedicated documentation endpoints for AI agents and LLMs:</p>
+      <ul>
+        <li><a href="/llms.txt">/llms.txt</a> — Documentation index with structured table of contents for all guides, components, examples, and reference docs</li>
+        <li><a href="/llms-full.txt">/llms-full.txt</a> — Full English documentation in a single file (all Markdown source)</li>
+        <li><a href="/llms-components.txt">/llms-components.txt</a> — Component docs with props/state reference</li>
+        <li><a href="/llms-runtime.txt">/llms-runtime.txt</a> — Runtime, host integration, and secure rendering docs</li>
+        <li><a href="/llms-toolhost.txt">/llms-toolhost.txt</a> — ToolHost structured user-input docs</li>
+        <li><a href="/llms-authoring.txt">/llms-authoring.txt</a> — slex fence authoring rules</li>
+        <li><a href="/slexkit-ai-manifest.json">/slexkit-ai-manifest.json</a> — Machine-readable page and component metadata</li>
+      </ul>
+      <p>MCP server: <code>npx -y @slexkit/mcp</code> (read-only: docs search, examples browsing, Slex source validation)</p>
+    </div>
+  </section>
+</main>`;
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -170,6 +272,51 @@ export function seoAlternates(page) {
   }));
 }
 
+function jsonLd(page, publicBaseUrl) {
+  const canonicalUrl = absoluteSiteUrl(page.canonicalPath, publicBaseUrl);
+
+  if (page.unlocalizedPath === "/") {
+    return JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: siteName,
+      url: canonicalUrl,
+      description: page.description,
+      inLanguage: page.locale,
+    });
+  }
+
+  if (page.kind === "article") {
+    const pageTitle = page.title.replace(/ - SlexKit$/, "");
+    const breadcrumbs = [
+      { "@type": "ListItem", position: 1, name: "Home", item: absoluteSiteUrl("/", publicBaseUrl) },
+      { "@type": "ListItem", position: 2, name: "Docs", item: absoluteSiteUrl("/docs/guides/intro", publicBaseUrl) },
+      { "@type": "ListItem", position: 3, name: pageTitle, item: canonicalUrl },
+    ];
+
+    return JSON.stringify([
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: pageTitle,
+        description: page.description,
+        url: canonicalUrl,
+        author: { "@type": "Organization", name: siteName },
+        publisher: { "@type": "Organization", name: siteName },
+        inLanguage: page.locale,
+        isPartOf: { "@type": "WebSite", name: siteName, url: absoluteSiteUrl("/", publicBaseUrl) },
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: breadcrumbs,
+      },
+    ]);
+  }
+
+  return "";
+}
+
 export function seoHead(page, { publicBaseUrl, imagePath = "/og.svg" } = {}) {
   const canonicalUrl = absoluteSiteUrl(page.canonicalPath, publicBaseUrl);
   const imageUrl = absoluteSiteUrl(imagePath, publicBaseUrl);
@@ -178,6 +325,7 @@ export function seoHead(page, { publicBaseUrl, imagePath = "/og.svg" } = {}) {
     .map((entry) => `  <link rel="alternate" hreflang="${entry.locale}" href="${escapeHtml(absoluteSiteUrl(entry.path, publicBaseUrl))}" />`)
     .join("\n");
   const defaultAlternate = alternates.find((entry) => entry.locale === defaultLocale) ?? alternates[0];
+  const ldJson = jsonLd(page, publicBaseUrl);
 
   return [
     "<!-- slexkit:seo:start -->",
@@ -203,6 +351,7 @@ export function seoHead(page, { publicBaseUrl, imagePath = "/og.svg" } = {}) {
     `  <meta name="twitter:title" content="${escapeHtml(page.title)}" />`,
     `  <meta name="twitter:description" content="${escapeHtml(page.description)}" />`,
     `  <meta name="twitter:image" content="${escapeHtml(imageUrl)}" />`,
+    ...(ldJson ? [`  <script type="application/ld+json">${ldJson}</script>`] : []),
     "<!-- slexkit:seo:end -->",
   ].filter(Boolean).join("\n");
 }
@@ -226,8 +375,9 @@ export function renderRobotsTxt({ publicBaseUrl }) {
   ].join("\n");
 }
 
-export function renderSitemapXml(pages, { publicBaseUrl }) {
+export function renderSitemapXml(pages, { publicBaseUrl, lastmod }) {
   const canonicalPages = pages.filter((page) => page.path === localizedPath(page.unlocalizedPath, page.locale));
+  const lastmodTag = lastmod ? `\n    <lastmod>${escapeXml(lastmod)}</lastmod>` : "";
   const urls = canonicalPages.map((page) => {
     const alternates = seoAlternates(page)
       .map((entry) => `    <xhtml:link rel="alternate" hreflang="${entry.locale}" href="${escapeXml(absoluteSiteUrl(entry.path, publicBaseUrl))}" />`)
@@ -236,6 +386,7 @@ export function renderSitemapXml(pages, { publicBaseUrl }) {
     return [
       "  <url>",
       `    <loc>${escapeXml(absoluteSiteUrl(page.path, publicBaseUrl))}</loc>`,
+      ...(lastmodTag ? [lastmodTag] : []),
       alternates,
       xDefault,
       "  </url>",
