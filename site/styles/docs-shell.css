@@ -830,6 +830,71 @@
   }
 }
 
+.slex-home-content {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  display: grid;
+  gap: 3rem;
+}
+
+.slex-home-section-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.slex-home-section-desc {
+  margin: 0.5rem 0 0;
+  color: var(--muted-foreground);
+  line-height: 1.7;
+}
+
+.slex-home-features-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.slex-home-feature-item {
+  color: var(--foreground);
+  line-height: 1.6;
+}
+
+.slex-home-feature-item strong {
+  font-weight: 600;
+}
+
+.slex-home-ai-links {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: grid;
+  gap: 0.375rem;
+}
+
+.slex-home-ai-links li {
+  line-height: 1.6;
+}
+
+.slex-home-ai-links a {
+  color: var(--primary);
+  text-decoration: none;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+}
+
+.slex-home-ai-links a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 640px) {
+  .slex-home-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .slex-docs-layout {
   display: grid;
   gap: 2rem;
