@@ -756,7 +756,8 @@
 
 .slex-home-preview {
   position: relative;
-  width: min(100%, 72rem);
+  width: min(100%, 64rem);
+  margin: 0 auto;
   min-width: 0;
   justify-self: center;
   animation: slex-home-preview-enter 680ms cubic-bezier(0.22, 1, 0.36, 1) 380ms both;
@@ -833,22 +834,30 @@
 .slex-home-content {
   max-width: 64rem;
   margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+  padding: 4rem 0 0;
   display: grid;
   gap: 3rem;
 }
 
+.slex-home-section {
+  display: grid;
+  gap: 1.25rem;
+}
+
 .slex-home-section-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--foreground);
+  letter-spacing: -0.01em;
 }
 
 .slex-home-section-desc {
-  margin: 0.5rem 0 0;
+  margin: 0;
   color: var(--muted-foreground);
-  line-height: 1.7;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  max-width: 48rem;
 }
 
 .slex-home-features-grid {
@@ -857,41 +866,90 @@
   margin-top: 1rem;
 }
 
-.slex-home-feature-item {
-  color: var(--foreground);
-  line-height: 1.6;
+.slex-home-feature-card {
+  padding: 0.875rem 1rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--border);
+  background: var(--card);
 }
 
-.slex-home-feature-item strong {
-  font-weight: 600;
-}
-
-.slex-home-ai-links {
-  list-style: none;
-  padding: 0;
-  margin: 0.75rem 0 0;
-  display: grid;
-  gap: 0.375rem;
-}
-
-.slex-home-ai-links li {
-  line-height: 1.6;
-}
-
-.slex-home-ai-links a {
-  color: var(--primary);
-  text-decoration: none;
-  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+.slex-home-feature-name {
+  display: block;
   font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.25rem;
 }
 
-.slex-home-ai-links a:hover {
-  text-decoration: underline;
+.slex-home-feature-desc {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  line-height: 1.55;
+}
+
+.slex-home-ai-grid {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.slex-home-ai-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+
+.slex-home-ai-card:hover {
+  border-color: var(--primary);
+}
+
+.slex-home-ai-path {
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+}
+
+.slex-home-ai-label {
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.slex-home-mcp {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.slex-home-mcp code {
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  background: var(--muted);
 }
 
 @media (min-width: 640px) {
   .slex-home-features-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .slex-home-ai-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .slex-home-ai-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

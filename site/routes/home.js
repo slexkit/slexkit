@@ -17,9 +17,8 @@ const homeLabelsByLocale = {
       ["安全沙箱", "可选的安全运行时，隔离执行不受信任的内容"],
       ["工具调用渲染", "ToolHost 系统将 AI 工具调用渲染为可交互的确认对话框和表单"],
     ],
-    aiDocsTitle: "AI / LLM 文档接入",
-    aiDocsDesc: "SlexKit 为 AI agent 和 LLM 提供了专门的文档接口：",
-    aiDocsMcp: "MCP 服务器",
+    aiDocsTitle: "AI / LLM 接入",
+    aiDocsDesc: "为 AI agent 提供专门的文档接口：",
     getStartedTitle: "开始使用",
   },
   "en-US": {
@@ -37,9 +36,8 @@ const homeLabelsByLocale = {
       ["Secure sandbox", "Optional secure runtime for isolating untrusted content execution."],
       ["Tool-call rendering", "ToolHost system renders AI tool calls as interactive confirmation dialogs and forms."],
     ],
-    aiDocsTitle: "AI / LLM Documentation",
-    aiDocsDesc: "SlexKit provides dedicated documentation endpoints for AI agents and LLMs:",
-    aiDocsMcp: "MCP server",
+    aiDocsTitle: "AI / LLM",
+    aiDocsDesc: "Dedicated documentation endpoints for AI agents:",
     getStartedTitle: "Get Started",
   },
 };
@@ -196,15 +194,13 @@ export function createHomeRoute({ clearMobileContext, currentLocale, mount, navH
     const grid = document.createElement("div");
     grid.className = "slex-home-features-grid";
 
-    for (const [name, desc] of labels.features) {
-      const item = document.createElement("div");
-      item.className = "slex-home-feature-item";
-      const strong = document.createElement("strong");
-      strong.textContent = name;
-      const sep = document.createTextNode(" — ");
-      const text = document.createTextNode(desc);
-      item.append(strong, sep, text);
-      grid.appendChild(item);
+    for (const [name, descText] of labels.features) {
+      const card = document.createElement("div");
+      card.className = "slex-home-feature-card";
+      const nameEl = textElement("strong", "slex-home-feature-name", name);
+      const descEl = textElement("span", "slex-home-feature-desc", descText);
+      card.append(nameEl, descEl);
+      grid.appendChild(card);
     }
 
     section.appendChild(grid);
@@ -221,37 +217,24 @@ export function createHomeRoute({ clearMobileContext, currentLocale, mount, navH
 
     const links = [
       ["/llms.txt", "Documentation index"],
-      ["/llms-full.txt", "Full English documentation (single file)"],
-      ["/llms-components.txt", "Component docs with props/state reference"],
-      ["/llms-runtime.txt", "Runtime, host integration, and secure rendering docs"],
-      ["/llms-toolhost.txt", "ToolHost structured user-input docs"],
-      ["/llms-authoring.txt", "slex fence authoring rules"],
-      ["/slexkit-ai-manifest.json", "Machine-readable page and component metadata"],
+      ["/llms-full.txt", "Full documentation (single file)"],
+      ["/slexkit-ai-manifest.json", "Machine-readable metadata"],
     ];
 
-    const list = document.createElement("ul");
-    list.className = "slex-home-ai-links";
+    const grid = document.createElement("div");
+    grid.className = "slex-home-ai-grid";
 
     for (const [href, desc] of links) {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = href;
-      a.textContent = href;
-      const sep = document.createTextNode(" — ");
-      const text = document.createTextNode(desc);
-      li.append(a, sep, text);
-      list.appendChild(li);
+      const card = document.createElement("a");
+      card.className = "slex-home-ai-card";
+      card.href = href;
+      const path = textElement("span", "slex-home-ai-path", href);
+      const label = textElement("span", "slex-home-ai-label", desc);
+      card.append(path, label);
+      grid.appendChild(card);
     }
 
-    const mcp = document.createElement("p");
-    mcp.className = "slex-home-section-desc";
-    const mcpLabel = document.createElement("strong");
-    mcpLabel.textContent = `${labels.aiDocsMcp}: `;
-    const mcpCode = document.createElement("code");
-    mcpCode.textContent = "npx -y @slexkit/mcp";
-    mcp.append(mcpLabel, mcpCode);
-
-    section.append(list, mcp);
+    section.append(grid);
     return section;
   }
 

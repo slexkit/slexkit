@@ -18,8 +18,8 @@ export function homePlaygroundConfig(locale = defaultLocale) {
     title: "Playground",
     class: "slex-home-playground",
     mode: "render",
+    previewAlign: "center",
     previewMinHeight: "0px",
-    previewMaxWidth: "980px",
     sourceType: "markdown",
     source: homePlaygroundSource(locale),
   };
