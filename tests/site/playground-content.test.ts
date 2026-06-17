@@ -88,7 +88,7 @@ describe("site playground markdown renderer", () => {
     expect(css).toContain(".slex-home-preview-surface .slex-home-playground");
     expect(css).toContain(".slex-home-playground .slex-playground-live-pane");
     expect(css).toContain(".slex-home-playground .slex-playground-live-code");
-    expect(css).toContain("width: min(100%, 72rem)");
+    expect(css).toContain("width: min(100%, 64rem)");
     expect(css.replaceAll("\r\n", "\n")).toContain(".slex-home-playground .slex-playground-preview-pane {\n  overflow: visible;");
     expect(css).not.toContain("height: min(78svh, 48rem)");
     expect(css).not.toContain("height: 80svh");
