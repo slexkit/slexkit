@@ -21,7 +21,7 @@ Use this skill as `/host` when adding SlexKit to a host application or documenta
 
 - Vanilla host: `createSlexKitMarkdownRuntimeHost`.
 - React/Streamdown: `@slexkit/streamdown`.
-- Obsidian: `@slexkit/obsidian`, readonly fenced block rendering.
+- Obsidian: install the official SlexKit plugin from Obsidian Community Plugins; release repo `slexkit/obsidian-slexkit`.
 - Custom host: detect the `slex` code fence, pass source plus artifact id to the runtime host, dispose when the block is removed.
 
 ## Rules

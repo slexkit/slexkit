@@ -16,7 +16,7 @@ SlexKit — Streaming Live EXpressions Kit. Zero-build, Markdown-friendly reacti
 
 ```sh
 bun run dev           # Start site dev server
-bun run build         # Build all (core + streamdown + obsidian)
+bun run build         # Build all (core + streamdown + mcp)
 bun run build:core    # Build core runtime only
 bun test              # Run all tests
 bun run test:watch    # Run tests in watch mode
@@ -40,7 +40,7 @@ packages/
   components-svelte/# @slexkit/components-svelte — thin wrapper re-exporting slexkit/components-svelte
   theme-shadcn/     # @slexkit/theme-shadcn — CSS only
   streamdown/       # @slexkit/streamdown — React/Streamdown custom renderer
-  obsidian/         # @slexkit/obsidian — Obsidian plugin adapter
+  mcp/              # @slexkit/mcp — read-only docs/examples/validate MCP server
 
 site/               # Documentation website (Svelte-based SPA)
   content/          # Markdown docs: guides/ + components/
@@ -49,7 +49,6 @@ site/               # Documentation website (Svelte-based SPA)
   scripts/          # Site build and static export
 
 tests/              # Bun test suites (runtime/, components/, secure/, site/, toolhost/, markdown/)
-docs/               # Technical documentation (spec.md, guide.md, runtime.md, design.md, security.md, packages.md, integration.md)
 examples/           # Integration examples (basic-resistor, component-gallery, custom-component, markdown-fence, secure-fetch, toolhost)
 scripts/            # Build (build-core.ts), CLI (cli.mjs), release-smoke (release-smoke.mjs)
 ```

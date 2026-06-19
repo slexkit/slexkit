@@ -9,6 +9,8 @@ slexkitRenderMode: component
 
 # 开始使用
 
+> 只想在 Obsidian 里直接安装插件？打开 **Settings -> Community plugins**，搜索 **SlexKit**，安装并启用即可。下面的内容主要面向需要把 SlexKit 接入网页、Markdown host、Streamdown 或自定义运行环境的开发者。
+
 安装 `slexkit`，挂载一个可信片段，即可开始使用。后续可接入 Markdown host、Streamdown 或 Obsidian 插件。本文跳过这些集成细节，聚焦核心集成路径。
 
 ## 安装入口
@@ -32,7 +34,7 @@ import "slexkit/style.css";
 | 官方 Svelte 组件注册 | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | 独立 shadcn token 主题 CSS | `npm install @slexkit/theme-shadcn` |
 | React + Streamdown Markdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
-| Obsidian vault 渲染 | 从 `slexkit/obsidian-slexkit` 通过 Community Plugins、BRAT 或手动 release assets 安装 |
+| Obsidian vault 渲染 | 从 Obsidian Community Plugins 安装 **SlexKit** |
 
 `@slexkit/runtime` 和 `@slexkit/components-svelte` 是根包的 thin wrapper，不是独立实现包。
 

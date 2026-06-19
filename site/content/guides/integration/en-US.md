@@ -110,15 +110,26 @@ The secure runtime deployment checklist lives in [Secure Runtime Setup](security
 
 ## Obsidian
 
+> If your goal is only to install the Obsidian plugin, you do not need the developer integration material above. Search for **SlexKit** in Obsidian **Community plugins**, then install and enable it.
+
 The Obsidian plugin targets local vault content. It registers a `slex` code block processor in reading mode, renders the fence as a readonly interactive fragment, and does not write output back to notes.
 
-Install the plugin from Community Plugins once it is listed, or use BRAT/manual release assets before listing:
+Install the plugin from Obsidian Community Plugins:
+
+1. Open **Settings -> Community plugins**.
+2. Disable **Restricted mode** if needed.
+3. Search for **SlexKit**.
+4. Install and enable the plugin.
+
+The current community release is desktop-only until mobile vault testing is complete. The plugin is compatible with Obsidian 1.5.0+.
+
+BRAT and manual release assets remain useful for testing unreleased builds:
 
 ```text
 BRAT repository: https://github.com/slexkit/obsidian-slexkit
 ```
 
-Manual installs copy release assets into the vault:
+Manual installs copy the GitHub release assets into the vault:
 
 ```text
 .obsidian/plugins/slexkit/

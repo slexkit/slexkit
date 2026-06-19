@@ -120,7 +120,9 @@ export function Message({ markdown }: { markdown: string }) {
 
 官方 Obsidian 插件位于独立发布仓库：<https://github.com/slexkit/obsidian-slexkit>。
 
-上架后从 Community Plugins 安装；上架前使用 BRAT 或手动 GitHub release assets 安装。
+普通 vault 使用直接从 Obsidian Community Plugins 安装 **SlexKit**。BRAT 或手动 GitHub release assets 主要用于测试 `slexkit/obsidian-slexkit` 中尚未发布的构建。
+
+当前社区插件为 desktop-only，兼容 Obsidian 1.5.0+。移动端支持应在真实 mobile vault 测试通过后再开启。
 
 该 adapter 使用 trusted runtime mode，因为它渲染用户本地 vault 内容，不设计为第三方或 agent-generated Markdown 的 sandbox。Secure sandbox support 不属于 v0 adapter 范围。
 
@@ -143,7 +145,7 @@ npx -y @slexkit/mcp
 | With Svelte components | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | Add shadcn theme | `npm install @slexkit/theme-shadcn` |
 | React/Streamdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
-| Obsidian plugin | 从 `slexkit/obsidian-slexkit` 通过 Community Plugins、BRAT 或手动 release assets 安装 |
+| Obsidian plugin | 从 Obsidian Community Plugins 安装 **SlexKit** |
 | AI agent MCP server | `npx -y @slexkit/mcp` |
 
 ## v0 packaging strategy

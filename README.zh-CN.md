@@ -15,7 +15,7 @@
     <a href="README.md">English</a>
   </p>
   <p>
-    <img alt="version" src="https://img.shields.io/badge/version-0.2.0-18181b">
+    <img alt="version" src="https://img.shields.io/badge/version-0.3.0-18181b">
     <img alt="script" src="https://img.shields.io/badge/Slex-v0.1-18181b">
     <img alt="TypeScript" src="https://img.shields.io/badge/runtime-TypeScript-3178c6">
     <img alt="Svelte 5" src="https://img.shields.io/badge/components-Svelte_5-ff3e00">
@@ -30,6 +30,8 @@
 它适合聊天消息、文档、Agent 面板、工具结果和 AI 生成的仪表盘。它不是完整应用框架。
 
 ## 安装
+
+> 只想在 Obsidian 里使用 SlexKit？打开 **Settings -> Community plugins**，搜索 **SlexKit**，安装并启用即可。下面的 npm 安装方式主要面向需要把 SlexKit 接入网页、Markdown renderer、Streamdown 或自定义宿主的开发者。
 
 ```sh
 npm install slexkit
@@ -115,7 +117,6 @@ import "slexkit/style.css";
 | `@slexkit/components-svelte` | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` | Svelte 组件注册 |
 | `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS 主题 token |
 | `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React / Streamdown Markdown 渲染器 |
-| `@slexkit/obsidian` | `npm install slexkit @slexkit/obsidian` | Obsidian 插件适配器 |
 | `@slexkit/mcp` | `npx -y @slexkit/mcp` | 面向文档、示例和源码校验的只读 MCP 服务 |
 
 更多说明见 [Package Boundaries](site/content/reference/packages/zh-CN.md)。
@@ -127,7 +128,7 @@ import "slexkit/style.css";
 | 浏览器 DOM | `mount()`、`ingest()`、`boot()`、`disposeNamespace()` |
 | Markdown 渲染器 | `createSlexKitMarkdownRuntimeHost()` |
 | React / Streamdown | `@slexkit/streamdown` |
-| Obsidian | `@slexkit/obsidian` |
+| Obsidian | 从 Community Plugins 安装 **SlexKit**；发布仓库：<https://github.com/slexkit/obsidian-slexkit> |
 | AI Agents | `@slexkit/mcp`、`llms.txt`、SlexKit skill 文档 |
 | 自定义组件 | `register()`、`registerSvelteComponent()`、`registerSubset()` |
 

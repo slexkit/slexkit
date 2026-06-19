@@ -120,7 +120,9 @@ Processes `slex` fences. Supports both trusted and secure runtime modes.
 
 The official Obsidian plugin lives in a separate release repository: <https://github.com/slexkit/obsidian-slexkit>.
 
-Install it through Community Plugins once listed, or use BRAT/manual GitHub release assets before listing.
+Install **SlexKit** through Obsidian Community Plugins for normal vault use. Use BRAT or manual GitHub release assets only when testing unreleased builds from `slexkit/obsidian-slexkit`.
+
+The community plugin is currently desktop-only and compatible with Obsidian 1.5.0+. Mobile support should be enabled only after real mobile vault testing.
 
 The adapter uses trusted runtime mode - it renders content from the user's local vault and is not designed as a sandbox for third-party or agent-generated Markdown. Secure sandbox support is not part of the v0 adapter.
 
@@ -143,7 +145,7 @@ The server does not modify project files. Use it when an agent needs current Sle
 | With Svelte components | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | Add shadcn theme | `npm install @slexkit/theme-shadcn` |
 | React/Streamdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
-| Obsidian plugin | Community Plugins, BRAT, or manual release assets from `slexkit/obsidian-slexkit` |
+| Obsidian plugin | Install **SlexKit** from Obsidian Community Plugins |
 | AI agent MCP server | `npx -y @slexkit/mcp` |
 
 ## v0 packaging strategy

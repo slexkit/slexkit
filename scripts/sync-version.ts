@@ -64,6 +64,19 @@ export async function syncVersion(): Promise<void> {
   await replaceInFile(join(root, "site", "app", "version.js"), [
     [/export const SLEXKIT_SITE_VERSION = ".*?";/, `export const SLEXKIT_SITE_VERSION = "${version}";`],
   ]);
+  await replaceInFile(join(root, "site", "index.html"), [
+    [/<span data-site-version>.*?<\/span>/, `<span data-site-version>${version}</span>`],
+  ]);
+  await replaceInFile(join(root, "README.md"), [
+    [/badge\/version-[^-"]+-18181b/, `badge/version-${version}-18181b`],
+  ]);
+  await replaceInFile(join(root, "README.zh-CN.md"), [
+    [/badge\/version-[^-"]+-18181b/, `badge/version-${version}-18181b`],
+  ]);
+  await replaceInFile(join(root, "examples", "minimal-cdn", "index.html"), [
+    [/slexkit@[^/"]+\/dist\/slexkit\.css/g, `slexkit@${version}/dist/slexkit.css`],
+    [/slexkit@[^/"]+\/dist\/slexkit\.js/g, `slexkit@${version}/dist/slexkit.js`],
+  ]);
 }
 
 if (import.meta.main) {

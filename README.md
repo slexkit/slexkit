@@ -15,7 +15,7 @@
     <a href="README.zh-CN.md">简体中文</a>
   </p>
   <p>
-    <img alt="version" src="https://img.shields.io/badge/version-0.2.0-18181b">
+    <img alt="version" src="https://img.shields.io/badge/version-0.3.0-18181b">
     <img alt="script" src="https://img.shields.io/badge/Slex-v0.1-18181b">
     <img alt="TypeScript" src="https://img.shields.io/badge/runtime-TypeScript-3178c6">
     <img alt="Svelte 5" src="https://img.shields.io/badge/components-Svelte_5-ff3e00">
@@ -30,6 +30,8 @@
 It is built for chat messages, documents, agent panels, tool results, and AI-authored dashboards. It is not a full application framework.
 
 ## Installation
+
+> Just want to use SlexKit in Obsidian? Open **Settings -> Community plugins**, search for **SlexKit**, then install and enable it. The npm package below is for developers integrating SlexKit into web apps, Markdown renderers, Streamdown, or custom hosts.
 
 ```sh
 npm install slexkit
@@ -126,7 +128,7 @@ See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
 | Browser DOM | `mount()`, `ingest()`, `boot()`, `disposeNamespace()` |
 | Markdown renderers | `createSlexKitMarkdownRuntimeHost()` |
 | React / Streamdown | `@slexkit/streamdown` |
-| Obsidian | Official plugin repo: <https://github.com/slexkit/obsidian-slexkit> |
+| Obsidian | Install **SlexKit** from Community Plugins; release repo: <https://github.com/slexkit/obsidian-slexkit> |
 | AI agents | `@slexkit/mcp`, `llms.txt`, SlexKit skill docs |
 | Custom components | `register()`, `registerSvelteComponent()`, `registerSubset()` |
 

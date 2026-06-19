@@ -112,15 +112,26 @@ const renderer = createSlexKitRenderer({
 
 ## Obsidian
 
+> 如果你的目标只是安装 Obsidian 插件，不需要阅读本页前面的开发者集成内容。直接在 Obsidian 的 **Community plugins** 中搜索 **SlexKit**，安装并启用即可。
+
 Obsidian 插件面向本地 vault 内容。它在 reading mode 中注册 `slex` code block processor，将 fence 渲染为只读交互片段，不将结果写回笔记。
 
-上架后可从 Community Plugins 安装；上架前使用 BRAT 或手动 release assets 安装：
+现在可直接从 Obsidian Community Plugins 安装：
+
+1. 打开 **Settings -> Community plugins**。
+2. 如有需要，关闭 **Restricted mode**。
+3. 搜索 **SlexKit**。
+4. 安装并启用插件。
+
+当前社区版本为 desktop-only，兼容 Obsidian 1.5.0+。移动端支持应在真实 mobile vault 测试通过后再开启。
+
+BRAT 和手动 release assets 仍可用于测试尚未发布的构建：
 
 ```text
 BRAT repository: https://github.com/slexkit/obsidian-slexkit
 ```
 
-手动安装时将 release assets 放入 vault：
+手动安装时将 GitHub release assets 放入 vault：
 
 ```text
 .obsidian/plugins/slexkit/

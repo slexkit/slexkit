@@ -9,6 +9,8 @@ slexkitRenderMode: component
 
 # Getting Started
 
+> Just want to install the Obsidian plugin? Open **Settings -> Community plugins**, search for **SlexKit**, then install and enable it. The rest of this page is for developers integrating SlexKit into web apps, Markdown hosts, Streamdown, or custom runtimes.
+
 Install `slexkit`, mount a trusted fragment, and you're off. Hand off Markdown / React / Obsidian details to dedicated guides — this page keeps the core integration path focused.
 
 ## Installation Entry
@@ -32,7 +34,7 @@ For clearer package boundaries, choose scoped packages by host:
 | Official Svelte component registration | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | Standalone shadcn-token theme CSS | `npm install @slexkit/theme-shadcn` |
 | React + Streamdown Markdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
-| Obsidian vault rendering | Community Plugins, BRAT, or manual release assets from `slexkit/obsidian-slexkit` |
+| Obsidian vault rendering | Install **SlexKit** from Obsidian Community Plugins |
 
 `@slexkit/runtime` and `@slexkit/components-svelte` are thin wrappers around the root package, not independent implementations.
 
