@@ -86,7 +86,7 @@ For exact policy fields and allowed adapter hooks, use the [Security Runtime Con
 
 `@slexkit/streamdown` can run trusted or secure. Use secure mode for chat messages and agent output unless the message source is already trusted by the host.
 
-`@slexkit/obsidian` v0 is a trusted readonly adapter for local vault content. It should not be used as the isolation boundary for third-party Markdown or direct agent output.
+The official Obsidian plugin is a trusted readonly adapter for local vault content. It should not be used as the isolation boundary for third-party Markdown or direct agent output.
 
 Custom Markdown hosts should still process only fences whose language is exactly `slex` and should preserve readable Markdown fallback for non-SlexKit environments.
 

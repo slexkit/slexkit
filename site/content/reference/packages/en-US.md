@@ -25,7 +25,6 @@ slexkit (root - real code)
  @slexkit/components-svelte (thin wrapper) ─── re-exports slexkit/components-svelte
  @slexkit/theme-shadcn ─── CSS only
  @slexkit/streamdown ─── React/Streamdown renderer
- @slexkit/obsidian ─── Obsidian plugin
  @slexkit/mcp ─── read-only MCP server for AI agents
 ```
 
@@ -117,15 +116,13 @@ export function Message({ markdown }: { markdown: string }) {
 
 Processes `slex` fences. Supports both trusted and secure runtime modes.
 
-## @slexkit/obsidian
+## Obsidian plugin
 
-Obsidian plugin adapter. Registers SlexKit fenced code block processors and renders local vault content in reading mode.
+The official Obsidian plugin lives in a separate release repository: <https://github.com/slexkit/obsidian-slexkit>.
 
-```sh
-npm install slexkit @slexkit/obsidian
-```
+Install it through Community Plugins once listed, or use BRAT/manual GitHub release assets before listing.
 
-The adapter uses trusted runtime mode -it renders content from the user's local vault and is not designed as a sandbox for third-party or agent-generated Markdown. Obsidian secure sandbox support is not part of the v0 adapter.
+The adapter uses trusted runtime mode - it renders content from the user's local vault and is not designed as a sandbox for third-party or agent-generated Markdown. Secure sandbox support is not part of the v0 adapter.
 
 ## @slexkit/mcp
 
@@ -146,7 +143,7 @@ The server does not modify project files. Use it when an agent needs current Sle
 | With Svelte components | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | Add shadcn theme | `npm install @slexkit/theme-shadcn` |
 | React/Streamdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
-| Obsidian plugin | `npm install slexkit @slexkit/obsidian` |
+| Obsidian plugin | Community Plugins, BRAT, or manual release assets from `slexkit/obsidian-slexkit` |
 | AI agent MCP server | `npx -y @slexkit/mcp` |
 
 ## v0 packaging strategy
@@ -163,4 +160,4 @@ bun run test
 bun run smoke:release
 ```
 
-The release smoke packs and installs every scoped package, verifies public entry points, verifies CSS subpath exports, loads the Obsidian CJS bundle with an Obsidian module mock, and starts the MCP stdio binary to check `initialize`, `tools/list`, and `slexkitValidate`.
+The release smoke packs and installs every scoped package in this repository, verifies public entry points, verifies CSS subpath exports, and starts the MCP stdio binary to check `initialize`, `tools/list`, and `slexkitValidate`.

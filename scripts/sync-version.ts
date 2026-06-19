@@ -61,9 +61,6 @@ export async function syncVersion(): Promise<void> {
   await replaceInFile(join(root, "packages", "streamdown", "src", "index.ts"), [
     [/const STREAMDOWN_RENDERER_VERSION = ".*?";/, `const STREAMDOWN_RENDERER_VERSION = "${version}";`],
   ]);
-  await replaceInFile(join(root, "packages", "obsidian", "manifest.json"), [
-    [/"version":\s*".*?"/, `"version": "${version}"`],
-  ]);
   await replaceInFile(join(root, "site", "app", "version.js"), [
     [/export const SLEXKIT_SITE_VERSION = ".*?";/, `export const SLEXKIT_SITE_VERSION = "${version}";`],
   ]);

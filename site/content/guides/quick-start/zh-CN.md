@@ -32,7 +32,7 @@ import "slexkit/style.css";
 | 官方 Svelte 组件注册 | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | 独立 shadcn token 主题 CSS | `npm install @slexkit/theme-shadcn` |
 | React + Streamdown Markdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
-| Obsidian vault 渲染 | `npm install slexkit @slexkit/obsidian` |
+| Obsidian vault 渲染 | 从 `slexkit/obsidian-slexkit` 通过 Community Plugins、BRAT 或手动 release assets 安装 |
 
 `@slexkit/runtime` 和 `@slexkit/components-svelte` 是根包的 thin wrapper，不是独立实现包。
 

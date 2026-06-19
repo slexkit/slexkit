@@ -86,7 +86,7 @@ Content-Type: text/javascript
 
 `@slexkit/streamdown` 可以运行 trusted 或 secure。聊天消息和 agent 输出默认使用 secure mode，除非宿主已经信任这条消息的来源。
 
-`@slexkit/obsidian` v0 是本地 vault 内容的 trusted readonly adapter，不应作为第三方 Markdown 或 agent 直接输出的隔离边界。
+官方 Obsidian 插件是本地 vault 内容的 trusted readonly adapter，不应作为第三方 Markdown 或 agent 直接输出的隔离边界。
 
 自定义 Markdown 宿主仍然只应处理语言标记为 `slex` 的 fence，并为不支持 SlexKit 的环境保留可读的 Markdown fallback。
 

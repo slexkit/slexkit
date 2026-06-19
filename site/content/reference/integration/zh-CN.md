@@ -172,7 +172,7 @@ export function Message({ markdown }: { markdown: string }) {
 
 ## Obsidian integration
 
-`@slexkit/obsidian` 注册 Obsidian `slex` fenced code block processor：
+官方 Obsidian 插件位于 <https://github.com/slexkit/obsidian-slexkit>，它注册 `slex` fenced code block processor：
 
 ```ts
 registerMarkdownCodeBlockProcessor("slex", (source, el, ctx) => { ... });

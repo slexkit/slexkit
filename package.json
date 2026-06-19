@@ -81,7 +81,7 @@
   ],
   "scripts": {
     "dev": "bun run site/server.ts",
-    "build": "bun run build:core && bun run --filter @slexkit/streamdown build && bun run --filter @slexkit/obsidian build && bun run --filter @slexkit/mcp build",
+    "build": "bun run build:core && bun run --filter @slexkit/streamdown build && bun run --filter @slexkit/mcp build",
     "build:core": "bun run scripts/build-core.ts",
     "ai:docs": "bun run scripts/generate-ai-docs.ts",
     "version:sync": "bun run scripts/sync-version.ts",

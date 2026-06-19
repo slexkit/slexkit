@@ -32,7 +32,7 @@ For clearer package boundaries, choose scoped packages by host:
 | Official Svelte component registration | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | Standalone shadcn-token theme CSS | `npm install @slexkit/theme-shadcn` |
 | React + Streamdown Markdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
-| Obsidian vault rendering | `npm install slexkit @slexkit/obsidian` |
+| Obsidian vault rendering | Community Plugins, BRAT, or manual release assets from `slexkit/obsidian-slexkit` |
 
 `@slexkit/runtime` and `@slexkit/components-svelte` are thin wrappers around the root package, not independent implementations.
 

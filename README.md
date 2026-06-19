@@ -115,7 +115,6 @@ Markdown platforms without SlexKit support show the fallback text. Hosts with Sl
 | `@slexkit/components-svelte` | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` | Svelte component registration |
 | `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS theme tokens |
 | `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React / Streamdown Markdown renderer |
-| `@slexkit/obsidian` | `npm install slexkit @slexkit/obsidian` | Obsidian plugin adapter |
 | `@slexkit/mcp` | `npx -y @slexkit/mcp` | Read-only MCP server for docs, examples, and source validation |
 
 See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
@@ -127,7 +126,7 @@ See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
 | Browser DOM | `mount()`, `ingest()`, `boot()`, `disposeNamespace()` |
 | Markdown renderers | `createSlexKitMarkdownRuntimeHost()` |
 | React / Streamdown | `@slexkit/streamdown` |
-| Obsidian | `@slexkit/obsidian` |
+| Obsidian | Official plugin repo: <https://github.com/slexkit/obsidian-slexkit> |
 | AI agents | `@slexkit/mcp`, `llms.txt`, SlexKit skill docs |
 | Custom components | `register()`, `registerSvelteComponent()`, `registerSubset()` |
 

@@ -133,7 +133,6 @@ describe("split runtime and Svelte component entries", () => {
       "components-svelte",
       "theme-shadcn",
       "streamdown",
-      "obsidian",
       "mcp",
     ];
 
@@ -164,9 +163,6 @@ describe("split runtime and Svelte component entries", () => {
       expect(existsSync(`packages/${dir}/LICENSE`)).toBe(true);
     }
 
-    expect(existsSync("packages/obsidian/dist/main.js")).toBe(true);
-    expect(existsSync("packages/obsidian/dist/manifest.json")).toBe(true);
-    expect(existsSync("packages/obsidian/dist/styles.css")).toBe(true);
     expect(existsSync("packages/mcp/dist/index.js")).toBe(true);
     expect(existsSync("packages/mcp/dist/data/slexkit-ai-manifest.json")).toBe(true);
     expect(rootPackage.repository?.type).toBe("git");

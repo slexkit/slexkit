@@ -34,7 +34,6 @@ const packages = [
   `@slexkit/components-svelte@${version}`,
   `@slexkit/theme-shadcn@${version}`,
   `@slexkit/streamdown@${version}`,
-  `@slexkit/obsidian@${version}`,
   `@slexkit/mcp@${version}`,
   "react",
   "react-dom",

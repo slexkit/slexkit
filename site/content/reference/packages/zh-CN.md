@@ -25,7 +25,6 @@ slexkit (root - real code)
  @slexkit/components-svelte  re-exports slexkit/components-svelte
  @slexkit/theme-shadcn       CSS only
  @slexkit/streamdown         React/Streamdown renderer
- @slexkit/obsidian           Obsidian plugin
  @slexkit/mcp                read-only MCP server for AI agents
 ```
 
@@ -117,15 +116,13 @@ export function Message({ markdown }: { markdown: string }) {
 
 它只处理 `slex` fences，并支持 trusted 与 secure runtime modes。
 
-## `@slexkit/obsidian`
+## Obsidian plugin
 
-Obsidian plugin adapter。它注册 SlexKit fenced code block processor，在 reading mode 渲染本地 vault 内容。
+官方 Obsidian 插件位于独立发布仓库：<https://github.com/slexkit/obsidian-slexkit>。
 
-```sh
-npm install slexkit @slexkit/obsidian
-```
+上架后从 Community Plugins 安装；上架前使用 BRAT 或手动 GitHub release assets 安装。
 
-该 adapter 使用 trusted runtime mode，因为它渲染用户本地 vault 内容，不设计为第三方或 agent-generated Markdown 的 sandbox。Obsidian secure sandbox support 不属于 v0 adapter 范围。
+该 adapter 使用 trusted runtime mode，因为它渲染用户本地 vault 内容，不设计为第三方或 agent-generated Markdown 的 sandbox。Secure sandbox support 不属于 v0 adapter 范围。
 
 ## `@slexkit/mcp`
 
@@ -146,7 +143,7 @@ npx -y @slexkit/mcp
 | With Svelte components | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | Add shadcn theme | `npm install @slexkit/theme-shadcn` |
 | React/Streamdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
-| Obsidian plugin | `npm install slexkit @slexkit/obsidian` |
+| Obsidian plugin | 从 `slexkit/obsidian-slexkit` 通过 Community Plugins、BRAT 或手动 release assets 安装 |
 | AI agent MCP server | `npx -y @slexkit/mcp` |
 
 ## v0 packaging strategy
@@ -163,4 +160,4 @@ bun run test
 bun run smoke:release
 ```
 
-Release smoke 会 pack 并安装所有 scoped package，验证 public entry points、CSS subpath exports、Obsidian CJS bundle，以及 MCP stdio binary 的 `initialize`、`tools/list` 和 `slexkitValidate`。
+Release smoke 会 pack 并安装本仓库的 scoped package，验证 public entry points、CSS subpath exports，以及 MCP stdio binary 的 `initialize`、`tools/list` 和 `slexkitValidate`。

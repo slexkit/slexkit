@@ -9,17 +9,17 @@ slexkitRenderMode: component
 
 # Integration
 
-SlexKit ships two official plugins: Streamdown and Obsidian. Both process only explicit `slex` fences — they don't scan ordinary JavaScript, JSON, or unlabeled code blocks. For the full API and host contract, see the [Host Integration reference](/docs/reference/integration).
+SlexKit ships the Streamdown package in this repository and maintains the official Obsidian plugin in a separate release repository. Both integrations process only explicit `slex` fences — they don't scan ordinary JavaScript, JSON, or unlabeled code blocks. For the full API and host contract, see the [Host Integration reference](/docs/reference/integration).
 
 ## Plugin Selection
 
 | Host | Package | Use case | Runtime boundary |
 |---|---|---|---|
 | React / Streamdown | `@slexkit/streamdown` | Chat messages, AI output, React Markdown pages | trusted or secure |
-| Obsidian | `@slexkit/obsidian` | Slex fences in local vault reading mode | trusted readonly |
+| Obsidian | `slexkit/obsidian-slexkit` | Slex fences in local vault reading mode | trusted readonly |
 | Custom Markdown host | `slexkit` | Product-specific Markdown renderer or document viewer | trusted or secure |
 
-Use the packaged plugin when the host is Streamdown or Obsidian. Use `createSlexKitMarkdownRuntimeHost` directly for custom Markdown renderers.
+Use the packaged plugin when the host is Streamdown. Use the separate [SlexKit plugin repository](https://github.com/slexkit/obsidian-slexkit) for Obsidian installs and releases. Use `createSlexKitMarkdownRuntimeHost` directly for custom Markdown renderers.
 
 Package installation details and release boundaries are tracked in [Package Boundaries](/docs/reference/packages).
 
@@ -112,13 +112,13 @@ The secure runtime deployment checklist lives in [Secure Runtime Setup](security
 
 The Obsidian plugin targets local vault content. It registers a `slex` code block processor in reading mode, renders the fence as a readonly interactive fragment, and does not write output back to notes.
 
-Build the plugin:
+Install the plugin from Community Plugins once it is listed, or use BRAT/manual release assets before listing:
 
-```sh
-bun run --filter @slexkit/obsidian build
+```text
+BRAT repository: https://github.com/slexkit/obsidian-slexkit
 ```
 
-Copy release assets into the vault:
+Manual installs copy release assets into the vault:
 
 ```text
 .obsidian/plugins/slexkit/
@@ -154,7 +154,7 @@ Blocks in the same note share one Markdown artifact runtime, so a state-only fen
 
 ## Obsidian Boundary
 
-`@slexkit/obsidian` v0 is a trusted readonly adapter. Content comes from the user's local vault; the plugin is not a sandbox for third-party Markdown or agent output.
+The official plugin is a trusted readonly adapter. Content comes from the user's local vault; the plugin is not a sandbox for third-party Markdown or agent output.
 
 For untrusted content, use secure mode in a web host with an explicit sandbox frame and host policy.
 

@@ -72,7 +72,7 @@ async function pack(packagePath = ".") {
 }
 
 const tarballs = [];
-for (const pkg of [".", "./packages/runtime", "./packages/components-svelte", "./packages/streamdown", "./packages/theme-shadcn", "./packages/obsidian", "./packages/mcp"]) {
+for (const pkg of [".", "./packages/runtime", "./packages/components-svelte", "./packages/streamdown", "./packages/theme-shadcn", "./packages/mcp"]) {
   tarballs.push(await pack(pkg));
 }
 
@@ -91,9 +91,9 @@ writeFileSync(
     "import { mount as scopedMount } from '@slexkit/runtime';",
     "import '@slexkit/components-svelte';",
     "import { SlexKitRenderer, createSlexKitRenderer, slexkitRenderer } from '@slexkit/streamdown';",
-    "import { createRequire } from 'node:module';",
     "import { existsSync } from 'node:fs';",
     "import { join } from 'node:path';",
+    "import { createRequire } from 'node:module';",
     "const require = createRequire(import.meta.url);",
     "const themeCss = require.resolve('@slexkit/theme-shadcn/style.css');",
     "const themeBaseCss = require.resolve('@slexkit/theme-shadcn/base.css');",
@@ -108,21 +108,6 @@ writeFileSync(
     "if (!themeBaseCss.endsWith('base.css')) throw new Error('theme base CSS export did not resolve');",
     "if (!themeButtonCss.endsWith('button.css')) throw new Error('theme component CSS export did not resolve');",
     "if (!streamdownCss.endsWith('style.css')) throw new Error('streamdown CSS export did not resolve');",
-    "const Module = require('node:module');",
-    "const originalLoad = Module._load;",
-    "Module._load = function patchedLoad(request, parent, isMain) {",
-    "  if (request === 'obsidian') {",
-    "    return {",
-    "      MarkdownRenderChild: class { constructor(containerEl) { this.containerEl = containerEl; } },",
-    "      Plugin: class { registerMarkdownCodeBlockProcessor() {} },",
-    "    };",
-    "  }",
-    "  return originalLoad.apply(this, arguments);",
-    "};",
-    "const ObsidianPlugin = require('@slexkit/obsidian');",
-    "Module._load = originalLoad;",
-    "if (typeof ObsidianPlugin !== 'function') throw new Error('@slexkit/obsidian did not export a plugin constructor');",
-    "if (ObsidianPlugin.default !== ObsidianPlugin) throw new Error('@slexkit/obsidian default export mismatch');",
     "const mcpBinBase = join(process.cwd(), 'node_modules', '.bin', 'slexkit-mcp');",
     "const mcpBin = (process.platform === 'win32' ? [`${mcpBinBase}.cmd`, `${mcpBinBase}.exe`, `${mcpBinBase}.bunx`, mcpBinBase] : [mcpBinBase]).find(existsSync);",
     "if (!mcpBin) throw new Error('slexkit-mcp binary missing');",

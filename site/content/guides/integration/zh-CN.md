@@ -9,7 +9,7 @@ slexkitRenderMode: component
 
 # 集成
 
-SlexKit 提供两台官方插件：Streamdown 和 Obsidian。它们只处理显式 `slex` fence，不扫描普通代码块。完整 API 和 host 契约见 [Host Integration reference](/docs/reference/integration)。
+SlexKit 在本仓库提供 Streamdown 包，并在独立发布仓库维护官方 Obsidian 插件。两者都只处理显式 `slex` fence，不扫描普通代码块。完整 API 和 host 契约见 [Host Integration reference](/docs/reference/integration)。
 
 两个官方插件都只处理显式 `slex` fence，不扫描普通 JavaScript、JSON 或未标记代码块。
 
@@ -18,10 +18,10 @@ SlexKit 提供两台官方插件：Streamdown 和 Obsidian。它们只处理显�
 | 宿主 | 使用包 | 适用场景 | 运行边界 |
 |---|---|---|---|
 | React / Streamdown | `@slexkit/streamdown` | 聊天消息、AI 输出、React Markdown 页面 | trusted 或 secure |
-| Obsidian | `@slexkit/obsidian` | 本地 vault reading mode 中的 Slex fence | trusted readonly |
+| Obsidian | `slexkit/obsidian-slexkit` | 本地 vault reading mode 中的 Slex fence | trusted readonly |
 | 自定义 Markdown 宿主 | `slexkit` | 产品自己的 Markdown renderer 或文档查看器 | trusted 或 secure |
 
-宿主是 Streamdown 或 Obsidian 时，优先使用对应插件。自定义 Markdown renderer 直接使用 `createSlexKitMarkdownRuntimeHost`。
+宿主是 Streamdown 时使用本仓库里的包；Obsidian 安装和发布以独立的 [SlexKit 插件仓库](https://github.com/slexkit/obsidian-slexkit) 为准。自定义 Markdown renderer 直接使用 `createSlexKitMarkdownRuntimeHost`。
 
 包安装细节和发布边界由 [Package Boundaries](/docs/reference/packages) 维护。
 
@@ -114,13 +114,13 @@ const renderer = createSlexKitRenderer({
 
 Obsidian 插件面向本地 vault 内容。它在 reading mode 中注册 `slex` code block processor，将 fence 渲染为只读交互片段，不将结果写回笔记。
 
-构建插件：
+上架后可从 Community Plugins 安装；上架前使用 BRAT 或手动 release assets 安装：
 
-```sh
-bun run --filter @slexkit/obsidian build
+```text
+BRAT repository: https://github.com/slexkit/obsidian-slexkit
 ```
 
-Release assets 放入 vault：
+手动安装时将 release assets 放入 vault：
 
 ```text
 .obsidian/plugins/slexkit/
@@ -156,7 +156,7 @@ Vault status: Ready.
 
 ## Obsidian 边界
 
-`@slexkit/obsidian` v0 是 trusted readonly adapter。内容来自用户本地 vault，不是第三方 Markdown 或 agent 输出的安全沙箱。
+官方插件是 trusted readonly adapter。内容来自用户本地 vault，不是第三方 Markdown 或 agent 输出的安全沙箱。
 
 渲染不可信内容时，应在 Web host 中使用 secure mode，并显式配置 sandbox frame 与 host policy。
 

@@ -94,7 +94,7 @@ describe("docs page module", () => {
     const integrationMarkdown = await Bun.file("site/content/guides/integration/zh-CN.md").text();
     expect(integrationMarkdown).toContain("# 集成");
     expect(integrationMarkdown).toContain("@slexkit/streamdown");
-    expect(integrationMarkdown).toContain("@slexkit/obsidian");
+    expect(integrationMarkdown).toContain("slexkit/obsidian-slexkit");
     expect(integrationMarkdown).toContain("createSlexKitRenderer");
     expect(integrationMarkdown).toContain("Obsidian");
 

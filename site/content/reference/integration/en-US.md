@@ -199,16 +199,16 @@ The renderer handles `slex` fences. It supports both trusted and secure runtime 
 
 ## Obsidian integration
 
-The `@slexkit/obsidian` package registers the `slex` fenced code block processor in Obsidian:
+The official Obsidian plugin lives in <https://github.com/slexkit/obsidian-slexkit> and registers the `slex` fenced code block processor:
 
 ```ts
-// In the Obsidian plugin:
+// In the plugin:
 registerMarkdownCodeBlockProcessor("slex", (source, el, ctx) => { ... });
 ```
 
 The adapter renders blocks in **reading mode only** and does not write back to the vault. Blocks within the same note share a trusted artifact runtime.
 
-**Important**: The Obsidian adapter uses trusted mode because it renders content from the user's login vault. It is not designed as a security boundary for untrusted or agent-generated Markdown.
+**Important**: The Obsidian adapter uses trusted mode because it renders content from the user's local vault. It is not designed as a security boundary for untrusted or agent-generated Markdown.
 
 ## Writing a custom host adapter
 
