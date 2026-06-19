@@ -232,5 +232,7 @@
   "Show a close button.": "显示关闭按钮。",
   "Alias for dismissable.": "dismissable 的别名。",
   "Accessible close button label.": "无障碍关闭按钮标签。",
-  "Alias for closeLabel.": "closeLabel 的别名。"
+  "Alias for closeLabel.": "closeLabel 的别名。",
+  "Optional CSS color for controlled previews.": "受控预览使用的可选 CSS 颜色。",
+  "Optional font size. Numbers are treated as px.": "可选字号。数字会按 px 处理。"
 }

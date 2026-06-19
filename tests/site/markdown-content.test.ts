@@ -494,6 +494,15 @@ order: 1
     }
   });
 
+  it("uses the text component for the cross-document style preview", async () => {
+    const markdown = await Bun.file("site/content/examples/cross-doc-state-lab/zh-CN.md").text();
+
+    expect(markdown).toContain('"text:styledValue"');
+    expect(markdown).toContain('"$color": "g.color"');
+    expect(markdown).toContain('"$size": "g.size"');
+    expect(markdown).not.toContain('"stat:sizePreview"');
+  });
+
   it("marks locale fallback and stale translated spec blocks", async () => {
     const sourceMarkdown = await Bun.file("site/content/components/button/en-US.md").text();
     const zhMarkdown = sourceMarkdown.replace(/(slex:spec-api:start[^>]*sourceHash=")[^"]+/, "$1outdated");

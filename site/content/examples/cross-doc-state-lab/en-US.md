@@ -75,7 +75,10 @@ Below are three independent ` ```slex ` fences — one control panel and two obs
   layout: {
     "card:a": {
       title: "Observer Panel A — Text Styling",
-      "stat:sizePreview": { "$label": "'Font size: ' + g.size + 'px'", "$value": "g.color" },
+      "column:stylePreview": {
+        "text:styleMeta": { "$text": "'Font size: ' + g.size + 'px'" },
+        "text:styledValue": { "$text": "g.color", "$color": "g.color", "$size": "g.size" }
+      },
       "callout:preview": {
         "$tone": "g.theme === 'dark' ? 'danger' : g.theme === 'info' ? 'info' : 'success'",
         "$text": "g.theme === 'dark' ? 'Dark mode: color scheme for night reading.' : g.theme === 'info' ? 'Info mode: emphasizes technical details.' : 'Light mode: default document reading colors.'"

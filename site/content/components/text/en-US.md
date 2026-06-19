@@ -32,12 +32,14 @@ Output text content for status messages, descriptions, and result display.
 
 ## API Reference {#api}
 
-<!-- slex:spec-api:start component="text" sourceHash="32589fbc" -->
+<!-- slex:spec-api:start component="text" sourceHash="745fea9a" -->
 | Field | Type | Required | Dynamic | Default | Description |
 |---|---|---|---|---|---|
 | `text` | string | No | Yes |  | Displayed text. |
 | `content` | string | No | Yes |  | Alias for text. |
 | `label` | string | No | Yes |  | Alias for text. |
 | `variant` | string: default, muted | No | No | `"default"` | Text visual variant. |
+| `color` | string | No | Yes |  | Optional CSS color for controlled previews. |
+| `size` | string \| number | No | Yes |  | Optional font size. Numbers are treated as px. |
 | `class` | string | No | No |  | Additional host-controlled CSS class. |
 <!-- slex:spec-api:end -->

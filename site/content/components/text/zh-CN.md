@@ -33,12 +33,14 @@ summary: "短文本输出，用于状态、说明、结果。"
 
 ## API 参考 {#api}
 
-<!-- slex:spec-api:start component="text" sourceHash="32589fbc" -->
+<!-- slex:spec-api:start component="text" sourceHash="745fea9a" -->
 | 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `text` | string | 否 | 是 |  | 显示文本。 |
 | `content` | string | 否 | 是 |  | text 的别名。 |
 | `label` | string | 否 | 是 |  | text 的别名。 |
 | `variant` | string: default, muted | 否 | 否 | `"default"` | 文本视觉变体。 |
+| `color` | string | 否 | 是 |  | 受控预览使用的可选 CSS 颜色。 |
+| `size` | string \| number | 否 | 是 |  | 可选字号。数字会按 px 处理。 |
 | `class` | string | 否 | 否 |  | 额外的宿主控制 CSS 类。 |
 <!-- slex:spec-api:end -->

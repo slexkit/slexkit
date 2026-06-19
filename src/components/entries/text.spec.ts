@@ -11,6 +11,8 @@ export const textSpec = component({
       content: { type: "string", dynamic: true, description: "Alias for text." },
       label: { type: "string", dynamic: true, description: "Alias for text." },
       variant: { type: "string", values: ["default", "muted"], default: "default", description: "Text visual variant." },
+      color: { type: "string", dynamic: true, description: "Optional CSS color for controlled previews." },
+      size: { type: "string | number", dynamic: true, description: "Optional font size. Numbers are treated as px." },
       class: { type: "string", description: "Additional host-controlled CSS class." },
     },
     children: noChildren,
