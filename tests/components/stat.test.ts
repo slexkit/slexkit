@@ -205,7 +205,8 @@ describe("stat component", () => {
   it("keeps stat number motion scoped and reduced-motion aware", async () => {
     const css = await Bun.file("src/styles/display.css").text();
 
-    expect(css).toContain(".slex-stat-character[data-stat-change]");
+    expect(css).toContain('.slex-stat-character[data-stat-kind="digit"][data-stat-change]');
+    expect(css).not.toContain(".slex-stat-character[data-stat-change] {\n  overflow: hidden;");
     expect(css).toContain(".slex-stat-character[data-stat-initial=\"true\"]");
     expect(css).toContain("--slex-stat-initial-delay");
     expect(css).toContain("@keyframes slex-stat-digit-new-up");

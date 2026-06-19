@@ -2365,7 +2365,7 @@ body[data-mobile-nav-open] {
   display: block;
 }
 
-.slex-stat-character[data-stat-change] {
+.slex-stat-character[data-stat-kind="digit"][data-stat-change] {
   overflow: hidden;
 }
 
