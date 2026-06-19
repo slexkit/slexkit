@@ -144,10 +144,14 @@ describe("slider component", () => {
       await Bun.file("src/styles/components/switch.css").text(),
     ].join("\n");
     expect(css).toContain(".slex-slider::-webkit-slider-thumb");
+    expect(css).toContain(".slex-slider::-webkit-slider-runnable-track");
     expect(css).toContain(".slex-slider:hover::-webkit-slider-thumb");
     expect(css).toContain(".slex-slider:active::-webkit-slider-thumb");
+    expect(css).toContain("margin-top: -0.25rem");
+    expect(css).toContain("background-clip: padding-box");
+    expect(css).toContain("background: transparent");
     expect(css).toContain("border: 2px solid var(--primary)");
-    expect(css).toContain("background: var(--background) !important");
+    expect(css).toContain("background-color: var(--background)");
     expect(css).toContain(".slex-switch:hover .slex-switch-control");
     expect(css).toContain(".slex-switch:active .slex-switch-control::after");
     expect(css).toContain(".slex-switch-input:checked + .slex-switch-control");
