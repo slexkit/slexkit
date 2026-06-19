@@ -40,7 +40,6 @@ $$Error = \frac{|BR_{actual} - BR_{target}|}{BR_{target}} \times 100\%$$
   },
   layout: {
     "section:baudCalculator": {
-      eyebrow: "计算器",
       title: "波特率误差计算器",
       subtitle: "输入晶振频率和目标波特率，计算误差。",
       "card:baud": {

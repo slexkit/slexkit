@@ -40,7 +40,6 @@ slexkitRenderMode: component
   },
   layout: {
     "section:salary": {
-      eyebrow: "计算器",
       title: "五险一金计算器",
       subtitle: "输入税前工资和城市，实时计算五险一金明细。",
       "grid:params": {

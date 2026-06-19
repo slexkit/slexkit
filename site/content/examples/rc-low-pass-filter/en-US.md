@@ -43,7 +43,6 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
   },
   layout: {
     "section:params": {
-      eyebrow: "Calculator",
       title: "RC Low-Pass Filter",
       subtitle: "One resistor and one capacitor — filter out high-frequency noise.",
       "card:params": {

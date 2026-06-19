@@ -39,7 +39,6 @@ With load $R_L$: $V_{out,loaded} = V_{in} \times \frac{R_2 \parallel R_L}{R_1 + 
   },
   layout: {
     "section:divider": {
-      eyebrow: "Calculator",
       title: "Voltage Divider Calculator",
       subtitle: "Two resistors in series, tapping voltage from the middle.",
       "card:divider": {

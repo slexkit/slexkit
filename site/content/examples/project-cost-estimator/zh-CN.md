@@ -36,7 +36,6 @@ slexkitRenderMode: component
   },
   layout: {
     "section:estimator": {
-      eyebrow: "计算器",
       title: "软件项目成本估算器",
       subtitle: "输入团队配置和周期，成本自动算出来。",
       "card:estimator": {

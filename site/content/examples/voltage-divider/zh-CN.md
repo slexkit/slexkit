@@ -39,7 +39,6 @@ slexkitRenderMode: component
   },
   layout: {
     "section:divider": {
-      eyebrow: "计算器",
       title: "分压器计算器",
       subtitle: "两个电阻串联，从中间引出电压。",
       "card:divider": {

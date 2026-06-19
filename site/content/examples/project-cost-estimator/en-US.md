@@ -36,7 +36,6 @@ Your boss asks: "How much will this project cost?" You say: "Let me calculate." 
   },
   layout: {
     "section:estimator": {
-      eyebrow: "Calculator",
       title: "Software Project Cost Estimator",
       subtitle: "Enter team configuration and timeline — cost calculates automatically.",
       "card:estimator": {

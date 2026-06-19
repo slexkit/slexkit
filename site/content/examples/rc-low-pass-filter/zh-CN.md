@@ -43,7 +43,6 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
   },
   layout: {
     "section:params": {
-      eyebrow: "计算器",
       title: "RC 低通滤波器",
       subtitle: "一个电阻加一个电容，把高频噪声滤掉。",
       "card:params": {

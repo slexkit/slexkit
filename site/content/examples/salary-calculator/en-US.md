@@ -40,7 +40,6 @@ You got an offer — 20,000 RMB/month. How much do you actually take home? HR sa
   },
   layout: {
     "section:salary": {
-      eyebrow: "Calculator",
       title: "Social Insurance Calculator",
       subtitle: "Enter pre-tax salary and city to calculate social insurance breakdown in real time.",
       "grid:params": {
