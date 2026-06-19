@@ -42,6 +42,10 @@ function isWritableComponent(type: string): boolean {
   return mode === "value" || mode === "checked" || mode === "enabled";
 }
 
+function isReadableComponent(type: string): boolean {
+  return getComponentStateMode(type) === "readable";
+}
+
 function isStatefulComponent(type: string): boolean {
   return getComponentStateMode(type) !== "none";
 }
@@ -176,7 +180,10 @@ export function ensureComponentState(
   componentTypes: ComponentTypeMap,
 ): ComponentState {
   if (!components[name]) components[name] = {};
-  componentTypes[name] = type;
+  const previousType = componentTypes[name] ?? "";
+  if (!(isWritableComponent(previousType) && isReadableComponent(type))) {
+    componentTypes[name] = type;
+  }
   return components[name];
 }
 
@@ -216,6 +223,8 @@ export function syncComponentProps(
   componentTypes: ComponentTypeMap,
 ): ComponentState | undefined {
   if (!name || !isStatefulComponent(type)) return undefined;
+  const previousType = componentTypes[name] ?? "";
+  if (isWritableComponent(previousType) && isReadableComponent(type)) return undefined;
   const state = ensureComponentState(name, type, components, componentTypes);
   if (type === "input" && typeof props.type === "string") {
     assignInputType(state, props.type);
@@ -305,7 +314,7 @@ function warnDuplicateState(
   );
   if (previous.type !== currentType) {
     console.warn(
-      `[SlexKit][${ns}] Component state '${name}' is used by multiple component types (${previous.type}, ${currentType}); the latest rendered type controls write behavior.`,
+      `[SlexKit][${ns}] Component state '${name}' is used by multiple component types (${previous.type}, ${currentType}); use distinct names when components should not share state.`,
     );
   }
 }
@@ -329,6 +338,9 @@ function shouldWarnDuplicateState(
   currentBinding: string | undefined,
   previous: SeenComponentState,
 ): boolean {
+  if (isReadableComponent(previous.type) && isReadableComponent(currentType)) {
+    return false;
+  }
   if (
     currentBinding &&
     previous.stateBinding === currentBinding &&

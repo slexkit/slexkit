@@ -187,6 +187,68 @@ describe("secure markdown artifact bridge", () => {
       second.remove();
     });
 
+    it("keeps trusted markdown slider bindings separate from sibling select state", () => {
+      const runtime = createSlexKitMarkdownRuntimeHost();
+      const container = setup();
+
+      runtime.mountBlock({
+        artifactId: "cross-doc-controls",
+        container,
+        source: `({
+          slex: "0.1",
+          namespace: "cross_doc_controls",
+          g: { color: "blue", size: 16 },
+          layout: {
+            "grid:controls": {
+              "select:color": {
+                label: "Color",
+                "$value": "g.color",
+                options: [
+                  { label: "Blue", value: "blue" },
+                  { label: "Green", value: "green" },
+                ],
+                onchange: "g.color = String($event)",
+              },
+              "slider:size": {
+                label: "Size",
+                "$value": "g.size",
+                min: 8,
+                max: 48,
+                step: 2,
+                unit: "px",
+                onchange: "g.size = Number($event)",
+              },
+              "badge:note": { "$label": "'style ' + g.color + ' ' + g.size + 'px'" },
+            },
+          },
+        })`,
+      });
+      const observer = document.createElement("div");
+      document.body.appendChild(observer);
+      runtime.mountBlock({
+        artifactId: "cross-doc-controls",
+        container: observer,
+        source: `({
+          slex: "0.1",
+          namespace: "cross_doc_controls",
+          layout: {
+            "card:observer": {
+              "stat:size": { "$label": "'Size: ' + g.size + 'px'", "$value": "g.color" },
+            },
+          },
+        })`,
+      });
+
+      expect(container.querySelector(".slex-slider-value")?.textContent).toBe("16px");
+      const input = container.querySelector(".slex-slider") as HTMLInputElement;
+      expect(input.value).toBe("16");
+      expect(input.style.getPropertyValue("--slex-slider-progress")).toBe("20%");
+      expect(container.querySelector(".slex-badge")?.textContent).toContain("style blue 16px");
+
+      runtime.disposeArtifact("cross-doc-controls");
+      observer.remove();
+    });
+
 
     it("uses one secure sandbox frame for all blocks in the same markdown artifact", () => {
       const runtime = createSlexKitMarkdownRuntimeHost({

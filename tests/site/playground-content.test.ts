@@ -196,8 +196,10 @@ describe("site playground markdown renderer", () => {
     const staticExport = await Bun.file("site/scripts/export-static.ts").text();
 
     expect(renderer).toContain("mount(MarkdownRenderer");
+    expect(renderer).toContain('from "slexkit"');
     expect(renderer).toContain("createSlexKitMarkdownRuntimeHost");
     expect(renderer).toContain("runtimeHost.disposeArtifact(domain)");
+    expect(renderer).toContain("if (ownsRuntimeHost) runtimeHost.disposeAll()");
     expect(renderer).not.toContain("createRoot");
     expect(markdownComponent).toContain("@humanspeak/svelte-markdown");
     expect(markdownComponent).toContain("normalizeHeadingAnchors(content)");
@@ -211,6 +213,7 @@ describe("site playground markdown renderer", () => {
     expect(slexkitRenderer).toContain('sourceType: "slex"');
     expect(slexkitRenderer).toContain("mountSecureArtifact");
     expect(slexkitRenderer).toContain("activeRuntimeHost.mountBlock");
+    expect(slexkitRenderer).toContain("configureRuntimeHost");
     expect(slexkitRenderer).toContain("getSlexKitMarkdownRuntimeHost");
     expect(slexkitRenderer).toContain("HighlightedMarkdownCode");
     expect(highlightedCode).toContain("svelte-highlight");

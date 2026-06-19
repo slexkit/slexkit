@@ -38,6 +38,93 @@ function parseGeneratedSpecAttrs(markdown: string, kind: "spec-api" | "spec-exam
   throw new Error(`${component} is missing generated ${kind} block`);
 }
 
+const stateModes: Record<string, "value" | "checked" | "enabled" | "readable"> = {
+  input: "value",
+  slider: "value",
+  select: "value",
+  tabs: "value",
+  "radio-group": "value",
+  checkbox: "checked",
+  switch: "enabled",
+  stat: "readable",
+  text: "readable",
+  progress: "readable",
+  badge: "readable",
+  callout: "readable",
+  "code-block": "readable",
+  divider: "readable",
+  formula: "readable",
+  link: "readable",
+  table: "readable",
+  section: "readable",
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function collectStatefulComponentUses(
+  layout: Record<string, unknown>,
+  namespace: string,
+  uses: Array<{ namespace: string; type: string; name: string; mode: string }>,
+) {
+  for (const [key, value] of Object.entries(layout)) {
+    if (!isRecord(value)) continue;
+    const separatorIndex = key.indexOf(":");
+    if (separatorIndex > 0) {
+      const type = key.slice(0, separatorIndex);
+      const name = key.slice(separatorIndex + 1);
+      const mode = stateModes[type];
+      if (mode && name) uses.push({ namespace, type, name, mode });
+    }
+    collectStatefulComponentUses(value, namespace, uses);
+  }
+}
+
+function slexLayoutFromParsedSource(source: unknown): Record<string, unknown> | undefined {
+  if (!isRecord(source)) return undefined;
+  if (isRecord(source.layout)) return source.layout;
+  const { slex: _slex, namespace: _namespace, g: _g, layout: _layout, ...bareLayout } = source;
+  return Object.keys(bareLayout).some((key) => key.includes(":")) ? bareLayout : undefined;
+}
+
+function findWritableReadableStateCollisions(markdown: string): string[] {
+  const uses: Array<{ namespace: string; type: string; name: string; mode: string }> = [];
+  const fences = Array.from(markdown.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
+  for (const fence of fences) {
+    const parsed = parseSlexSource(fence);
+    if (!parsed.ok) continue;
+    const namespace = isRecord(parsed.value) ? String(parsed.value.namespace || "default") : "default";
+    const layout = slexLayoutFromParsedSource(parsed.value);
+    if (layout) collectStatefulComponentUses(layout, namespace, uses);
+  }
+
+  const byNamespaceAndName = new Map<string, typeof uses>();
+  for (const use of uses) {
+    const key = `${use.namespace}:${use.name}`;
+    const group = byNamespaceAndName.get(key) ?? [];
+    group.push(use);
+    byNamespaceAndName.set(key, group);
+  }
+
+  const writableModes = new Set(["value", "checked", "enabled"]);
+  const collisions: string[] = [];
+  for (const [key, group] of byNamespaceAndName) {
+    if (group.some((use) => writableModes.has(use.mode)) && group.some((use) => use.mode === "readable")) {
+      collisions.push(`${key} (${group.map((use) => use.type).join(", ")})`);
+    }
+  }
+  return collisions;
+}
+
+function expectParseableSlexFences(markdown: string, context: string) {
+  const fences = Array.from(markdown.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
+  for (const fence of fences) {
+    const parsed = parseSlexSource(fence);
+    expect(parsed.ok, `${context}\n${fence}`).toBe(true);
+  }
+}
+
 describe("site markdown content", () => {
   it("parses frontmatter and keeps markdown as the render source", () => {
     const doc = parseMarkdownComponentDoc(
@@ -369,6 +456,10 @@ order: 1
     expect(changelogDoc?.markdownHref).toBe(
       changelogDoc?.contentLocale === "zh-CN" ? "/zh-CN/docs/releases/changelog.md" : "/docs/releases/changelog.md",
     );
+    for (const doc of [...referenceDocs, ...releaseDocs]) {
+      const markdown = "markdown" in doc ? doc.markdown : doc.content;
+      expectParseableSlexFences(markdown, doc.slug);
+    }
   });
 
   it("discovers examples with Chinese source fallback and parseable Slex fences", async () => {
@@ -399,6 +490,7 @@ order: 1
         const parsed = parseSlexSource(fence);
         expect(parsed.ok, `${example.slug}\n${fence}`).toBe(true);
       }
+      expect(findWritableReadableStateCollisions(example.markdown), example.slug).toEqual([]);
     }
   });
 

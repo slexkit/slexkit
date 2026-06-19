@@ -39,7 +39,7 @@ slexkitRenderMode: component
           step: 1,
           onchange: "g.count = Number($event)"
         },
-        "stat:count": { label: "当前数值", "$value": "g.count" },
+        "stat:countStat": { label: "当前数值", "$value": "g.count" },
         "badge:level": {
           "$label": "g.count < 30 ? '低' : g.count < 70 ? '中' : '高'",
           "$tone": "g.count < 30 ? 'success' : g.count < 70 ? 'warning' : 'danger'"

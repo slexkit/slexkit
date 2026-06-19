@@ -106,6 +106,15 @@
     } as const;
   }
 
+  function configureRuntimeHost(): void {
+    activeRuntimeHost?.configure({
+      mode: runtime,
+      policy: securePolicy,
+      hostAdapter,
+      secureFrame,
+    });
+  }
+
   $effect(() => {
     if (!isSlexKit) return;
     const token = ++runtimeLoadToken;
@@ -125,6 +134,7 @@
     if (activeRuntimeHost) {
       const container = document.createElement("span");
       try {
+        configureRuntimeHost();
         const cleanup = activeRuntimeHost.mountBlock({
           artifactId: domain,
           source: runtimeInput,
@@ -153,6 +163,7 @@
       if (displayError || !runtimeApi || !isSlexKit || sourceKind === "state-only") return;
 
       try {
+        if (activeRuntimeHost) configureRuntimeHost();
         cleanup = activeRuntimeHost
           ? activeRuntimeHost.mountBlock({
               artifactId: domain,

@@ -39,7 +39,7 @@ The previous section was all static data. To bring UI "to life," you need three 
           step: 1,
           onchange: "g.count = Number($event)"
         },
-        "stat:count": { label: "Current value", "$value": "g.count" },
+        "stat:countStat": { label: "Current value", "$value": "g.count" },
         "badge:level": {
           "$label": "g.count < 30 ? 'Low' : g.count < 70 ? 'Medium' : 'High'",
           "$tone": "g.count < 30 ? 'success' : g.count < 70 ? 'warning' : 'danger'"

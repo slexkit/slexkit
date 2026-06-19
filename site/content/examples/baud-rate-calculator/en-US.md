@@ -39,7 +39,7 @@ Actual baud rate $BR_{actual} = f_{osc} / (16 \times N)$, where $N = \text{round
     tone: function () { var e = this.error(); return e < 0.5 ? "success" : e < 2 ? "info" : e < 5 ? "warning" : "danger"; }
   },
   layout: {
-    "section:baud": {
+    "section:baudCalculator": {
       eyebrow: "Calculator",
       title: "Baud Rate Error Calculator",
       subtitle: "Enter crystal frequency and target baud rate to calculate error.",

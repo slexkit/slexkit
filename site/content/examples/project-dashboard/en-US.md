@@ -37,7 +37,7 @@ Real projects need a bird's-eye view — not just a single calculation card, but
         "card:sprint": {
           title: "Sprint Progress",
           "progress:sp": { label: "Completion", "$value": "g.sprintProgress" },
-          "stat:scope": { "$label": "Scope Status", "$value": "g.scopeStatus()" },
+          "stat:scope": { label: "Scope Status", "$value": "g.scopeStatus()" },
           "badge:flag": { "$label": "g.scope === 'on-track' ? 'On Track' : g.scope === 'at-risk' ? '⚠ Warning' : '🚨 Off Track'", "$tone": "g.scope === 'on-track' ? 'success' : g.scope === 'at-risk' ? 'warning' : 'danger'" }
         },
         "card:quality": {

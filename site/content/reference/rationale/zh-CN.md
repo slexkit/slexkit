@@ -68,7 +68,7 @@ SlexKit hosts 只能处理显式标记的 `slex` fences。Plain JavaScript、JSO
 
 ````md
 ```slex
-{ namespace: "status", ... }
+{ namespace: "status", layout: { "badge:state": { label: "3/4 complete", tone: "info" } } }
 ```
 
 **Status:** 3/4 complete

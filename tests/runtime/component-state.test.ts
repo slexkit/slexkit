@@ -181,6 +181,61 @@ describe("component instance state", () => {
     warnSpy.mockRestore();
   });
 
+  it("does not warn when repeated readable output names are not used as writable state", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const warnSpy = spyOn(console, "warn").mockImplementation(() => {});
+
+    mount({
+      namespace: unique("duplicate_readable"),
+      g: {},
+      layout: {
+        "grid:cards": {
+          "card:first": {
+            "text:body": { text: "First" },
+          },
+          "card:second": {
+            "text:body": { text: "Second" },
+          },
+        },
+      },
+    }, document.getElementById("app")!);
+
+    await sleep();
+
+    expect(Array.from(document.querySelectorAll(".slex-text")).map((el) => el.textContent)).toEqual(["First", "Second"]);
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it("does not let later readable output overwrite a writable component with the same name", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const warnSpy = spyOn(console, "warn").mockImplementation(() => {});
+
+    mount({
+      namespace: unique("readable_after_writable"),
+      g: { color: "blue", size: 16 },
+      layout: {
+        "slider:size": {
+          $value: "g.size",
+          min: 8,
+          max: 48,
+          unit: "px",
+          onchange: "g.size = Number($event)",
+        },
+        "stat:size": {
+          $label: "'Size: ' + g.size + 'px'",
+          $value: "g.color",
+        },
+      },
+    }, document.getElementById("app")!);
+
+    await sleep();
+
+    expect(document.querySelector(".slex-slider-value")?.textContent).toBe("16px");
+    expect((document.querySelector(".slex-slider") as HTMLInputElement).value).toBe("16");
+    warnSpy.mockRestore();
+  });
+
   it("warns when a named writable value component is rendered with $for", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const warnSpy = spyOn(console, "warn").mockImplementation(() => {});

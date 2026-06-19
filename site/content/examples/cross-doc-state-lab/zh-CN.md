@@ -75,7 +75,7 @@ slexkitRenderMode: component
   layout: {
     "card:a": {
       title: "观察面板 A — 纯文本样式",
-      "stat:size": { "$label": "'字体大小：' + g.size + 'px'", "$value": "g.color" },
+      "stat:sizePreview": { "$label": "'字体大小：' + g.size + 'px'", "$value": "g.color" },
       "callout:preview": {
         "$tone": "g.theme === 'dark' ? 'danger' : g.theme === 'info' ? 'info' : 'success'",
         "$text": "g.theme === 'dark' ? '暗色模式：适合夜间阅读的配色方案。' : g.theme === 'info' ? '信息模式：用于强调技术细节。' : '明亮模式：默认的文档阅读配色。'"

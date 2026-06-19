@@ -37,7 +37,7 @@ slexkitRenderMode: component
         "card:sprint": {
           title: "Sprint 进度",
           "progress:sp": { label: "完成度", "$value": "g.sprintProgress" },
-          "stat:scope": { "$label": "范围状态", "$value": "g.scopeStatus()" },
+          "stat:scope": { label: "范围状态", "$value": "g.scopeStatus()" },
           "badge:flag": { "$label": "g.scope === 'on-track' ? '正常' : g.scope === 'at-risk' ? '⚠ 预警' : '🚨 偏离'", "$tone": "g.scope === 'on-track' ? 'success' : g.scope === 'at-risk' ? 'warning' : 'danger'" }
         },
         "card:quality": {

@@ -1,5 +1,5 @@
 import { mount, unmount } from "svelte";
-import { createSlexKitMarkdownRuntimeHost } from "../../src/engine/index";
+import { createSlexKitMarkdownRuntimeHost } from "slexkit";
 import MarkdownRenderer from "./MarkdownRenderer.svelte";
 
 let markdownDomainId = 0;

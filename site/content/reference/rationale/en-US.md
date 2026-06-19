@@ -67,7 +67,7 @@ A generation should include a plain Markdown fallback so the output degrades gra
 
 ~~~~md
 ```slex
-{ namespace: "status", ... }
+{ namespace: "status", layout: { "badge:state": { label: "3/4 complete", tone: "info" } } }
 ```
 
 **Status:** 3/4 complete

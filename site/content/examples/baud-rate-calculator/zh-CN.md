@@ -39,7 +39,7 @@ $$Error = \frac{|BR_{actual} - BR_{target}|}{BR_{target}} \times 100\%$$
     tone: function () { var e = this.error(); return e < 0.5 ? "success" : e < 2 ? "info" : e < 5 ? "warning" : "danger"; }
   },
   layout: {
-    "section:baud": {
+    "section:baudCalculator": {
       eyebrow: "计算器",
       title: "波特率误差计算器",
       subtitle: "输入晶振频率和目标波特率，计算误差。",
