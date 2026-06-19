@@ -232,4 +232,48 @@ describe("slider component", () => {
     expect(input.value).toBe("16");
     expect(input.style.getPropertyValue("--slex-slider-progress")).toBe("20%");
   });
+
+  it("does not reuse a preceding select value for a slider bound to another g key", async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mount(
+      {
+        namespace: unique("slider_no_cross_component_shadow"),
+        g: { color: "blue", size: 16 },
+        layout: {
+          "select:color": {
+            label: "Color",
+            $value: "g.color",
+            options: [
+              { label: "Blue", value: "blue" },
+              { label: "Green", value: "green" },
+            ],
+            onchange: "g.color = String($event)",
+          },
+          "slider:size": {
+            label: "Size",
+            $value: "g.size",
+            min: 8,
+            max: 48,
+            unit: "px",
+            onchange: "g.size = Number($event)",
+          },
+          "badge:note": { "$label": "'style ' + g.color + ' ' + g.size + 'px'" },
+        },
+      },
+      document.getElementById("app")!,
+    );
+
+    expect(document.querySelector(".slex-slider-value")?.textContent).toBe("16px");
+    expect((document.querySelector(".slex-slider") as HTMLInputElement)?.value).toBe("16");
+    expect(document.querySelector(".slex-badge")?.textContent).toContain("style blue 16px");
+
+    const trigger = document.querySelector(".slex-select-trigger") as HTMLButtonElement;
+    trigger.click();
+    await sleep();
+    (Array.from(document.querySelectorAll('[role="option"]')).find((node) => node.textContent?.includes("Green")) as HTMLElement).click();
+    await sleep();
+
+    expect(document.querySelector(".slex-slider-value")?.textContent).toBe("16px");
+    expect(document.querySelector(".slex-badge")?.textContent).toContain("style green 16px");
+  });
 });
