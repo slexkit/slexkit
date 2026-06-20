@@ -15,7 +15,7 @@
     <a href="README.zh-CN.md">简体中文</a>
   </p>
   <p>
-    <img alt="version" src="https://img.shields.io/badge/version-0.3.0-18181b">
+    <img alt="version" src="https://img.shields.io/badge/version-0.3.1-18181b">
     <img alt="script" src="https://img.shields.io/badge/Slex-v0.1-18181b">
     <img alt="TypeScript" src="https://img.shields.io/badge/runtime-TypeScript-3178c6">
     <img alt="Svelte 5" src="https://img.shields.io/badge/components-Svelte_5-ff3e00">

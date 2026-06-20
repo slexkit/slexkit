@@ -11,6 +11,24 @@ slexkitRenderMode: component
 
 SlexKit 的所有重要变更。
 
+## v0.3.1 - 宿主稳定性与控件渲染加固
+
+### Added
+- 新增 runtime 样式安全测试，阻止已发布 CSS 中出现宽泛 `:has()`、`clip-path` 和 slider 轨道回归。
+- 新增 Switch、Checkbox、Radio 禁用状态属性的回归覆盖。
+
+### Changed
+- CI 现在使用 `bun install --frozen-lockfile`，并在测试前运行 lint。
+- Switch、Checkbox、Radio 的禁用态样式改用显式 `data-disabled` 属性，不再依赖宽泛关系选择器。
+- Select 和 sr-only 辅助样式不再使用 `clip-path`，提升宿主和 Obsidian CSS 兼容性。
+
+### Fixed
+- 修复 range track 绘制在原生 input 盒子上导致的 Slider 圆点方形背景伪影。
+- 修复移除工程输入自绘 stepper 后 Input 聚焦态不可见的问题。
+- 首页 RC 示例改用 Input 组件自身 label，避免单独文本标签造成样式不一致。
+- 修复跨文档状态示例中 Stat 卡片更新后文字被裁切的问题。
+- 修复 Markdown 计算器示例重复渲染区块标题的问题。
+
 ## v0.3.0 - 示例体系重构、组件审计与国际化
 
 ### Added

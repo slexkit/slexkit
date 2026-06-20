@@ -2,6 +2,24 @@
 
 All notable changes to SlexKit.
 
+## v0.3.1 - Host stability and control rendering hardening
+
+### Added
+- Runtime style safety tests that block broad `:has()` selectors, `clip-path`, and slider track regressions in shipped CSS.
+- Regression coverage for disabled Switch, Checkbox, and Radio state attributes.
+
+### Changed
+- CI now installs dependencies with `bun install --frozen-lockfile` and runs lint before tests.
+- Disabled Switch, Checkbox, and Radio styling now uses explicit `data-disabled` attributes instead of broad relational selectors.
+- Select and sr-only helper styles avoid `clip-path` for better host and Obsidian CSS compatibility.
+
+### Fixed
+- Slider thumb rendering artifacts caused by painting the range track on the native input box.
+- Input focus visibility after removing custom engineering steppers.
+- Home RC example input labels now use native Input component labels instead of separate text labels.
+- Stat cards no longer clip updated text during cross-document state examples.
+- Markdown calculator examples no longer render duplicate section labels.
+
 ## v0.3.0 - Examples overhaul with component audit and i18n
 
 ### Added

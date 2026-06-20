@@ -49,7 +49,11 @@ function isRenderableSource(value: unknown): boolean {
 }
 
 function bareLayoutFromSource(value: Record<string, unknown>): Record<string, unknown> {
-  const { slex: _slex, namespace: _namespace, g: _g, layout: _layout, ...layout } = value;
+  const layout = { ...value };
+  delete layout.slex;
+  delete layout.namespace;
+  delete layout.g;
+  delete layout.layout;
   return layout;
 }
 
