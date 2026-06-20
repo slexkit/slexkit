@@ -87,7 +87,7 @@
     "version:sync": "bun run scripts/sync-version.ts",
     "changelog:sync": "bun run scripts/sync-changelog.ts",
     "docs:sync-spec": "bun run site/scripts/sync-doc-spec-blocks.ts",
-    "site:export": "bun run build:core && bun run site/scripts/export-static.ts",
+    "site:export": "bun run build && bun run site/scripts/export-static.ts",
     "site:preview-static": "bunx serve site-static",
     "copy-runtime": "node scripts/cli.mjs copy-runtime",
     "preview": "bun run site/server.ts",
