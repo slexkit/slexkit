@@ -105,6 +105,11 @@ async function exampleSharedResponse(pathname: string) {
   return localStaticResponse(join(projectRoot, "examples", "shared"), pathname.slice("/shared/".length));
 }
 
+async function vendorResponse(pathname: string) {
+  if (!pathname.startsWith("/vendor/katex/")) return null;
+  return localStaticResponse(join(projectRoot, "node_modules", "katex", "dist"), pathname.slice("/vendor/katex/".length));
+}
+
 async function officialExampleResponse(pathname: string) {
   if (!pathname.startsWith("/official-examples/")) return null;
   return localStaticResponse(join(siteRoot, "content", "examples"), pathname.slice("/official-examples/".length));
@@ -499,6 +504,8 @@ Bun.serve({
     if (adapterDemo) return adapterDemo;
     const sharedExample = await exampleSharedResponse(url.pathname);
     if (sharedExample) return sharedExample;
+    const vendor = await vendorResponse(url.pathname);
+    if (vendor) return vendor;
     const officialExample = await officialExampleResponse(url.pathname);
     if (officialExample) return officialExample;
     const packageAdapter = await packageAdapterResponse(url.pathname);

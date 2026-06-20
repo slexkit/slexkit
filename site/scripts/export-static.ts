@@ -110,7 +110,8 @@ function rewriteAdapterDemoHtml(html: string) {
   return rewriteHtmlForStatic(html, "en-US")
     .replaceAll('"/dist/', `"${withBase("/dist/")}`)
     .replaceAll('"/packages/', `"${withBase("/packages/")}`)
-    .replaceAll('"/shared/', `"${withBase("/shared/")}`);
+    .replaceAll('"/shared/', `"${withBase("/shared/")}`)
+    .replaceAll('"/vendor/', `"${withBase("/vendor/")}`);
 }
 
 async function copyAdapterPackage(name: "streamdown" | "tiptap") {
@@ -137,6 +138,8 @@ async function copyAdapterDemoFiles() {
   await copyAdapterDemo("streamdown");
   await copyAdapterDemo("tiptap");
   await cp(join(projectRoot, "examples", "shared"), join(outDir, "shared"), { recursive: true });
+  await mkdir(join(outDir, "vendor", "katex"), { recursive: true });
+  await cp(join(projectRoot, "node_modules", "katex", "dist", "katex.min.css"), join(outDir, "vendor", "katex", "katex.min.css"));
   await cp(join(siteRoot, "content", "examples"), join(outDir, "official-examples"), { recursive: true });
   await copyAdapterPackage("streamdown");
   await copyAdapterPackage("tiptap");

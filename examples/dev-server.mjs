@@ -8,6 +8,7 @@ const examplesRoot = join(root, "examples");
 const officialExamplesRoot = join(root, "site", "content", "examples");
 const distRoot = join(root, "dist");
 const sharedRoot = join(examplesRoot, "shared");
+const vendorRoot = join(root, "node_modules");
 const streamdownPackageRoot = join(root, "packages", "streamdown");
 const tiptapPackageRoot = join(root, "packages", "tiptap");
 const exampleName = process.argv[2];
@@ -89,6 +90,9 @@ const server = Bun.serve({
     }
     if (url.pathname.startsWith("/shared/")) {
       return (await serveFile(sharedRoot, url.pathname.slice("/shared/".length))) || response("Not found", 404);
+    }
+    if (url.pathname.startsWith("/vendor/katex/")) {
+      return (await serveFile(join(vendorRoot, "katex", "dist"), url.pathname.slice("/vendor/katex/".length))) || response("Not found", 404);
     }
     if (url.pathname.startsWith("/official-examples/")) {
       return (await serveFile(officialExamplesRoot, url.pathname.slice("/official-examples/".length))) || response("Not found", 404);
