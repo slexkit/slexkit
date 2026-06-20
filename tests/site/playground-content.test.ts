@@ -261,7 +261,8 @@ describe("site playground markdown renderer", () => {
     expect(docRail).toContain("以 Live 模式打开");
     expect(routeExamples).toContain('runtimeUrl: withSiteBase("/slexkit.js")');
     expect(routeExamples).not.toContain("/dist/slexkit.runtime.js");
-    expect(routeExamples).toContain("return examples[0] ?? null");
+    expect(routeExamples).toContain("examplesLandingDoc(examples, locale, copy)");
+    expect(routeExamples).toContain('id: "examples/index"');
     expect(routeExamples).not.toContain("data:text/markdown;charset=utf-8");
     expect(siteIcons).toContain('"square-split-horizontal": SquareSplitHorizontalRegular');
   });
