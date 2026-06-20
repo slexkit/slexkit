@@ -1,6 +1,6 @@
 {
   "name": "@slexkit/mcp",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Read-only MCP server for SlexKit docs, components, and source validation.",
   "author": "SlexKit contributors",
   "type": "module",

@@ -2,6 +2,12 @@
 
 All notable changes to SlexKit.
 
+## v0.3.3 - Obsidian input control hardening
+
+### Fixed
+- Slider now renders its visual track outside the native range input while keeping the native input for interaction and accessibility, avoiding square thumb artifacts in Obsidian and other host themes.
+- Input fields with trailing units now reset host input chrome with scoped selectors so unit add-ons stay aligned with the text field in Obsidian dark themes.
+
 ## v0.3.2 - Host CSS isolation and repeated layout hardening
 
 ### Changed

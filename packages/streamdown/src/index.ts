@@ -26,7 +26,7 @@ import {
 } from "slexkit";
 
 const DEFAULT_LANGUAGES = ["slex"] as const;
-const STREAMDOWN_RENDERER_VERSION = "0.3.2";
+const STREAMDOWN_RENDERER_VERSION = "0.3.3";
 const DEFAULT_SECURE_POLICY: HostRuntimePolicy = {};
 
 export type SlexKitRendererOptions = {

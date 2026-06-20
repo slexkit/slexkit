@@ -1,6 +1,6 @@
 {
   "name": "slexkit",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Zero-build, Markdown-friendly reactive UI runtime for AI output.",
   "author": "SlexKit contributors",
   "type": "module",
