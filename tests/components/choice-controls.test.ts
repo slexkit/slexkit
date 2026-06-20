@@ -167,4 +167,37 @@ describe("choice controls", () => {
       await sleep();
       expect(calls).toEqual([8, 8]);
     });
+
+
+    it("marks disabled choice labels without broad :has selectors", async () => {
+      document.body.innerHTML = '<div id="app"></div>';
+      mount(
+        {
+          namespace: unique("choice_disabled_style"),
+          layout: {
+            "checkbox:a": { label: "A", disabled: true },
+            "radio-group:r": {
+              value: "a",
+              options: [
+                { label: "Alpha", value: "a", disabled: true },
+                { label: "Beta", value: "b" },
+              ],
+            },
+          },
+        },
+        document.getElementById("app")!,
+      );
+
+      expect((document.querySelector(".slex-checkbox-field") as HTMLElement).dataset.disabled).toBe("true");
+      const radioFields = Array.from(document.querySelectorAll(".slex-radio-field")) as HTMLElement[];
+      expect(radioFields[0].dataset.disabled).toBe("true");
+      expect(radioFields[1].dataset.disabled).toBeUndefined();
+
+      const css = [
+        await Bun.file("src/styles/components/choice.css").text(),
+        await Bun.file("src/styles/components/select.css").text(),
+        await Bun.file("src/styles/components/switch.css").text(),
+      ].join("\n");
+      expect(css).not.toContain(":has(");
+    });
 });

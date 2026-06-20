@@ -34,7 +34,7 @@
 </script>
 
 <span class="slex-choice-event-layer" onpointerdown={() => haptic(8)} onclick={() => haptic(8)}>
-  <label class="slex-checkbox-field">
+  <label class="slex-checkbox-field" data-disabled={p.disabled ? "true" : undefined}>
     <input
       type="checkbox"
       class="slex-checkbox"

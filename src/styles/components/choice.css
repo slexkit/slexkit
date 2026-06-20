@@ -154,8 +154,8 @@
   transform: none;
 }
 
-.slex-checkbox-field:has(.slex-checkbox:disabled),
-.slex-radio-field:has(.slex-radio:disabled) {
+.slex-checkbox-field[data-disabled="true"],
+.slex-radio-field[data-disabled="true"] {
   cursor: not-allowed;
   opacity: 0.65;
 }

@@ -110,7 +110,6 @@
   border: 0;
   overflow: hidden;
   clip: rect(0 0 0 0);
-  clip-path: inset(50%);
   white-space: nowrap;
 }
 
@@ -167,11 +166,6 @@
 .slex-select-option--active:not([data-disabled]) {
   background: var(--accent);
   color: var(--accent-foreground);
-}
-
-.slex-select-menu:has(.slex-select-option:hover) .slex-select-option--active:not(:hover) {
-  background: transparent;
-  color: var(--popover-foreground, var(--foreground));
 }
 
 .slex-select-option--selected {

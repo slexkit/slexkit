@@ -49,7 +49,7 @@
     {@const disabled = !!item.disabled || !!p.disabled}
     {@const hapticKey = text(itemValue)}
     <span class="slex-choice-event-layer" onpointerdown={() => haptic(hapticKey, disabled, 8)} onclick={() => haptic(hapticKey, disabled, 8)}>
-      <label class="slex-radio-field">
+      <label class="slex-radio-field" data-disabled={disabled ? "true" : undefined}>
         <input
           type="radio"
           class="slex-radio"

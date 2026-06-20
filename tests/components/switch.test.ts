@@ -80,6 +80,7 @@ describe("switch component", () => {
       document.getElementById("app")!,
     );
     const root = document.querySelector(".slex-switch")!;
+    expect((root as HTMLElement).dataset.disabled).toBe("true");
     root.click();
     await sleep();
     expect((root.querySelector("input") as HTMLInputElement).checked).toBe(false);

@@ -372,12 +372,12 @@
   opacity: 0.55;
 }
 
-.slex-switch:has(.slex-switch-input:disabled) {
+.slex-switch[data-disabled="true"] {
   cursor: not-allowed;
 }
 
-.slex-switch:has(.slex-switch-input:disabled):hover .slex-switch-control,
-.slex-switch:has(.slex-switch-input:disabled):hover .slex-switch-control::after {
+.slex-switch[data-disabled="true"]:hover .slex-switch-control,
+.slex-switch[data-disabled="true"]:hover .slex-switch-control::after {
   box-shadow: none;
 }
 
@@ -674,7 +674,6 @@
   border: 0;
   overflow: hidden;
   clip: rect(0 0 0 0);
-  clip-path: inset(50%);
   white-space: nowrap;
 }
 
@@ -731,11 +730,6 @@
 .slex-select-option--active:not([data-disabled]) {
   background: var(--accent);
   color: var(--accent-foreground);
-}
-
-.slex-select-menu:has(.slex-select-option:hover) .slex-select-option--active:not(:hover) {
-  background: transparent;
-  color: var(--popover-foreground, var(--foreground));
 }
 
 .slex-select-option--selected {
@@ -1176,8 +1170,8 @@
   transform: none;
 }
 
-.slex-checkbox-field:has(.slex-checkbox:disabled),
-.slex-radio-field:has(.slex-radio:disabled) {
+.slex-checkbox-field[data-disabled="true"],
+.slex-radio-field[data-disabled="true"] {
   cursor: not-allowed;
   opacity: 0.65;
 }

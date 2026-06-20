@@ -104,11 +104,11 @@
   opacity: 0.55;
 }
 
-.slex-switch:has(.slex-switch-input:disabled) {
+.slex-switch[data-disabled="true"] {
   cursor: not-allowed;
 }
 
-.slex-switch:has(.slex-switch-input:disabled):hover .slex-switch-control,
-.slex-switch:has(.slex-switch-input:disabled):hover .slex-switch-control::after {
+.slex-switch[data-disabled="true"]:hover .slex-switch-control,
+.slex-switch[data-disabled="true"]:hover .slex-switch-control::after {
   box-shadow: none;
 }
