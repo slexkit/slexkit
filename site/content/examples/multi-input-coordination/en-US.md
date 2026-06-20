@@ -37,12 +37,12 @@ Real-world scenarios often have multiple input variables that affect each other.
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:w": {
-          "input:width": { label: "Width", "$value": "g.width", type: "number", unit: "px", onchange: "g.width = Number($event || 0)" },
-          "slider:width": { label: "Width", "$value": "g.width", min: 20, max: 300, step: 5, unit: "px", onchange: "g.width = Number($event)" }
+          "input:widthInput": { label: "Width", "$value": "g.width", type: "number", unit: "px", onchange: "g.width = Number($event || 0)" },
+          "slider:widthSlider": { label: "Width", "$value": "g.width", min: 20, max: 300, step: 5, unit: "px", onchange: "g.width = Number($event)" }
         },
         "column:h": {
-          "input:height": { label: "Height", "$value": "g.height", type: "number", unit: "px", onchange: "g.height = Number($event || 0)" },
-          "slider:height": { label: "Height", "$value": "g.height", min: 20, max: 300, step: 5, unit: "px", onchange: "g.height = Number($event)" }
+          "input:heightInput": { label: "Height", "$value": "g.height", type: "number", unit: "px", onchange: "g.height = Number($event || 0)" },
+          "slider:heightSlider": { label: "Height", "$value": "g.height", min: 20, max: 300, step: 5, unit: "px", onchange: "g.height = Number($event)" }
         }
       },
       "grid:results": {

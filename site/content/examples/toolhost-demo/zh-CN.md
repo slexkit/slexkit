@@ -12,7 +12,7 @@ featured: true
 slexkitRenderMode: dialog
 ---
 
-## ToolHost 对话演示
+# ToolHost 对话演示
 
 AI 对话中需要收集用户信息时，会调用 **ToolHost** 弹出交互式表单卡片。用户填写并提交后，表单数据以结构化的 `ToolResult` 返回给 AI，AI 继续处理。
 

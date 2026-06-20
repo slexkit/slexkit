@@ -117,6 +117,35 @@ function findWritableReadableStateCollisions(markdown: string): string[] {
   return collisions;
 }
 
+function findWritableCrossTypeStateCollisions(markdown: string): string[] {
+  const uses: Array<{ namespace: string; type: string; name: string; mode: string }> = [];
+  const fences = Array.from(markdown.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
+  for (const fence of fences) {
+    const parsed = parseSlexSource(fence);
+    if (!parsed.ok) continue;
+    const namespace = isRecord(parsed.value) ? String(parsed.value.namespace || "default") : "default";
+    const layout = slexLayoutFromParsedSource(parsed.value);
+    if (layout) collectStatefulComponentUses(layout, namespace, uses);
+  }
+
+  const writableModes = new Set(["value", "checked", "enabled"]);
+  const writableUses = uses.filter((use) => writableModes.has(use.mode));
+  const byNamespaceAndName = new Map<string, typeof writableUses>();
+  for (const use of writableUses) {
+    const key = `${use.namespace}:${use.name}`;
+    const group = byNamespaceAndName.get(key) ?? [];
+    group.push(use);
+    byNamespaceAndName.set(key, group);
+  }
+
+  const collisions: string[] = [];
+  for (const [key, group] of byNamespaceAndName) {
+    const types = [...new Set(group.map((use) => use.type))];
+    if (types.length > 1) collisions.push(`${key} (${types.join(", ")})`);
+  }
+  return collisions;
+}
+
 function expectParseableSlexFences(markdown: string, context: string) {
   const fences = Array.from(markdown.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
   for (const fence of fences) {
@@ -489,10 +518,11 @@ order: 1
       for (const fence of fences) {
         const parsed = parseSlexSource(fence);
         expect(parsed.ok, `${example.slug}\n${fence}`).toBe(true);
+        }
+        expect(findWritableReadableStateCollisions(example.markdown), example.slug).toEqual([]);
+        expect(findWritableCrossTypeStateCollisions(example.markdown), example.slug).toEqual([]);
       }
-      expect(findWritableReadableStateCollisions(example.markdown), example.slug).toEqual([]);
-    }
-  });
+    });
 
   it("uses the text component for the cross-document style preview", async () => {
     const markdown = await Bun.file("site/content/examples/cross-doc-state-lab/zh-CN.md").text();

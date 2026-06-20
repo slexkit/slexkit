@@ -37,12 +37,12 @@ slexkitRenderMode: component
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:w": {
-          "input:width": { label: "宽度", "$value": "g.width", type: "number", unit: "px", onchange: "g.width = Number($event || 0)" },
-          "slider:width": { label: "宽度", "$value": "g.width", min: 20, max: 300, step: 5, unit: "px", onchange: "g.width = Number($event)" }
+          "input:widthInput": { label: "宽度", "$value": "g.width", type: "number", unit: "px", onchange: "g.width = Number($event || 0)" },
+          "slider:widthSlider": { label: "宽度", "$value": "g.width", min: 20, max: 300, step: 5, unit: "px", onchange: "g.width = Number($event)" }
         },
         "column:h": {
-          "input:height": { label: "高度", "$value": "g.height", type: "number", unit: "px", onchange: "g.height = Number($event || 0)" },
-          "slider:height": { label: "高度", "$value": "g.height", min: 20, max: 300, step: 5, unit: "px", onchange: "g.height = Number($event)" }
+          "input:heightInput": { label: "高度", "$value": "g.height", type: "number", unit: "px", onchange: "g.height = Number($event || 0)" },
+          "slider:heightSlider": { label: "高度", "$value": "g.height", min: 20, max: 300, step: 5, unit: "px", onchange: "g.height = Number($event)" }
         }
       },
       "grid:results": {

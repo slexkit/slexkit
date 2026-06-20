@@ -58,12 +58,12 @@ Your boss asks: "How much will this project cost?" You say: "Let me calculate." 
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:period": {
-          "input:months": { label: "Timeline", "$value": "g.months", type: "number", unit: "months", onchange: "g.months = Number($event || 0)" },
-          "slider:months": { label: "Timeline", "$value": "g.months", min: 1, max: 24, step: 1, unit: "mo", onchange: "g.months = Number($event)" }
+          "input:monthsInput": { label: "Timeline", "$value": "g.months", type: "number", unit: "months", onchange: "g.months = Number($event || 0)" },
+          "slider:monthsSlider": { label: "Timeline", "$value": "g.months", min: 1, max: 24, step: 1, unit: "mo", onchange: "g.months = Number($event)" }
         },
         "column:salaryField": {
-          "input:salary": { label: "Avg monthly salary", "$value": "g.salary", type: "number", unit: "RMB", onchange: "g.salary = Number($event || 0)" },
-          "slider:salary": { label: "Avg monthly salary", "$value": "g.salary", min: 8000, max: 50000, step: 1000, unit: "RMB", onchange: "g.salary = Number($event)" }
+          "input:salaryInput": { label: "Avg monthly salary", "$value": "g.salary", type: "number", unit: "RMB", onchange: "g.salary = Number($event || 0)" },
+          "slider:salarySlider": { label: "Avg monthly salary", "$value": "g.salary", min: 8000, max: 50000, step: 1000, unit: "RMB", onchange: "g.salary = Number($event)" }
         }
       },
       "grid:results": {

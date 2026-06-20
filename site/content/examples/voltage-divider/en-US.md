@@ -45,13 +45,13 @@ With load $R_L$: $V_{out,loaded} = V_{in} \times \frac{R_2 \parallel R_L}{R_1 + 
         title: "Voltage Divider Calculator",
       "grid:params": {
         columns: 1, mdColumns: 2,
-        "column:r1Field": { "input:r1": { label: "R1", "$value": "g.r1", type: "number", unit: "Ω", onchange: "g.r1 = Number($event || 0)" }, "slider:r1": { label: "R1", "$value": "g.r1", min: 100, max: 1000000, step: 100, unit: "Ω", onchange: "g.r1 = Number($event)" } },
-        "column:r2Field": { "input:r2": { label: "R2", "$value": "g.r2", type: "number", unit: "Ω", onchange: "g.r2 = Number($event || 0)" }, "slider:r2": { label: "R2", "$value": "g.r2", min: 100, max: 1000000, step: 100, unit: "Ω", onchange: "g.r2 = Number($event)" } }
+        "column:r1Field": { "input:r1Input": { label: "R1", "$value": "std.units.si(g.r1, 'Ω', 1)", type: "engineering", unit: "Ω", placeholder: "10kΩ", onchange: "if ($event.valid && $event.number > 0) g.r1 = $event.number" }, "slider:r1Slider": { label: "R1", "$value": "g.r1", min: 100, max: 1000000, step: 100, unit: "Ω", onchange: "g.r1 = Number($event)" } },
+        "column:r2Field": { "input:r2Input": { label: "R2", "$value": "std.units.si(g.r2, 'Ω', 1)", type: "engineering", unit: "Ω", placeholder: "10kΩ", onchange: "if ($event.valid && $event.number > 0) g.r2 = $event.number" }, "slider:r2Slider": { label: "R2", "$value": "g.r2", min: 100, max: 1000000, step: 100, unit: "Ω", onchange: "g.r2 = Number($event)" } }
       },
       "grid:params2": {
         columns: 1, mdColumns: 2,
-        "column:vinField": { "input:vin": { label: "Input voltage Vin", "$value": "g.vin", type: "number", unit: "V", onchange: "g.vin = Number($event || 0)" }, "slider:vin": { label: "Vin", "$value": "g.vin", min: 0.1, max: 48, step: 0.1, unit: "V", onchange: "g.vin = Number($event)" } },
-        "column:rlField": { "input:rl": { label: "Load resistance RL", "$value": "g.rl", type: "number", unit: "Ω", onchange: "g.rl = Number($event || 0)" }, "slider:rl": { label: "RL", "$value": "g.rl", min: 1000, max: 10000000, step: 1000, unit: "Ω", onchange: "g.rl = Number($event)" } }
+        "column:vinField": { "input:vinInput": { label: "Input voltage Vin", "$value": "std.units.si(g.vin, 'V', 1)", type: "engineering", unit: "V", placeholder: "5V", onchange: "if ($event.valid && $event.number > 0) g.vin = $event.number" }, "slider:vinSlider": { label: "Vin", "$value": "g.vin", min: 0.1, max: 48, step: 0.1, unit: "V", onchange: "g.vin = Number($event)" } },
+        "column:rlField": { "input:rlInput": { label: "Load resistance RL", "$value": "std.units.si(g.rl, 'Ω', 1)", type: "engineering", unit: "Ω", placeholder: "100kΩ", onchange: "if ($event.valid && $event.number > 0) g.rl = $event.number" }, "slider:rlSlider": { label: "RL", "$value": "g.rl", min: 1000, max: 10000000, step: 1000, unit: "Ω", onchange: "g.rl = Number($event)" } }
       },
       "formula:eq1": { "$tex": "'V_{out} = ' + g.vin.toFixed(1) + ' \\\\times \\\\frac{' + (g.r2/1000).toFixed(1) + '\\\\text{k}}{' + (g.r1/1000).toFixed(1) + '\\\\text{k} + ' + (g.r2/1000).toFixed(1) + '\\\\text{k}} = ' + g.vout().toFixed(3) + '\\\\text{ V}'" },
       "grid:results": {

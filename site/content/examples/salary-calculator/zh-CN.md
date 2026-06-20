@@ -45,8 +45,8 @@ slexkitRenderMode: component
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:baseField": {
-          "input:base": { label: "税前工资", "$value": "g.base", type: "number", unit: "元/月", onchange: "g.base = Number($event || 0)" },
-          "slider:base": { label: "税前工资", "$value": "g.base", min: 3000, max: 50000, step: 500, unit: "元", onchange: "g.base = Number($event)" }
+          "input:baseInput": { label: "税前工资", "$value": "g.base", type: "number", unit: "元/月", onchange: "g.base = Number($event || 0)" },
+          "slider:baseSlider": { label: "税前工资", "$value": "g.base", min: 3000, max: 50000, step: 500, unit: "元", onchange: "g.base = Number($event)" }
         },
         "column:cityField": {
           "select:city": {

@@ -58,12 +58,12 @@ slexkitRenderMode: component
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:period": {
-          "input:months": { label: "开发周期", "$value": "g.months", type: "number", unit: "个月", onchange: "g.months = Number($event || 0)" },
-          "slider:months": { label: "开发周期", "$value": "g.months", min: 1, max: 24, step: 1, unit: "月", onchange: "g.months = Number($event)" }
+          "input:monthsInput": { label: "开发周期", "$value": "g.months", type: "number", unit: "个月", onchange: "g.months = Number($event || 0)" },
+          "slider:monthsSlider": { label: "开发周期", "$value": "g.months", min: 1, max: 24, step: 1, unit: "月", onchange: "g.months = Number($event)" }
         },
         "column:salaryField": {
-          "input:salary": { label: "人均月薪", "$value": "g.salary", type: "number", unit: "元", onchange: "g.salary = Number($event || 0)" },
-          "slider:salary": { label: "人均月薪", "$value": "g.salary", min: 8000, max: 50000, step: 1000, unit: "元", onchange: "g.salary = Number($event)" }
+          "input:salaryInput": { label: "人均月薪", "$value": "g.salary", type: "number", unit: "元", onchange: "g.salary = Number($event || 0)" },
+          "slider:salarySlider": { label: "人均月薪", "$value": "g.salary", min: 8000, max: 50000, step: 1000, unit: "元", onchange: "g.salary = Number($event)" }
         }
       },
       "grid:results": {

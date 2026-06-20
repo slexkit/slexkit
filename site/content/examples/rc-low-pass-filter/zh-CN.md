@@ -49,9 +49,9 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
         title: "参数输入",
       "grid:inputs": {
         columns: 1, mdColumns: 2,
-        "column:rField": { "input:r": { label: "电阻 R", "$value": "g.r", type: "number", unit: "Ω", onchange: "g.r = Number($event || 0)" }, "slider:r": { label: "R", "$value": "g.r", min: 100, max: 100000, step: 100, unit: "Ω", onchange: "g.r = Number($event)" } },
-        "column:cField": { "input:c": { label: "电容 C", "$value": "g.c", type: "number", unit: "nF", onchange: "g.c = Number($event || 0)" }, "slider:c": { label: "C", "$value": "g.c", min: 1, max: 1000, step: 1, unit: "nF", onchange: "g.c = Number($event)" } },
-        "column:fField": { "input:f": { label: "输入频率 f", "$value": "g.f", type: "number", unit: "Hz", onchange: "g.f = Number($event || 0)" }, "slider:f": { label: "f", "$value": "g.f", min: 1, max: 100000, step: 1, unit: "Hz", onchange: "g.f = Number($event)" } }
+        "column:rField": { "input:rInput": { label: "电阻 R", "$value": "std.units.si(g.r, 'Ω', 1)", type: "engineering", unit: "Ω", placeholder: "10kΩ", onchange: "if ($event.valid && $event.number > 0) g.r = $event.number" }, "slider:rSlider": { label: "R", "$value": "g.r", min: 100, max: 100000, step: 100, unit: "Ω", onchange: "g.r = Number($event)" } },
+        "column:cField": { "input:cInput": { label: "电容 C", "$value": "g.c + 'nF'", type: "engineering", unit: "nF", placeholder: "100nF", onchange: "if ($event.valid && $event.number > 0) g.c = $event.unit ? $event.number * 1e9 : $event.number" }, "slider:cSlider": { label: "C", "$value": "g.c", min: 1, max: 1000, step: 1, unit: "nF", onchange: "g.c = Number($event)" } },
+        "column:fField": { "input:fInput": { label: "输入频率 f", "$value": "std.units.si(g.f, 'Hz', 1)", type: "engineering", unit: "Hz", placeholder: "1kHz", onchange: "if ($event.valid && $event.number >= 0) g.f = $event.number" }, "slider:fSlider": { label: "f", "$value": "g.f", min: 1, max: 100000, step: 1, unit: "Hz", onchange: "g.f = Number($event)" } }
       },
       "stat:fc": { label: "截止频率", "$value": "g.cutoff().toFixed(1)", unit: "Hz" },
       "badge:regime": { "$label": "g.regimeLabel()", "$tone": "g.f < g.cutoff() * 0.1 ? 'success' : g.f > g.cutoff() * 10 ? 'danger' : 'warning'" }

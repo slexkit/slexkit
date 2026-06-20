@@ -45,8 +45,8 @@ You got an offer — 20,000 RMB/month. How much do you actually take home? HR sa
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:baseField": {
-          "input:base": { label: "Pre-tax salary", "$value": "g.base", type: "number", unit: "RMB/mo", onchange: "g.base = Number($event || 0)" },
-          "slider:base": { label: "Pre-tax salary", "$value": "g.base", min: 3000, max: 50000, step: 500, unit: "RMB", onchange: "g.base = Number($event)" }
+          "input:baseInput": { label: "Pre-tax salary", "$value": "g.base", type: "number", unit: "RMB/mo", onchange: "g.base = Number($event || 0)" },
+          "slider:baseSlider": { label: "Pre-tax salary", "$value": "g.base", min: 3000, max: 50000, step: 500, unit: "RMB", onchange: "g.base = Number($event)" }
         },
         "column:cityField": {
           "select:city": {

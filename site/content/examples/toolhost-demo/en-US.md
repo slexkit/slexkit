@@ -12,7 +12,7 @@ featured: true
 slexkitRenderMode: dialog
 ---
 
-## ToolHost Dialog Demo
+# ToolHost Dialog Demo
 
 When an AI needs to collect user information during a conversation, it calls **ToolHost** to pop up an interactive form card. The user fills it out and submits, and the form data is returned to the AI as a structured `ToolResult` for continued processing.
 
