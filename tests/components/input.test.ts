@@ -301,12 +301,15 @@ describe("input component", () => {
     expect(Array.from(document.querySelectorAll(".slex-text")).map((el) => el.textContent)).toEqual(["1000", "Ω"]);
   });
 
-  it("keeps native input chrome and wrapper focus rings from leaking into host apps", async () => {
+  it("keeps native input chrome off while preserving a visible input focus ring", async () => {
     const css = await Bun.file("src/styles/components/text-input.css").text();
 
     expect(css).toContain("-webkit-appearance: none;");
     expect(css).toContain("appearance: none;");
     expect(css).toContain("background-clip: padding-box;");
+    expect(css).toContain(".slex-input:focus");
+    expect(css).toContain("box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 18%, transparent);");
+    expect(css).toContain('.slex-input-control[data-has-unit="true"] .slex-input:focus');
     expect(css).toContain(".slex-input-control:not([data-has-unit]):focus-within");
     expect(css).toContain("box-shadow: none;");
   });

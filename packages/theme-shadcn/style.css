@@ -3522,6 +3522,10 @@ body[data-mobile-nav-open] {
 
 .slex-input:focus {
   border-color: var(--ring);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 18%, transparent);
+}
+
+.slex-input-control[data-has-unit="true"] .slex-input:focus {
   box-shadow: none;
 }
 
@@ -3546,6 +3550,10 @@ body[data-mobile-nav-open] {
 
 .slex-input-field[data-invalid="true"] .slex-input:focus {
   border-color: var(--destructive);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+}
+
+.slex-input-field[data-invalid="true"] .slex-input-control[data-has-unit="true"] .slex-input:focus {
   box-shadow: none;
 }
 
