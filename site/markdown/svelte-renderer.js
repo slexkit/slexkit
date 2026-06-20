@@ -34,6 +34,92 @@ function rewriteRootRelativeUrls(container) {
   });
 }
 
+function frameContentHeight(frame) {
+  const doc = frame.contentDocument;
+  if (!doc) return 0;
+  const root = doc.documentElement;
+  const body = doc.body;
+  return Math.max(
+    root?.scrollHeight ?? 0,
+    root?.offsetHeight ?? 0,
+    body?.scrollHeight ?? 0,
+    body?.offsetHeight ?? 0,
+  );
+}
+
+function bindLiveExampleFrames(container) {
+  const cleanups = [];
+  const frames = container.querySelectorAll("iframe.slex-example-live-frame");
+
+  frames.forEach((frame) => {
+    if (!(frame instanceof HTMLIFrameElement)) return;
+    frame.setAttribute("scrolling", "no");
+
+    let observer;
+    let observedDoc;
+    let raf = 0;
+    const timers = [];
+    const win = frame.ownerDocument.defaultView;
+    const scheduleResize = () => {
+      if (!win) return;
+      if (raf) win.cancelAnimationFrame(raf);
+      raf = win.requestAnimationFrame(() => {
+        raf = 0;
+        try {
+          const height = frameContentHeight(frame);
+          if (height > 0) frame.style.height = `${Math.ceil(height)}px`;
+        } catch {
+          // Cross-origin frames keep their CSS fallback height.
+        }
+      });
+    };
+
+    const observeContent = () => {
+      scheduleResize();
+      try {
+        const doc = frame.contentDocument;
+        const resizeObserver = frame.contentWindow?.ResizeObserver;
+        if (!doc || !resizeObserver) return;
+        if (observer && observedDoc !== doc) {
+          observedDoc?.defaultView?.removeEventListener("resize", scheduleResize);
+          observer.disconnect();
+          observer = undefined;
+          observedDoc = undefined;
+        }
+        if (observer) return;
+        observer = new resizeObserver(scheduleResize);
+        observedDoc = doc;
+        if (doc.documentElement) observer.observe(doc.documentElement);
+        if (doc.body) observer.observe(doc.body);
+        doc.defaultView?.addEventListener("resize", scheduleResize);
+      } catch {
+        // Cross-origin frames keep their CSS fallback height.
+      }
+    };
+
+    frame.addEventListener("load", observeContent);
+    observeContent();
+    for (const delay of [100, 350, 800, 1600, 3200]) {
+      if (win) timers.push(win.setTimeout(observeContent, delay));
+    }
+    cleanups.push(() => {
+      frame.removeEventListener("load", observeContent);
+      if (raf && win) win.cancelAnimationFrame(raf);
+      for (const timer of timers) win?.clearTimeout(timer);
+      try {
+        observedDoc?.defaultView?.removeEventListener("resize", scheduleResize);
+      } catch {
+        // Cross-origin frames keep their CSS fallback height.
+      }
+      observer?.disconnect();
+    });
+  });
+
+  return () => {
+    for (const cleanup of cleanups) cleanup();
+  };
+}
+
 export function renderMarkdown(content, container, options = {}) {
   const domain = options.domain ?? containerDomain(container);
   const ownsRuntimeHost = !options.slexkitRuntimeHost;
@@ -61,6 +147,7 @@ export function renderMarkdown(content, container, options = {}) {
   const rewrite = () => {
     if (active) rewriteRootRelativeUrls(container);
   };
+  const cleanupLiveFrames = bindLiveExampleFrames(container);
 
   rewrite();
   queueMicrotask(rewrite);
@@ -68,6 +155,7 @@ export function renderMarkdown(content, container, options = {}) {
 
   return () => {
     active = false;
+    cleanupLiveFrames();
     void unmount(app);
     runtimeHost.disposeArtifact(domain);
     if (ownsRuntimeHost) runtimeHost.disposeAll();

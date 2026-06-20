@@ -52,7 +52,9 @@ describe("adapter examples", () => {
     expect(exporter).toContain('"official-examples"');
     expect(exporter).toContain('from "../../shared/adapter-demo.js"');
     expect(renderer).toContain("rewriteRootRelativeUrls");
+    expect(renderer).toContain("bindLiveExampleFrames");
     expect(renderer).toContain("iframe[src]");
+    expect(renderer).toContain("slex-example-live-frame");
     expect(renderer).toContain("withSiteBase(value)");
   });
 

@@ -15,6 +15,10 @@
   min-width: max-content;
 }
 
+.slex-site-menu-button {
+  display: inline-grid !important;
+}
+
 .slex-site-nav-links {
   display: none;
   align-items: center;
@@ -1176,17 +1180,18 @@
 .slex-doc-prose :where(.slex-example-live-frame) {
   display: block;
   width: 100%;
-  height: min(760px, 72svh);
+  height: 1120px;
   min-height: 520px;
   margin: 1.25rem 0;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--background);
+  overflow: hidden;
 }
 
 @media (max-width: 480px) {
   .slex-doc-prose :where(.slex-example-live-frame) {
-    height: 68svh;
+    height: 980px;
     min-height: 440px;
   }
 }
@@ -1324,7 +1329,7 @@
   padding-left: 1.25rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .slex-site-nav {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -1341,6 +1346,16 @@
 
   .slex-site-nav-actions {
     justify-self: end;
+  }
+
+  .slex-site-menu-button {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .slex-site-external-action {
+    display: none !important;
   }
 }
 

@@ -2,8 +2,10 @@ body {
   background: var(--card);
 }
 
+html:has(.adapter-example-shell[data-embed="true"]),
 body:has(.adapter-example-shell[data-embed="true"]) {
   background: var(--background);
+  overflow: hidden;
 }
 
 .adapter-example-shell {
