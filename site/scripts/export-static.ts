@@ -190,6 +190,8 @@ export async function exportStaticSite() {
   await cp(join(projectRoot, "README.md"), join(outDir, "README.md"));
   await cp(join(projectRoot, "README.zh-CN.md"), join(outDir, "README.zh-CN.md"));
   await cp(join(projectRoot, "CHANGELOG.md"), join(outDir, "CHANGELOG.md"));
+  await mkdir(join(outDir, "site"), { recursive: true });
+  await cp(join(siteRoot, "assets"), join(outDir, "site", "assets"), { recursive: true });
   await cp(join(siteRoot, "assets", "logo.svg"), join(outDir, "logo.svg"));
   await cp(join(siteRoot, "assets", "og.svg"), join(outDir, "og.svg"));
   await cp(join(projectRoot, "skills"), join(outDir, "skills"), { recursive: true });

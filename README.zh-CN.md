@@ -22,7 +22,7 @@
     <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a">
   </p>
   <p>
-    <img src="site/assets/readme/slexkit-markdown-live-ui.jpg" alt="SlexKit 将显式 slex Markdown fence 渲染成实时交互 UI" width="920" />
+    <img src="site/assets/readme/slexkit-markdown-live-ui.svg" alt="SlexKit 将显式 slex Markdown fence 渲染成实时交互 UI" width="920" />
   </p>
 </div>
 

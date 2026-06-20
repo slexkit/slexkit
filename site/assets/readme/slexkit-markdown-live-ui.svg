@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1220" viewBox="0 0 1200 1220" role="img" aria-labelledby="title desc">
+  <title id="title">SlexKit RC low-pass filter live UI block</title>
+  <desc id="desc">A vector rendering of the RC low-pass filter example with parameter inputs, sliders, computed cutoff frequency, gain, and status callout.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .panel { fill: #ffffff; stroke: #d8e2f0; stroke-width: 1.2; }
+    .muted-panel { fill: #f1f5f9; stroke: #d8e2f0; stroke-width: 1.2; }
+    .field { fill: #f8fafc; stroke: #d8e2f0; stroke-width: 1.2; }
+    .unit { fill: #eef2f7; stroke: #d8e2f0; stroke-width: 1.2; }
+    .track { stroke: #dbe3ee; stroke-width: 12; stroke-linecap: round; }
+    .active { stroke: #3f8fe5; stroke-width: 12; stroke-linecap: round; }
+    .line { stroke: #d8e2f0; stroke-width: 1.2; }
+    .text { fill: #0f172a; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .muted { fill: #64748b; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .mono { fill: #0f172a; font-family: "SFMono-Regular", "Cascadia Code", "Liberation Mono", Menlo, Consolas, monospace; }
+    .math { fill: #0f172a; font-family: "Cambria Math", "Times New Roman", serif; }
+    .orange { fill: #c45f08; }
+  </style>
+
+  <rect class="bg" width="1200" height="1040"/>
+
+  <g transform="translate(30 22)">
+    <text x="0" y="0" class="text" font-size="30" font-weight="760" dominant-baseline="hanging">RC Low-Pass Filter</text>
+    <path d="M0 40H1140" class="line"/>
+    <text x="0" y="98" class="muted" font-size="24">One resistor and one capacitor — filter out high-frequency noise.</text>
+  </g>
+
+  <g transform="translate(30 180)">
+    <rect class="panel" x="0" y="0" width="1140" height="548" rx="14"/>
+    <text x="30" y="38" class="text" font-size="28" font-weight="760">Parameter Input</text>
+    <path d="M30 82H1110" class="line"/>
+
+    <g transform="translate(30 112)">
+      <text x="0" y="0" class="text" font-size="20" font-weight="720">Resistance R</text>
+      <rect class="field" x="0" y="22" width="342" height="60" rx="9"/>
+      <rect class="unit" x="288" y="22" width="54" height="60" rx="9"/>
+      <path d="M288 22V82" class="line"/>
+      <text x="20" y="61" class="text" font-size="21">10.0 kΩ</text>
+      <text x="314" y="61" class="muted" font-size="21" font-weight="720" text-anchor="middle">Ω</text>
+
+      <text x="368" y="0" class="text" font-size="20" font-weight="720">Capacitance C</text>
+      <rect class="field" x="368" y="22" width="342" height="60" rx="9"/>
+      <rect class="unit" x="648" y="22" width="62" height="60" rx="9"/>
+      <path d="M648 22V82" class="line"/>
+      <text x="388" y="61" class="text" font-size="21">100nF</text>
+      <text x="679" y="61" class="muted" font-size="21" font-weight="720" text-anchor="middle">nF</text>
+
+      <text x="735" y="0" class="text" font-size="20" font-weight="720">Input frequency f</text>
+      <rect class="field" x="735" y="22" width="342" height="60" rx="9"/>
+      <rect class="unit" x="1016" y="22" width="61" height="60" rx="9"/>
+      <path d="M1016 22V82" class="line"/>
+      <text x="755" y="61" class="text" font-size="21">1.0 kHz</text>
+      <text x="1047" y="61" class="muted" font-size="21" font-weight="720" text-anchor="middle">Hz</text>
+    </g>
+
+    <g transform="translate(30 242)">
+      <text x="0" y="0" class="muted" font-size="20" font-weight="720">R</text>
+      <rect x="244" y="-13" width="98" height="40" rx="8" fill="#e6edf6"/>
+      <text x="293" y="13" class="mono" font-size="20" font-weight="720" text-anchor="middle">10000Ω</text>
+      <path d="M0 54H342" class="track"/>
+      <path d="M0 54H44" class="active"/>
+      <circle cx="44" cy="54" r="11" fill="#ffffff" stroke="#3f8fe5" stroke-width="3"/>
+
+      <text x="368" y="0" class="muted" font-size="20" font-weight="720">C</text>
+      <rect x="626" y="-13" width="84" height="40" rx="8" fill="#e6edf6"/>
+      <text x="668" y="13" class="mono" font-size="20" font-weight="720" text-anchor="middle">100nF</text>
+      <path d="M368 54H710" class="track"/>
+      <path d="M368 54H411" class="active"/>
+      <circle cx="411" cy="54" r="11" fill="#ffffff" stroke="#3f8fe5" stroke-width="3"/>
+
+      <text x="735" y="0" class="muted" font-size="20" font-weight="720">f</text>
+      <rect x="980" y="-13" width="97" height="40" rx="8" fill="#e6edf6"/>
+      <text x="1028" y="13" class="mono" font-size="20" font-weight="720" text-anchor="middle">1000Hz</text>
+      <path d="M735 54H1077" class="track"/>
+      <path d="M735 54H748" class="active"/>
+      <circle cx="748" cy="54" r="11" fill="#ffffff" stroke="#3f8fe5" stroke-width="3"/>
+    </g>
+
+    <g transform="translate(30 338)">
+      <rect class="muted-panel" x="0" y="0" width="1080" height="118" rx="10"/>
+      <text x="25" y="45" class="muted" font-size="18" font-weight="760">CUTOFF FREQUENCY</text>
+      <text x="25" y="91" class="text" font-size="36" font-weight="780">159.2</text>
+      <text x="132" y="91" class="muted" font-size="20" font-weight="720">Hz</text>
+
+      <rect x="0" y="144" width="122" height="34" rx="8" fill="#fff7ed" stroke="#f3c7a9" stroke-width="1.2"/>
+      <text x="61" y="167" class="orange" font-size="17" font-weight="720" text-anchor="middle">Transition</text>
+    </g>
+  </g>
+
+  <g transform="translate(30 784)">
+    <text x="0" y="0" class="text" font-size="30" font-weight="760" dominant-baseline="hanging">Results</text>
+    <path d="M0 43H1140" class="line"/>
+
+    <g transform="translate(326 102)">
+      <text x="0" y="0" class="math" font-size="33" font-style="italic">f</text>
+      <text x="17" y="7" class="math" font-size="20">c</text>
+      <text x="42" y="0" class="math" font-size="33">=</text>
+      <text x="240" y="-16" class="math" font-size="30" text-anchor="middle">1</text>
+      <path d="M98 -1H382" stroke="#0f172a" stroke-width="1"/>
+      <text x="240" y="32" class="math" font-size="28" text-anchor="middle">2π × 10.0kΩ × 100nF</text>
+      <text x="408" y="0" class="math" font-size="33">= 159.2 Hz</text>
+    </g>
+
+    <g transform="translate(0 176)">
+      <rect class="muted-panel" x="0" y="0" width="558" height="118" rx="9"/>
+      <text x="24" y="46" class="muted" font-size="17" font-weight="760">MAGNITUDE GAIN |H(F)|</text>
+      <text x="24" y="92" class="text" font-size="36" font-weight="780">0.1572</text>
+
+      <rect class="muted-panel" x="582" y="0" width="558" height="118" rx="9"/>
+      <text x="606" y="46" class="muted" font-size="17" font-weight="760">GAIN</text>
+      <text x="606" y="92" class="orange" font-size="36" font-weight="780">-16.1</text>
+      <text x="704" y="92" class="muted" font-size="20" font-weight="720">dB</text>
+    </g>
+
+    <g transform="translate(0 320)">
+      <rect class="panel" x="0" y="0" width="1140" height="94" rx="9"/>
+      <rect x="25" y="22" width="6" height="50" rx="3" fill="#ea580c"/>
+      <text x="50" y="58" class="muted" font-size="20">Signal is in the transition band — attenuation is about 16.1 dB.</text>
+    </g>
+  </g>
+</svg>
