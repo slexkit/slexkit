@@ -390,6 +390,27 @@ body[data-mobile-nav-open] {
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 24%, transparent);
 }
 
+@media (max-width: 1023px) {
+  .slex-doc-detail-actions--content {
+    gap: 0.125rem;
+  }
+
+  .slex-doc-detail-actions--content .slex-doc-detail-action {
+    width: 2.25rem;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    min-height: 2.25rem;
+    padding: 0;
+    font-size: 0;
+    line-height: 1;
+  }
+
+  .slex-doc-detail-actions--content .slex-doc-detail-action-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
 @media (min-width: 1280px) {
   .slex-doc-detail-layout {
     grid-template-columns: minmax(0, 1fr) 15rem;
