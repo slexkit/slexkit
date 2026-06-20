@@ -119,7 +119,7 @@ export function Message({ markdown }: { markdown: string }) {
 
 ## `@slexkit/tiptap`
 
-Tiptap extension，用于把显式 `slex` code block 渲染成 SlexKit preview，同时保留普通 fenced code block 的 Markdown roundtrip。
+Tiptap extension，用于把显式 `slex` code block 渲染成 SlexKit preview，同时保留普通 fenced code block 的 Markdown 导入/导出行为。
 
 ```sh
 npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown

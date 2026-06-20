@@ -130,17 +130,19 @@ function localizedCopy(locale) {
   if (locale === "zh-CN") {
     return {
       title: "示例中心",
-      lede: "可直接打开的 SlexKit 示例。",
+      lede: "可直接运行的 SlexKit 示例。",
       landingEyebrow: "示例入口",
-      landingTitle: "从宿主、入门路径或真实场景开始",
-      landingDescription: "同一份 Markdown 可以在不同宿主中渲染；只有显式 `slex` fence 会交给 SlexKit。",
+      landingTitle: "按宿主、入门路径或应用场景浏览",
+      landingDescription: "不同宿主保留自己的 Markdown 渲染；SlexKit 只处理显式 slex fence。",
       hostIntegration: "宿主集成",
-      hostIntegrationDesc: "Streamdown、Tiptap 和官网 Svelte Markdown host。",
+      hostIntegrationDesc: "Streamdown、Tiptap，以及官网自定义 Markdown host 的接入方式。",
       gettingStarted: "入门教程",
       gettingStartedDesc: "从静态卡片、响应式状态到多输入协同，按顺序理解 SlexKit。",
-      calculators: "真实计算器",
+      calculators: "计算器示例",
       calculatorsDesc: "工程、电子和成本估算场景。",
-      hostAdapters: "宿主适配器",
+      hostAdapters: "宿主接入",
+      streamdownAdapterDesc: "React/Streamdown 中只接管显式 slex fence。",
+      tiptapAdapterDesc: "Tiptap 编辑器内的 slex 代码块预览。",
       openExample: "打开示例",
       openGuide: "查看指南",
       viewSource: "查看源码",
@@ -167,15 +169,17 @@ function localizedCopy(locale) {
     title: "Examples",
     lede: "Runnable SlexKit examples.",
     landingEyebrow: "Example entry points",
-    landingTitle: "Start from a host, a learning path, or a real artifact",
-    landingDescription: "The same Markdown can render in different hosts; only explicit `slex` fences are handed to SlexKit.",
+    landingTitle: "Browse by host, learning path, or use case",
+    landingDescription: "Hosts keep their Markdown renderer; SlexKit only handles explicit slex fences.",
     hostIntegration: "Host Integration",
-    hostIntegrationDesc: "Streamdown, Tiptap, and the Svelte Markdown host used by this site.",
+    hostIntegrationDesc: "Streamdown, Tiptap, and the custom Markdown host used by this site.",
     gettingStarted: "Getting Started",
     gettingStartedDesc: "Learn SlexKit in order: static card, reactive state, and coordinated inputs.",
-    calculators: "Real-world calculators",
+    calculators: "Calculator examples",
     calculatorsDesc: "Engineering, electronics, and cost-estimation scenarios.",
-    hostAdapters: "Host adapters",
+    hostAdapters: "Host integration",
+    streamdownAdapterDesc: "Handle explicit slex fences inside React/Streamdown.",
+    tiptapAdapterDesc: "Preview slex code blocks inside a Tiptap editor.",
     openExample: "Open example",
     openGuide: "Open guide",
     viewSource: "View source",
@@ -300,11 +304,11 @@ function examplesLandingHtml(examples, copy, locale) {
         <div class="slex-examples-adapter-grid">
           <a class="slex-examples-adapter-card" href="${escapeAttribute(streamdownHref)}">
             <strong>Streamdown</strong>
-            <span>React / Streamdown renderer for explicit <code>slex</code> fences.</span>
+            <span>${escapeAttribute(copy.streamdownAdapterDesc)}</span>
           </a>
           <a class="slex-examples-adapter-card" href="${escapeAttribute(tiptapHref)}">
             <strong>Tiptap</strong>
-            <span>Editor preview for <code>slex</code> code blocks with Markdown roundtrip.</span>
+            <span>${escapeAttribute(copy.tiptapAdapterDesc)}</span>
           </a>
           <a class="slex-examples-adapter-card" href="${escapeAttribute(integrationHref)}">
             <strong>${escapeAttribute(copy.svelteHost)}</strong>

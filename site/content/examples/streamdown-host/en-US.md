@@ -1,9 +1,9 @@
 ---
-title: "Streamdown Host Adapter"
+title: "Streamdown Integration"
 category: "Host Integration"
 status: published
 order: 18
-summary: "A React/Streamdown integration path that renders only explicit slex fences while leaving ordinary Markdown and code blocks to Streamdown."
+summary: "A React/Streamdown adapter that takes over explicit slex fences and leaves ordinary Markdown and code blocks to Streamdown."
 tags: streamdown, react, markdown, adapter
 components: section, table, callout, code-block
 difficulty: Intermediate
@@ -12,9 +12,9 @@ featured: true
 slexkitRenderMode: component
 ---
 
-# Streamdown Host Adapter
+# Streamdown Integration
 
-This page shows the integration boundary for `@slexkit/streamdown`: Streamdown keeps rendering Markdown, and SlexKit handles only explicit `slex` fences.
+Use `@slexkit/streamdown` when a React page already renders Markdown with Streamdown. The adapter takes over fences whose language is `slex`; Streamdown continues to render the rest of the document, including prose, math, and ordinary code blocks.
 
 Run it from the repository:
 
@@ -24,13 +24,13 @@ bun run --filter @slexkit/streamdown build
 bun examples/dev-server.mjs streamdown
 ```
 
-The source lives in [`examples/streamdown`](https://github.com/slexkit/slexkit/tree/main/examples/streamdown). It uses the same RC low-pass filter Markdown as the site example, so it is easy to compare with Tiptap.
+The source lives in [`examples/streamdown`](https://github.com/slexkit/slexkit/tree/main/examples/streamdown). The Streamdown and Tiptap examples use the same RC low-pass filter content, so both hosts can be checked against the same input.
 
 <iframe class="slex-example-live-frame" src="/adapter-demos/streamdown/?embed=1" title="Streamdown runnable example"></iframe>
 
 [Open the integration guide](/docs/guides/integration) · [View runnable source](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)
 
-## Integration Boundary
+## Responsibilities
 
 | Item | Convention |
 | --- | --- |
@@ -38,9 +38,9 @@ The source lives in [`examples/streamdown`](https://github.com/slexkit/slexkit/t
 | Runtime | `trusted` or `secure` |
 | Markdown host | Streamdown |
 
-Ordinary Markdown, math, tables, and non-`slex` code blocks stay with Streamdown. State-only `slex` fences share artifact state with later renderable fences.
+Ordinary Markdown, math, tables, and non-`slex` code blocks stay with Streamdown. State-only `slex` fences do not render standalone UI, but write to the same artifact state used by later renderable fences.
 
-The minimal wiring is:
+Minimal wiring:
 
 ```tsx
 import { Streamdown } from "streamdown";
@@ -62,4 +62,4 @@ export function Message({ markdown }: { markdown: string }) {
 }
 ```
 
-Use this package when the host already renders Markdown through Streamdown. Use the custom Markdown host API directly when the host owns its own parser or renderer.
+Use `@slexkit/streamdown` when Streamdown is the Markdown layer. If the host owns its parser or renderer, wire SlexKit through the custom Markdown host API instead.

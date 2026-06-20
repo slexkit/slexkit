@@ -5,10 +5,10 @@ import { loadExampleDocs } from "./examples.js";
 
 const siteName = "SlexKit";
 const defaultDescription =
-  "\"Docs as tools, tools as docs\" gives Markdown interactive power, making AI output come alive.";
+  "\"Docs as tools, tools as docs\" renders explicit Markdown fences as stateful UI blocks.";
 const homeDescriptions = {
   "en-US": defaultDescription,
-  "zh-CN": "\"文档即工具，工具即文档\"，赋予 Markdown 可交互的能力，让 AI 的输出变得生动。",
+  "zh-CN": "\"文档即工具，工具即文档\"，把显式 Markdown fence 渲染成带状态的交互块。",
 };
 
 export function prerenderedHomeHtml(locale = "en-US") {
@@ -18,16 +18,16 @@ export function prerenderedHomeHtml(locale = "en-US") {
     <div class="slex-home-copy">
       <h1>SlexKit</h1>
       <p><strong>Streaming Live EXpressions Kit</strong></p>
-      <p class="slex-home-lede">"文档即工具，工具即文档"，赋予 Markdown 可交互的能力，让 AI 的输出变得生动。</p>
-      <p>SlexKit 是一个零构建、Markdown 友好的响应式 UI 运行时，专为 AI 输出设计。它让你在 Markdown 文档中嵌入可交互的组件——表单、图表、计算工具、实时预览——无需任何构建步骤。</p>
-      <h2>核心特性</h2>
+      <p class="slex-home-lede">"文档即工具，工具即文档"，把显式 Markdown fence 渲染成带状态的交互块。</p>
+      <p>SlexKit 是面向 Markdown 宿主的交互式 UI 运行时。文档中写显式 <code>slex</code> fence，运行时负责挂载表单、指标、计算器和预览组件；不需要为每段内容增加构建流程。</p>
+      <h2>能力范围</h2>
       <ul>
-        <li><strong>零构建</strong> — 直接在 Markdown 中使用 <code>&lt;slex&gt;</code> 代码块，无需 webpack、vite 或任何打包工具</li>
-        <li><strong>流式渲染</strong> — 支持 AI 流式输出，组件随内容到达逐步渲染</li>
-        <li><strong>响应式状态</strong> — 内置响应式系统，组件间可双向绑定数据</li>
-        <li><strong>丰富组件</strong> — 30+ 内置组件：卡片、表单、图表、代码块、手风琴、标签页等</li>
-        <li><strong>安全沙箱</strong> — 可选的安全运行时，隔离执行不受信任的内容</li>
-        <li><strong>工具调用渲染</strong> — ToolHost 系统将 AI 工具调用渲染为可交互的确认对话框和表单</li>
+        <li><strong>零构建</strong> — 在 Markdown 中直接写 slex fence；宿主只需加载运行时和样式</li>
+        <li><strong>流式渲染</strong> — 适合消息流和文档流：内容到达后按 fence 挂载</li>
+        <li><strong>响应式状态</strong> — 同一 artifact 内共享状态，控件和展示组件可以联动</li>
+        <li><strong>组件集</strong> — 内置常用文档组件：卡片、表单、表格、代码块、标签页等</li>
+        <li><strong>安全沙箱</strong> — 不可信内容可放入 secure runtime，与宿主页隔离</li>
+        <li><strong>工具调用渲染</strong> — ToolHost 把确认、选择和表单类工具调用渲染成可提交 UI</li>
       </ul>
       <h2>快速示例</h2>
       <p>在 Markdown 中写一个交互式计算器：</p>
@@ -42,12 +42,12 @@ type:row
         <li><a href="/docs/guides/intro">简介</a> — 了解 SlexKit 的设计理念</li>
         <li><a href="/docs/guides/quick-start">快速开始</a> — 5 分钟上手 SlexKit</li>
         <li><a href="/docs/components/accordion">组件文档</a> — 浏览所有可用组件</li>
-        <li><a href="/examples">示例中心</a> — 查看真实场景示例</li>
+        <li><a href="/examples">示例中心</a> — 查看应用场景示例</li>
         <li><a href="https://www.npmjs.com/package/slexkit">npm</a> — 安装 <code>npm install slexkit</code></li>
         <li><a href="https://github.com/slexkit/slexkit">GitHub</a> — 源码与贡献</li>
       </ul>
       <h2>AI / LLM 文档接入</h2>
-      <p>SlexKit 为 AI agent 和 LLM 提供了专门的文档接口：</p>
+      <p>供 agent 读取的索引、全文和 MCP 入口：</p>
       <ul>
         <li><a href="/llms.txt">/llms.txt</a> — 文档索引，包含所有指南、组件、示例和参考文档的结构化目录</li>
         <li><a href="/llms-full.txt">/llms-full.txt</a> — 完整英文文档（单文件），包含所有 Markdown 源文件</li>
@@ -68,16 +68,16 @@ type:row
     <div class="slex-home-copy">
       <h1>SlexKit</h1>
       <p><strong>Streaming Live EXpressions Kit</strong></p>
-      <p class="slex-home-lede">"Docs as tools, tools as docs" gives Markdown interactive power, making AI output come alive.</p>
-      <p>SlexKit is a zero-build, Markdown-friendly reactive UI runtime designed for AI output. It lets you embed interactive components—forms, charts, calculators, live previews—inside Markdown documents without any build step.</p>
-      <h2>Key Features</h2>
+      <p class="slex-home-lede">"Docs as tools, tools as docs" renders explicit Markdown fences as stateful UI blocks.</p>
+      <p>SlexKit is an interactive UI runtime for Markdown hosts. Write explicit <code>slex</code> fences in the document; the runtime mounts forms, metrics, calculators, and previews without adding a build step for each artifact.</p>
+      <h2>Runtime scope</h2>
       <ul>
-        <li><strong>Zero-build</strong> — Use <code>&lt;slex&gt;</code> code blocks directly in Markdown. No webpack, vite, or bundler required.</li>
-        <li><strong>Streaming</strong> — Renders components as AI output streams in, progressively.</li>
-        <li><strong>Reactive state</strong> — Built-in reactive system with two-way data binding between components.</li>
-        <li><strong>Rich components</strong> — 30+ built-in components: cards, forms, charts, code blocks, accordions, tabs, and more.</li>
-        <li><strong>Secure sandbox</strong> — Optional secure runtime for isolating untrusted content execution.</li>
-        <li><strong>Tool-call rendering</strong> — ToolHost system renders AI tool calls as interactive confirmation dialogs and forms.</li>
+        <li><strong>Zero-build</strong> — Write slex fences directly in Markdown; the host loads the runtime and CSS.</li>
+        <li><strong>Streaming</strong> — Works with message and document streams; fences mount as content arrives.</li>
+        <li><strong>Reactive state</strong> — Components in one artifact can share state and update together.</li>
+        <li><strong>Component set</strong> — Built-in document components: cards, forms, tables, code blocks, tabs, and more.</li>
+        <li><strong>Secure sandbox</strong> — Run untrusted content in a secure runtime isolated from the host page.</li>
+        <li><strong>Tool-call rendering</strong> — ToolHost renders confirmations, choices, and forms as submit-ready UI.</li>
       </ul>
       <h2>Quick Example</h2>
       <p>Write an interactive calculator in Markdown:</p>
@@ -92,12 +92,12 @@ type:row
         <li><a href="/docs/guides/intro">Introduction</a> — Learn about SlexKit's design philosophy</li>
         <li><a href="/docs/guides/quick-start">Quick Start</a> — Get up and running in 5 minutes</li>
         <li><a href="/docs/components/accordion">Component Docs</a> — Browse all available components</li>
-        <li><a href="/examples">Examples</a> — See real-world examples</li>
+        <li><a href="/examples">Examples</a> — Browse use-case examples</li>
         <li><a href="https://www.npmjs.com/package/slexkit">npm</a> — Install with <code>npm install slexkit</code></li>
         <li><a href="https://github.com/slexkit/slexkit">GitHub</a> — Source code and contributions</li>
       </ul>
       <h2>AI / LLM Documentation</h2>
-      <p>SlexKit provides dedicated documentation endpoints for AI agents and LLMs:</p>
+      <p>Index, full context, and MCP entry points for agents:</p>
       <ul>
         <li><a href="/llms.txt">/llms.txt</a> — Documentation index with structured table of contents for all guides, components, examples, and reference docs</li>
         <li><a href="/llms-full.txt">/llms-full.txt</a> — Full English documentation in a single file (all Markdown source)</li>
@@ -205,8 +205,8 @@ function examplesIndexPage(locale) {
     locale,
     title: locale === "zh-CN" ? "示例中心 - SlexKit" : "Examples - SlexKit",
     description: locale === "zh-CN"
-      ? "浏览可直接打开的 SlexKit 示例：宿主集成、入门路径和真实计算器。"
-      : "Browse runnable SlexKit examples: host adapters, learning paths, and real calculators.",
+      ? "浏览可直接运行的 SlexKit 示例：宿主接入、入门路径和计算器场景。"
+      : "Browse runnable SlexKit examples: host integration, learning paths, and calculator scenarios.",
     canonicalPath: "/examples",
   });
 }

@@ -62,7 +62,7 @@ describe("adapter examples", () => {
     const route = readFileSync("site/routes/examples.js", "utf8");
 
     expect(route).toContain("examplesLandingDoc");
-    expect(route).toContain("Start from a host, a learning path, or a real artifact");
+    expect(route).toContain("Browse by host, learning path, or use case");
     expect(route).toContain("Streamdown");
     expect(route).toContain("Tiptap");
     expect(route).toContain("Svelte Markdown Host");

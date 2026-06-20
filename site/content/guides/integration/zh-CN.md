@@ -16,7 +16,7 @@ SlexKit 在本仓库提供 Streamdown 与 Tiptap 包，并在独立发布仓库�
 | 宿主 | 使用包 | 适用场景 | 运行边界 |
 |---|---|---|---|
 | React / Streamdown | `@slexkit/streamdown` | 聊天消息、AI 输出、React Markdown 页面 | trusted 或 secure |
-| Tiptap | `@slexkit/tiptap` | 需要交互式 `slex` code block preview 与 Markdown roundtrip 的编辑器文档 | trusted |
+| Tiptap | `@slexkit/tiptap` | 需要 `slex` 代码块预览，并保留 Markdown 导入/导出的编辑器文档 | trusted |
 | Obsidian | `slexkit/obsidian-slexkit` | 本地 vault reading mode 中的 Slex fence | trusted readonly |
 | 自定义 Markdown 宿主 | `slexkit` | 产品自己的 Markdown renderer、文档查看器或 Svelte 官网 renderer | trusted 或 secure |
 
@@ -28,8 +28,8 @@ SlexKit 在本仓库提供 Streamdown 与 Tiptap 包，并在独立发布仓库�
 
 仓库里包含两个可直接在浏览器打开的宿主示例。两者使用同一份 RC 低通滤波器 Markdown source，方便对比不同宿主的行为：
 
-- [Streamdown 宿主适配](/zh-CN/examples/streamdown-host) 对应 `examples/streamdown`。
-- [Tiptap 编辑器适配](/zh-CN/examples/tiptap-host) 对应 `examples/tiptap`。
+- [Streamdown 接入](/zh-CN/examples/streamdown-host) 对应 `examples/streamdown`。
+- [Tiptap 编辑器接入](/zh-CN/examples/tiptap-host) 对应 `examples/tiptap`。
 
 ## Svelte Markdown 宿主
 

@@ -1,9 +1,9 @@
 ---
-title: "Tiptap 编辑器适配"
+title: "Tiptap 编辑器接入"
 category: "宿主集成"
 status: published
 order: 19
-summary: "Tiptap CodeBlock extension：预览显式 slex fence，同时保留 Markdown roundtrip。"
+summary: "Tiptap CodeBlock 适配器：只把显式 slex 代码块渲染为预览，普通代码块和 Markdown 导入/导出保持 Tiptap 行为。"
 tags: tiptap, editor, markdown, adapter
 components: section, table, callout, code-block
 difficulty: 中级
@@ -12,11 +12,11 @@ featured: true
 slexkitRenderMode: component
 ---
 
-# Tiptap 编辑器适配
+# Tiptap 编辑器接入
 
-这个页面展示 `@slexkit/tiptap` 的接入边界：Tiptap 继续负责编辑和 Markdown roundtrip，SlexKit 只替换显式 `slex` 代码块。
+`@slexkit/tiptap` 适用于需要在编辑器中预览 `slex` 代码块的文档。Tiptap 仍负责编辑、选区和 Markdown 导入/导出；SlexKit 只接管语言为 `slex` 的 CodeBlock。
 
-在仓库中运行：
+本地运行：
 
 ```sh
 bun run build:core
@@ -24,13 +24,13 @@ bun run --filter @slexkit/tiptap build
 bun examples/dev-server.mjs tiptap
 ```
 
-示例源码位于 [`examples/tiptap`](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)。它复用官网 RC 低通滤波器 Markdown，便于和 Streamdown 示例对照。
+源码位于 [`examples/tiptap`](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)。Tiptap 与 Streamdown 示例使用同一份 RC 低通滤波器内容，用于对照编辑器宿主和只读渲染宿主的差异。
 
 <iframe class="slex-example-live-frame" src="/adapter-demos/tiptap/?embed=1" title="Tiptap 可运行示例"></iframe>
 
 [打开集成指南](/zh-CN/docs/guides/integration) · [查看可运行源码](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)
 
-## 接入边界
+## 职责划分
 
 | 项目 | 约定 |
 | --- | --- |
@@ -38,9 +38,9 @@ bun examples/dev-server.mjs tiptap
 | Fence language | `slex` |
 | Runtime | `trusted` |
 
-Tiptap 负责文档编辑和 Markdown roundtrip。State-only `slex` fence 与后续 preview block 共享 artifact runtime；非 `slex` code block 保持 Tiptap 原生行为。
+Tiptap 负责文档编辑和 Markdown 导入/导出。只写状态的 `slex` fence 与后续预览块共享 artifact runtime；非 `slex` code block 保持 Tiptap 原生行为。
 
-最小接入代码：
+最小配置：
 
 ```ts
 import { Editor } from "@tiptap/core";
@@ -62,4 +62,4 @@ const editor = new Editor({
 });
 ```
 
-产品需要编辑器内 preview 时使用这个包；只读 Markdown 输出优先使用 Streamdown 或自定义 Markdown host API。
+需要编辑器内预览时使用 `@slexkit/tiptap`。只读 Markdown 输出通常使用 Streamdown 或自定义 Markdown host API。
