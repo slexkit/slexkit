@@ -109,7 +109,6 @@
       },
       "optionalPeers": [
         "@tiptap/markdown",
-        "slexkit",
       ],
     },
   },
