@@ -1,0 +1,66 @@
+{
+  "name": "@slexkit/tiptap",
+  "version": "0.3.3",
+  "description": "Tiptap extension for SlexKit fenced UI blocks.",
+  "author": "SlexKit contributors",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slexkit/slexkit.git",
+    "directory": "packages/tiptap"
+  },
+  "homepage": "https://github.com/slexkit/slexkit/tree/main/packages/tiptap#readme",
+  "bugs": {
+    "url": "https://github.com/slexkit/slexkit/issues"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./style.css": "./style.css"
+  },
+  "files": [
+    "dist/",
+    "style.css",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun run scripts/build.ts"
+  },
+  "keywords": [
+    "slexkit",
+    "tiptap",
+    "prosemirror",
+    "markdown",
+    "editor"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@tiptap/core": "^3.0.0",
+    "@tiptap/extension-code-block": "^3.0.0",
+    "@tiptap/markdown": "^3.0.0",
+    "@tiptap/pm": "^3.0.0",
+    "slexkit": "^0.3.3"
+  },
+  "peerDependenciesMeta": {
+    "@tiptap/markdown": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@tiptap/core": "^3.27.1",
+    "@tiptap/extension-code-block": "^3.27.1",
+    "@tiptap/markdown": "^3.27.1",
+    "@tiptap/pm": "^3.27.1",
+    "@tiptap/starter-kit": "^3.27.1",
+    "slexkit": "file:../.."
+  }
+}

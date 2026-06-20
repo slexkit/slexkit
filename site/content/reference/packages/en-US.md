@@ -25,6 +25,7 @@ slexkit (root - real code)
  @slexkit/components-svelte (thin wrapper) ─── re-exports slexkit/components-svelte
  @slexkit/theme-shadcn ─── CSS only
  @slexkit/streamdown ─── React/Streamdown renderer
+ @slexkit/tiptap ─── framework-free Tiptap NodeView adapter
  @slexkit/mcp ─── read-only MCP server for AI agents
 ```
 
@@ -116,6 +117,28 @@ export function Message({ markdown }: { markdown: string }) {
 
 Processes `slex` fences. Supports both trusted and secure runtime modes.
 
+## @slexkit/tiptap
+
+Tiptap extension for rendering explicit `slex` code blocks as SlexKit previews while preserving normal fenced code block Markdown roundtrip.
+
+```sh
+npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown
+```
+
+```ts
+import StarterKit from "@tiptap/starter-kit";
+import { createSlexKitTiptapExtension } from "@slexkit/tiptap";
+import "@slexkit/theme-shadcn/style.css";
+import "@slexkit/tiptap/style.css";
+
+const extensions = [
+  StarterKit.configure({ codeBlock: false }),
+  createSlexKitTiptapExtension({ artifactId: "doc-1" })
+];
+```
+
+The adapter extends Tiptap's `CodeBlock`, only takes over blocks whose language is exactly `slex`, keeps ordinary code blocks native, and uses a trusted Markdown runtime host by default. Add `@tiptap/markdown` when loading or exporting Markdown.
+
 ## Obsidian plugin
 
 The official Obsidian plugin lives in a separate release repository: <https://github.com/slexkit/obsidian-slexkit>.
@@ -145,6 +168,7 @@ The server does not modify project files. Use it when an agent needs current Sle
 | With Svelte components | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | Add shadcn theme | `npm install @slexkit/theme-shadcn` |
 | React/Streamdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
+| Tiptap editor host | `npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown` |
 | Obsidian plugin | Install **SlexKit** from Obsidian Community Plugins |
 | AI agent MCP server | `npx -y @slexkit/mcp` |
 

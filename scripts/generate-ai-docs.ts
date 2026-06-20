@@ -78,7 +78,7 @@ const root = join(import.meta.dir, "..");
 const guidePages = [
   ["intro", "SlexKit Introduction", "What SlexKit is and where it fits."],
   ["quick-start", "Quick Start", "Install SlexKit and render a first Markdown-friendly Slex source."],
-  ["integration", "Integration", "React/Streamdown and Obsidian host plugins for explicit Slex fences."],
+  ["integration", "Integration", "Streamdown, Tiptap, Obsidian, and custom Markdown hosts for explicit Slex fences."],
   ["design", "Design Guidelines", "Design and authoring guidelines for SlexKit components and docs."],
   ["security-runtime", "Secure Runtime Setup", "Decision and setup guide for rendering untrusted or agent-generated Slex source."],
   ["ai-agents", "AI / Agents", "LLM docs, MCP server, skills, and authoring rules for SlexKit agents."],
@@ -92,7 +92,7 @@ const referencePages = [
   ["spec", "Slex Specification", "Public Slex expression envelope, component keys, props, directives, and lifecycle."],
   ["usage", "Slex Usage Reference", "Slex source structure, props, directives, events, theming, custom components, and ToolHost boundaries."],
   ["runtime", "Runtime Model", "Mounting, ingestion, boot, namespace store, lifecycle, and runtime APIs."],
-  ["integration", "Host Integration", "Markdown renderers, Streamdown, Obsidian, custom hosts, and artifact lifecycle."],
+  ["integration", "Host Integration", "Markdown renderers, Svelte custom hosts, Streamdown, Tiptap, Obsidian, and artifact lifecycle."],
   ["security", "Security Runtime", "Threat model, sandbox iframe, postMessage bridge, policy, and fail-closed behavior."],
   ["packages", "Package Boundaries", "Package relationships, installation matrix, and packaging strategy."],
   ["toolhost", "ToolHost", "Tool call rendering, built-in templates, custom templates, and submit boundaries."],

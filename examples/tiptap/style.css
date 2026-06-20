@@ -1,0 +1,20 @@
+.tiptap-editor {
+  padding: 0;
+  color: var(--foreground);
+  background: transparent;
+}
+
+.tiptap-editor .ProseMirror {
+  min-height: 30rem;
+  outline: none;
+}
+
+.tiptap-editor .slex-tiptap-code-block code,
+.tiptap-editor .slex-tiptap-source code {
+  padding: 0;
+  background: transparent;
+}
+
+.tiptap-editor .slex-tiptap-block {
+  max-width: 100%;
+}

@@ -3,25 +3,59 @@ title: Integration
 category: Guides
 status: ready
 order: 25
-summary: "Plugin setup guide for Streamdown and Obsidian hosts that render explicit Slex fences."
+summary: "Plugin setup guide for Streamdown, Tiptap, Obsidian, and custom Markdown hosts that render explicit Slex fences."
 slexkitRenderMode: component
 ---
 
 # Integration
 
-SlexKit ships the Streamdown package in this repository and maintains the official Obsidian plugin in a separate release repository. Both integrations process only explicit `slex` fences — they don't scan ordinary JavaScript, JSON, or unlabeled code blocks. For the full API and host contract, see the [Host Integration reference](/docs/reference/integration).
+SlexKit ships Streamdown and Tiptap packages in this repository and maintains the official Obsidian plugin in a separate release repository. These integrations process only explicit `slex` fences — they don't scan ordinary JavaScript, JSON, or unlabeled code blocks. The SlexKit website also uses the custom Markdown host path internally. For the full API and host contract, see the [Host Integration reference](/docs/reference/integration).
 
 ## Plugin Selection
 
 | Host | Package | Use case | Runtime boundary |
 |---|---|---|---|
 | React / Streamdown | `@slexkit/streamdown` | Chat messages, AI output, React Markdown pages | trusted or secure |
+| Tiptap | `@slexkit/tiptap` | Editor documents that need interactive `slex` code block previews and Markdown roundtrip | trusted |
 | Obsidian | `slexkit/obsidian-slexkit` | Slex fences in local vault reading mode | trusted readonly |
-| Custom Markdown host | `slexkit` | Product-specific Markdown renderer or document viewer | trusted or secure |
+| Custom Markdown host | `slexkit` | Product-specific Markdown renderer, document viewer, or Svelte site renderer | trusted or secure |
 
-Use the packaged plugin when the host is Streamdown. Use the separate [SlexKit plugin repository](https://github.com/slexkit/obsidian-slexkit) for Obsidian installs and releases. Use `createSlexKitMarkdownRuntimeHost` directly for custom Markdown renderers.
+Use the packaged plugins when the host is Streamdown or Tiptap. Use the separate [SlexKit plugin repository](https://github.com/slexkit/obsidian-slexkit) for Obsidian installs and releases. Use `createSlexKitMarkdownRuntimeHost` directly for custom Markdown renderers.
 
 Package installation details and release boundaries are tracked in [Package Boundaries](/docs/reference/packages).
+
+## Best Practice Examples
+
+The repository includes browser-openable best-practice examples for the packaged adapters. Both examples use the same RC low-pass Markdown source so host behavior is easy to compare:
+
+- [Streamdown Host Adapter](/examples/streamdown-host) mirrors `examples/streamdown`.
+- [Tiptap Editor Adapter](/examples/tiptap-host) mirrors `examples/tiptap`.
+
+## Svelte Markdown Host
+
+The SlexKit website is a Svelte application, but its Markdown integration is not a separate public adapter package. It is the reference shape for a custom Markdown renderer:
+
+```js
+import { createSlexKitMarkdownRuntimeHost } from "slexkit";
+import MarkdownRenderer from "./MarkdownRenderer.svelte";
+
+const runtimeHost = createSlexKitMarkdownRuntimeHost({
+  mode: "trusted",
+  theme: "host-shadcn"
+});
+
+mount(MarkdownRenderer, {
+  target: container,
+  props: {
+    content: markdown,
+    artifactId: "docs-page",
+    runtimeHost,
+    slexkitRenderMode: "component"
+  }
+});
+```
+
+Use this pattern when the product owns the Markdown parser, Svelte component tree, or document shell. The host still has the same responsibilities: detect only `slex` fences, keep ordinary code blocks as code, pass a stable `artifactId`, and call cleanup when the rendered document unmounts.
 
 ## Streamdown
 
@@ -54,6 +88,43 @@ export function Message({ markdown }: { markdown: string }) {
 ```
 
 The default renderer handles only `slex` fences. Ordinary code blocks pass through to Streamdown.
+
+## Tiptap
+
+Install the runtime, theme, adapter, and Tiptap peer dependencies:
+
+```sh
+npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown
+```
+
+Import styles once in the app entry:
+
+```ts
+import "@slexkit/theme-shadcn/style.css";
+import "@slexkit/tiptap/style.css";
+```
+
+Register the adapter instead of StarterKit's default code block:
+
+```ts
+import { Editor } from "@tiptap/core";
+import StarterKit from "@tiptap/starter-kit";
+import { Markdown } from "@tiptap/markdown";
+import { createSlexKitTiptapExtension } from "@slexkit/tiptap";
+
+const editor = new Editor({
+  element: document.querySelector("#editor"),
+  extensions: [
+    StarterKit.configure({ codeBlock: false }),
+    Markdown,
+    createSlexKitTiptapExtension({ artifactId: "doc-1" })
+  ],
+  content: markdown,
+  contentType: "markdown"
+});
+```
+
+The adapter extends Tiptap's `CodeBlock`, only takes over blocks whose language is exactly `slex`, and leaves ordinary code blocks as editable source. Blocks in one editor share an artifact runtime, so state-only fences can seed later renderable fences. It defaults to trusted runtime mode; use a secure web host for untrusted Markdown.
 
 ## Streamdown Options
 

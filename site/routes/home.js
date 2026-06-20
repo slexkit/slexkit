@@ -4,7 +4,7 @@ import { homePlaygroundConfig } from "../playground/home-playground.js";
 const homeLabelsByLocale = {
   "zh-CN": {
     previewLabel: "实时预览",
-    lede: '"文档即工具，工具即文档"，赋予 Markdown 可交互的能力，让 AI 的输出变得生动。',
+    lede: '"文档即工具，工具即文档"，把显式 Markdown fence 渲染成带状态的实时 UI 块。',
     primaryAction: "快速开始",
     secondaryAction: "查看组件",
     description: "SlexKit 是一个零构建、Markdown 友好的响应式 UI 运行时，专为 AI 输出设计。它让你在 Markdown 文档中嵌入可交互的组件——表单、图表、计算工具、实时预览——无需任何构建步骤。",
@@ -17,13 +17,20 @@ const homeLabelsByLocale = {
       ["安全沙箱", "可选的安全运行时，隔离执行不受信任的内容"],
       ["工具调用渲染", "ToolHost 系统将 AI 工具调用渲染为可交互的确认对话框和表单"],
     ],
+    hostAdaptersTitle: "宿主适配",
+    hostAdaptersDesc: "同一份 Markdown，在聊天、编辑器和官网文档中复用显式 slex fence。",
+    hostAdapters: [
+      ["Streamdown", "React/Streamdown 消息或文档渲染", "/examples/streamdown-host"],
+      ["Tiptap", "编辑器内 slex code block preview", "/examples/tiptap-host"],
+      ["Svelte Markdown Host", "官网自定义 Markdown renderer 参考", "/docs/guides/integration"],
+    ],
     aiDocsTitle: "AI / LLM 接入",
     aiDocsDesc: "为 AI agent 提供专门的文档接口：",
     getStartedTitle: "开始使用",
   },
   "en-US": {
     previewLabel: "Live preview",
-    lede: '"Docs as tools, tools as docs" gives Markdown interactive power, making AI output come alive.',
+    lede: '"Docs as tools, tools as docs" renders explicit Markdown fences as live, stateful UI blocks.',
     primaryAction: "Quick start",
     secondaryAction: "Components",
     description: "SlexKit is a zero-build, Markdown-friendly reactive UI runtime designed for AI output. It lets you embed interactive components—forms, charts, calculators, live previews—inside Markdown documents without any build step.",
@@ -35,6 +42,13 @@ const homeLabelsByLocale = {
       ["Rich components", "30+ built-in components: cards, forms, charts, code blocks, accordions, tabs, and more."],
       ["Secure sandbox", "Optional secure runtime for isolating untrusted content execution."],
       ["Tool-call rendering", "ToolHost system renders AI tool calls as interactive confirmation dialogs and forms."],
+    ],
+    hostAdaptersTitle: "Host adapters",
+    hostAdaptersDesc: "Use the same Markdown and explicit slex fences in chat, editors, and site docs.",
+    hostAdapters: [
+      ["Streamdown", "React/Streamdown message or document rendering.", "/examples/streamdown-host"],
+      ["Tiptap", "Editor preview for slex code blocks.", "/examples/tiptap-host"],
+      ["Svelte Markdown Host", "Custom Markdown renderer reference from this site.", "/docs/guides/integration"],
     ],
     aiDocsTitle: "AI / LLM",
     aiDocsDesc: "Dedicated documentation endpoints for AI agents:",
@@ -207,6 +221,31 @@ export function createHomeRoute({ clearMobileContext, currentLocale, mount, navH
     return section;
   }
 
+  function renderHostAdaptersSection(labels) {
+    const section = document.createElement("section");
+    section.className = "slex-home-section";
+
+    const title = textElement("h2", "slex-home-section-title", labels.hostAdaptersTitle);
+    const desc = textElement("p", "slex-home-section-desc", labels.hostAdaptersDesc);
+    section.append(title, desc);
+
+    const grid = document.createElement("div");
+    grid.className = "slex-home-adapters-grid";
+
+    for (const [name, descText, href] of labels.hostAdapters) {
+      const card = document.createElement("a");
+      card.className = "slex-home-adapter-card";
+      card.href = navHref(href);
+      const nameEl = textElement("strong", "slex-home-adapter-name", name);
+      const descEl = textElement("span", "slex-home-adapter-desc", descText);
+      card.append(nameEl, descEl);
+      grid.appendChild(card);
+    }
+
+    section.appendChild(grid);
+    return section;
+  }
+
   function renderAiDocsSection(labels) {
     const section = document.createElement("section");
     section.className = "slex-home-section";
@@ -283,6 +322,7 @@ export function createHomeRoute({ clearMobileContext, currentLocale, mount, navH
     const content = document.createElement("div");
     content.className = "slex-home-content";
     content.append(
+      renderHostAdaptersSection(labels),
       renderFeaturesSection(labels),
       renderAiDocsSection(labels),
     );

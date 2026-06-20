@@ -205,8 +205,8 @@ function examplesIndexPage(locale) {
     locale,
     title: locale === "zh-CN" ? "示例中心 - SlexKit" : "Examples - SlexKit",
     description: locale === "zh-CN"
-      ? "浏览 SlexKit 面向 AI 输出、工程文档和交互式知识表达的高质量示例。"
-      : "Browse high-quality SlexKit examples for AI output, engineering docs, and interactive knowledge surfaces.",
+      ? "浏览可直接打开的 SlexKit 示例：宿主集成、入门路径和真实计算器。"
+      : "Browse runnable SlexKit examples: host adapters, learning paths, and real calculators.",
     canonicalPath: "/examples",
   });
 }

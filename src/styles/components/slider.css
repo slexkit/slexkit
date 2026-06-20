@@ -96,8 +96,7 @@
 }
 
 .slex-slider:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 4px;
+  outline: none;
 }
 
 .slex-slider::-webkit-slider-thumb {
@@ -144,6 +143,18 @@
 .slex-slider:hover::-moz-range-thumb {
   box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
   transform: scale(1.06);
+}
+
+.slex-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 4px var(--background),
+    0 0 0 6px var(--ring);
+}
+
+.slex-slider:focus-visible::-moz-range-thumb {
+  box-shadow:
+    0 0 0 4px var(--background),
+    0 0 0 6px var(--ring);
 }
 
 .slex-slider:active::-webkit-slider-thumb {

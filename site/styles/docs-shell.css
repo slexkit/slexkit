@@ -866,6 +866,50 @@
   margin-top: 1rem;
 }
 
+.slex-home-adapters-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.slex-home-adapter-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.375rem;
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--card);
+  color: inherit;
+  padding: 0.875rem 1rem;
+  text-decoration: none;
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+.slex-home-adapter-card:hover {
+  border-color: color-mix(in oklab, var(--primary) 46%, var(--border));
+  background: color-mix(in oklab, var(--accent) 48%, var(--card));
+  transform: translateY(-1px);
+}
+
+.slex-home-adapter-card:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 24%, transparent);
+}
+
+.slex-home-adapter-name {
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.slex-home-adapter-desc {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
 .slex-home-feature-card {
   padding: 0.875rem 1rem;
   border-radius: 0.625rem;
@@ -942,6 +986,10 @@
     gap: 0.75rem;
   }
 
+  .slex-home-adapters-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .slex-home-ai-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -959,6 +1007,201 @@
   align-items: start;
 }
 
+.slex-examples-landing {
+  display: grid;
+  gap: 2rem;
+}
+
+.slex-examples-hero {
+  display: grid;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.slex-examples-eyebrow {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.slex-examples-landing h1 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 780;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.slex-examples-landing h2 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 720;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.slex-examples-subtitle {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 1.125rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.slex-examples-hero p:not(.slex-examples-eyebrow),
+.slex-examples-entry-desc,
+.slex-examples-adapter-card span,
+.slex-examples-link-row small {
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+.slex-examples-entry-grid,
+.slex-examples-adapter-grid,
+.slex-examples-list-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.slex-examples-entry-card,
+.slex-examples-adapter-card,
+.slex-examples-link-row {
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
+  background: var(--card);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+.slex-examples-entry-card:hover,
+.slex-examples-adapter-card:hover,
+.slex-examples-link-row:hover {
+  border-color: color-mix(in oklab, var(--primary) 46%, var(--border));
+  background: color-mix(in oklab, var(--accent) 48%, var(--card));
+  transform: translateY(-1px);
+}
+
+.slex-examples-entry-card:focus-visible,
+.slex-examples-adapter-card:focus-visible,
+.slex-examples-link-row:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 24%, transparent);
+}
+
+.slex-examples-entry-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.slex-examples-entry-title,
+.slex-examples-adapter-card strong,
+.slex-examples-link-row span {
+  color: var(--foreground);
+  font-size: 0.9375rem;
+  font-weight: 680;
+  line-height: 1.35;
+}
+
+.slex-examples-entry-action {
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.slex-examples-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.slex-examples-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.slex-examples-section-header a {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.slex-examples-section-header a:hover {
+  color: var(--foreground);
+}
+
+.slex-examples-adapter-card {
+  display: grid;
+  gap: 0.375rem;
+  padding: 0.875rem 1rem;
+}
+
+.slex-examples-adapter-card code {
+  border-radius: 0.25rem;
+  background: var(--muted);
+  color: var(--foreground);
+  padding: 0.0625rem 0.25rem;
+}
+
+.slex-examples-link-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.slex-examples-link-row {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem 0.875rem;
+}
+
+.slex-doc-prose :where(img) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card);
+}
+
+.slex-doc-prose :where(.slex-example-live-frame) {
+  display: block;
+  width: 100%;
+  height: min(760px, 72svh);
+  min-height: 520px;
+  margin: 1.25rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+
+@media (max-width: 480px) {
+  .slex-doc-prose :where(.slex-example-live-frame) {
+    height: 68svh;
+    min-height: 440px;
+  }
+}
+
+@media (min-width: 760px) {
+  .slex-examples-entry-grid,
+  .slex-examples-adapter-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .slex-examples-list-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .slex-docs-sidebar,
 .slex-docs-toc {
   display: none;
@@ -971,10 +1214,11 @@
 .slex-docs-title {
   margin: 0;
   color: var(--foreground);
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 7vw, 2rem);
   font-weight: 750;
-  line-height: 1;
+  line-height: 1.08;
   letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .slex-docs-summary {
@@ -1257,6 +1501,13 @@
   .slex-static-page,
   .slex-docs-layout {
     padding-inline: 0.75rem;
+  }
+
+  .slex-static-page .slex-static-prose :where(h1),
+  .slex-doc-prose .slex-docs-markdown :where(h1) {
+    font-size: clamp(1.75rem, 7.5vw, 2rem);
+    line-height: 1.1;
+    overflow-wrap: anywhere;
   }
 
   .slex-home-page {

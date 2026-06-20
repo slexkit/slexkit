@@ -3,7 +3,7 @@ title: Host Integration
 category: Reference
 status: ready
 order: 40
-summary: "MarkdownRuntimeHost, trusted and secure host integrations, Streamdown, Obsidian, and custom adapters."
+summary: "MarkdownRuntimeHost, trusted and secure host integrations, Svelte custom hosts, Streamdown, Tiptap, Obsidian, and custom adapters."
 slexkitRenderMode: component
 ---
 
@@ -176,6 +176,37 @@ Content-Type: text/javascript
 
 The build output includes `dist/runtime.js` for this purpose. The `slex copy-runtime` command copies that module to `public/slexkit.runtime.js` by default so existing secure-frame URLs can stay stable. Configure your CDN or static file server to serve it with the correct headers.
 
+## Svelte custom Markdown host
+
+The SlexKit website uses Svelte plus a custom Markdown renderer instead of a packaged Svelte Markdown adapter. The public contract is still `createSlexKitMarkdownRuntimeHost`; the Svelte pieces are host code.
+
+```js
+import { mount, unmount } from "svelte";
+import { createSlexKitMarkdownRuntimeHost } from "slexkit";
+import MarkdownRenderer from "./MarkdownRenderer.svelte";
+
+export function renderMarkdown(content, container, options = {}) {
+  const runtimeHost = options.slexkitRuntimeHost ?? createSlexKitMarkdownRuntimeHost({
+    mode: options.runtimeMode ?? "trusted",
+    theme: "host-shadcn"
+  });
+
+  const app = mount(MarkdownRenderer, {
+    target: container,
+    props: {
+      content,
+      runtimeHost,
+      artifactId: options.artifactId,
+      slexkitRenderMode: options.slexkitRenderMode ?? "component"
+    }
+  });
+
+  return () => unmount(app);
+}
+```
+
+Use this as an implementation reference when the host owns its Markdown AST or Svelte renderer. Do not treat `site/markdown/*` as a separately versioned package API.
+
 ## Streamdown / React integration
 
 The `@slexkit/streamdown` package provides a React/Streamdown custom renderer:
@@ -196,6 +227,28 @@ export function Message({ markdown }: { markdown: string }) {
 ```
 
 The renderer handles `slex` fences. It supports both trusted and secure runtime modes and can delegate to a shared Markdown runtime host instance.
+
+## Tiptap integration
+
+The `@slexkit/tiptap` package provides a framework-free Tiptap `CodeBlock` extension:
+
+```ts
+import StarterKit from "@tiptap/starter-kit";
+import { Markdown } from "@tiptap/markdown";
+import { createSlexKitTiptapExtension } from "@slexkit/tiptap";
+import "@slexkit/theme-shadcn/style.css";
+import "@slexkit/tiptap/style.css";
+
+const extensions = [
+  StarterKit.configure({ codeBlock: false }),
+  Markdown,
+  createSlexKitTiptapExtension({ artifactId: "doc-1" })
+];
+```
+
+The adapter only takes over `codeBlock` nodes with `language === "slex"`. Non-Slex code blocks remain ordinary Tiptap code blocks, and Markdown import/export keeps standard ` ```slex ` fences through Tiptap's Markdown extension.
+
+Each editor instance gets one trusted Markdown runtime host by default. Blocks in that editor share an artifact ID, so state-only fences can seed later renderable fences. Pass `runtimeHost` or `artifactId` when the host needs explicit lifecycle ownership.
 
 ## Obsidian integration
 

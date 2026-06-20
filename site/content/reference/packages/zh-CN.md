@@ -25,6 +25,7 @@ slexkit (root - real code)
  @slexkit/components-svelte  re-exports slexkit/components-svelte
  @slexkit/theme-shadcn       CSS only
  @slexkit/streamdown         React/Streamdown renderer
+ @slexkit/tiptap             framework-free Tiptap NodeView adapter
  @slexkit/mcp                read-only MCP server for AI agents
 ```
 
@@ -116,6 +117,28 @@ export function Message({ markdown }: { markdown: string }) {
 
 它只处理 `slex` fences，并支持 trusted 与 secure runtime modes。
 
+## `@slexkit/tiptap`
+
+Tiptap extension，用于把显式 `slex` code block 渲染成 SlexKit preview，同时保留普通 fenced code block 的 Markdown roundtrip。
+
+```sh
+npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown
+```
+
+```ts
+import StarterKit from "@tiptap/starter-kit";
+import { createSlexKitTiptapExtension } from "@slexkit/tiptap";
+import "@slexkit/theme-shadcn/style.css";
+import "@slexkit/tiptap/style.css";
+
+const extensions = [
+  StarterKit.configure({ codeBlock: false }),
+  createSlexKitTiptapExtension({ artifactId: "doc-1" })
+];
+```
+
+这个 adapter 扩展 Tiptap 的 `CodeBlock`，只接管语言严格等于 `slex` 的块，普通 code block 仍走 Tiptap 原生渲染。默认使用 trusted Markdown runtime host；需要 Markdown 导入/导出时安装并启用 `@tiptap/markdown`。
+
 ## Obsidian plugin
 
 官方 Obsidian 插件位于独立发布仓库：<https://github.com/slexkit/obsidian-slexkit>。
@@ -145,6 +168,7 @@ npx -y @slexkit/mcp
 | With Svelte components | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | Add shadcn theme | `npm install @slexkit/theme-shadcn` |
 | React/Streamdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
+| Tiptap editor host | `npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown` |
 | Obsidian plugin | 从 Obsidian Community Plugins 安装 **SlexKit** |
 | AI agent MCP server | `npx -y @slexkit/mcp` |
 

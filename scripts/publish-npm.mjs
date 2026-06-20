@@ -10,6 +10,7 @@ const packages = [
   "packages/components-svelte",
   "packages/theme-shadcn",
   "packages/streamdown",
+  "packages/tiptap",
   "packages/mcp",
 ];
 

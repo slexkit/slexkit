@@ -1,0 +1,160 @@
+body {
+  background: var(--card);
+}
+
+body:has(.adapter-example-shell[data-embed="true"]) {
+  background: var(--background);
+}
+
+.adapter-example-shell {
+  width: min(1024px, calc(100% - 32px));
+  padding-top: 36px;
+}
+
+.adapter-example-hero {
+  justify-items: center;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.adapter-example-hero .example-kicker {
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+}
+
+.adapter-example-hero .example-title {
+  max-width: 720px;
+  font-size: clamp(1.9rem, 3.5vw, 3rem);
+  letter-spacing: 0;
+}
+
+.adapter-example-hero .example-description {
+  max-width: 690px;
+  color: var(--muted-foreground);
+  font-size: 1rem;
+}
+
+.adapter-document-stage {
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.adapter-document {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.adapter-document h1 {
+  margin: 0 0 1rem;
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+
+.adapter-document h2 {
+  margin: 2rem 0 0.75rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+
+.adapter-document p,
+.adapter-document li {
+  color: var(--muted-foreground);
+  line-height: 1.65;
+}
+
+.adapter-document p {
+  margin: 0 0 1rem;
+}
+
+.adapter-document code {
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.25rem;
+  background: var(--muted);
+  font-size: 0.9em;
+}
+
+.adapter-document table {
+  width: 100%;
+  margin: 1rem 0;
+  border-collapse: collapse;
+  color: var(--muted-foreground);
+  font-size: 0.92rem;
+}
+
+.adapter-document th,
+.adapter-document td {
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.adapter-document th {
+  color: var(--foreground);
+  background: var(--muted);
+  font-weight: 650;
+}
+
+.adapter-source-panel {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.adapter-source-panel > summary {
+  cursor: pointer;
+  padding: 0.85rem 1rem;
+  color: var(--muted-foreground);
+  font-weight: 650;
+}
+
+.adapter-source {
+  max-height: 24rem;
+  margin: 0 1rem 1rem;
+  white-space: pre;
+}
+
+.adapter-example-shell[data-embed="true"] {
+  width: 100%;
+  padding: 0;
+}
+
+.adapter-example-shell[data-embed="true"] .adapter-example-hero,
+.adapter-example-shell[data-embed="true"] .adapter-source-panel {
+  display: none;
+}
+
+.adapter-example-shell[data-embed="true"] .adapter-document-stage {
+  padding: clamp(12px, 3vw, 20px);
+  border: 0;
+  border-radius: 0;
+}
+
+.adapter-example-shell[data-embed="true"] .adapter-document {
+  max-width: 760px;
+}
+
+@media (max-width: 640px) {
+  .adapter-example-shell {
+    padding-top: 28px;
+  }
+
+  .adapter-example-hero {
+    justify-items: start;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+
+  .adapter-example-hero .example-title {
+    font-size: 1.75rem;
+    line-height: 1.12;
+  }
+
+  .adapter-document-stage {
+    padding: 14px;
+  }
+}

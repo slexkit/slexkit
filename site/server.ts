@@ -54,11 +54,66 @@ function contentType(path: string) {
       return "application/json; charset=utf-8";
     case ".svg":
       return "image/svg+xml";
+    case ".png":
+      return "image/png";
     case ".xml":
       return "application/xml; charset=utf-8";
     default:
       return "application/octet-stream";
   }
+}
+
+async function localStaticResponse(root: string, relative: string) {
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(relative).replace(/^\/+/, "");
+  } catch {
+    return new Response("Not found", { status: 404 });
+  }
+
+  if (!decoded || decoded.includes("..") || decoded.includes("\\")) {
+    return new Response("Not found", { status: 404 });
+  }
+
+  const path = join(root, decoded);
+  try {
+    const headers: Record<string, string> = {
+      "cache-control": "no-store",
+      "content-type": contentType(path),
+    };
+    if (path.endsWith(".js")) {
+      headers["access-control-allow-origin"] = "*";
+    }
+    return new Response(await readFile(path), { headers });
+  } catch {
+    return new Response("Not found", { status: 404 });
+  }
+}
+
+async function adapterDemoResponse(pathname: string) {
+  const match = pathname.match(/^\/adapter-demos\/(streamdown|tiptap)(?:\/(.*))?$/);
+  if (!match) return null;
+
+  const demo = match[1];
+  const requested = match[2] ?? "";
+  const relative = !requested || requested.endsWith("/") ? `${requested}index.html` : requested;
+  return localStaticResponse(join(projectRoot, "examples", demo), relative);
+}
+
+async function exampleSharedResponse(pathname: string) {
+  if (!pathname.startsWith("/shared/")) return null;
+  return localStaticResponse(join(projectRoot, "examples", "shared"), pathname.slice("/shared/".length));
+}
+
+async function officialExampleResponse(pathname: string) {
+  if (!pathname.startsWith("/official-examples/")) return null;
+  return localStaticResponse(join(siteRoot, "content", "examples"), pathname.slice("/official-examples/".length));
+}
+
+async function packageAdapterResponse(pathname: string) {
+  const match = pathname.match(/^\/packages\/(streamdown|tiptap)\/(.+)$/);
+  if (!match) return null;
+  return localStaticResponse(join(projectRoot, "packages", match[1]), match[2]);
 }
 
 async function wikiDocsResponse() {
@@ -440,6 +495,14 @@ Bun.serve({
     if (url.pathname === "/slexkit.css" || url.pathname === "/dist/slexkit.css") {
       return runtimeResponse(url.pathname);
     }
+    const adapterDemo = await adapterDemoResponse(url.pathname);
+    if (adapterDemo) return adapterDemo;
+    const sharedExample = await exampleSharedResponse(url.pathname);
+    if (sharedExample) return sharedExample;
+    const officialExample = await officialExampleResponse(url.pathname);
+    if (officialExample) return officialExample;
+    const packageAdapter = await packageAdapterResponse(url.pathname);
+    if (packageAdapter) return packageAdapter;
     if (url.pathname.startsWith("/assets/")) return assetResponse(url.pathname);
     if (url.pathname === "/playground.html") {
       return htmlResponse(playgroundHtmlPath);

@@ -15,6 +15,7 @@ import {
 } from "streamdown";
 import {
   ingest,
+  createSlexKitMarkdownRuntimeHost,
   getSlexKitMarkdownRuntimeHost,
   mount,
   mountSecureArtifact,
@@ -60,6 +61,21 @@ type SlexKitDiagnostic = {
 };
 
 type FenceOptions = Record<string, string>;
+type SlexKitRendererCoordinatorBlock = {
+  code: string;
+  container: HTMLElement;
+  isStateOnly: boolean;
+  runtimeInput: SlexKitInput;
+  setError: (error: unknown) => void;
+  onError?: (error: unknown, code: string) => void;
+};
+
+type SlexKitRendererCoordinator = {
+  artifactId: string;
+  runtimeHost: SlexKitMarkdownRuntimeHost;
+  blocks: Map<symbol, SlexKitRendererCoordinatorBlock>;
+  scheduled: boolean;
+};
 
 function languageList(languages: string | string[] | undefined): string | string[] {
   return languages ?? [...DEFAULT_LANGUAGES];
@@ -200,6 +216,44 @@ function playgroundOption(meta: string | undefined, key: string, fallback = ""):
   return parseFenceOptions(meta)[key] || fallback;
 }
 
+function compareContainerOrder(a: HTMLElement, b: HTMLElement): number {
+  if (a === b) return 0;
+  const position = a.compareDocumentPosition(b);
+  if (position & Node.DOCUMENT_POSITION_FOLLOWING) return -1;
+  if (position & Node.DOCUMENT_POSITION_PRECEDING) return 1;
+  return 0;
+}
+
+function scheduleCoordinatorRender(coordinator: SlexKitRendererCoordinator): void {
+  if (coordinator.scheduled) return;
+  coordinator.scheduled = true;
+  queueMicrotask(() => {
+    coordinator.scheduled = false;
+    coordinator.runtimeHost.disposeArtifact(coordinator.artifactId);
+
+    const blocks = Array.from(coordinator.blocks.values())
+      .sort((a, b) => compareContainerOrder(a.container, b.container));
+    for (const block of blocks) {
+      block.container.replaceChildren();
+      block.setError(null);
+      try {
+        coordinator.runtimeHost.mountBlock({
+          artifactId: coordinator.artifactId,
+          source: block.runtimeInput,
+          container: block.container,
+        });
+        if (!block.isStateOnly && !block.container.querySelector(".slexkit-root")) {
+          throw new Error("SlexKit did not render a root. Check the source syntax.");
+        }
+      } catch (err) {
+        block.container.replaceChildren();
+        block.setError(err);
+        block.onError?.(err, block.code);
+      }
+    }
+  });
+}
+
 function playgroundSlexKitInput(
   code: string,
   meta: string | undefined,
@@ -275,7 +329,11 @@ function PlaygroundShell({
   );
 }
 
-export function SlexKitRenderer({
+type SlexKitRendererInternalProps = SlexKitRendererProps & {
+  coordinator?: SlexKitRendererCoordinator;
+};
+
+function renderSlexKitRenderer({
   code,
   language,
   isIncomplete,
@@ -294,11 +352,13 @@ export function SlexKitRenderer({
   placeholder,
   className,
   onError,
-}: SlexKitRendererProps) {
-  const hostRef = useRef<HTMLDivElement>(null);
+  coordinator,
+}: SlexKitRendererInternalProps) {
+  const hostRef = useRef<HTMLElement>(null);
+  const blockIdRef = useRef<symbol>(Symbol("slexkit-streamdown-block"));
   const [error, setError] = useState<unknown>(null);
   const isSecureRuntime = runtime === "secure";
-  const activeRuntimeHost = runtimeHost ?? (useGlobalRuntimeHost ? getSlexKitMarkdownRuntimeHost() : undefined);
+  const activeRuntimeHost = coordinator?.runtimeHost ?? runtimeHost ?? (useGlobalRuntimeHost ? getSlexKitMarkdownRuntimeHost() : undefined);
   const activeRuntimeMode = activeRuntimeHost?.getMode();
   const delegatesToSecureHost = activeRuntimeMode === "secure";
   const parsedSource = useMemo(
@@ -329,6 +389,23 @@ export function SlexKitRenderer({
     if (parseError) {
       onError?.(parseError, String(code));
       return;
+    }
+    if (coordinator && effectiveRenderMode !== "playground") {
+      const host = hostRef.current;
+      if (!host) return;
+      coordinator.blocks.set(blockIdRef.current, {
+        code: String(code),
+        container: host,
+        isStateOnly,
+        runtimeInput,
+        setError,
+        onError,
+      });
+      scheduleCoordinatorRender(coordinator);
+      return () => {
+        coordinator.blocks.delete(blockIdRef.current);
+        scheduleCoordinatorRender(coordinator);
+      };
     }
     if (isStateOnly) {
       if (activeRuntimeHost) {
@@ -412,7 +489,9 @@ export function SlexKitRenderer({
     securePolicy,
   ]);
 
-  if (isStateOnly) return null;
+  if (isStateOnly) {
+    return coordinator ? createElement("span", { ref: hostRef, hidden: true }) : null;
+  }
 
   const body = createElement(
     "div",
@@ -494,14 +573,30 @@ export function SlexKitRenderer({
   );
 }
 
+export function SlexKitRenderer(props: SlexKitRendererProps): ReactNode {
+  return renderSlexKitRenderer(props);
+}
+
+function SlexKitRendererWithCoordinator(props: SlexKitRendererInternalProps): ReactNode {
+  return renderSlexKitRenderer(props);
+}
+
 export function createSlexKitRenderer(
   options: SlexKitRendererOptions = {},
 ): CustomRenderer {
   const { languages, ...rendererOptions } = options;
+  const coordinator = rendererOptions.domain && rendererOptions.runtime !== "secure"
+    ? {
+        artifactId: rendererOptions.domain,
+        runtimeHost: rendererOptions.runtimeHost ?? createSlexKitMarkdownRuntimeHost(),
+        blocks: new Map<symbol, SlexKitRendererCoordinatorBlock>(),
+        scheduled: false,
+      } satisfies SlexKitRendererCoordinator
+    : undefined;
   return {
     language: languageList(languages),
     component: (props) =>
-      createElement(SlexKitRenderer, { ...props, ...rendererOptions }),
+      createElement(SlexKitRendererWithCoordinator, { ...props, ...rendererOptions, coordinator }),
   };
 }
 

@@ -31,6 +31,9 @@ const allowedExampleSlugs = new Set([
   "salary-calculator",
   "project-cost-estimator",
   "tech-selection-evaluator",
+  // 宿主集成
+  "streamdown-host",
+  "tiptap-host",
 ]);
 
 function titleFromSlug(slug) {

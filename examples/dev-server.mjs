@@ -5,8 +5,11 @@ import { extname, join, normalize, resolve, sep } from "node:path";
 
 const root = resolve(import.meta.dir, "..");
 const examplesRoot = join(root, "examples");
+const officialExamplesRoot = join(root, "site", "content", "examples");
 const distRoot = join(root, "dist");
 const sharedRoot = join(examplesRoot, "shared");
+const streamdownPackageRoot = join(root, "packages", "streamdown");
+const tiptapPackageRoot = join(root, "packages", "tiptap");
 const exampleName = process.argv[2];
 const port = Number(process.env.PORT || 4174);
 
@@ -16,6 +19,7 @@ const contentTypes = new Map([
   [".mjs", "text/javascript; charset=utf-8"],
   [".css", "text/css; charset=utf-8"],
   [".json", "application/json; charset=utf-8"],
+  [".md", "text/markdown; charset=utf-8"],
   [".svg", "image/svg+xml"],
 ]);
 
@@ -73,6 +77,9 @@ const server = Bun.serve({
   port,
   async fetch(request) {
     const url = new URL(request.url);
+    if (url.pathname === "/favicon.ico") {
+      return new Response(null, { status: 204 });
+    }
     if (url.pathname === "/" || url.pathname === `/${exampleName}`) {
       return Response.redirect(`${url.origin}/examples/${exampleName}/`, 302);
     }
@@ -83,10 +90,21 @@ const server = Bun.serve({
     if (url.pathname.startsWith("/shared/")) {
       return (await serveFile(sharedRoot, url.pathname.slice("/shared/".length))) || response("Not found", 404);
     }
+    if (url.pathname.startsWith("/official-examples/")) {
+      return (await serveFile(officialExamplesRoot, url.pathname.slice("/official-examples/".length))) || response("Not found", 404);
+    }
     if (url.pathname.startsWith("/dist/")) {
       const rest = url.pathname.slice("/dist/".length);
       const runtimeAlias = rest === "slexkit.runtime.js" ? "runtime.js" : rest;
       return (await serveFile(distRoot, runtimeAlias)) || response("Not found", 404);
+    }
+    if (url.pathname.startsWith("/packages/streamdown/")) {
+      const rest = url.pathname.slice("/packages/streamdown/".length);
+      return (await serveFile(streamdownPackageRoot, rest)) || response("Not found", 404);
+    }
+    if (url.pathname.startsWith("/packages/tiptap/")) {
+      const rest = url.pathname.slice("/packages/tiptap/".length);
+      return (await serveFile(tiptapPackageRoot, rest)) || response("Not found", 404);
     }
     return response("Not found", 404);
   },

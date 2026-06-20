@@ -500,10 +500,14 @@ order: 1
     const enExamples = loadExampleDocs({ markdownItems: items, locale: "en-US" });
     const featured = zhExamples.filter((example) => example.featured);
 
-    expect(zhExamples).toHaveLength(17);
-    expect(enExamples).toHaveLength(17);
-    expect(featured).toHaveLength(17);
+    expect(zhExamples).toHaveLength(19);
+    expect(enExamples).toHaveLength(19);
+    expect(featured).toHaveLength(19);
     expect(zhExamples.map((example) => example.category)).toContain("配置向导");
+    expect(zhExamples.map((example) => example.slug)).toContain("streamdown-host");
+    expect(zhExamples.map((example) => example.slug)).toContain("tiptap-host");
+    expect(enExamples.map((example) => example.slug)).toContain("streamdown-host");
+    expect(enExamples.map((example) => example.slug)).toContain("tiptap-host");
     expect(zhExamples.every((example) => example.slexkitRenderMode === "component" || example.slexkitRenderMode === "dialog")).toBe(true);
 
     const forbiddenPlaceholderPhrases = ["骨架示例", "示例完整度", "后续可以扩展成完整教程"];
@@ -512,8 +516,9 @@ order: 1
         expect(example.markdown.includes(phrase), `${example.slug} contains ${phrase}`).toBe(false);
       }
 
-      if (example.slexkitRenderMode === "dialog") continue;
       const fences = Array.from(example.markdown.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
+      const usesLiveAdapterDemo = example.markdown.includes('class="slex-example-live-frame"');
+      if (example.slexkitRenderMode === "dialog" || usesLiveAdapterDemo) continue;
       expect(fences.length, example.slug).toBeGreaterThan(0);
       for (const fence of fences) {
         const parsed = parseSlexSource(fence);

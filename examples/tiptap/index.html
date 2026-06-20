@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SlexKit Tiptap example</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css">
+    <link rel="stylesheet" href="/dist/slexkit.css">
+    <link rel="stylesheet" href="/packages/tiptap/style.css">
+    <link rel="stylesheet" href="/shared/examples.css">
+    <link rel="stylesheet" href="/shared/adapter-host.css">
+    <link rel="stylesheet" href="./style.css">
+    <script type="importmap">
+      {
+        "imports": {
+          "slexkit": "/dist/slexkit.js",
+          "@slexkit/tiptap": "/packages/tiptap/dist/index.js",
+          "@tiptap/core": "https://esm.sh/@tiptap/core@3.27.1",
+          "@tiptap/starter-kit": "https://esm.sh/@tiptap/starter-kit@3.27.1",
+          "@tiptap/extension-code-block": "https://esm.sh/@tiptap/extension-code-block@3.27.1",
+          "@tiptap/extension-mathematics": "https://esm.sh/@tiptap/extension-mathematics@3.27.1?deps=katex@0.17.0",
+          "@tiptap/markdown": "https://esm.sh/@tiptap/markdown@3.27.1",
+          "katex": "https://esm.sh/katex@0.17.0",
+          "@tiptap/pm": "https://esm.sh/@tiptap/pm@3.27.1",
+          "@tiptap/pm/": "https://esm.sh/@tiptap/pm@3.27.1/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main class="example-shell adapter-example-shell">
+      <header class="example-header adapter-example-hero">
+        <div class="example-kicker">Tiptap editor</div>
+        <h1 class="example-title">RC Low-Pass Filter in Tiptap</h1>
+        <p class="example-description">
+          This editor loads the same Markdown source used on the SlexKit site.
+          The Tiptap adapter renders <code>slex</code> fences in place and keeps
+          Markdown roundtrip available.
+        </p>
+      </header>
+
+      <section class="adapter-document-stage" aria-label="Editable Tiptap document">
+        <article id="editor" class="adapter-document tiptap-editor" aria-label="Editable Tiptap note"></article>
+      </section>
+
+      <details class="adapter-source-panel">
+        <summary>Markdown roundtrip</summary>
+        <pre id="markdown-output" class="example-code adapter-source"></pre>
+      </details>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

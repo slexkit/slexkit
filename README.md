@@ -5,7 +5,7 @@
   <h1>SlexKit</h1>
   <p><strong>Streaming Live EXpressions Kit</strong></p>
   <p>
-    "Docs as tools, tools as docs." Give Markdown interactive power and make every AI output come alive.
+    "Docs as tools, tools as docs." Render explicit Markdown fences as live, stateful UI blocks.
   </p>
   <p>
     <a href="site/content/guides/intro/en-US.md">Documentation</a> ·
@@ -20,6 +20,9 @@
     <img alt="TypeScript" src="https://img.shields.io/badge/runtime-TypeScript-3178c6">
     <img alt="Svelte 5" src="https://img.shields.io/badge/components-Svelte_5-ff3e00">
     <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a">
+  </p>
+  <p>
+    <img src="site/assets/readme/slexkit-markdown-live-ui.jpg" alt="SlexKit renders explicit slex Markdown fences as live interactive UI blocks" width="920" />
   </p>
 </div>
 
@@ -117,6 +120,7 @@ Markdown platforms without SlexKit support show the fallback text. Hosts with Sl
 | `@slexkit/components-svelte` | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` | Svelte component registration |
 | `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS theme tokens |
 | `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React / Streamdown Markdown renderer |
+| `@slexkit/tiptap` | `npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown` | Tiptap code block NodeView for `slex` fences |
 | `@slexkit/mcp` | `npx -y @slexkit/mcp` | Read-only MCP server for docs, examples, and source validation |
 
 See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
@@ -128,6 +132,7 @@ See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
 | Browser DOM | `mount()`, `ingest()`, `boot()`, `disposeNamespace()` |
 | Markdown renderers | `createSlexKitMarkdownRuntimeHost()` |
 | React / Streamdown | `@slexkit/streamdown` |
+| Tiptap | `@slexkit/tiptap` |
 | Obsidian | Install **SlexKit** from Community Plugins; release repo: <https://github.com/slexkit/obsidian-slexkit> |
 | AI agents | `@slexkit/mcp`, `llms.txt`, SlexKit skill docs |
 | Custom components | `register()`, `registerSvelteComponent()`, `registerSubset()` |
@@ -143,7 +148,7 @@ Read the [Security Runtime](site/content/reference/security/en-US.md) docs befor
 | Document | Topic |
 | --- | --- |
 | [Getting Started](site/content/guides/quick-start/en-US.md) | Install and render a first Markdown-friendly Slex source |
-| [Integration](site/content/guides/integration/en-US.md) | Streamdown, Obsidian, and custom host paths |
+| [Integration](site/content/guides/integration/en-US.md) | Streamdown, Tiptap, Obsidian, and custom host paths |
 | [Runtime model](site/content/reference/runtime/en-US.md) | Mounting, updates, namespace store, lifecycle |
 | [Slex usage reference](site/content/reference/usage/en-US.md) | Source structure, directives, expressions, events, custom components |
 | [Security runtime](site/content/reference/security/en-US.md) | Threat model, sandbox iframe, policy, postMessage bridge |

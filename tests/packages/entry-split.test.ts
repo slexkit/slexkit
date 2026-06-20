@@ -133,6 +133,7 @@ describe("split runtime and Svelte component entries", () => {
       "components-svelte",
       "theme-shadcn",
       "streamdown",
+      "tiptap",
       "mcp",
     ];
 

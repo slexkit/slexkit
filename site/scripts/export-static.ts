@@ -37,16 +37,19 @@ function withBase(path: string) {
   return `${cleanBase}${path}`;
 }
 
+function rewriteRootUrlsForStatic(html: string) {
+  const cleanBase = siteBase === "/" ? "" : siteBase.slice(0, -1);
+  return html.replace(/(href|src)=(["'])(\/(?!\/)[^"']*)\2/g, (match, attr, quote, path) => {
+    if (cleanBase && path.startsWith(cleanBase)) return match;
+    return `${attr}=${quote}${withBase(path)}${quote}`;
+  });
+}
+
 function rewriteHtmlForStatic(html: string, locale = "en-US") {
   const baseMeta = `    <meta name="slexkit-site-base" content="${escapeHtmlAttribute(siteBase)}" />`;
-  const cleanBase = siteBase === "/" ? "" : siteBase.slice(0, -1);
-  return html
+  return rewriteRootUrlsForStatic(html
     .replace(/lang="[^"]*"/, `lang="${locale}"`)
-    .replace(/(<meta name="viewport"[^>]*>\s*)/i, `$1\n${baseMeta}`)
-    .replace(/(href|src)=(["'])(\/(?!\/)[^"']*)\2/g, (match, attr, quote, path) => {
-      if (cleanBase && path.startsWith(cleanBase)) return match;
-      return `${attr}=${quote}${withBase(path)}${quote}`;
-    });
+    .replace(/(<meta name="viewport"[^>]*>\s*)/i, `$1\n${baseMeta}`));
 }
 
 function localeOutDir(locale: string) {
@@ -103,6 +106,50 @@ async function copyCanonicalMarkdown() {
   await copyExampleMarkdown("zh-CN", outDir);
 }
 
+function rewriteAdapterDemoHtml(html: string) {
+  return rewriteHtmlForStatic(html, "en-US")
+    .replaceAll('"/dist/', `"${withBase("/dist/")}`)
+    .replaceAll('"/packages/', `"${withBase("/packages/")}`)
+    .replaceAll('"/shared/', `"${withBase("/shared/")}`);
+}
+
+async function copyAdapterPackage(name: "streamdown" | "tiptap") {
+  const source = join(projectRoot, "packages", name);
+  const target = join(outDir, "packages", name);
+  await mkdir(target, { recursive: true });
+  await cp(join(source, "style.css"), join(target, "style.css"));
+  await cp(join(source, "dist"), join(target, "dist"), { recursive: true });
+}
+
+async function copyAdapterDemo(name: "streamdown" | "tiptap") {
+  const target = join(outDir, "adapter-demos", name);
+  await cp(join(projectRoot, "examples", name), target, { recursive: true });
+
+  const indexPath = join(target, "index.html");
+  await writeFile(indexPath, rewriteAdapterDemoHtml(await readFile(indexPath, "utf-8")), "utf-8");
+
+  const mainPath = join(target, "main.js");
+  const mainSource = await readFile(mainPath, "utf-8");
+  await writeFile(mainPath, mainSource.replace('from "/shared/adapter-demo.js"', 'from "../../shared/adapter-demo.js"'), "utf-8");
+}
+
+async function copyAdapterDemoFiles() {
+  await copyAdapterDemo("streamdown");
+  await copyAdapterDemo("tiptap");
+  await cp(join(projectRoot, "examples", "shared"), join(outDir, "shared"), { recursive: true });
+  await cp(join(siteRoot, "content", "examples"), join(outDir, "official-examples"), { recursive: true });
+  await copyAdapterPackage("streamdown");
+  await copyAdapterPackage("tiptap");
+
+  const sharedAdapterPath = join(outDir, "shared", "adapter-demo.js");
+  const sharedAdapterSource = await readFile(sharedAdapterPath, "utf-8");
+  await writeFile(
+    sharedAdapterPath,
+    sharedAdapterSource.replace('"/official-examples/', `"${withBase("/official-examples/")}`),
+    "utf-8",
+  );
+}
+
 function routeOutputPath(routePath: string) {
   const clean = routePath.replace(/^\/+|\/+$/g, "");
   return clean ? join(outDir, clean, "index.html") : join(outDir, "index.html");
@@ -125,9 +172,13 @@ export async function exportStaticSite() {
   await cp(join(projectRoot, "dist", "tooling.js"), join(outDir, "tooling.js"));
   await cp(join(projectRoot, "dist", "slexkit.css"), join(outDir, "slexkit.css"));
   await mkdir(join(outDir, "dist"), { recursive: true });
+  await cp(join(projectRoot, "dist", "slexkit.js"), join(outDir, "dist", "slexkit.js"));
+  await cp(join(projectRoot, "dist", "runtime.js"), join(outDir, "dist", "runtime.js"));
+  await cp(join(projectRoot, "dist", "tooling.js"), join(outDir, "dist", "tooling.js"));
   await cp(join(projectRoot, "dist", "slexkit.css"), join(outDir, "dist", "slexkit.css"));
   await writeFile(join(outDir, "slexkit.runtime.js"), 'export * from "./slexkit.js";\n', "utf-8");
   await writeFile(join(outDir, "dist", "slexkit.runtime.js"), 'export * from "../slexkit.js";\n', "utf-8");
+  await copyAdapterDemoFiles();
   for (const locale of supportedLocales) {
     await copyComponentMarkdown(locale);
     await copyGuideMarkdown(locale);
@@ -178,7 +229,7 @@ export async function exportStaticSite() {
         const { html: bodyHtml } = prerenderMarkdown(rawMd);
         html = html.replace(
           '<div id="siteRoot"></div>',
-          `<div id="siteRoot"><article class="slex-prerendered-content">${bodyHtml}</article></div>`,
+          `<div id="siteRoot"><article class="slex-prerendered-content">${rewriteRootUrlsForStatic(bodyHtml)}</article></div>`,
         );
       }
     }

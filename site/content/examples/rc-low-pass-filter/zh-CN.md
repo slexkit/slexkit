@@ -36,6 +36,7 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
     r: 10000,
     c: 100,
     f: 1000,
+    cLabel: function () { return String(Math.round(this.c * 1000) / 1000); },
     cutoff: function () { return 1 / (2 * Math.PI * this.r * this.c * 1e-9); },
     gain: function () { return 1 / Math.sqrt(1 + Math.pow(this.f / this.cutoff(), 2)); },
     gainDb: function () { return (20 * Math.log10(this.gain())).toFixed(1); },
@@ -48,9 +49,9 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
       "card:params": {
         title: "参数输入",
       "grid:inputs": {
-        columns: 1, mdColumns: 2,
+        columns: 1, mdColumns: 3,
         "column:rField": { "input:rInput": { label: "电阻 R", "$value": "std.units.si(g.r, 'Ω', 1)", type: "engineering", unit: "Ω", placeholder: "10kΩ", onchange: "if ($event.valid && $event.number > 0) g.r = $event.number" }, "slider:rSlider": { label: "R", "$value": "g.r", min: 100, max: 100000, step: 100, unit: "Ω", onchange: "g.r = Number($event)" } },
-        "column:cField": { "input:cInput": { label: "电容 C", "$value": "g.c + 'nF'", type: "engineering", unit: "nF", placeholder: "100nF", onchange: "if ($event.valid && $event.number > 0) g.c = $event.unit ? $event.number * 1e9 : $event.number" }, "slider:cSlider": { label: "C", "$value": "g.c", min: 1, max: 1000, step: 1, unit: "nF", onchange: "g.c = Number($event)" } },
+        "column:cField": { "input:cInput": { label: "电容 C", "$value": "g.cLabel() + 'nF'", type: "engineering", unit: "nF", placeholder: "100nF", onchange: "if ($event.valid && $event.number > 0) g.c = $event.unit ? $event.number * 1e9 : $event.number" }, "slider:cSlider": { label: "C", "$value": "g.c", min: 1, max: 1000, step: 1, unit: "nF", onchange: "g.c = Number($event)" } },
         "column:fField": { "input:fInput": { label: "输入频率 f", "$value": "std.units.si(g.f, 'Hz', 1)", type: "engineering", unit: "Hz", placeholder: "1kHz", onchange: "if ($event.valid && $event.number >= 0) g.f = $event.number" }, "slider:fSlider": { label: "f", "$value": "g.f", min: 1, max: 100000, step: 1, unit: "Hz", onchange: "g.f = Number($event)" } }
       },
       "stat:fc": { label: "截止频率", "$value": "g.cutoff().toFixed(1)", unit: "Hz" },
@@ -69,11 +70,12 @@ $$|H(f)| = \frac{1}{\sqrt{1 + (f/f_c)^2}}$$
   slex: "0.1",
   namespace: "example_rc_low_pass_filter",
   layout: {
-    "card:results": {
-      title: "计算结果",
-      "formula:fc_eq": { "$tex": "'f_c = \\\\frac{1}{2\\\\pi \\\\times ' + (g.r/1000).toFixed(1) + 'k\\\\Omega \\\\times ' + g.c + '\\\\text{nF}} = ' + g.cutoff().toFixed(1) + '\\\\text{ Hz}'" },
-      "stat:gain_val": { label: "幅值增益 |H(f)|", "$value": "g.gain().toFixed(4)" },
-      "stat:gain_db": { label: "增益", "$value": "g.gainDb()", unit: "dB" },
+    "column:results": {
+      "formula:fc_eq": { "$tex": "'f_c = \\\\frac{1}{2\\\\pi \\\\times ' + (g.r/1000).toFixed(1) + 'k\\\\Omega \\\\times ' + g.cLabel() + '\\\\text{nF}} = ' + g.cutoff().toFixed(1) + '\\\\text{ Hz}'" },
+      "row:metrics": {
+        "stat:gain_val": { label: "幅值增益 |H(f)|", "$value": "g.gain().toFixed(4)" },
+        "stat:gain_db": { label: "增益", "$value": "g.gainDb()", unit: "dB", "$tone": "g.f < g.cutoff() * 0.1 ? 'success' : g.f > g.cutoff() * 10 ? 'danger' : 'warning'" }
+      },
       "callout:verdict": { "$tone": "g.f < g.cutoff() * 0.1 ? 'success' : g.f > g.cutoff() * 10 ? 'danger' : 'warning'", "$text": "g.f < g.cutoff() * 0.1 ? '信号完整通过，衰减 < 0.04 dB。' : g.f > g.cutoff() * 10 ? '信号被强烈衰减超过 20 dB，滤波器有效工作。' : '信号处于过渡带，衰减约 ' + (-20 * Math.log10(1 / Math.sqrt(1 + Math.pow(g.f / g.cutoff(), 2)))).toFixed(1) + ' dB。'" }
     }
   }

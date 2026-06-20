@@ -5,7 +5,7 @@
   <h1>SlexKit</h1>
   <p><strong>Streaming Live EXpressions Kit</strong></p>
   <p>
-    “文档即工具，工具即文档”，赋予 Markdown 可交互的能力，让 AI 的每一次输出都变得生动。
+    “文档即工具，工具即文档”，把显式 Markdown fence 渲染成带状态的实时 UI 块。
   </p>
   <p>
     <a href="site/content/guides/intro/zh-CN.md">简介</a> ·
@@ -20,6 +20,9 @@
     <img alt="TypeScript" src="https://img.shields.io/badge/runtime-TypeScript-3178c6">
     <img alt="Svelte 5" src="https://img.shields.io/badge/components-Svelte_5-ff3e00">
     <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a">
+  </p>
+  <p>
+    <img src="site/assets/readme/slexkit-markdown-live-ui.jpg" alt="SlexKit 将显式 slex Markdown fence 渲染成实时交互 UI" width="920" />
   </p>
 </div>
 
@@ -117,6 +120,7 @@ import "slexkit/style.css";
 | `@slexkit/components-svelte` | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` | Svelte 组件注册 |
 | `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS 主题 token |
 | `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React / Streamdown Markdown 渲染器 |
+| `@slexkit/tiptap` | `npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown` | Tiptap code block NodeView，用于 `slex` fences |
 | `@slexkit/mcp` | `npx -y @slexkit/mcp` | 面向文档、示例和源码校验的只读 MCP 服务 |
 
 更多说明见 [Package Boundaries](site/content/reference/packages/zh-CN.md)。
@@ -128,6 +132,7 @@ import "slexkit/style.css";
 | 浏览器 DOM | `mount()`、`ingest()`、`boot()`、`disposeNamespace()` |
 | Markdown 渲染器 | `createSlexKitMarkdownRuntimeHost()` |
 | React / Streamdown | `@slexkit/streamdown` |
+| Tiptap | `@slexkit/tiptap` |
 | Obsidian | 从 Community Plugins 安装 **SlexKit**；发布仓库：<https://github.com/slexkit/obsidian-slexkit> |
 | AI Agents | `@slexkit/mcp`、`llms.txt`、SlexKit skill 文档 |
 | 自定义组件 | `register()`、`registerSvelteComponent()`、`registerSubset()` |
@@ -143,7 +148,7 @@ import "slexkit/style.css";
 | 文档 | 主题 |
 | --- | --- |
 | [快速开始](site/content/guides/quick-start/zh-CN.md) | 安装并渲染第一个 Markdown 友好的 Slex 源码 |
-| [集成指南](site/content/guides/integration/zh-CN.md) | Streamdown、Obsidian 和自定义宿主路径 |
+| [集成指南](site/content/guides/integration/zh-CN.md) | Streamdown、Tiptap、Obsidian 和自定义宿主路径 |
 | [运行时模型](site/content/reference/runtime/zh-CN.md) | 挂载、更新、命名空间存储、生命周期 |
 | [Slex 用法参考](site/content/reference/usage/zh-CN.md) | 源码结构、指令、表达式、事件、自定义组件 |
 | [安全运行时](site/content/reference/security/zh-CN.md) | 威胁模型、sandbox iframe、策略、postMessage 桥接 |

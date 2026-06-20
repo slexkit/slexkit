@@ -1,0 +1,31 @@
+.streamdown-preview {
+  overflow-wrap: anywhere;
+}
+
+.streamdown-preview .slex-streamdown-block {
+  margin: 1.25rem 0;
+}
+
+.streamdown-preview .slex-streamdown-body {
+  padding: 0;
+}
+
+.streamdown-preview pre,
+.streamdown-preview table,
+.streamdown-preview .slex-card {
+  max-width: 100%;
+}
+
+.streamdown-preview pre {
+  overflow-x: auto;
+}
+
+.streamdown-preview .katex .katex-mathml {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

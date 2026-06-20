@@ -3,7 +3,7 @@ title: 宿主集成
 category: Reference
 status: ready
 order: 40
-summary: "MarkdownRuntimeHost、trusted/secure host integration、Streamdown、Obsidian 与 custom adapters。"
+summary: "MarkdownRuntimeHost、trusted/secure host integration、Svelte custom host、Streamdown、Tiptap、Obsidian 与 custom adapters。"
 slexkitRenderMode: component
 ---
 
@@ -149,6 +149,37 @@ Content-Type: text/javascript
 
 Build output 包含 `dist/runtime.js`。`slex copy-runtime` 命令默认复制到 `public/slexkit.runtime.js`，便于保持 secure-frame URL 稳定。
 
+## Svelte custom Markdown host
+
+SlexKit 官网使用 Svelte 和自定义 Markdown renderer，而不是一个独立发布的 Svelte Markdown adapter。公开契约仍然是 `createSlexKitMarkdownRuntimeHost`；Svelte 部分属于宿主代码。
+
+```js
+import { mount, unmount } from "svelte";
+import { createSlexKitMarkdownRuntimeHost } from "slexkit";
+import MarkdownRenderer from "./MarkdownRenderer.svelte";
+
+export function renderMarkdown(content, container, options = {}) {
+  const runtimeHost = options.slexkitRuntimeHost ?? createSlexKitMarkdownRuntimeHost({
+    mode: options.runtimeMode ?? "trusted",
+    theme: "host-shadcn"
+  });
+
+  const app = mount(MarkdownRenderer, {
+    target: container,
+    props: {
+      content,
+      runtimeHost,
+      artifactId: options.artifactId,
+      slexkitRenderMode: options.slexkitRenderMode ?? "component"
+    }
+  });
+
+  return () => unmount(app);
+}
+```
+
+宿主拥有自己的 Markdown AST 或 Svelte renderer 时，可以把这个作为实现参考。不要把 `site/markdown/*` 当成单独版本化的包 API。
+
 ## Streamdown / React integration
 
 `@slexkit/streamdown` 提供 React/Streamdown custom renderer：
@@ -169,6 +200,28 @@ export function Message({ markdown }: { markdown: string }) {
 ```
 
 该 renderer 处理 `slex` fences，支持 trusted 和 secure runtime modes，也可以委托给 shared Markdown runtime host instance。
+
+## Tiptap integration
+
+`@slexkit/tiptap` 提供 framework-free Tiptap `CodeBlock` extension：
+
+```ts
+import StarterKit from "@tiptap/starter-kit";
+import { Markdown } from "@tiptap/markdown";
+import { createSlexKitTiptapExtension } from "@slexkit/tiptap";
+import "@slexkit/theme-shadcn/style.css";
+import "@slexkit/tiptap/style.css";
+
+const extensions = [
+  StarterKit.configure({ codeBlock: false }),
+  Markdown,
+  createSlexKitTiptapExtension({ artifactId: "doc-1" })
+];
+```
+
+这个 adapter 只接管 `language === "slex"` 的 `codeBlock` node。非 Slex code block 保持普通 Tiptap code block；通过 Tiptap Markdown extension 导入/导出时，标准 ` ```slex ` fence 会保留。
+
+每个 editor 实例默认拥有一个 trusted Markdown runtime host。该 editor 中的 block 共享 artifact ID，因此 state-only fence 可以为后续可渲染 fence 提供状态。宿主需要显式生命周期控制时，可以传入 `runtimeHost` 或 `artifactId`。
 
 ## Obsidian integration
 

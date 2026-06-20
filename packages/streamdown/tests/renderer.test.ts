@@ -302,6 +302,58 @@ const namespace = "not_slexkit";
     await view.unmount();
   });
 
+  it("clears state seeded by removed state-only fences on rerender", async () => {
+    const renderer = createSlexKitRenderer({ domain: "doc-domain-remove", showChrome: false });
+    const withState = `\`\`\`slex
+{
+  namespace: "shared_remove",
+  g: { value: 21 },
+}
+\`\`\`
+
+\`\`\`slex
+{
+  namespace: "shared_remove",
+  layout: {
+    "text:value": { $text: "'value:' + String(g.value)" }
+  }
+}
+\`\`\`
+`;
+    const withoutState = `\`\`\`slex
+{
+  namespace: "shared_remove",
+  layout: {
+    "text:value": { $text: "'value:' + String(g.value)" }
+  }
+}
+\`\`\`
+`;
+
+    const view = await render(
+      React.createElement(
+        Streamdown,
+        { plugins: { renderers: [renderer] } },
+        withState,
+      ),
+    );
+
+    expect(view.container.textContent).toContain("value:21");
+
+    await view.rerender(
+      React.createElement(
+        Streamdown,
+        { plugins: { renderers: [renderer] } },
+        withoutState,
+      ),
+    );
+
+    expect(view.container.textContent).not.toContain("value:21");
+    expect(view.container.textContent).toContain("value:");
+
+    await view.unmount();
+  });
+
   it("keeps identical namespaces isolated across different markdown domains", async () => {
     const markdown = (value: number) => `\`\`\`slex
 {

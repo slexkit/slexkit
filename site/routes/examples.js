@@ -130,7 +130,22 @@ function localizedCopy(locale) {
   if (locale === "zh-CN") {
     return {
       title: "示例中心",
-      lede: "面向 AI 输出、工程文档和交互式知识表达的 SlexKit 高质量示例。",
+      lede: "可直接打开的 SlexKit 示例。",
+      landingEyebrow: "示例入口",
+      landingTitle: "从宿主、入门路径或真实场景开始",
+      landingDescription: "同一份 Markdown 可以在不同宿主中渲染；只有显式 `slex` fence 会交给 SlexKit。",
+      hostIntegration: "宿主集成",
+      hostIntegrationDesc: "Streamdown、Tiptap 和官网 Svelte Markdown host。",
+      gettingStarted: "入门教程",
+      gettingStartedDesc: "从静态卡片、响应式状态到多输入协同，按顺序理解 SlexKit。",
+      calculators: "真实计算器",
+      calculatorsDesc: "工程、电子和成本估算场景。",
+      hostAdapters: "宿主适配器",
+      openExample: "打开示例",
+      openGuide: "查看指南",
+      viewSource: "查看源码",
+      svelteHost: "Svelte Markdown 宿主",
+      svelteHostDesc: "官网内部 renderer 的 custom Markdown host 参考路径。",
       featured: "精选示例",
       allExamples: "全部示例",
       empty: "没有匹配的示例。",
@@ -150,7 +165,22 @@ function localizedCopy(locale) {
 
   return {
     title: "Examples",
-    lede: "High-quality SlexKit examples for AI output, engineering docs, and interactive knowledge surfaces.",
+    lede: "Runnable SlexKit examples.",
+    landingEyebrow: "Example entry points",
+    landingTitle: "Start from a host, a learning path, or a real artifact",
+    landingDescription: "The same Markdown can render in different hosts; only explicit `slex` fences are handed to SlexKit.",
+    hostIntegration: "Host Integration",
+    hostIntegrationDesc: "Streamdown, Tiptap, and the Svelte Markdown host used by this site.",
+    gettingStarted: "Getting Started",
+    gettingStartedDesc: "Learn SlexKit in order: static card, reactive state, and coordinated inputs.",
+    calculators: "Real-world calculators",
+    calculatorsDesc: "Engineering, electronics, and cost-estimation scenarios.",
+    hostAdapters: "Host adapters",
+    openExample: "Open example",
+    openGuide: "Open guide",
+    viewSource: "View source",
+    svelteHost: "Svelte Markdown Host",
+    svelteHostDesc: "Custom Markdown host reference based on the site's internal renderer.",
     featured: "Featured examples",
     allExamples: "All examples",
     empty: "No examples found.",
@@ -191,6 +221,128 @@ function shellDoc(example) {
     href: withSiteBase(example.href),
     markdownHref: withSiteBase(example.markdownHref),
     bodyHtml: `<div class="slex-docs-markdown" data-markdown-doc="${escapeAttribute(example.slug)}"></div>`,
+  };
+}
+
+function groupExamples(examples, category) {
+  return examples.filter((example) => example.category === category).slice(0, 4);
+}
+
+function exampleBySlug(examples, slug) {
+  return examples.find((example) => example.slug === slug);
+}
+
+function hrefForExample(examples, slug, fallback = "/examples") {
+  return withSiteBase(exampleBySlug(examples, slug)?.href ?? fallback);
+}
+
+function landingCard({ title, description, href, action }) {
+  return `
+    <a class="slex-examples-entry-card" href="${escapeAttribute(href)}">
+      <span class="slex-examples-entry-title">${escapeAttribute(title)}</span>
+      <span class="slex-examples-entry-desc">${escapeAttribute(description)}</span>
+      <span class="slex-examples-entry-action">${escapeAttribute(action)}</span>
+    </a>
+  `;
+}
+
+function landingLinkList(items) {
+  return items.map((item) => `
+    <a class="slex-examples-link-row" href="${escapeAttribute(withSiteBase(item.href))}">
+      <span>${escapeAttribute(item.title)}</span>
+      <small>${escapeAttribute(item.summary || item.difficulty || "")}</small>
+    </a>
+  `).join("");
+}
+
+function examplesLandingHtml(examples, copy, locale) {
+  const intro = groupExamples(examples, locale === "zh-CN" ? "入门教程" : "Getting Started");
+  const calculators = groupExamples(examples, locale === "zh-CN" ? "计算器" : "Calculator");
+  const integrationHref = withSiteBase(locale === "zh-CN" ? "/zh-CN/docs/guides/integration" : "/docs/guides/integration");
+  const streamdownHref = hrefForExample(examples, "streamdown-host");
+  const tiptapHref = hrefForExample(examples, "tiptap-host");
+
+  return `
+    <section class="slex-examples-landing">
+      <div class="slex-examples-hero">
+        <p class="slex-examples-eyebrow">${escapeAttribute(copy.landingEyebrow)}</p>
+        <h1>${escapeAttribute(copy.title)}</h1>
+        <p class="slex-examples-subtitle">${escapeAttribute(copy.landingTitle)}</p>
+        <p>${escapeAttribute(copy.landingDescription)}</p>
+      </div>
+
+      <div class="slex-examples-entry-grid" aria-label="${escapeAttribute(copy.title)}">
+        ${landingCard({
+          title: copy.hostIntegration,
+          description: copy.hostIntegrationDesc,
+          href: streamdownHref,
+          action: copy.openExample,
+        })}
+        ${landingCard({
+          title: copy.gettingStarted,
+          description: copy.gettingStartedDesc,
+          href: hrefForExample(examples, "hello-slexkit"),
+          action: copy.openExample,
+        })}
+        ${landingCard({
+          title: copy.calculators,
+          description: copy.calculatorsDesc,
+          href: hrefForExample(examples, "rc-low-pass-filter"),
+          action: copy.openExample,
+        })}
+      </div>
+
+      <section class="slex-examples-section">
+        <div class="slex-examples-section-header">
+          <h2>${escapeAttribute(copy.hostAdapters)}</h2>
+          <a href="${escapeAttribute(integrationHref)}">${escapeAttribute(copy.openGuide)}</a>
+        </div>
+        <div class="slex-examples-adapter-grid">
+          <a class="slex-examples-adapter-card" href="${escapeAttribute(streamdownHref)}">
+            <strong>Streamdown</strong>
+            <span>React / Streamdown renderer for explicit <code>slex</code> fences.</span>
+          </a>
+          <a class="slex-examples-adapter-card" href="${escapeAttribute(tiptapHref)}">
+            <strong>Tiptap</strong>
+            <span>Editor preview for <code>slex</code> code blocks with Markdown roundtrip.</span>
+          </a>
+          <a class="slex-examples-adapter-card" href="${escapeAttribute(integrationHref)}">
+            <strong>${escapeAttribute(copy.svelteHost)}</strong>
+            <span>${escapeAttribute(copy.svelteHostDesc)}</span>
+          </a>
+        </div>
+      </section>
+
+      <div class="slex-examples-list-grid">
+        <section class="slex-examples-section">
+          <h2>${escapeAttribute(copy.gettingStarted)}</h2>
+          <div class="slex-examples-link-list">${landingLinkList(intro)}</div>
+        </section>
+        <section class="slex-examples-section">
+          <h2>${escapeAttribute(copy.calculators)}</h2>
+          <div class="slex-examples-link-list">${landingLinkList(calculators)}</div>
+        </section>
+      </div>
+    </section>
+  `;
+}
+
+function examplesLandingDoc(examples, locale, copy) {
+  const href = locale === "zh-CN" ? "/zh-CN/examples" : "/examples";
+  return {
+    id: "examples/index",
+    kind: "examples-index",
+    slug: "examples",
+    title: copy.title,
+    summary: copy.lede,
+    href: withSiteBase(href),
+    markdownHref: false,
+    bodyHtml: examplesLandingHtml(examples, copy, locale),
+    toc: [
+      { id: "host-adapters", title: copy.hostAdapters, depth: 2 },
+      { id: "getting-started", title: copy.gettingStarted, depth: 2 },
+      { id: "calculators", title: copy.calculators, depth: 2 },
+    ],
   };
 }
 
@@ -254,7 +406,7 @@ export function createExamplesRoute({
 
   function currentExample(examples) {
     const href = exampleHrefForPath();
-    if (href.replace(/\/$/, "") === (currentLocale() === "zh-CN" ? "/zh-CN/examples" : "/examples")) return examples[0] ?? null;
+    if (href.replace(/\/$/, "") === (currentLocale() === "zh-CN" ? "/zh-CN/examples" : "/examples")) return null;
     return examples.find((item) => item.href === href) ?? examples[0] ?? null;
   }
 
@@ -269,10 +421,10 @@ export function createExamplesRoute({
     const locale = currentLocale();
     const copy = localizedCopy(locale);
     const example = currentExample(examples);
-    const doc = shellDoc(example);
+    const doc = example ? shellDoc(example) : examplesLandingDoc(examples, locale, copy);
 
     const shellState = {
-      activeHref: withSiteBase(example.href),
+      activeHref: example ? withSiteBase(example.href) : withSiteBase(locale === "zh-CN" ? "/zh-CN/examples" : "/examples"),
       currentDoc: doc,
       docs: shellItems(examples),
       locale,

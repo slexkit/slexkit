@@ -72,7 +72,7 @@ async function pack(packagePath = ".") {
 }
 
 const tarballs = [];
-for (const pkg of [".", "./packages/runtime", "./packages/components-svelte", "./packages/streamdown", "./packages/theme-shadcn", "./packages/mcp"]) {
+for (const pkg of [".", "./packages/runtime", "./packages/components-svelte", "./packages/streamdown", "./packages/tiptap", "./packages/theme-shadcn", "./packages/mcp"]) {
   tarballs.push(await pack(pkg));
 }
 
@@ -81,7 +81,7 @@ writeFileSync(
   JSON.stringify({ private: true, type: "module" }, null, 2),
 );
 
-installPackedApp([...tarballs, "react", "react-dom", "streamdown"], { cwd: appDir, stdio: "inherit" });
+installPackedApp([...tarballs, "react", "react-dom", "streamdown", "@tiptap/core", "@tiptap/pm", "@tiptap/extension-code-block"], { cwd: appDir, stdio: "inherit" });
 
 writeFileSync(
   join(appDir, "smoke.mjs"),
@@ -91,6 +91,7 @@ writeFileSync(
     "import { mount as scopedMount } from '@slexkit/runtime';",
     "import '@slexkit/components-svelte';",
     "import { SlexKitRenderer, createSlexKitRenderer, slexkitRenderer } from '@slexkit/streamdown';",
+    "import { SlexKitTiptapExtension, createSlexKitTiptapExtension } from '@slexkit/tiptap';",
     "import { existsSync } from 'node:fs';",
     "import { join } from 'node:path';",
     "import { createRequire } from 'node:module';",
@@ -99,15 +100,19 @@ writeFileSync(
     "const themeBaseCss = require.resolve('@slexkit/theme-shadcn/base.css');",
     "const themeButtonCss = require.resolve('@slexkit/theme-shadcn/components/button.css');",
     "const streamdownCss = require.resolve('@slexkit/streamdown/style.css');",
+    "const tiptapCss = require.resolve('@slexkit/tiptap/style.css');",
     "if (typeof rootMount !== 'function') throw new Error('slexkit/runtime mount missing');",
     "if (typeof scopedMount !== 'function') throw new Error('@slexkit/runtime mount missing');",
     "if (typeof slexkitRenderer !== 'object') throw new Error('@slexkit/streamdown renderer missing');",
     "if (typeof createSlexKitRenderer !== 'function') throw new Error('@slexkit/streamdown factory missing');",
     "if (typeof SlexKitRenderer !== 'function') throw new Error('@slexkit/streamdown component missing');",
+    "if (typeof createSlexKitTiptapExtension !== 'function') throw new Error('@slexkit/tiptap factory missing');",
+    "if (typeof SlexKitTiptapExtension !== 'object') throw new Error('@slexkit/tiptap extension missing');",
     "if (!themeCss.endsWith('style.css')) throw new Error('theme CSS export did not resolve');",
     "if (!themeBaseCss.endsWith('base.css')) throw new Error('theme base CSS export did not resolve');",
     "if (!themeButtonCss.endsWith('button.css')) throw new Error('theme component CSS export did not resolve');",
     "if (!streamdownCss.endsWith('style.css')) throw new Error('streamdown CSS export did not resolve');",
+    "if (!tiptapCss.endsWith('style.css')) throw new Error('tiptap CSS export did not resolve');",
     "const mcpBinBase = join(process.cwd(), 'node_modules', '.bin', 'slexkit-mcp');",
     "const mcpBin = (process.platform === 'win32' ? [`${mcpBinBase}.cmd`, `${mcpBinBase}.exe`, `${mcpBinBase}.bunx`, mcpBinBase] : [mcpBinBase]).find(existsSync);",
     "if (!mcpBin) throw new Error('slexkit-mcp binary missing');",

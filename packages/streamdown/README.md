@@ -19,11 +19,13 @@ import "@slexkit/streamdown/style.css";
 
 ```tsx
 import { Streamdown } from "streamdown";
-import { slexkitRenderer } from "@slexkit/streamdown";
+import { createSlexKitRenderer } from "@slexkit/streamdown";
 
-export function Message({ markdown }: { markdown: string }) {
+export function Message({ id, markdown }: { id: string; markdown: string }) {
+  const renderer = createSlexKitRenderer({ domain: id });
+
   return (
-    <Streamdown plugins={{ renderers: [slexkitRenderer] }}>
+    <Streamdown plugins={{ renderers: [renderer] }}>
       {markdown}
     </Streamdown>
   );
@@ -35,24 +37,37 @@ export function Message({ markdown }: { markdown: string }) {
 ```tsx
 import { useChat } from "@ai-sdk/react";
 import { Streamdown } from "streamdown";
-import { slexkitRenderer } from "@slexkit/streamdown";
+import { createSlexKitRenderer } from "@slexkit/streamdown";
+
+const renderers = new Map<string, ReturnType<typeof createSlexKitRenderer>>();
+
+function rendererForMessage(id: string) {
+  let renderer = renderers.get(id);
+  if (!renderer) {
+    renderer = createSlexKitRenderer({ domain: id });
+    renderers.set(id, renderer);
+  }
+  return renderer;
+}
 
 export function Chat() {
   const { messages, status } = useChat();
 
-  return messages.map((message) =>
-    message.parts.map((part, index) =>
+  return messages.map((message) => {
+    const renderer = rendererForMessage(message.id);
+
+    return message.parts.map((part, index) =>
       part.type === "text" ? (
         <Streamdown
           key={index}
           isAnimating={status === "streaming"}
-          plugins={{ renderers: [slexkitRenderer] }}
+          plugins={{ renderers: [renderer] }}
         >
           {part.text}
         </Streamdown>
       ) : null,
-    ),
-  );
+    );
+  });
 }
 ```
 
@@ -120,7 +135,7 @@ During streaming (`isIncomplete: true`), the renderer shows a placeholder instea
 />
 ```
 
-State-only blocks (source with `namespace` and `g` but no renderable `layout`) are processed via `ingest()` and return `null` from the component — they update state silently without rendering DOM.
+State-only blocks (source with `namespace` and `g` but no renderable `layout`) return no visible block. When the renderer has a `domain`, the adapter remounts that domain in document order, so removing a state-only fence also clears the state it seeded.
 
 ## Trust Boundary
 
@@ -233,7 +248,7 @@ export const renderer = createSlexKitRenderer({
   languages: ["slex"],          // Fence language tags to process (default: ["slex"])
   renderMode: "component",      // "component" | "playground"
   runtime: "trusted",           // "trusted" | "secure"
-  domain: "my-app",             // Namespace prefix for blocks
+  domain: "message-or-doc-id",  // Artifact id and namespace prefix for blocks
   showChrome: true,             // Show CodeBlockContainer + toolbar (default: true)
   showSource: false,            // Show source code in a details element
   className: "my-block",        // Extra CSS class on wrapper
@@ -274,6 +289,8 @@ Parse errors display a diagnostic panel with line, column, excerpt, and detail. 
 
 ## Documentation
 
+- [Official Streamdown host example](https://slexkit.app.simgor.cn/examples/streamdown-host)
+- [Runnable example source](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)
 - [SlexKit Security runtime](https://github.com/slexkit/slexkit/blob/main/site/content/reference/security/en-US.md)
 - [SlexKit Host integration](https://github.com/slexkit/slexkit/blob/main/site/content/reference/integration/en-US.md)
 - [SlexKit Usage guide](https://github.com/slexkit/slexkit/blob/main/site/content/reference/usage/en-US.md)

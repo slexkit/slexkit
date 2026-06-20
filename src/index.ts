@@ -158,7 +158,7 @@ export type {
   SlexKitMarkdownRuntimeMode,
   SlexKitMarkdownRuntimeOptions,
 } from "./engine/index";
-export type { ComponentRenderer, RenderContext, SlexExpression, DSL } from "./engine/types";
+export type { ComponentRenderer, RenderContext, SlexExpression, ThemeMode, DSL } from "./engine/types";
 export {
   registerAllApi as registerAll,
   registerSvelteComponentApi as registerSvelteComponent,
