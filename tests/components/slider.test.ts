@@ -149,7 +149,12 @@ describe("slider component", () => {
     expect(css).toContain(".slex-slider:active::-webkit-slider-thumb");
     expect(css).toContain("margin-top: -0.25rem");
     expect(css).toContain("background-clip: padding-box");
+    expect(css).toContain("height: 1rem");
+    expect(css).toContain("overflow: visible");
+    expect(css).toContain(".slex-slider {\n  box-sizing: border-box;");
     expect(css).toContain("background: transparent");
+    expect(css).toContain(".slex-slider::-webkit-slider-runnable-track");
+    expect(css).toContain("var(--primary) var(--slex-slider-progress, 0%)");
     expect(css).toContain("border: 2px solid var(--primary)");
     expect(css).toContain("background-color: var(--background)");
     expect(css).toContain(".slex-switch:hover .slex-switch-control");
