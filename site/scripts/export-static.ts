@@ -140,6 +140,7 @@ async function copyAdapterDemoFiles() {
   await cp(join(projectRoot, "examples", "shared"), join(outDir, "shared"), { recursive: true });
   await mkdir(join(outDir, "vendor", "katex"), { recursive: true });
   await cp(join(projectRoot, "node_modules", "katex", "dist", "katex.min.css"), join(outDir, "vendor", "katex", "katex.min.css"));
+  await cp(join(projectRoot, "node_modules", "katex", "dist", "fonts"), join(outDir, "vendor", "katex", "fonts"), { recursive: true });
   await cp(join(siteRoot, "content", "examples"), join(outDir, "official-examples"), { recursive: true });
   await copyAdapterPackage("streamdown");
   await copyAdapterPackage("tiptap");
