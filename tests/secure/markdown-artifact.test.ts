@@ -241,8 +241,9 @@ describe("secure markdown artifact bridge", () => {
 
       expect(container.querySelector(".slex-slider-value")?.textContent).toBe("16px");
       const input = container.querySelector(".slex-slider") as HTMLInputElement;
+      const control = container.querySelector(".slex-slider-control") as HTMLElement;
       expect(input.value).toBe("16");
-      expect(input.style.getPropertyValue("--slex-slider-progress")).toBe("20%");
+      expect(control.style.getPropertyValue("--slex-slider-progress")).toBe("20%");
       expect(container.querySelector(".slex-badge")?.textContent).toContain("style blue 16px");
 
       runtime.disposeArtifact("cross-doc-controls");

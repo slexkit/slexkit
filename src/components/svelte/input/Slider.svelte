@@ -80,17 +80,19 @@
     </span>
     <span class="slex-slider-value">{text(value ?? 0)}{#if p.unit} {text(p.unit)}{/if}</span>
   </div>
-  <input
-    type="range"
-    class="slex-slider"
-    min={Number(p.min ?? 0)}
-    max={Number(p.max ?? 100)}
-    step={Number(p.step ?? 1)}
-    value={Number(value ?? 0)}
-    disabled={!!p.disabled}
-    aria-label={text(p["aria-label"] ?? p.ariaLabel ?? p.label ?? componentName)}
-    style={`--slex-slider-progress: ${sliderProgress(value, p.min, p.max)}`}
-    onpointerdown={grabSlider}
-    oninput={(event) => choose(Number((event.target as HTMLInputElement).value))}
-  />
+  <div class="slex-slider-control" style={`--slex-slider-progress: ${sliderProgress(value, p.min, p.max)}`}>
+    <span class="slex-slider-track" aria-hidden="true"></span>
+    <input
+      type="range"
+      class="slex-slider"
+      min={Number(p.min ?? 0)}
+      max={Number(p.max ?? 100)}
+      step={Number(p.step ?? 1)}
+      value={Number(value ?? 0)}
+      disabled={!!p.disabled}
+      aria-label={text(p["aria-label"] ?? p.ariaLabel ?? p.label ?? componentName)}
+      onpointerdown={grabSlider}
+      oninput={(event) => choose(Number((event.target as HTMLInputElement).value))}
+    />
+  </div>
 </div>

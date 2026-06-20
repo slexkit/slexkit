@@ -29,9 +29,14 @@ describe("runtime style safety", () => {
   it("keeps range track paint out of the slider input box", async () => {
     const css = await Bun.file("src/styles/components/slider.css").text();
 
-    expect(css).toContain(".slex-slider {\n  box-sizing: border-box;");
+    expect(css).toContain(".slex-slider-control");
+    expect(css).toContain(".slex-slider-track");
+    expect(css).toContain(".slexkit-root .slex-slider-control input.slex-slider");
+    expect(css).toContain(".slex-slider {\n  position: relative;");
     expect(css).toContain("background: transparent;");
     expect(css).toContain(".slex-slider::-webkit-slider-runnable-track");
     expect(css).toContain("var(--primary) var(--slex-slider-progress, 0%)");
+    expect(css).toContain(".slex-slider::-webkit-slider-runnable-track {\n  box-sizing: border-box;");
+    expect(css).toContain("background: transparent;");
   });
 });

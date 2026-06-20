@@ -56,7 +56,36 @@
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
+.slexkit-root .slex-input-control input.slex-input {
+  box-sizing: border-box;
+  display: block;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.5625rem;
+  height: auto;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  box-shadow: none;
+  background: var(--background);
+  background-clip: padding-box;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 .slex-input-control[data-has-unit="true"] .slex-input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.slexkit-root .slex-input-control[data-has-unit="true"] input.slex-input {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }

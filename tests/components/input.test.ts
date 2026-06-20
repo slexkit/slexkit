@@ -306,6 +306,8 @@ describe("input component", () => {
 
     expect(css).toContain("-webkit-appearance: none;");
     expect(css).toContain("appearance: none;");
+    expect(css).toContain(".slexkit-root .slex-input-control input.slex-input");
+    expect(css).toContain('min-height: 2.5625rem;');
     expect(css).toContain("background-clip: padding-box;");
     expect(css).toContain(".slex-input:focus");
     expect(css).toContain("box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 18%, transparent);");

@@ -39,7 +39,8 @@ describe("slider component", () => {
     expect(root!.getAttribute("data-orientation")).toBe("horizontal");
     const input = root!.querySelector(".slex-slider") as HTMLInputElement;
     expect(input.value).toBe("50");
-    expect(input.style.getPropertyValue("--slex-slider-progress")).toBe("50%");
+    const control = root!.querySelector(".slex-slider-control") as HTMLElement;
+    expect(control.style.getPropertyValue("--slex-slider-progress")).toBe("50%");
   });
 
   it("native input changes value and emits @change", async () => {
@@ -70,7 +71,8 @@ describe("slider component", () => {
     expect(emitted).toHaveLength(1);
     expect(emitted[0]).toBe(51);
     expect(document.querySelector(".slex-slider-value")!.textContent).toBe("51");
-    expect(input.style.getPropertyValue("--slex-slider-progress")).toBe("51%");
+    const control = document.querySelector(".slex-slider-control") as HTMLElement;
+    expect(control.style.getPropertyValue("--slex-slider-progress")).toBe("51%");
   });
 
   it("renders native range constraints", () => {
@@ -113,7 +115,8 @@ describe("slider component", () => {
     expect(input.max).toBe("100000");
     expect(input.step).toBe("1000");
     expect(input.value).toBe("10000");
-    expect(input.style.getPropertyValue("--slex-slider-progress")).toBe("9.09%");
+    const control = document.querySelector(".slex-slider-control") as HTMLElement;
+    expect(control.style.getPropertyValue("--slex-slider-progress")).toBe("9.09%");
   });
 
   it("formats floating point tails in the displayed value", () => {
@@ -147,14 +150,19 @@ describe("slider component", () => {
     expect(css).toContain(".slex-slider::-webkit-slider-runnable-track");
     expect(css).toContain(".slex-slider:hover::-webkit-slider-thumb");
     expect(css).toContain(".slex-slider:active::-webkit-slider-thumb");
-    expect(css).toContain("margin-top: -0.25rem");
+    expect(css).toContain(".slex-slider-control");
+    expect(css).toContain(".slex-slider-track");
+    expect(css).toContain(".slexkit-root .slex-slider-control input.slex-slider");
+    expect(css).toContain("margin-top: 0");
     expect(css).toContain("background-clip: padding-box");
     expect(css).toContain("height: 1rem");
     expect(css).toContain("overflow: visible");
-    expect(css).toContain(".slex-slider {\n  box-sizing: border-box;");
+    expect(css).toContain(".slex-slider {\n  position: relative;");
     expect(css).toContain("background: transparent");
     expect(css).toContain(".slex-slider::-webkit-slider-runnable-track");
     expect(css).toContain("var(--primary) var(--slex-slider-progress, 0%)");
+    expect(css).toContain(".slex-slider::-webkit-slider-runnable-track {\n  box-sizing: border-box;");
+    expect(css).toContain("background: transparent;");
     expect(css).toContain("border: 2px solid var(--primary)");
     expect(css).toContain("background-color: var(--background)");
     expect(css).toContain(".slex-switch:hover .slex-switch-control");
@@ -239,7 +247,8 @@ describe("slider component", () => {
 
     const input = document.querySelector(".slex-slider") as HTMLInputElement;
     expect(input.value).toBe("16");
-    expect(input.style.getPropertyValue("--slex-slider-progress")).toBe("20%");
+    const control = document.querySelector(".slex-slider-control") as HTMLElement;
+    expect(control.style.getPropertyValue("--slex-slider-progress")).toBe("20%");
   });
 
   it("does not reuse a preceding select value for a slider bound to another g key", async () => {
