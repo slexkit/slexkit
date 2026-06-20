@@ -28,6 +28,10 @@ describe("site playground markdown renderer", () => {
     expect(playground.source).toContain('type: "engineering"');
     expect(playground.source).toContain('value: "10kΩ"');
     expect(playground.source).toContain('value: "100nF"');
+    expect(playground.source).not.toContain('"text:rLabel"');
+    expect(playground.source).not.toContain('"text:cLabel"');
+    expect(playground.source).not.toContain('"text:fLabel"');
+    expect(playground.source).not.toContain('"text:vinLabel"');
     expect(playground.source).toContain("value 保留原文，number 参与计算");
     expect(playground.source).toContain("animateInitial: true");
     expect(playground.source).toContain("工程输入可以直接写 `10kΩ`");
@@ -35,6 +39,14 @@ describe("site playground markdown renderer", () => {
     const englishPlayground = homePlaygroundConfig("en-US");
     expect(englishPlayground.source).toContain("# First-order RC Low-pass Filter");
     expect(englishPlayground.source).not.toContain("# 一阶 RC 低通滤波器");
+    expect(englishPlayground.source).toContain('label: "Resistance R"');
+    expect(englishPlayground.source).toContain('label: "Capacitance C"');
+    expect(englishPlayground.source).toContain('label: "Input frequency f"');
+    expect(englishPlayground.source).toContain('label: "Input amplitude Vin"');
+    expect(englishPlayground.source).not.toContain('"text:rLabel"');
+    expect(englishPlayground.source).not.toContain('"text:cLabel"');
+    expect(englishPlayground.source).not.toContain('"text:fLabel"');
+    expect(englishPlayground.source).not.toContain('"text:vinLabel"');
     expect(englishPlayground.source).toContain("Try 4.7kΩ, 220nF, 10kHz, and 500mV");
   });
 

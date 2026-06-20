@@ -72,8 +72,8 @@ $$
       columns: 1,
       mdColumns: 4,
       "column:rField": {
-        "text:rLabel": { text: "Resistance R" },
         "input:r": {
+          label: "Resistance R",
           type: "engineering",
           value: "10kΩ",
           placeholder: "10kΩ",
@@ -89,8 +89,8 @@ $$
         },
       },
       "column:cField": {
-        "text:cLabel": { text: "Capacitance C" },
         "input:c": {
+          label: "Capacitance C",
           type: "engineering",
           value: "100nF",
           placeholder: "100nF",
@@ -106,8 +106,8 @@ $$
         },
       },
       "column:fField": {
-        "text:fLabel": { text: "Input frequency f" },
         "input:f": {
+          label: "Input frequency f",
           type: "engineering",
           value: "1kHz",
           placeholder: "1kHz",
@@ -123,8 +123,8 @@ $$
         },
       },
       "column:vinField": {
-        "text:vinLabel": { text: "Input amplitude Vin" },
         "input:vin": {
+          label: "Input amplitude Vin",
           type: "engineering",
           value: "1V",
           placeholder: "1V",

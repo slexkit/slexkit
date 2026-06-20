@@ -72,8 +72,8 @@ $$
       columns: 1,
       mdColumns: 4,
       "column:rField": {
-        "text:rLabel": { text: "电阻 R" },
         "input:r": {
+          label: "电阻 R",
           type: "engineering",
           value: "10kΩ",
           placeholder: "10kΩ",
@@ -89,8 +89,8 @@ $$
         },
       },
       "column:cField": {
-        "text:cLabel": { text: "电容 C" },
         "input:c": {
+          label: "电容 C",
           type: "engineering",
           value: "100nF",
           placeholder: "100nF",
@@ -106,8 +106,8 @@ $$
         },
       },
       "column:fField": {
-        "text:fLabel": { text: "输入频率 f" },
         "input:f": {
+          label: "输入频率 f",
           type: "engineering",
           value: "1kHz",
           placeholder: "1kHz",
@@ -123,8 +123,8 @@ $$
         },
       },
       "column:vinField": {
-        "text:vinLabel": { text: "输入幅值 Vin" },
         "input:vin": {
+          label: "输入幅值 Vin",
           type: "engineering",
           value: "1V",
           placeholder: "1V",
