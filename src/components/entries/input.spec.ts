@@ -27,7 +27,6 @@ export const inputSpec = component({
       min: { type: "string | number", dynamic: true, description: "Minimum value used by numeric input controls." },
       max: { type: "string | number", dynamic: true, description: "Maximum value used by numeric input controls." },
       step: { type: "string | number", dynamic: true, description: "Step size used by numeric input controls." },
-      controls: { type: "boolean", default: true, dynamic: true, description: "Show decrement and increment buttons for numeric inputs." },
       onchange: { type: "write-expression", description: "Write expression invoked when the value changes." },
     },
     children: noChildren,

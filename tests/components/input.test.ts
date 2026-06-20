@@ -97,52 +97,7 @@ describe("input component", () => {
     expect(description.textContent).toBe("Supply rail");
   });
 
-  it("renders numeric controls by default and emits stepped string values", async () => {
-    document.body.innerHTML = '<div id="app"></div>';
-    const emitted: unknown[] = [];
-    mount({
-      namespace: unique("input_controls"),
-      g: {
-        onChange(value: unknown) { emitted.push(value); },
-      },
-      layout: {
-        "input:voltage": {
-          label: "Voltage",
-          type: "number",
-          value: "3.3",
-          unit: "V",
-          step: 0.1,
-          min: 3.2,
-          max: 3.4,
-          required: true,
-          onchange: "g.onChange($event)",
-        },
-      },
-    }, document.getElementById("app")!);
-
-    const field = document.querySelector(".slex-input-field") as HTMLElement;
-    const input = document.querySelector(".slex-input") as HTMLInputElement;
-    const [increment, decrement] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
-    expect(input.type).toBe("number");
-    expect(input.value).toBe("3.3");
-    expect(field.querySelector(".slex-input-controls")).toBeTruthy();
-    expect(field.dataset.required).toBe("true");
-    expect(decrement.getAttribute("aria-label")).toBe("Decrease Voltage");
-    expect(increment.getAttribute("aria-label")).toBe("Increase Voltage");
-
-    increment.click();
-    await sleep();
-    expect(input.value).toBe("3.4");
-    expect(emitted).toEqual(["3.4"]);
-    expect(increment.disabled).toBe(true);
-
-    decrement.click();
-    await sleep();
-    expect(input.value).toBe("3.3");
-    expect(emitted).toEqual(["3.4", "3.3"]);
-  });
-
-  it("does not render controls for ordinary text inputs or when controls are disabled", async () => {
+  it("does not render custom step controls for text, number, or engineering inputs", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     mount({
       namespace: unique("input_controls_default"),
@@ -155,11 +110,20 @@ describe("input component", () => {
           label: "Age",
           type: "number",
           value: "42",
-          controls: false,
+          min: 0,
+          max: 120,
+          step: 1,
+        },
+        "input:legacy": {
+          label: "Legacy controls prop",
+          type: "engineering",
+          value: "10kΩ",
+          controls: true,
         },
       },
     }, document.getElementById("app")!);
 
+    expect(document.querySelector(".slex-input-controls")).toBeNull();
     expect(document.querySelectorAll(".slex-input-step")).toHaveLength(0);
   });
 
@@ -205,22 +169,6 @@ describe("input component", () => {
     expect(error.getAttribute("role")).toBe("alert");
     expect(describedBy.split(/\s+/)).toContain(description.id);
     expect(describedBy.split(/\s+/)).toContain(error.id);
-  });
-
-  it("disables controls when the current value cannot be stepped", async () => {
-    document.body.innerHTML = '<div id="app"></div>';
-    mount({
-      namespace: unique("input_controls_invalid"),
-      layout: {
-        "input:name": {
-          value: "not-a-number",
-          step: 1,
-        },
-      },
-    }, document.getElementById("app")!);
-
-    const steps = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
-    expect(steps.map((button) => button.disabled)).toEqual([true, true]);
   });
 
   it("does not emit change from disabled and readonly fields", async () => {
@@ -329,22 +277,17 @@ describe("input component", () => {
     expect(Array.from(document.querySelectorAll(".slex-text")).map((el) => el.textContent)).toEqual(["false", "invalid_number"]);
   });
 
-  it("steps valid engineering values while preserving the parsed unit", async () => {
+  it("ignores legacy engineering controls props", async () => {
     document.body.innerHTML = '<div id="app"></div>';
-    let emitted: unknown = undefined;
     mount({
       namespace: unique("input_engineering_controls"),
-      g: {
-        onChange(value: unknown) { emitted = value; },
-      },
       layout: {
         "input:resistance": {
           type: "engineering",
           value: "1kΩ",
           unit: "Ω",
           step: 100,
-
-          onchange: "g.onChange($event)",
+          controls: true,
         },
         "text:number": { $text: "String(resistance.number)" },
         "text:unit": { $text: "resistance.unit" },
@@ -353,39 +296,19 @@ describe("input component", () => {
 
     const input = document.querySelector(".slex-input") as HTMLInputElement;
     const [increment] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
-    increment.click();
-    await sleep();
-
-    expect(input.value).toBe("1.1kΩ");
-    expect(emitted).toMatchObject({
-      raw: "1.1kΩ",
-      number: 1100,
-      valid: true,
-      prefix: "k",
-      unit: "Ω",
-    });
-    expect(Array.from(document.querySelectorAll(".slex-text")).map((el) => el.textContent)).toEqual(["1100", "Ω"]);
+    expect(input.value).toBe("1kΩ");
+    expect(increment).toBeUndefined();
+    expect(Array.from(document.querySelectorAll(".slex-text")).map((el) => el.textContent)).toEqual(["1000", "Ω"]);
   });
 
-  it("uses the current engineering prefix as the default step size", async () => {
-    document.body.innerHTML = '<div id="app"></div>';
-    mount({
-      namespace: unique("input_engineering_default_step"),
-      layout: {
-        "input:capacitance": {
-          type: "engineering",
-          value: "100nF",
-        },
-        "text:number": { $text: "String(capacitance.number)" },
-      },
-    }, document.getElementById("app")!);
+  it("keeps native input chrome and wrapper focus rings from leaking into host apps", async () => {
+    const css = await Bun.file("src/styles/components/text-input.css").text();
 
-    const input = document.querySelector(".slex-input") as HTMLInputElement;
-    const [increment] = Array.from(document.querySelectorAll(".slex-input-step")) as HTMLButtonElement[];
-    increment.click();
-    await sleep();
-
-    expect(input.value).toBe("101nF");
-    expect(document.querySelector(".slex-text")?.textContent).toBe("1.01e-7");
+    expect(css).toContain("-webkit-appearance: none;");
+    expect(css).toContain("appearance: none;");
+    expect(css).toContain("background-clip: padding-box;");
+    expect(css).toContain(".slex-input-control:not([data-has-unit]):focus-within");
+    expect(css).toContain("box-shadow: none;");
   });
+
 });

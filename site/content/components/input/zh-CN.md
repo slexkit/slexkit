@@ -34,8 +34,8 @@ summary: "单行文本输入。"
 - 关联组件：select 用于选项选择，slider 用于数值范围。
 - 通常放在 column 中组成表单。
 - 使用 $value 和 onchange 实现状态绑定。
-- 数值输入默认显示递减和递增按钮，配合 `step`、`min`、`max` 定义快速调整行为；需要隐藏时设置 `controls: false`。
-- `onchange` 会在用户输入或点击增减按钮时触发。
+- 数值和工程输入只显示原生输入框；范围调节应使用 `slider`，不再提供自绘递减/递增按钮。
+- `onchange` 会在用户输入时触发。
 - `type: "number"` 仍然输出字符串；需要数值时在表达式中使用 `Number($event)`，或使用 `type: "engineering"` 读取解析后的 `number`。
 - 使用 `invalid` 配合 `error` 展示校验错误，错误文本会通过 `aria-describedby` 关联到输入框。
 
@@ -102,7 +102,7 @@ summary: "单行文本输入。"
 
 ## API 参考 {#api}
 
-<!-- slex:spec-api:start component="input" sourceHash="08bdd046" -->
+<!-- slex:spec-api:start component="input" sourceHash="a1afe57e" -->
 | 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `value` | string | 否 | 是 |  | 当前输入值。 |
@@ -125,6 +125,5 @@ summary: "单行文本输入。"
 | `min` | string \| number | 否 | 是 |  | 数值输入控件使用的最小值。 |
 | `max` | string \| number | 否 | 是 |  | 数值输入控件使用的最大值。 |
 | `step` | string \| number | 否 | 是 |  | 数值输入控件使用的步进值。 |
-| `controls` | boolean | 否 | 是 | `true` | 为数值输入显示递减和递增按钮。 |
 | `onchange` | write-expression | 否 | 否 |  | 数值变化时执行的写表达式。 |
 <!-- slex:spec-api:end -->

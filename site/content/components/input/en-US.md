@@ -33,8 +33,8 @@ Single-line text input with controlled value, placeholder, label, description, n
 - Related components: `select` for option selection, `slider` for numeric ranges.
 - Typically placed inside a `column` to compose forms.
 - Use `$value` and `onchange` for state binding.
-- Numeric inputs show decrement and increment buttons by default. Use `step`, `min`, and `max` to define quick-adjust behavior, or set `controls: false` to hide them.
-- `onchange` fires when the user edits the value or clicks a step control.
+- Numeric and engineering inputs render only the native input. Use `slider` for range adjustment; SlexKit no longer adds custom decrement or increment buttons.
+- `onchange` fires when the user edits the value.
 - `type: "number"` still emits a string value. Convert with `Number($event)` or use `type: "engineering"` to read parsed results.
 - Use `invalid` plus `error` for validation feedback. Error text is linked through `aria-describedby`.
 
@@ -101,7 +101,7 @@ Supports scientific notation and SI prefixes: `p`, `n`, `u`, `µ`, `m`, `k`, `K`
 
 ## API Reference {#api}
 
-<!-- slex:spec-api:start component="input" sourceHash="08bdd046" -->
+<!-- slex:spec-api:start component="input" sourceHash="a1afe57e" -->
 | Field | Type | Required | Dynamic | Default | Description |
 |---|---|---|---|---|---|
 | `value` | string | No | Yes |  | Current input value. |
@@ -124,6 +124,5 @@ Supports scientific notation and SI prefixes: `p`, `n`, `u`, `µ`, `m`, `k`, `K`
 | `min` | string \| number | No | Yes |  | Minimum value used by numeric input controls. |
 | `max` | string \| number | No | Yes |  | Maximum value used by numeric input controls. |
 | `step` | string \| number | No | Yes |  | Step size used by numeric input controls. |
-| `controls` | boolean | No | Yes | `true` | Show decrement and increment buttons for numeric inputs. |
 | `onchange` | write-expression | No | No |  | Write expression invoked when the value changes. |
 <!-- slex:spec-api:end -->
