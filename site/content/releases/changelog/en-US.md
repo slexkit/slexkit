@@ -11,6 +11,18 @@ slexkitRenderMode: component
 
 All notable changes to SlexKit.
 
+## v0.3.2 - Host CSS isolation and repeated layout hardening
+
+### Changed
+- `$for` rendering now uses comment anchors and direct child insertion instead of a wrapper element that depended on `display: contents`.
+- Site-only mobile navigation CSS moved out of the runtime base stylesheet and into the documentation site shell.
+- Component accessors now share one reactive effect across subscribers instead of creating duplicate subscriber fan-out work.
+
+### Fixed
+- Obsidian and other Markdown hosts no longer need to rewrite `$for` wrapper CSS to avoid `display: contents`, preserving grid and row layouts for repeated items.
+- Published runtime base CSS no longer leaks `#mobileNav` or `body[data-mobile-nav-open]` selectors into host pages.
+- Custom renderers that return no element no longer leave invalid `$for` slots behind during diffing or cleanup.
+
 ## v0.3.1 - Host stability and control rendering hardening
 
 ### Added

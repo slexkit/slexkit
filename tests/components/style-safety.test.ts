@@ -21,6 +21,9 @@ describe("runtime style safety", () => {
 
     expect(css).not.toContain(":has(");
     expect(css).not.toContain("clip-path");
+    expect(css).not.toContain("display: contents");
+    expect(css).not.toContain("#mobileNav");
+    expect(css).not.toContain("data-mobile-nav-open");
   });
 
   it("keeps range track paint out of the slider input box", async () => {

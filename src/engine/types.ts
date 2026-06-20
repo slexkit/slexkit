@@ -27,8 +27,8 @@ export type ForContext = {
 };
 
 export type ForSlot = {
-  key: unknown;
-  el: HTMLElement;
+    key: unknown;
+    el: HTMLElement | null;
   forCtx: ForContext;
   index: number;
   item: unknown;

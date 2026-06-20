@@ -11,6 +11,18 @@ slexkitRenderMode: component
 
 SlexKit 的所有重要变更。
 
+## v0.3.2 - 宿主 CSS 隔离与重复布局加固
+
+### Changed
+- `$for` 渲染改为使用 comment anchors 和直接子节点插入，不再依赖带 `display: contents` 的 wrapper 元素。
+- 站点专用的移动导航 CSS 已从 runtime base stylesheet 移到文档站点 shell。
+- Component accessor 现在会在多个订阅者之间共享一个 reactive effect，不再产生重复的 subscriber fan-out 工作。
+
+### Fixed
+- Obsidian 和其他 Markdown 宿主不再需要重写 `$for` wrapper CSS 来规避 `display: contents`，重复项在 grid 和 row 中会保持原本布局。
+- 发布版 runtime base CSS 不再把 `#mobileNav` 或 `body[data-mobile-nav-open]` 选择器泄漏到宿主页面。
+- 自定义 renderer 返回空元素时，不再在 `$for` diff 或 cleanup 中留下无效 slot。
+
 ## v0.3.1 - 宿主稳定性与控件渲染加固
 
 ### Added

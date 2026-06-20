@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { mount } from "../../src/engine/index";
+import { mount, register } from "../../src/engine/index";
 import "../../src/components/index";
 
 function unique(ns = "v015") {
@@ -20,6 +20,52 @@ function getTextElementMap(container: HTMLElement): Map<string, Element> {
 }
 
 describe("$for key-based diff — add", () => {
+  it("renders repeated items as direct layout children without a wrapper element", () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const container = document.getElementById("app")!;
+
+    mount({
+      namespace: unique("diff_direct_children"),
+      g: { items: ["a", "b", "c"] },
+      layout: {
+        "grid:list": {
+          columns: 3,
+          "text:i": {
+            $for: "g.items",
+            $key: "$value",
+            $content: "$item",
+          },
+        },
+      },
+    }, container);
+
+    const grid = container.querySelector(".slex-grid")!;
+    expect(Array.from(grid.children).map((child) => child.className)).toEqual(["slex-text", "slex-text", "slex-text"]);
+    expect(container.querySelector(".slexkit-for-wrapper")).toBeNull();
+  });
+
+  it("does not retain slots when a custom renderer returns no element", () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const container = document.getElementById("app")!;
+    const type = unique("void_renderer");
+    register(type, () => {});
+
+    const cleanup = mount({
+      namespace: unique("diff_void_renderer"),
+      g: { items: ["a", "b"] },
+      layout: {
+        [`${type}:item`]: {
+          $for: "g.items",
+          $key: "$value",
+        },
+      },
+    }, container);
+
+    expect(container.querySelector(".slexkit-for-wrapper")).toBeNull();
+    expect(container.querySelector(".slex-layout")!.children).toHaveLength(0);
+    expect(() => cleanup()).not.toThrow();
+  });
+
   it("push adds only new DOM, existing items unchanged", () => {
     document.body.innerHTML = '<div id="app"></div>';
     const container = document.getElementById("app")!;

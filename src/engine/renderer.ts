@@ -398,9 +398,10 @@ function renderForNode(
   const renderer = getRenderer(type);
   if (!renderer) return;
 
-  const forWrapper = (container.ownerDocument || document).createElement("div");
-  forWrapper.className = "slexkit-for-wrapper";
-  container.appendChild(forWrapper);
+  const doc = container.ownerDocument || document;
+  const startAnchor = doc.createComment(`slexkit-for:${fullKey}:start`);
+  const endAnchor = doc.createComment(`slexkit-for:${fullKey}:end`);
+  container.append(startAnchor, endAnchor);
 
   const evalCtx = buildComponentEvalContext(g, components, componentTypes, api, forCtx);
   const items = createMemo(() => trackForCollection(evalRead(props.$for as string, evalCtx, ns, `${fullKey}:$for`)));
@@ -415,8 +416,10 @@ function renderForNode(
     disposedSlots.add(slot);
     leavingSlots.delete(slot);
     callHook(g, name, "onUnmount");
-    disposeComponent(slot.el);
-    slot.el.remove();
+    if (slot.el) {
+      disposeComponent(slot.el);
+      slot.el.remove();
+    }
     if (slot.dispose) slot.dispose();
   };
 
@@ -444,14 +447,18 @@ function renderForNode(
       }
     }
     for (const slot of deletedSlots) {
-      container.appendChild(slot.el);
       leavingSlots.add(slot);
+      if (!slot.el) {
+        disposeSlot(slot);
+        continue;
+      }
       applyLeaveAnimation(slot.el, slot.props, () => {
         disposeSlot(slot);
       });
     }
 
     // Phase 2: add new items, update retained items' forCtx, adjust DOM order.
+    let cursor: ChildNode = startAnchor;
     arr.forEach((item: unknown, index: number) => {
       item = asReactiveValue(item, g);
       const keyVal = newKeys[index];
@@ -481,30 +488,31 @@ function renderForNode(
         const indexSignal = createSignal(index);
         const revisionSignal = createSignal(0);
         slot = renderAndMountSlot(item, index, keyVal, indexSignal, revisionSignal, renderer, type, name, props, container, g, components, componentTypes, api, forCtx, ns, fullKey, options);
-        if (slot.el) {
-          applyEnterAnimation(slot.el, slot.props);
-          callHook(g, name, "onMount");
+        if (!slot.el) {
+          disposeSlot(slot);
+          return;
         }
+        applyEnterAnimation(slot.el, slot.props);
+        callHook(g, name, "onMount");
         slotMap.set(keyVal, slot);
       }
 
-      const refChild = forWrapper.children[index];
-      if (slot.el && refChild !== slot.el) {
-        forWrapper.insertBefore(slot.el, refChild ?? null);
+      const nextChild = cursor.nextSibling;
+      if (slot.el && nextChild !== slot.el) {
+        container.insertBefore(slot.el, nextChild ?? endAnchor);
+      }
+      if (slot.el) {
+        cursor = slot.el;
       }
     });
-
-    // Phase 3: trim excess children defensively.
-    while (forWrapper.children.length > arr.length) {
-      forWrapper.lastChild!.remove();
-    }
   });
 
   onCleanup(() => {
     for (const slot of Array.from(slotMap.values())) disposeSlot(slot);
     slotMap.clear();
     for (const slot of Array.from(leavingSlots)) disposeSlot(slot);
-    forWrapper.remove();
+    startAnchor.remove();
+    endAnchor.remove();
   });
 }
 

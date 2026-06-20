@@ -17,19 +17,30 @@ export function configureComponentScope(options: { flush?: FlushDom }): void {
 export function createComponentAccessor<T>(read: () => T): ReadableAccessor<T> {
   const subscribers = new Set<Subscriber<T>>();
   let current = read();
+  let stopEffect: Cleanup | undefined;
+
+  const start = () => {
+    if (stopEffect) return;
+    stopEffect = createEffect(() => {
+      current = read();
+      for (const subscriber of Array.from(subscribers)) subscriber(current);
+      flushDom?.();
+    });
+  };
 
   const accessor = (() => current) as ReadableAccessor<T>;
   accessor.subscribe = (run) => {
+    const wasIdle = subscribers.size === 0;
     subscribers.add(run);
-    run(current);
-    const stop = createEffect(() => {
-      current = read();
-      for (const subscriber of subscribers) subscriber(current);
-      flushDom?.();
-    });
+    if (wasIdle) start();
+    else run(current);
+
     return () => {
       subscribers.delete(run);
-      stop();
+      if (subscribers.size === 0) {
+        stopEffect?.();
+        stopEffect = undefined;
+      }
     };
   };
   return accessor;

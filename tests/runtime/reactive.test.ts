@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { createComponentAccessor } from "../../src/engine/component-scope";
 import {
   batch,
   createEffect,
@@ -93,5 +94,35 @@ describe("reactive runtime", () => {
     g.items.push("b");
 
     expect(lengths).toEqual([1, 2]);
+  });
+
+  it("shares one component accessor effect across subscribers", () => {
+    const state = createReactiveState({ value: 1 });
+    const accessor = createComponentAccessor(() => state.value);
+    const first: number[] = [];
+    const second: number[] = [];
+
+    const unsubscribeFirst = accessor.subscribe((value) => first.push(value));
+    expect(first).toEqual([1]);
+
+    state.value = 2;
+    expect(first).toEqual([1, 2]);
+
+    const unsubscribeSecond = accessor.subscribe((value) => second.push(value));
+    expect(first).toEqual([1, 2]);
+    expect(second).toEqual([2]);
+
+    state.value = 3;
+    expect(first).toEqual([1, 2, 3]);
+    expect(second).toEqual([2, 3]);
+
+    unsubscribeFirst();
+    state.value = 4;
+    expect(first).toEqual([1, 2, 3]);
+    expect(second).toEqual([2, 3, 4]);
+
+    unsubscribeSecond();
+    state.value = 5;
+    expect(second).toEqual([2, 3, 4]);
   });
 });

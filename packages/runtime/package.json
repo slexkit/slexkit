@@ -1,6 +1,6 @@
 {
   "name": "@slexkit/runtime",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Pure SlexKit runtime and expression engine entry.",
   "author": "SlexKit contributors",
   "type": "module",
@@ -40,7 +40,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "slexkit": "^0.3.1"
+    "slexkit": "^0.3.2"
   },
   "peerDependenciesMeta": {
     "slexkit": {
