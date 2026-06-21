@@ -205,6 +205,10 @@ describe("split runtime and Svelte component entries", () => {
     expect(runtime.getSlexKitInfo()).toEqual(root.getSlexKitInfo());
     expect(root.runSlexConformance().ok).toBe(true);
     expect(runtime.runSlexConformance().ok).toBe(true);
+    expect(root.isLikelyIncompleteSlexSource("{ layout: {")).toBe(true);
+    expect(runtime.isLikelyIncompleteSlexSource("{ layout: {")).toBe(true);
+    expect(root.parseSlexStreamingSource("{ layout: {", { mode: "repair" }).status).toBe("repaired");
+    expect(runtime.parseSlexStreamingSource("{ layout: {", { mode: "repair" }).status).toBe("repaired");
     expect(siteVersion.SLEXKIT_SITE_VERSION).toBe(rootPackage.version);
     expect(siteVersion.SLEX_PROTOCOL_VERSION).toBe("0.1");
   });

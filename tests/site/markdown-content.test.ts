@@ -466,6 +466,7 @@ order: 1
     const referenceDocs = await discoverReferenceMarkdown({ siteRoot: "site", locale: "zh-CN" });
     const releaseDocs = await discoverReleaseMarkdown({ siteRoot: "site", locale: "zh-CN" });
     const specDoc = referenceDocs.find((doc) => doc.slug === "spec");
+    const integrationDoc = referenceDocs.find((doc) => doc.slug === "integration");
     const changelogDoc = releaseDocs[0];
 
     expect(referenceDocs.map((doc) => doc.href)).toContain("/zh-CN/docs/reference/spec");
@@ -476,6 +477,9 @@ order: 1
     expect(specDoc?.markdownHref).toBe(
       specDoc?.contentLocale === "zh-CN" ? "/zh-CN/docs/reference/spec.md" : "/docs/reference/spec.md",
     );
+    const integrationMarkdown = integrationDoc && ("markdown" in integrationDoc ? integrationDoc.markdown : integrationDoc.content);
+    expect(integrationMarkdown).toContain("executionMode");
+    expect(integrationMarkdown).toContain('streaming="repair"');
     expect(releaseDocs).toHaveLength(1);
     expect(changelogDoc).toMatchObject({
       slug: "changelog",

@@ -125,12 +125,15 @@ Playground meta also supports `title`, `mode`, `height`/`previewMinHeight`, `web
 
 ## Streaming behavior
 
-During streaming (`isIncomplete: true`), the renderer shows a placeholder instead of attempting to parse partial Slex source. The placeholder defaults to "Rendering SlexKit..." and can be customized:
+During streaming (`isIncomplete: true`), the trusted renderer uses `streaming="repair"` by default. It parses the current Slex source on every update. If the source is already a complete object literal, it mounts normally; if the source is missing only EOF closing tokens such as `"`, `}`, `]`, `)`, or `*/`, the renderer mounts a preview with those tokens virtually appended.
+
+Preview mounts use an isolated namespace and freeze write handlers, lifecycle hooks, component `emit()` writes, and `api.*` capabilities until the real source is complete. Use `streaming="stable"` to render only fully parseable source before the fence closes, or `streaming={false}` to wait for the closing fence. The placeholder defaults to "Rendering SlexKit..." and can be customized:
 
 ```tsx
 <SlexKitRenderer
   code={code}
   isIncomplete={true}
+  streaming="repair"
   placeholder={<Spinner />}
 />
 ```

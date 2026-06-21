@@ -1,7 +1,8 @@
 import {
   mount, ingest, boot, disposeNamespace,
   register, getRenderer, diagnoseSlexKitSource, SlexKitSyntaxError,
-  formatSlexKitDiagnostic, mountSecureArtifact, parseSlexSource,
+  formatSlexKitDiagnostic, isLikelyIncompleteSlexSource, parseSlexStreamingSource,
+  mountSecureArtifact, parseSlexSource,
   parseSlexKitDsl, createSecureRuntime, SlexKitRuntimeError,
   getSlexKitRuntimeUrl, setSlexKitRuntimeUrl,
   createSlexKitMarkdownRuntimeHost, getSlexKitMarkdownRuntimeHost,
@@ -29,6 +30,8 @@ const getRendererApi = getRenderer;
 const diagnoseSlexKitSourceApi = diagnoseSlexKitSource;
 const SlexKitSyntaxErrorApi = SlexKitSyntaxError;
 const formatSlexKitDiagnosticApi = formatSlexKitDiagnostic;
+const isLikelyIncompleteSlexSourceApi = isLikelyIncompleteSlexSource;
+const parseSlexStreamingSourceApi = parseSlexStreamingSource;
 const mountSecureArtifactApi = mountSecureArtifact;
 const parseSlexSourceApi = parseSlexSource;
 const parseSlexKitDslApi = parseSlexKitDsl;
@@ -70,6 +73,8 @@ export {
   diagnoseSlexKitSourceApi as diagnoseSlexKitSource,
   SlexKitSyntaxErrorApi as SlexKitSyntaxError,
   formatSlexKitDiagnosticApi as formatSlexKitDiagnostic,
+  isLikelyIncompleteSlexSourceApi as isLikelyIncompleteSlexSource,
+  parseSlexStreamingSourceApi as parseSlexStreamingSource,
   mountSecureArtifactApi as mountSecureArtifact,
   parseSlexSourceApi as parseSlexSource,
   parseSlexKitDslApi as parseSlexKitDsl,

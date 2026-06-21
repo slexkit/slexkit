@@ -105,6 +105,51 @@ describe("secure markdown artifact bridge", () => {
     });
 
 
+    it("applies host-level preview execution mode unless a block overrides it", () => {
+      const runtime = createSlexKitMarkdownRuntimeHost({ executionMode: "preview" });
+      const previewContainer = setup();
+
+      runtime.mountBlock({
+        artifactId: "preview-doc",
+        container: previewContainer,
+        source: `({
+          namespace: "markdown_preview_default",
+          g: { count: 0 },
+          layout: {
+            "button:add": { label: "Add", onclick: "g.count++" },
+            "text:value": { $text: "'count:' + String(g.count)" },
+          },
+        })`,
+      });
+
+      expect(previewContainer.querySelector(".slexkit-root")?.getAttribute("data-execution-mode")).toBe("preview");
+      expect(previewContainer.textContent).toContain("count:0");
+      (previewContainer.querySelector(".slex-button") as HTMLButtonElement).click();
+      expect(previewContainer.textContent).toContain("count:0");
+      runtime.disposeArtifact("preview-doc");
+
+      const liveContainer = setup();
+      runtime.mountBlock({
+        artifactId: "preview-doc",
+        container: liveContainer,
+        executionMode: "live",
+        source: `({
+          namespace: "markdown_preview_default",
+          g: { count: 0 },
+          layout: {
+            "button:add": { label: "Add", onclick: "g.count++" },
+            "text:value": { $text: "'count:' + String(g.count)" },
+          },
+        })`,
+      });
+
+      expect(liveContainer.querySelector(".slexkit-root")?.getAttribute("data-execution-mode")).toBe("live");
+      (liveContainer.querySelector(".slex-button") as HTMLButtonElement).click();
+      expect(liveContainer.textContent).toContain("count:1");
+      runtime.disposeArtifact("preview-doc");
+    });
+
+
     it("scopes and disposes default trusted markdown artifact namespaces", () => {
       const runtime = createSlexKitMarkdownRuntimeHost();
       const stateContainer = document.createElement("div");

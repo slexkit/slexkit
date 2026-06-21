@@ -8,6 +8,7 @@
     HostRuntimeAdapter,
     HostRuntimePolicy,
     SecureFrameOptions,
+    SlexStreamingMode,
   } from "slexkit";
 
   type RenderMode = "component" | "playground";
@@ -23,6 +24,8 @@
     slexkitSecurePolicy?: HostRuntimePolicy;
     slexkitHostAdapter?: HostRuntimeAdapter;
     slexkitSecureFrame?: boolean | SecureFrameOptions;
+    slexkitStreaming?: SlexStreamingMode | true;
+    slexkitIncomplete?: boolean;
   };
 
   let {
@@ -35,6 +38,8 @@
     slexkitSecurePolicy = {},
     slexkitHostAdapter,
     slexkitSecureFrame = true,
+    slexkitStreaming = false,
+    slexkitIncomplete = false,
   }: Props = $props();
 
   const extensions = [markedKatex({ singleDollarInline: true }), markedAlert()];
@@ -61,6 +66,8 @@
         securePolicy={slexkitSecurePolicy}
         hostAdapter={slexkitHostAdapter}
         secureFrame={slexkitSecureFrame}
+        streaming={slexkitStreaming}
+        incomplete={slexkitIncomplete}
         className="slex-doc-slexkit-demo"
       />
     {/snippet}

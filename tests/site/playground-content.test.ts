@@ -212,6 +212,8 @@ describe("site playground markdown renderer", () => {
     expect(renderer).toContain("createSlexKitMarkdownRuntimeHost");
     expect(renderer).toContain("runtimeHost.disposeArtifact(domain)");
     expect(renderer).toContain("if (ownsRuntimeHost) runtimeHost.disposeAll()");
+    expect(renderer).toContain("slexkitStreaming: options.slexkitStreaming ?? false");
+    expect(renderer).toContain("slexkitIncomplete: options.slexkitIncomplete ?? false");
     expect(renderer).not.toContain("createRoot");
     expect(markdownComponent).toContain("@humanspeak/svelte-markdown");
     expect(markdownComponent).toContain("normalizeHeadingAnchors(content)");
@@ -219,7 +221,12 @@ describe("site playground markdown renderer", () => {
     expect(markdownComponent).toContain("{#snippet code");
     expect(markdownComponent).toContain("slexkitRuntime");
     expect(markdownComponent).toContain("slexkitSecurePolicy");
+    expect(markdownComponent).toContain("slexkitStreaming");
+    expect(markdownComponent).toContain("slexkitIncomplete");
     expect(slexkitRenderer).toContain('"playground:inline"');
+    expect(slexkitRenderer).toContain("incomplete?: boolean");
+    expect(slexkitRenderer).toContain("parseFinalSlexSource");
+    expect(slexkitRenderer).toContain("namespace: `${scope}::default`");
     expect(slexkitRenderer).toContain("slex-doc-slexkit-demo--${effectiveRenderMode}");
     expect(slexkitRenderer).toContain("slex-doc-slexkit-demo--playground");
     expect(slexkitRenderer).toContain('sourceType: "slex"');

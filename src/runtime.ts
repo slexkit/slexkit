@@ -8,6 +8,8 @@ import {
   diagnoseSlexKitSource,
   SlexKitSyntaxError,
   formatSlexKitDiagnostic,
+  isLikelyIncompleteSlexSource,
+  parseSlexStreamingSource,
   mountSecureArtifact,
   parseSlexSource,
   parseSlexKitDsl,
@@ -34,7 +36,14 @@ import {
   SLEX_PROTOCOL_VERSION,
 } from "./version";
 export type { BootOptions } from "./engine/index";
-export type { SlexKitParseResult, SlexKitSourceDiagnostic } from "./engine/index";
+export type {
+  SlexKitParseResult,
+  SlexKitSourceDiagnostic,
+  SlexStreamingMode,
+  SlexStreamingParseOptions,
+  SlexStreamingParseResult,
+  SlexStreamingRepair,
+} from "./engine/index";
 export type {
   SlexConformanceCaseResult,
   SlexConformanceExpectedWarning,
@@ -100,6 +109,8 @@ const getRendererApi = getRenderer;
 const diagnoseSlexKitSourceApi = diagnoseSlexKitSource;
 const SlexKitSyntaxErrorApi = SlexKitSyntaxError;
 const formatSlexKitDiagnosticApi = formatSlexKitDiagnostic;
+const isLikelyIncompleteSlexSourceApi = isLikelyIncompleteSlexSource;
+const parseSlexStreamingSourceApi = parseSlexStreamingSource;
 const mountSecureArtifactApi = mountSecureArtifact;
 const parseSlexSourceApi = parseSlexSource;
 const parseSlexKitDslApi = parseSlexKitDsl;
@@ -132,6 +143,8 @@ export {
   diagnoseSlexKitSourceApi as diagnoseSlexKitSource,
   SlexKitSyntaxErrorApi as SlexKitSyntaxError,
   formatSlexKitDiagnosticApi as formatSlexKitDiagnostic,
+  isLikelyIncompleteSlexSourceApi as isLikelyIncompleteSlexSource,
+  parseSlexStreamingSourceApi as parseSlexStreamingSource,
   mountSecureArtifactApi as mountSecureArtifact,
   parseSlexSourceApi as parseSlexSource,
   parseSlexKitDslApi as parseSlexKitDsl,

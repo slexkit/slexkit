@@ -58,7 +58,7 @@ type SlexKitMarkdownRuntimeHost = {
 };
 ```
 
-`SlexKitMarkdownBlock` 包含 `artifactId`、`blockId`、`source`、`container`、`stateOnly`、`theme`、`dir`、`labels`。`SlexKitMarkdownRuntimeOptions` 包含 `mode`、`policy`、`hostAdapter`、`secureFrame`、`theme`、`dir`、`labels`。
+`SlexKitMarkdownBlock` 包含 `artifactId`、`blockId`、`source`、`container`、`stateOnly`、`theme`、`dir`、`labels`、`executionMode`。`SlexKitMarkdownRuntimeOptions` 包含 `mode`、`policy`、`hostAdapter`、`secureFrame`、`theme`、`dir`、`labels`、`executionMode`。
 
 ### Global singleton
 
@@ -200,6 +200,8 @@ export function Message({ markdown }: { markdown: string }) {
 ```
 
 该 renderer 处理 `slex` fences，支持 trusted 和 secure runtime modes，也可以委托给 shared Markdown runtime host instance。
+
+流式输出时，trusted renderer 默认使用 `streaming="repair"`：完整可解析源码会直接挂载；只缺 EOF 闭合符的前缀会以 preview 模式挂载；无法确定的前缀继续显示 placeholder；明确语法错误仍显示 diagnostics。`streaming="stable"` 只渲染已经可解析的前缀，`streaming={false}` 会等待 closing fence。Secure runtime 和 secure runtime host 不会在宿主 realm 执行 repaired prefix。
 
 ## Tiptap integration
 

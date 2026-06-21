@@ -25,10 +25,19 @@ export {
   diagnoseSlexKitSource,
   SlexKitSyntaxError,
   formatSlexKitDiagnostic,
+  isLikelyIncompleteSlexSource,
+  parseSlexStreamingSource,
   parseSlexSource,
   parseSlexKitDsl,
 } from "./diagnostics";
-export type { SlexKitParseResult, SlexKitSourceDiagnostic } from "./diagnostics";
+export type {
+  SlexKitParseResult,
+  SlexKitSourceDiagnostic,
+  SlexStreamingMode,
+  SlexStreamingParseOptions,
+  SlexStreamingParseResult,
+  SlexStreamingRepair,
+} from "./diagnostics";
 export { validateSlexSource } from "./validation";
 export type {
   SlexKitValidationMode,
@@ -244,6 +253,7 @@ export function mount(input: SlexExpression | string, container: HTMLElement, op
   root.dataset.namespace = ns;
   root.dataset.theme = theme;
   root.dataset.dir = dir;
+  root.dataset.executionMode = options.executionMode ?? "live";
   container.appendChild(root);
   store.roots.set(container, root);
 
@@ -253,6 +263,7 @@ export function mount(input: SlexExpression | string, container: HTMLElement, op
     root.appendChild(layoutRoot);
     renderTree(expression.layout ?? {}, layoutRoot, store.g, store.components, store.componentTypes, undefined, ns, options.api, {
       dir,
+      executionMode: options.executionMode ?? "live",
       labels: options.labels ?? {},
     });
     return () => {

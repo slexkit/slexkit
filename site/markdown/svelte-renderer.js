@@ -141,6 +141,8 @@ export function renderMarkdown(content, container, options = {}) {
       slexkitSecurePolicy: options.slexkitSecurePolicy ?? {},
       slexkitHostAdapter: options.slexkitHostAdapter,
       slexkitSecureFrame: options.slexkitSecureFrame ?? true,
+      slexkitStreaming: options.slexkitStreaming ?? false,
+      slexkitIncomplete: options.slexkitIncomplete ?? false,
     },
   });
   let active = true;

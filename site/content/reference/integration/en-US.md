@@ -65,6 +65,7 @@ type SlexKitMarkdownBlock = {
   theme?: ThemeMode;
   dir?: MountOptions["dir"];
   labels?: MountOptions["labels"];
+  executionMode?: MountOptions["executionMode"];
 };
 
 type SlexKitMarkdownRuntimeOptions = {
@@ -75,8 +76,11 @@ type SlexKitMarkdownRuntimeOptions = {
   theme?: ThemeMode;
   dir?: MountOptions["dir"];
   labels?: MountOptions["labels"];
+  executionMode?: MountOptions["executionMode"];
 };
 ```
+
+`executionMode: "preview"` is for speculative renders of repaired streaming prefixes. In preview mode, trusted mounts render readable UI but freeze write handlers, component emits, lifecycle hooks, and `api.*` capabilities. Blocks can override a host-level default by passing `executionMode` directly to `mountBlock()`.
 
 ### Global singleton
 
@@ -227,6 +231,8 @@ export function Message({ markdown }: { markdown: string }) {
 ```
 
 The renderer handles `slex` fences. It supports both trusted and secure runtime modes and can delegate to a shared Markdown runtime host instance.
+
+During token streaming, `streaming="repair"` is the default for trusted renders. A parseable source mounts immediately; a source missing only EOF closing tokens mounts as preview; uncertain prefixes stay on the placeholder; clear syntax errors still render diagnostics. Use `streaming="stable"` to render only already-parseable prefixes, or `streaming={false}` to wait for the closing fence. Secure runtime and secure runtime-host renders do not execute repaired prefixes in the host realm.
 
 ## Tiptap integration
 
