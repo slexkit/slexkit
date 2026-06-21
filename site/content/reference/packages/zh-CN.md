@@ -29,7 +29,7 @@ slexkit (root - real code)
  @slexkit/mcp                read-only MCP server for AI agents
 ```
 
-`@slexkit/runtime` 和 `@slexkit/components-svelte` 是根包的 thin wrapper，不是独立实现包。安装它们仍然需要安装 `slexkit`。`@slexkit/theme-shadcn` 只包含 CSS，没有 runtime implementation。
+`@slexkit/runtime` 和 `@slexkit/components-svelte` 是实际发布的 npm 包，但代码是根包的 thin wrapper，不是独立实现包。安装它们仍然需要安装 `slexkit`。`@slexkit/theme-shadcn` 只包含 CSS，没有 runtime implementation。
 
 ## `slexkit` root
 
@@ -42,14 +42,25 @@ npm install slexkit
 ```js
 import { mount, disposeNamespace, boot } from "slexkit";
 import "slexkit/style.css";
-import "slexkit/dist/style.css";
 ```
+
+`slexkit/dist/style.css` 是同一份发布 CSS 的兼容 alias；不要和 `slexkit/style.css` 同时导入。
 
 版本 helper 从 root 和 runtime entries 都导出：
 
 ```js
 import { SLEXKIT_VERSION, SLEX_PROTOCOL_VERSION, getSlexKitInfo } from "slexkit";
 ```
+
+根包也提供 `slex` CLI：
+
+```sh
+slex copy-runtime public/slexkit.runtime.js
+slex validate ./artifact.slex --mode secure
+slex validate --standard
+```
+
+`slex validate --standard` 会用当前 validator 运行内置 Slex conformance fixtures。CI 或 agent 消费时使用 `--json`。
 
 ## `@slexkit/runtime`
 
@@ -183,7 +194,12 @@ npx -y @slexkit/mcp
 ```sh
 bun run build
 bun run test
+bun run lint
 bun run smoke:release
+npm pack --dry-run --json
+slex validate --standard --json
 ```
 
-Release smoke 会 pack 并安装本仓库的 scoped package，验证 public entry points、CSS subpath exports，以及 MCP stdio binary 的 `initialize`、`tools/list` 和 `slexkitValidate`。
+Release smoke 会 pack 并安装本仓库的 scoped package，验证 public entry points、CSS subpath exports，运行已安装的 `slex validate --standard --json`，以及检查 MCP stdio binary 的 `initialize`、`tools/list` 和 `slexkitValidate`。
+
+发布前检查 `npm pack --dry-run --json` 是否包含 `dist/standard/*` 和 `scripts/cli.mjs`。Standard artifacts 必须匹配 `package.json`、`SLEX_PROTOCOL_VERSION` 和内置 conformance fixtures。

@@ -234,6 +234,8 @@ g.onUpdate_<name>()     -after $for item changes
 | `setSlexKitRuntimeUrl` | `(url) => void` | 设置默认 sandbox runtime URL |
 | `diagnoseSlexKitSource` | `(source, error) => Diagnostic` | 定位源码中的语法错误 |
 | `parseSlexSource` | `(source) => ParseResult` | 将 Slex source 解析为对象 |
+| `validateSlexSource` | `(source, options?) => ValidationResult` | parse-first 验证 source，并返回版本、usage 与稳定 warning codes |
+| `runSlexConformance` | `(options?) => ConformanceReport` | 运行内置标准 conformance fixtures |
 | `formatSlexKitDiagnostic` | `(diagnostic) => string` | 将 diagnostic 格式化为可读字符串 |
 
 完整 runtime 行为见 [Runtime Model](/docs/reference/runtime)。

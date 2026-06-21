@@ -104,6 +104,27 @@ Configures a flush function for component scope -used by framework adapters to s
 function configureComponentScope(options: { flush?: () => void }): void;
 ```
 
+## Validation and conformance
+
+### `validateSlexSource(source, options)`
+
+Validates Slex source after parsing. The result includes `schemaVersion`, `protocolVersion`, `logicProfileVersion`, usage lists, and warning codes. Syntax failures return a diagnostic.
+
+```ts
+function validateSlexSource(
+  source: string,
+  options?: { mode?: "trusted" | "secure" }
+): ValidationResult;
+```
+
+### `runSlexConformance(options)`
+
+Runs the bundled standard fixtures against the current validator. Pass `fixtureId` to run one fixture.
+
+```ts
+function runSlexConformance(options?: { fixtureId?: string }): ConformanceReport;
+```
+
 ## Namespace store
 
 `namespace` is the state domain. Multiple mounts with the same namespace share one store:

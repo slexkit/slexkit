@@ -29,7 +29,7 @@ slexkit (root - real code)
  @slexkit/mcp ─── read-only MCP server for AI agents
 ```
 
-`@slexkit/runtime` and `@slexkit/components-svelte` are thin wrappers that re-export from the root `slexkit` package. They are not standalone physical packages; installing them still requires installing `slexkit`. `@slexkit/theme-shadcn` is CSS-only and contains no runtime implementation.
+`@slexkit/runtime` and `@slexkit/components-svelte` are published npm packages, but their code is a thin wrapper around the root `slexkit` package. They are not independent implementation packages; installing them still requires installing `slexkit`. `@slexkit/theme-shadcn` is CSS-only and contains no runtime implementation.
 
 ## slexkit (root)
 
@@ -42,14 +42,25 @@ npm install slexkit
 ```js
 import { mount, disposeNamespace, boot } from "slexkit";
 import "slexkit/style.css";       // default styles (includes all component CSS)
-import "slexkit/dist/style.css";  // same distributed CSS bundle via dist alias
 ```
+
+`slexkit/dist/style.css` is a compatibility alias for the same distributed CSS bundle; do not import both paths.
 
 Version helpers are exported from both the root and runtime entries:
 
 ```js
 import { SLEXKIT_VERSION, SLEX_PROTOCOL_VERSION, getSlexKitInfo } from "slexkit";
 ```
+
+The root package also ships the `slex` CLI:
+
+```sh
+slex copy-runtime public/slexkit.runtime.js
+slex validate ./artifact.slex --mode secure
+slex validate --standard
+```
+
+`slex validate --standard` runs the bundled Slex conformance fixtures against the current validator. Use `--json` for CI or agent consumption.
 
 ## @slexkit/runtime
 
@@ -183,7 +194,12 @@ All scoped packages are release-checked together:
 ```sh
 bun run build
 bun run test
+bun run lint
 bun run smoke:release
+npm pack --dry-run --json
+slex validate --standard --json
 ```
 
-The release smoke packs and installs every scoped package in this repository, verifies public entry points, verifies CSS subpath exports, and starts the MCP stdio binary to check `initialize`, `tools/list`, and `slexkitValidate`.
+The release smoke packs and installs every scoped package in this repository, verifies public entry points, verifies CSS subpath exports, runs the installed `slex validate --standard --json`, and starts the MCP stdio binary to check `initialize`, `tools/list`, and `slexkitValidate`.
+
+Before publishing, check that `npm pack --dry-run --json` includes `dist/standard/*` and `scripts/cli.mjs`. Standard artifacts must match `package.json`, `SLEX_PROTOCOL_VERSION`, and the bundled conformance fixtures.

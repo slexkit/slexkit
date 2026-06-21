@@ -228,6 +228,8 @@ Component disposal is triggered by normal unmount, `$if` toggle-off, `$for` item
 | `setSlexKitRuntimeUrl`              | `(url) => void`                             | Set default sandbox runtime URL                                      |
 | `diagnoseSlexKitSource`             | `(source, error) => Diagnostic`             | Locate syntax error in source                                        |
 | `parseSlexSource`                   | `(source) => ParseResult`                   | Parse Slex source to object                                          |
+| `validateSlexSource`                | `(source, options?) => ValidationResult`    | Parse-first validation with versions, usage, and stable warning codes |
+| `runSlexConformance`                | `(options?) => ConformanceReport`           | Run bundled standard conformance fixtures                            |
 | `formatSlexKitDiagnostic`           | `(diagnostic) => string`                    | Format diagnostic to readable string                                 |
 
 ## 11. Error types

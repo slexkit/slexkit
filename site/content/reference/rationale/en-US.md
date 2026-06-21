@@ -109,7 +109,9 @@ The component layer (Svelte) adds `svelte` as a dependency only when using `@sle
 
 ### vs A2UI
 
-A2UI is a cross-platform declarative message protocol with a component catalog approach. SlexKit v0 is browser-focused, Markdown-friendly, and uses executable JavaScript expressions for interactivity rather than declarative wiring. SlexKit does not claim to be a cross-platform UI standard.
+A2UI is a cross-platform declarative UI protocol. SlexKit is a Markdown runtime format: component tree, local state, expressions, and trust boundary are part of one artifact.
+
+The standard bundle therefore includes more than schema and component catalog. It also publishes the logic profile, capability catalog, and conformance fixtures. Hosts can bridge a declarative subset to A2UI, but Slex itself remains executable.
 
 ### vs application frameworks
 

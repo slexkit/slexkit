@@ -13,13 +13,13 @@ SlexKit 的 icon system 为组件提供统一 icon 解析链：先查自定义�
 
 ## Resolution chain
 
-当组件收到 `icon` 字段时，runtime 按顺序解析：
+当组件收到 `icon` 字段时，同步解析和异步加载按顺序使用：
 
 1. `getRegisteredIcon(name, state)`：用户注册的 icon。
 2. 内置 Phosphor icon。
-3. `resolveIconifyIcon(name, state)`：Iconify fallback。
+3. `loadIcon(name, state)`：当前两步没有命中时，按 `resolveIconifyIcon()` 和 `iconifySvgUrl()` 走 Iconify async fallback。
 
-解析结果是 SVG string 或可加载 URL，具体由组件和宿主策略决定。
+同步 `getIcon()` 只返回已注册或内置 SVG string；不会发起网络请求。需要外部 Iconify fallback 的组件会调用 async `loadIcon()`。
 
 ## Public API
 
@@ -56,7 +56,7 @@ registerIcons({
 
 #### `getIcon(name, state?)`
 
-按完整解析链获取 icon。
+同步获取自定义注册或内置 Phosphor icon。
 
 #### `getRegisteredIcon(name, state?)`
 

@@ -32,9 +32,9 @@ npm install slexkit @slexkit/runtime
 
 ```js
 import { mount, register } from "@slexkit/runtime";
-import "@slexkit/components-svelte";
-import "@slexkit/theme-shadcn/style.css";
 ```
+
+This entry does not auto-register the official Svelte components. Use the root `slexkit` package, or explicitly import `@slexkit/components-svelte`, when you want the bundled components.
 
 For package boundaries and host-specific install commands, see [Package Boundaries](/docs/reference/packages).
 

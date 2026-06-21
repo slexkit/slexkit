@@ -34,10 +34,10 @@ const handle = renderToolCall({
   }
 }, container);
 
-const result = await handle.result;
+const result = await handle.promise;
 ```
 
-`ToolRenderHandle` 通常包含 `result` Promise、`cleanup()` 与底层 runtime cleanup。用户提交后 result resolve；取消或卸载时应清理 DOM。
+`ToolRenderHandle` 包含 `promise: Promise<ToolResult>` 与 `dispose()`。用户提交或忽略时 promise resolve；取消或卸载时调用 `dispose()` 清理 DOM。
 
 ### `registerToolTemplate(name, compiler)`
 

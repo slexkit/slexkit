@@ -32,9 +32,9 @@ npm install slexkit @slexkit/runtime
 
 ```js
 import { mount, register } from "@slexkit/runtime";
-import "@slexkit/components-svelte";
-import "@slexkit/theme-shadcn/style.css";
 ```
+
+这个入口不会自动注册官方 Svelte components。需要官方组件时，使用根包 `slexkit`，或显式导入 `@slexkit/components-svelte`。
 
 包边界和宿主安装组合见 [Package Boundaries](/docs/reference/packages)。
 

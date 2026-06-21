@@ -77,6 +77,27 @@ function register(
 function configureComponentScope(options: { flush?: () => void }): void;
 ```
 
+## Validation and conformance
+
+### `validateSlexSource(source, options)`
+
+解析后验证 Slex source。结果包含 `schemaVersion`、`protocolVersion`、`logicProfileVersion`、usage lists 和 warning codes。语法失败时返回 diagnostic。
+
+```ts
+function validateSlexSource(
+  source: string,
+  options?: { mode?: "trusted" | "secure" }
+): ValidationResult;
+```
+
+### `runSlexConformance(options)`
+
+用当前 validator 运行内置标准 fixtures。传入 `fixtureId` 可以只运行单个 fixture。
+
+```ts
+function runSlexConformance(options?: { fixtureId?: string }): ConformanceReport;
+```
+
 ## Namespace store
 
 `namespace` 是状态域。多个 mount 使用同一 namespace 时共享 store：
