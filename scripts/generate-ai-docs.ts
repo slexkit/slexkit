@@ -9,6 +9,12 @@ import {
 } from "../src/engine/capabilities";
 import { discoverExampleMarkdown } from "../site/data/content-discovery.js";
 import { loadExampleDocs } from "../site/data/examples.js";
+import {
+  createStandardArtifacts,
+  hashStandardText,
+  SLEX_STANDARD_ARTIFACTS,
+  type SlexStandardArtifactFilename,
+} from "../src/standard/artifacts";
 
 export const aiDocFilenames = [
   "llms.txt",
@@ -46,6 +52,7 @@ export type SlexKitAiManifest = {
   expressionContext: typeof slexkitExpressionContext;
   stdlib: typeof slexkitStdlibDocs;
   capabilities: typeof slexkitRuntimeCapabilities;
+  standardArtifacts: Record<SlexStandardArtifactFilename, { path: string; hash: string }>;
   components: Array<{
     type: string;
     title: string;
@@ -95,6 +102,7 @@ const referencePages = [
   ["integration", "Host Integration", "Markdown renderers, Svelte custom hosts, Streamdown, Tiptap, Obsidian, and artifact lifecycle."],
   ["security", "Security Runtime", "Threat model, sandbox iframe, postMessage bridge, policy, and fail-closed behavior."],
   ["packages", "Package Boundaries", "Package relationships, installation matrix, and packaging strategy."],
+  ["standard", "Slex Standard Artifacts", "JSON Schema, component catalog, logic profile, capabilities catalog, conformance fixtures, and manifest."],
   ["toolhost", "ToolHost", "Tool call rendering, built-in templates, custom templates, and submit boundaries."],
   ["icons", "Icon System", "Phosphor icons, custom icon registration, Iconify fallback, and API reference."],
   ["rationale", "Design Rationale", "Why SlexKit uses object literals, expressions, explicit fences, and secure/trusted modes."],
@@ -490,6 +498,9 @@ function indexText(version: string, pages: AiDocPage[]): string {
     "- [ToolHost docs](/llms-toolhost.txt): structured user-input UI docs.",
     "- [Authoring rules](/llms-authoring.txt): concise rules for Markdown `slex` fences.",
     "- [AI manifest](/slexkit-ai-manifest.json): structured page, component, and hash metadata.",
+    "- [Standard manifest](/standard/slex-standard-manifest.json): schema, component catalog, logic profile, capabilities, and conformance metadata.",
+    "- [Logic profile](/standard/slex-logic-profile.json): `$` read-pipes, `on*` write-pipes, directives, context, and secure-mode guidance.",
+    "- [Component catalog](/standard/slex-component-catalog.json): public component props, state modes, children, examples, docs, and hashes.",
     "",
     "SlexKit raw docs are Markdown (`.md`) with explicit `slex` fences. The interactive layer is the fenced `slex` source inside each Markdown page.",
     "",
@@ -547,8 +558,9 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
   const packageJson = JSON.parse(await readProjectFile("package.json")) as { version?: string };
   const version = packageJson.version ?? "0.0.0";
   const { pages, sourcePages, sourceHashes } = await collectPages();
+  const standard = createStandardArtifacts(version, generatedAt);
   const runtimePages = sourcePages.filter(
-    (page) => page.group === "Reference" && ["spec", "usage", "runtime", "integration", "security", "packages"].some((slug) => page.id === `reference/${slug}`),
+    (page) => page.group === "Reference" && ["spec", "usage", "runtime", "integration", "security", "packages", "standard"].some((slug) => page.id === `reference/${slug}`),
   );
   const toolhostPages = sourcePages.filter((page) => page.id === "reference/toolhost");
 
@@ -607,6 +619,15 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
       expressionContext: slexkitExpressionContext,
       stdlib: slexkitStdlibDocs,
       capabilities: slexkitRuntimeCapabilities,
+      standardArtifacts: Object.fromEntries(
+        SLEX_STANDARD_ARTIFACTS.map((filename) => [
+          filename,
+          {
+            path: `/standard/${filename}`,
+            hash: hashStandardText(standard.files[filename]),
+          },
+        ]),
+      ) as SlexKitAiManifest["standardArtifacts"],
       components,
       sourceHashes: {
         ...sourceHashes,

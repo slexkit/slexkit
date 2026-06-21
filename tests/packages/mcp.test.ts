@@ -86,7 +86,13 @@ describe("@slexkit/mcp stdio server", () => {
       });
       const validated = await waitForLine(proc);
       expect(validated.result).toMatchObject({
-        structuredContent: { ok: true, componentUsage: ["text"] },
+        structuredContent: {
+          ok: true,
+          schemaVersion: expect.any(String),
+          protocolVersion: "0.1",
+          logicProfileVersion: expect.any(String),
+          componentUsage: ["text"],
+        },
       });
 
       write({
@@ -123,10 +129,56 @@ describe("@slexkit/mcp stdio server", () => {
       const pages = (docs.result as { structuredContent: { pages: unknown[] } }).structuredContent.pages;
       expect(pages.length).toBeGreaterThan(0);
       expect((docs.result as { structuredContent: { capabilities: { stdlib: unknown[]; capabilities: unknown[] } } }).structuredContent.capabilities.stdlib.length).toBeGreaterThan(0);
+      expect((docs.result as { structuredContent: { standardArtifacts: Record<string, unknown> } }).structuredContent.standardArtifacts["slex-standard-manifest.json"]).toBeTruthy();
 
       write({
         jsonrpc: "2.0",
-        id: 6,
+        id: 7,
+        method: "tools/call",
+        params: {
+          name: "slexkitDocs",
+          arguments: { standardArtifact: "slex-logic-profile.json" },
+        },
+      });
+      const standard = await waitForLine(proc);
+      expect(standard.result).toMatchObject({
+        structuredContent: {
+          standardArtifact: {
+            filename: "slex-logic-profile.json",
+            content: {
+              sourceFormat: { fenceLanguage: "slex" },
+              secureMode: {
+                policyGatedApi: expect.arrayContaining(["api.fetch"]),
+              },
+            },
+          },
+        },
+      });
+
+      write({
+        jsonrpc: "2.0",
+        id: 8,
+        method: "tools/call",
+        params: {
+          name: "slexkitDocs",
+          arguments: { conformanceReport: true, conformanceFixture: "valid-full-envelope" },
+        },
+      });
+      const conformance = await waitForLine(proc);
+      expect(conformance.result).toMatchObject({
+        structuredContent: {
+          conformanceReport: {
+            ok: true,
+            total: 1,
+            failed: 0,
+            cases: [expect.objectContaining({ id: "valid-full-envelope", ok: true })],
+          },
+        },
+      });
+
+      write({
+        jsonrpc: "2.0",
+        id: 11,
         method: "tools/call",
         params: {
           name: "slexkitExamples",
@@ -144,7 +196,7 @@ describe("@slexkit/mcp stdio server", () => {
 
       write({
         jsonrpc: "2.0",
-        id: 8,
+        id: 12,
         method: "tools/call",
         params: {
           name: "slexkitValidate",
@@ -170,7 +222,7 @@ describe("@slexkit/mcp stdio server", () => {
 
       write({
         jsonrpc: "2.0",
-        id: 9,
+        id: 13,
         method: "tools/call",
         params: {
           name: "missingTool",

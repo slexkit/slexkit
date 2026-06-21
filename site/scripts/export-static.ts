@@ -12,6 +12,7 @@ import {
 import { normalizeSiteBase } from "../app/site-base.js";
 import { buildSiteAssets } from "./build";
 import { generateAiDocs, writeAiRawMarkdown } from "../../scripts/generate-ai-docs";
+import { generateStandardArtifacts } from "../../scripts/generate-standard-artifacts";
 import { createSeoIndex, injectSeoHead, prerenderedHomeHtml, renderRobotsTxt, renderSitemapXml } from "../data/seo.js";
 import { prerenderMarkdown } from "./prerender-markdown.js";
 import { loadExampleDocs } from "../data/examples.js";
@@ -260,6 +261,7 @@ export async function exportStaticSite() {
   await writeFile(join(outDir, "playground.html"), playgroundHtml, "utf-8");
   await writeFile(join(outDir, ".nojekyll"), "", "utf-8");
   const aiDocs = await generateAiDocs({ outputDirs: [outDir, join(projectRoot, "dist", "ai")] });
+  await generateStandardArtifacts({ outputDirs: [join(outDir, "standard"), join(projectRoot, "dist", "standard")] });
   await writeAiRawMarkdown(outDir, aiDocs.manifest.pages);
 
   console.log(`Exported static site to ${outDir} with SITE_BASE=${siteBase}`);

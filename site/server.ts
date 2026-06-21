@@ -326,6 +326,21 @@ async function aiDocsResponse(pathname: string) {
   }
 }
 
+async function standardArtifactResponse(pathname: string) {
+  const filename = pathname.slice("/standard/".length);
+  if (!filename || filename.includes("..") || filename.includes("/") || filename.includes("\\")) {
+    return new Response("Not found", { status: 404 });
+  }
+  const path = join(projectRoot, "dist", "standard", filename);
+  try {
+    return new Response(await readFile(path), {
+      headers: { "content-type": contentType(path), "cache-control": "no-store" },
+    });
+  } catch {
+    return new Response("Not found", { status: 404 });
+  }
+}
+
 async function markdownAssetResponse(pathname: string) {
   let relative: string;
   try {
@@ -360,7 +375,7 @@ async function markdownAssetResponse(pathname: string) {
   }
 
   const wikiReferenceDocMatch = relative.match(
-    /^docs\/reference\/(usage|runtime|security|spec|rationale|packages|integration|toolhost|icons)\.md$/,
+    /^docs\/reference\/(usage|runtime|security|spec|rationale|packages|integration|standard|toolhost|icons)\.md$/,
   );
   if (wikiReferenceDocMatch) {
     relative = `content/reference/${wikiReferenceDocMatch[1]}/${locale}.md`;
@@ -380,7 +395,7 @@ async function markdownAssetResponse(pathname: string) {
     relative = `content/guides/${docsDocMatch[1]}/${locale}.md`;
   }
 
-  const legacyReferenceDocMatch = relative.match(/^docs\/(guide|runtime|security|spec|packages|integration|toolhost|icons|rationale|design)\.md$/);
+  const legacyReferenceDocMatch = relative.match(/^docs\/(guide|runtime|security|spec|packages|integration|standard|toolhost|icons|rationale|design)\.md$/);
   if (legacyReferenceDocMatch) {
     const slug = legacyReferenceDocMatch[1] === "guide" ? "usage" : legacyReferenceDocMatch[1] === "design" ? "rationale" : legacyReferenceDocMatch[1];
     relative = `content/reference/${slug}/${locale}.md`;
@@ -543,6 +558,7 @@ Bun.serve({
     ) {
       return aiDocsResponse(url.pathname);
     }
+    if (url.pathname.startsWith("/standard/")) return standardArtifactResponse(url.pathname);
     if (url.pathname.endsWith(".md")) return markdownAssetResponse(url.pathname);
     if (request.headers.get("accept")?.includes("text/markdown")) {
       const markdownPath = `${url.pathname.replace(/\/$/, "")}.md`;

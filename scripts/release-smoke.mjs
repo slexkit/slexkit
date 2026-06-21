@@ -86,7 +86,7 @@ installPackedApp([...tarballs, "react", "react-dom", "streamdown", "@tiptap/core
 writeFileSync(
   join(appDir, "smoke.mjs"),
   [
-    "import { spawn } from 'node:child_process';",
+    "import { spawn, spawnSync } from 'node:child_process';",
     "import { mount as rootMount } from 'slexkit/runtime';",
     "import { mount as scopedMount } from '@slexkit/runtime';",
     "import '@slexkit/components-svelte';",
@@ -113,6 +113,14 @@ writeFileSync(
     "if (!themeButtonCss.endsWith('button.css')) throw new Error('theme component CSS export did not resolve');",
     "if (!streamdownCss.endsWith('style.css')) throw new Error('streamdown CSS export did not resolve');",
     "if (!tiptapCss.endsWith('style.css')) throw new Error('tiptap CSS export did not resolve');",
+    "const slexBinBase = join(process.cwd(), 'node_modules', '.bin', 'slex');",
+    "const slexBin = (process.platform === 'win32' ? [`${slexBinBase}.cmd`, `${slexBinBase}.exe`, `${slexBinBase}.bunx`, slexBinBase] : [slexBinBase]).find(existsSync);",
+    "if (!slexBin) throw new Error('slex binary missing');",
+    "const slexCommand = process.platform === 'win32' && slexBin.endsWith('.cmd') ? ['cmd.exe', ['/d', '/s', '/c', slexBin, 'validate', '--standard', '--json']] : [slexBin, ['validate', '--standard', '--json']];",
+    "const slexValidate = spawnSync(slexCommand[0], slexCommand[1], { cwd: process.cwd(), encoding: 'utf8', shell: false });",
+    "if (slexValidate.status !== 0) throw new Error(`slex validate --standard failed: ${slexValidate.stderr || slexValidate.stdout}`);",
+    "const slexReport = JSON.parse(slexValidate.stdout);",
+    "if (slexReport.ok !== true || slexReport.failed !== 0) throw new Error('slex conformance report failed');",
     "const mcpBinBase = join(process.cwd(), 'node_modules', '.bin', 'slexkit-mcp');",
     "const mcpBin = (process.platform === 'win32' ? [`${mcpBinBase}.cmd`, `${mcpBinBase}.exe`, `${mcpBinBase}.bunx`, mcpBinBase] : [mcpBinBase]).find(existsSync);",
     "if (!mcpBin) throw new Error('slexkit-mcp binary missing');",

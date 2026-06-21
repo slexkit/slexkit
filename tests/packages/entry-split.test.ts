@@ -1,12 +1,24 @@
 import { describe, expect, it } from "bun:test";
 import { existsSync } from "node:fs";
-import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { disposeNamespace, mount } from "../../src/runtime";
 
 async function sleep(ms = 40): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function runCli(args: string[]) {
+  const result = Bun.spawnSync(["node", "scripts/cli.mjs", ...args], {
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  return {
+    exitCode: result.exitCode,
+    stdout: new TextDecoder().decode(result.stdout),
+    stderr: new TextDecoder().decode(result.stderr),
+  };
 }
 
 describe("split runtime and Svelte component entries", () => {
@@ -116,6 +128,7 @@ describe("split runtime and Svelte component entries", () => {
     expect(rootPackage.exports["./style.css"]).toBe("./dist/slexkit.css");
     expect(rootPackage.exports["./base.css"]).toBe("./dist/base.css");
     expect(rootPackage.exports["./components/*.css"]).toBe("./dist/components/*.css");
+    expect(rootPackage.exports["./standard/*"]).toBe("./dist/standard/*");
     expect(themePackage.exports["./style.css"]).toBe("./style.css");
     expect(themePackage.exports["./base.css"]).toBe("./base.css");
     expect(themePackage.exports["./components/*.css"]).toBe("./components/*.css");
@@ -166,6 +179,8 @@ describe("split runtime and Svelte component entries", () => {
 
     expect(existsSync("packages/mcp/dist/index.js")).toBe(true);
     expect(existsSync("packages/mcp/dist/data/slexkit-ai-manifest.json")).toBe(true);
+    expect(existsSync("dist/standard/slex-standard-manifest.json")).toBe(true);
+    expect(existsSync("packages/mcp/dist/data/standard/slex-logic-profile.json")).toBe(true);
     expect(rootPackage.repository?.type).toBe("git");
     expect(rootPackage.repository?.url).toContain("github.com/slexkit/slexkit");
     expect(rootPackage.homepage).toContain("github.com/slexkit/slexkit");
@@ -188,6 +203,8 @@ describe("split runtime and Svelte component entries", () => {
     });
     expect(runtime.SLEXKIT_VERSION).toBe(rootPackage.version);
     expect(runtime.getSlexKitInfo()).toEqual(root.getSlexKitInfo());
+    expect(root.runSlexConformance().ok).toBe(true);
+    expect(runtime.runSlexConformance().ok).toBe(true);
     expect(siteVersion.SLEXKIT_SITE_VERSION).toBe(rootPackage.version);
     expect(siteVersion.SLEX_PROTOCOL_VERSION).toBe("0.1");
   });
@@ -206,6 +223,36 @@ describe("split runtime and Svelte component entries", () => {
 
       expect(targetInfo.size).toBe(sourceInfo.size);
       expect(copied).toBe(source);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it("validates source files and standard fixtures through the published CLI", async () => {
+    const standard = runCli(["validate", "--standard", "--json"]);
+    expect(standard.exitCode, standard.stderr).toBe(0);
+    expect(JSON.parse(standard.stdout)).toMatchObject({
+      ok: true,
+      failed: 0,
+      total: expect.any(Number),
+    });
+
+    const tempDir = await mkdtemp(join(tmpdir(), "slexkit-validate-"));
+    try {
+      const validPath = join(tempDir, "valid.slex");
+      await writeFile(validPath, '{ slex: "0.1", namespace: "cli_valid", layout: { "text:message": { text: "ok" } } }', "utf-8");
+      const valid = runCli(["validate", validPath, "--json"]);
+      expect(valid.exitCode, valid.stderr).toBe(0);
+      expect(JSON.parse(valid.stdout)).toMatchObject({ ok: true, componentUsage: ["text"] });
+
+      const warningPath = join(tempDir, "warning.slex");
+      await writeFile(warningPath, '{ namespace: "cli_warning", layout: { "text:message": { madeUp: true } } }', "utf-8");
+      const warning = runCli(["validate", warningPath, "--strict", "--json"]);
+      expect(warning.exitCode).toBe(1);
+      expect(JSON.parse(warning.stdout)).toMatchObject({
+        ok: true,
+        warnings: expect.arrayContaining([expect.objectContaining({ code: "unknown_prop" })]),
+      });
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }

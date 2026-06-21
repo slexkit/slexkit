@@ -26,6 +26,9 @@ describe("AI documentation generation", () => {
     expect(build.files["llms.txt"]).toContain("/llms-components.txt");
     expect(build.files["llms.txt"]).toContain("/llms-capabilities.txt");
     expect(build.files["llms.txt"]).toContain("/slexkit-ai-manifest.json");
+    expect(build.files["llms.txt"]).toContain("/standard/slex-standard-manifest.json");
+    expect(build.files["llms.txt"]).toContain("/standard/slex-logic-profile.json");
+    expect(build.files["llms.txt"]).toContain("/standard/slex-component-catalog.json");
     expect(build.files["llms.txt"]).toContain("### Guides");
     expect(build.files["llms.txt"]).toContain("### Examples");
     expect(build.files["llms.txt"]).toContain("### Components");
@@ -34,9 +37,11 @@ describe("AI documentation generation", () => {
     expect(build.files["llms.txt"]).not.toContain(".mdx");
     expect(build.files["llms.txt"]).toContain("/docs/guides/integration.md");
     expect(build.files["llms.txt"]).toContain("/docs/reference/spec.md");
+    expect(build.files["llms.txt"]).toContain("/docs/reference/standard.md");
     expect(build.files["llms.txt"]).toContain("/docs/releases/changelog.md");
     expect(build.manifest.pages.some((page) => page.rawHref === "/docs/guides/integration.md")).toBe(true);
     expect(build.manifest.pages.some((page) => page.rawHref === "/docs/reference/spec.md")).toBe(true);
+    expect(build.manifest.pages.some((page) => page.rawHref === "/docs/reference/standard.md")).toBe(true);
     expect(build.manifest.pages.some((page) => page.rawHref === "/docs/releases/changelog.md")).toBe(true);
     expect(build.files["llms-components.txt"]).toContain(`Public component count: ${publicComponentTypes.length}`);
     expect(build.files["llms-capabilities.txt"]).toContain("std.math.clamp");
@@ -44,6 +49,8 @@ describe("AI documentation generation", () => {
     expect(build.manifest.expressionContext.some((item) => item.name === "std")).toBe(true);
     expect(build.manifest.stdlib.some((namespace) => namespace.name === "math")).toBe(true);
     expect(build.manifest.capabilities.some((capability) => capability.name === "api.fetch")).toBe(true);
+    expect(build.manifest.standardArtifacts["slex-standard-manifest.json"].path).toBe("/standard/slex-standard-manifest.json");
+    expect(build.manifest.standardArtifacts["slex-logic-profile.json"].hash).toMatch(/^[0-9a-f]{8}$/);
     expect(build.manifest.components).toHaveLength(publicComponentTypes.length);
     expect(build.manifest.pages.every((page) => page.rawHref.endsWith(".md"))).toBe(true);
   });

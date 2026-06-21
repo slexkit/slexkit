@@ -27,6 +27,10 @@ SlexKit follows the assistant-ui information architecture: a clear index, a full
       "link:toolhost": { href: "/llms-toolhost.txt", text: "/llms-toolhost.txt - structured input", icon: "cursor-click" },
       "link:authoring": { href: "/llms-authoring.txt", text: "/llms-authoring.txt - slex fence authoring rules", icon: "pencil-simple" },
       "link:manifest": { href: "/slexkit-ai-manifest.json", text: "/slexkit-ai-manifest.json - machine-readable index", icon: "brackets-curly" },
+      "link:standard": { href: "/standard/slex-standard-manifest.json", text: "/standard/slex-standard-manifest.json - standard artifacts", icon: "brackets-curly" },
+      "link:catalog": { href: "/standard/slex-component-catalog.json", text: "/standard/slex-component-catalog.json - component catalog", icon: "puzzle-piece" },
+      "link:logic": { href: "/standard/slex-logic-profile.json", text: "/standard/slex-logic-profile.json - logic profile", icon: "function" },
+      "link:conformance": { href: "/standard/slex-conformance.json", text: "/standard/slex-conformance.json - conformance fixtures", icon: "check-circle" },
       "text:note": { text: "Raw docs use .md routes such as /docs/components/card.md. Do not add .mdx routes." }
     }
   }
@@ -41,6 +45,7 @@ Minimal reading path:
 4. Use [`/llms-capabilities.txt`](/llms-capabilities.txt) for `std.*` and policy-gated `api.*`.
 5. Use [`/llms-runtime.txt`](/llms-runtime.txt) for host and secure runtime integration.
 6. Use [`/llms-toolhost.txt`](/llms-toolhost.txt) only when user input must return structured data to the host.
+7. Use [`/standard/slex-standard-manifest.json`](/standard/slex-standard-manifest.json), [`/standard/slex-logic-profile.json`](/standard/slex-logic-profile.json), and [`/standard/slex-component-catalog.json`](/standard/slex-component-catalog.json) when an agent needs machine-readable authoring or validation context.
 
 SlexKit raw docs are ordinary `.md` pages with explicit `slex` fences. There is no `.mdx` route — `slex` fences are the interactive layer.
 
@@ -59,6 +64,8 @@ Key patterns:
 - Display UI uses explicit `slex` fenced blocks plus Markdown fallback.
 - Slex source uses `{ slex, namespace, g, layout }`; use `slex: "0.1"` for the current public protocol.
 - Use `std.*` for common calculations, formatting, units, and small statistics.
+- Use `/standard/slex-logic-profile.json` and `/standard/slex-component-catalog.json` for machine-readable rules before generating Slex.
+- Run `slex validate --standard` to verify the current package against bundled standard fixtures.
 - ToolHost is only for structured user input flows.
 - Untrusted or agent-generated source should use the secure runtime.
 - Raw docs are `.md` files with `slex` fences, not `.mdx`.
@@ -79,7 +86,7 @@ Use `/author` for display UI. Use `/toolhost` when the host must receive a submi
 
 ## MCP
 
-`@slexkit/mcp` provides read-only access to SlexKit documentation, examples, and Slex source validation. Keep the public surface small and natural: docs, examples, validate.
+`@slexkit/mcp` provides read-only access to SlexKit documentation, examples, standard artifacts, conformance reports, and Slex source validation. Keep the public surface small and natural: docs, examples, validate.
 
 ```slex
 {
@@ -91,7 +98,7 @@ Use `/author` for display UI. Use `/toolhost` when the host must receive a submi
       "card:docs": {
         title: "slexkitDocs",
         icon: "book-open-text",
-        "text:body": { text: "Search or fetch Markdown docs by query, group, slug, or raw .md URL." }
+        "text:body": { text: "Search or fetch Markdown docs, standard artifact JSON, or a conformance report." }
       },
       "card:examples": {
         title: "slexkitExamples",
