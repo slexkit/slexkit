@@ -65,7 +65,8 @@ describe("adapter examples", () => {
     expect(route).toContain("Browse by host, learning path, or use case");
     expect(route).toContain("Streamdown");
     expect(route).toContain("Tiptap");
-    expect(route).toContain("Svelte Markdown Host");
+    expect(route).toContain("Svelte Markdown");
+    expect(route).toContain("Obsidian");
     expect(route).toContain("return null");
   });
 });

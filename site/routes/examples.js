@@ -133,21 +133,23 @@ function localizedCopy(locale) {
       lede: "可直接运行的 SlexKit 示例。",
       landingEyebrow: "示例入口",
       landingTitle: "按宿主、入门路径或应用场景浏览",
-      landingDescription: "这里收录可运行示例和宿主接入案例，便于直接对照源码。",
+      landingDescription: "查看各宿主适配的可运行示例、接入说明和源码。",
       hostIntegration: "宿主集成",
-      hostIntegrationDesc: "Streamdown、Tiptap，以及官网自定义 Markdown host 的接入方式。",
+      hostIntegrationDesc: "Streamdown、Tiptap、Svelte Markdown 和 Obsidian 的接入方式。",
       gettingStarted: "入门教程",
       gettingStartedDesc: "从静态卡片、响应式状态到多输入协同，按顺序理解 SlexKit。",
       calculators: "计算器示例",
       calculatorsDesc: "工程、电子和成本估算场景。",
       hostAdapters: "宿主接入",
-      streamdownAdapterDesc: "React/Streamdown 接入示例。",
-      tiptapAdapterDesc: "Tiptap 编辑器接入示例。",
+      streamdownAdapterDesc: "Streamdown renderer 插件。",
+      tiptapAdapterDesc: "Tiptap editor extension。",
       openExample: "打开示例",
       openGuide: "查看指南",
       viewSource: "查看源码",
-      svelteHost: "Svelte Markdown 宿主",
-      svelteHostDesc: "官网内部 renderer 的 custom Markdown host 参考路径。",
+      svelteHost: "Svelte Markdown",
+      svelteHostDesc: "Svelte Markdown renderer 适配。",
+      obsidianHost: "Obsidian",
+      obsidianHostDesc: "为 Obsidian 文档启用 SlexKit 渲染。",
       featured: "精选示例",
       allExamples: "全部示例",
       empty: "没有匹配的示例。",
@@ -170,21 +172,23 @@ function localizedCopy(locale) {
     lede: "Runnable SlexKit examples.",
     landingEyebrow: "Example entry points",
     landingTitle: "Browse by host, learning path, or use case",
-    landingDescription: "Runnable examples and host integrations, with source links for comparison.",
+    landingDescription: "Runnable examples, setup notes, and source links for each host integration.",
     hostIntegration: "Host Integration",
-    hostIntegrationDesc: "Streamdown, Tiptap, and the custom Markdown host used by this site.",
+    hostIntegrationDesc: "Streamdown, Tiptap, Svelte Markdown, and Obsidian integrations.",
     gettingStarted: "Getting Started",
     gettingStartedDesc: "Learn SlexKit in order: static card, reactive state, and coordinated inputs.",
     calculators: "Calculator examples",
     calculatorsDesc: "Engineering, electronics, and cost-estimation scenarios.",
     hostAdapters: "Host integration",
-    streamdownAdapterDesc: "React/Streamdown integration example.",
-    tiptapAdapterDesc: "Tiptap editor integration example.",
+    streamdownAdapterDesc: "Streamdown renderer plugin.",
+    tiptapAdapterDesc: "Tiptap editor extension.",
     openExample: "Open example",
     openGuide: "Open guide",
     viewSource: "View source",
-    svelteHost: "Svelte Markdown Host",
-    svelteHostDesc: "Custom Markdown host reference based on the site's internal renderer.",
+    svelteHost: "Svelte Markdown",
+    svelteHostDesc: "Svelte Markdown renderer adapter.",
+    obsidianHost: "Obsidian",
+    obsidianHostDesc: "Enable SlexKit rendering in Obsidian documents.",
     featured: "Featured examples",
     allExamples: "All examples",
     empty: "No examples found.",
@@ -263,6 +267,7 @@ function examplesLandingHtml(examples, copy, locale) {
   const intro = groupExamples(examples, locale === "zh-CN" ? "入门教程" : "Getting Started");
   const calculators = groupExamples(examples, locale === "zh-CN" ? "计算器" : "Calculator");
   const integrationHref = withSiteBase(locale === "zh-CN" ? "/zh-CN/docs/guides/integration" : "/docs/guides/integration");
+  const obsidianHref = `${integrationHref}#obsidian`;
   const streamdownHref = hrefForExample(examples, "streamdown-host");
   const tiptapHref = hrefForExample(examples, "tiptap-host");
 
@@ -313,6 +318,10 @@ function examplesLandingHtml(examples, copy, locale) {
           <a class="slex-examples-adapter-card" href="${escapeAttribute(integrationHref)}">
             <strong>${escapeAttribute(copy.svelteHost)}</strong>
             <span>${escapeAttribute(copy.svelteHostDesc)}</span>
+          </a>
+          <a class="slex-examples-adapter-card" href="${escapeAttribute(obsidianHref)}">
+            <strong>${escapeAttribute(copy.obsidianHost)}</strong>
+            <span>${escapeAttribute(copy.obsidianHostDesc)}</span>
           </a>
         </div>
       </section>

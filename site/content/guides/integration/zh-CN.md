@@ -3,13 +3,13 @@ title: 集成
 category: Guides
 status: ready
 order: 25
-summary: "面向 Streamdown、Tiptap、Obsidian 与自定义 Markdown 宿主的插件接入指南，用于渲染显式 Slex fence。"
+summary: "面向 Streamdown、Tiptap、Svelte Markdown、Obsidian 与自定义 Markdown 宿主的插件接入指南。"
 slexkitRenderMode: component
 ---
 
 # 集成
 
-SlexKit 在本仓库提供 Streamdown 与 Tiptap 包，并在独立发布仓库维护官方 Obsidian 插件。官网自身也使用自定义 Markdown host 路径。完整 API 和 host 契约见 [Host Integration reference](/docs/reference/integration)。
+SlexKit 已提供 Streamdown、Tiptap、Svelte Markdown 和 Obsidian 的宿主适配。需要接入其他 Markdown 渲染器时，可参考 Host API。完整 API 和 host 契约见 [Host Integration reference](/docs/reference/integration)。
 
 ## 插件选择
 
@@ -17,10 +17,11 @@ SlexKit 在本仓库提供 Streamdown 与 Tiptap 包，并在独立发布仓库�
 |---|---|---|---|
 | React / Streamdown | `@slexkit/streamdown` | 聊天消息、AI 输出、React Markdown 页面 | trusted 或 secure |
 | Tiptap | `@slexkit/tiptap` | 需要 `slex` 代码块预览，并保留 Markdown 导入/导出的编辑器文档 | trusted |
-| Obsidian | `slexkit/obsidian-slexkit` | 本地 vault reading mode 中的 Slex fence | trusted readonly |
+| Svelte Markdown | `slexkit` | Svelte Markdown renderer 适配 | trusted 或 secure |
+| Obsidian | `slexkit/obsidian-slexkit` | Obsidian 文档中的 SlexKit 渲染 | trusted readonly |
 | 自定义 Markdown 宿主 | `slexkit` | 产品自己的 Markdown renderer、文档查看器或 Svelte 官网 renderer | trusted 或 secure |
 
-宿主是 Streamdown 或 Tiptap 时使用本仓库里的包；Obsidian 安装和发布以独立的 [SlexKit 插件仓库](https://github.com/slexkit/obsidian-slexkit) 为准。自定义 Markdown renderer 直接使用 `createSlexKitMarkdownRuntimeHost`。
+宿主是 Streamdown 或 Tiptap 时使用本仓库里的包；Svelte Markdown 和自定义 Markdown renderer 直接使用 `createSlexKitMarkdownRuntimeHost`；Obsidian 安装和发布以独立的 [SlexKit 插件仓库](https://github.com/slexkit/obsidian-slexkit) 为准。
 
 包安装细节和发布边界由 [Package Boundaries](/docs/reference/packages) 维护。
 
@@ -183,7 +184,7 @@ const renderer = createSlexKitRenderer({
 
 > 如果你的目标只是安装 Obsidian 插件，不需要阅读本页前面的开发者集成内容。直接在 Obsidian 的 **Community plugins** 中搜索 **SlexKit**，安装并启用即可。
 
-Obsidian 插件面向本地 vault 内容。它在 reading mode 中注册 `slex` code block processor，将 fence 渲染为只读交互片段，不将结果写回笔记。
+Obsidian 插件面向本地 vault 内容。它为 Obsidian 文档启用 SlexKit 渲染，不将结果写回笔记。
 
 现在可直接从 Obsidian Community Plugins 安装：
 

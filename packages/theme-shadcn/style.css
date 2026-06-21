@@ -623,6 +623,7 @@ color-scheme: dark;
 .focus\:ring-teal-400:focus{--un-ring-color:color-mix(in srgb, var(--colors-teal-400) var(--un-ring-opacity), transparent) /* oklch(77.7% 0.152 181.912) */;}
 .focus\:ring-violet-400:focus{--un-ring-color:color-mix(in srgb, var(--colors-violet-400) var(--un-ring-opacity), transparent) /* oklch(70.2% 0.183 293.541) */;}
 .focus\:ring-yellow-400:focus{--un-ring-color:color-mix(in srgb, var(--colors-yellow-400) var(--un-ring-opacity), transparent) /* oklch(85.2% 0.199 91.936) */;}
+.shadow,
 .shadow-sm{--un-shadow:0 1px 3px 0 var(--un-shadow-color, rgb(0 0 0 / 0.1)),0 1px 2px -1px var(--un-shadow-color, rgb(0 0 0 / 0.1));box-shadow:var(--un-inset-shadow), var(--un-inset-ring-shadow), var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}
 .-rotate-135{rotate:-135deg;}
 .-rotate-45{rotate:-45deg;}
