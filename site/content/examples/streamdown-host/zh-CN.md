@@ -3,7 +3,7 @@ title: "Streamdown 接入"
 category: "宿主集成"
 status: published
 order: 18
-summary: "React/Streamdown 适配器：只接管显式 slex fence，普通 Markdown 和代码块保持 Streamdown 原有渲染。"
+summary: "React/Streamdown 适配器示例，展示如何在 Markdown 页面中渲染 SlexKit 组件。"
 tags: streamdown, react, markdown, adapter
 components: section, table, callout, code-block
 difficulty: 中级
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Streamdown 接入
 
-`@slexkit/streamdown` 适用于已经使用 Streamdown 渲染 Markdown 的 React 页面。适配器只接管语言为 `slex` 的 fence；其余 Markdown、公式和代码块仍由 Streamdown 渲染。
+`@slexkit/streamdown` 适用于已经使用 Streamdown 渲染 Markdown 的 React 页面。这个示例复用官网的 RC 低通滤波器内容，展示 SlexKit 组件如何放进 Streamdown 页面。
 
 本地运行：
 
@@ -24,13 +24,13 @@ bun run --filter @slexkit/streamdown build
 bun examples/dev-server.mjs streamdown
 ```
 
-源码位于 [`examples/streamdown`](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)。Streamdown 与 Tiptap 示例使用同一份 RC 低通滤波器内容，用于对照两种宿主的渲染边界。
+源码位于 [`examples/streamdown`](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)。Streamdown 与 Tiptap 示例使用同一份 RC 低通滤波器内容，便于对照两种宿主的接入方式。
 
 <iframe class="slex-example-live-frame" src="/adapter-demos/streamdown/?embed=1" title="Streamdown 可运行示例"></iframe>
 
 [打开集成指南](/zh-CN/docs/guides/integration) · [查看可运行源码](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)
 
-## 职责划分
+## 接入方式
 
 | 项目 | 约定 |
 | --- | --- |

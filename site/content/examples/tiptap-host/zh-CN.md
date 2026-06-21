@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Tiptap 编辑器接入
 
-`@slexkit/tiptap` 适用于需要在编辑器中预览 `slex` 代码块的文档。Tiptap 仍负责编辑、选区和 Markdown 导入/导出；SlexKit 只接管语言为 `slex` 的 CodeBlock。
+`@slexkit/tiptap` 适用于需要在编辑器中预览 SlexKit 组件的文档。这个示例复用官网的 RC 低通滤波器内容，展示 SlexKit 组件如何放进 Tiptap 编辑器。
 
 本地运行：
 
@@ -24,13 +24,13 @@ bun run --filter @slexkit/tiptap build
 bun examples/dev-server.mjs tiptap
 ```
 
-源码位于 [`examples/tiptap`](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)。Tiptap 与 Streamdown 示例使用同一份 RC 低通滤波器内容，用于对照编辑器宿主和只读渲染宿主的差异。
+源码位于 [`examples/tiptap`](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)。Tiptap 与 Streamdown 示例使用同一份 RC 低通滤波器内容，便于对照编辑器宿主和只读渲染宿主的接入方式。
 
 <iframe class="slex-example-live-frame" src="/adapter-demos/tiptap/?embed=1" title="Tiptap 可运行示例"></iframe>
 
 [打开集成指南](/zh-CN/docs/guides/integration) · [查看可运行源码](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)
 
-## 职责划分
+## 接入方式
 
 | 项目 | 约定 |
 | --- | --- |

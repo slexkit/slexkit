@@ -18,7 +18,7 @@ const homeLabelsByLocale = {
       ["工具调用渲染", "ToolHost 把确认、选择和表单类工具调用渲染成可提交 UI"],
     ],
     hostAdaptersTitle: "宿主接入",
-    hostAdaptersDesc: "不同宿主保留自己的 Markdown 渲染；SlexKit 只接管显式 slex fence。",
+    hostAdaptersDesc: "已提供 Streamdown、Tiptap 和官网 Markdown renderer 的接入示例。",
     hostAdapters: [
       ["Streamdown", "React 消息流或 Markdown 页面", "/examples/streamdown-host"],
       ["Tiptap", "编辑器内 slex 代码块预览", "/examples/tiptap-host"],
@@ -44,7 +44,7 @@ const homeLabelsByLocale = {
       ["Tool-call rendering", "ToolHost renders confirmations, choices, and forms as submit-ready UI."],
     ],
     hostAdaptersTitle: "Host integration",
-    hostAdaptersDesc: "Hosts keep their Markdown renderer; SlexKit takes over explicit slex fences.",
+    hostAdaptersDesc: "Streamdown, Tiptap, and this site's Markdown renderer now have integration examples.",
     hostAdapters: [
       ["Streamdown", "React message streams or Markdown pages.", "/examples/streamdown-host"],
       ["Tiptap", "Editor preview for slex code blocks.", "/examples/tiptap-host"],

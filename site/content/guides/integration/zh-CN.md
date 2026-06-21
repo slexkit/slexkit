@@ -9,7 +9,7 @@ slexkitRenderMode: component
 
 # 集成
 
-SlexKit 在本仓库提供 Streamdown 与 Tiptap 包，并在独立发布仓库维护官方 Obsidian 插件。这些集成都只处理显式 `slex` fence，不扫描普通代码块。SlexKit 官网自身也使用自定义 Markdown host 路径。完整 API 和 host 契约见 [Host Integration reference](/docs/reference/integration)。
+SlexKit 在本仓库提供 Streamdown 与 Tiptap 包，并在独立发布仓库维护官方 Obsidian 插件。官网自身也使用自定义 Markdown host 路径。完整 API 和 host 契约见 [Host Integration reference](/docs/reference/integration)。
 
 ## 插件选择
 
