@@ -189,13 +189,13 @@ function compileChooseOptions(args: ChooseOptionsArguments, runtime: ToolRuntime
   const maxSelected = normalizeNumber(args.maxSelected, Number.POSITIVE_INFINITY);
   const choiceNode = multiple
     ? {
-        "checkbox:option": {
+        "checkbox:": {
           $for: "g.options",
           $key: "id",
-          $checked: "g.selected.includes(option.id)",
-          $label: "option.description ? option.label + ' - ' + option.description : option.label",
-          $disabled: "option.disabled",
-          onchange: "g.toggle(option.id, Boolean($event))",
+          $checked: "g.selected.includes($item.id)",
+          $label: "$item.description ? $item.label + ' - ' + $item.description : $item.label",
+          $disabled: "$item.disabled",
+          onchange: "g.toggle($item.id, Boolean($event))",
         },
       }
     : {

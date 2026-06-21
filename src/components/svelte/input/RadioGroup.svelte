@@ -20,7 +20,11 @@
 
   function vibrate(disabled: boolean, duration = 8): void {
     if (disabled || p.haptic === false || p.haptics === false) return;
-    const api = globalThis.navigator as (Navigator & { vibrate?: (pattern: number | number[]) => boolean }) | undefined;
+    const api = globalThis.navigator as (Navigator & {
+      userActivation?: { isActive?: boolean };
+      vibrate?: (pattern: number | number[]) => boolean;
+    }) | undefined;
+    if (api?.userActivation?.isActive === false) return;
     api?.vibrate?.(duration);
   }
 

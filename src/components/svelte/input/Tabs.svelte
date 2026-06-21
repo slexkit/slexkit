@@ -1,6 +1,4 @@
 <script lang="ts">
-  import FlowbiteTabs from "../../../../node_modules/flowbite-svelte/dist/tabs/Tabs.svelte";
-  import FlowbiteTabItem from "../../../../node_modules/flowbite-svelte/dist/tabs/TabItem.svelte";
   import { bindPropStore } from "../bindProps";
   import { cancelScheduledFrame, emit, list, scheduleFrame, text, type ScheduledFrame } from "../helpers";
   import InlineIcon from "../InlineIcon.svelte";
@@ -11,7 +9,7 @@
   let value = $state<unknown>(undefined);
   let iconVersion = $state(0);
   const orientation = $derived(text(p.orientation, "horizontal"));
-  const items = $derived(list(p.tabs));
+  const items = $derived(list(p.tabs).map((item) => ({ ...item })));
   const triggerClass = "slex-tabs-trigger";
   $effect(() => bindPropStore(props, (next) => {
     p = next;
@@ -21,6 +19,42 @@
   function choose(next: unknown): void {
     value = next;
     emit(ctx, "change", next);
+  }
+
+  function chooseIndex(index: number): void {
+    const item = items[index];
+    if (!item || item.disabled) return;
+    choose(item.value ?? item.label);
+  }
+
+  function handleKeydown(event: KeyboardEvent, index: number): void {
+    const enabledItems = items
+      .map((item, itemIndex) => ({ item, itemIndex }))
+      .filter(({ item }) => !item.disabled);
+    const currentEnabledIndex = enabledItems.findIndex(({ itemIndex }) => itemIndex === index);
+    if (currentEnabledIndex < 0) return;
+
+    let nextEnabledIndex: number | undefined;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      nextEnabledIndex = (currentEnabledIndex + 1) % enabledItems.length;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      nextEnabledIndex = (currentEnabledIndex - 1 + enabledItems.length) % enabledItems.length;
+    } else if (event.key === "Home") {
+      nextEnabledIndex = 0;
+    } else if (event.key === "End") {
+      nextEnabledIndex = enabledItems.length - 1;
+    }
+
+    if (nextEnabledIndex === undefined) return;
+    event.preventDefault();
+    const nextIndex = enabledItems[nextEnabledIndex]?.itemIndex;
+    if (nextIndex === undefined) return;
+    chooseIndex(nextIndex);
+    queueMicrotask(() => {
+      const root = (event.currentTarget as HTMLElement | null)?.closest(".slex-tabs");
+      const trigger = root?.querySelector<HTMLElement>(`.slex-tabs-trigger[data-value="${CSS.escape(text(items[nextIndex].value ?? items[nextIndex].label))}"]`);
+      trigger?.focus();
+    });
   }
 
   function requestIndicatorUpdate(): void {
@@ -58,11 +92,14 @@
     let frame: ScheduledFrame | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let indicatorReady = false;
+    let destroyed = false;
 
-    function scheduleIndicatorUpdate(list: HTMLElement, selectedTrigger: HTMLElement | undefined) {
+    function scheduleIndicatorUpdate(list: HTMLElement, selectedTrigger: HTMLElement | undefined, orientationSnapshot: string) {
+      if (destroyed) return;
       cancelScheduledFrame(ctx, frame);
       frame = scheduleFrame(ctx, () => {
         frame = undefined;
+        if (destroyed) return;
         if (!selectedTrigger) {
           list.style.setProperty("--slex-tabs-indicator-opacity", "0");
           return;
@@ -73,7 +110,7 @@
         const iconRect = selectedTrigger
           .querySelector<HTMLElement>(".slex-tabs-trigger-icon")
           ?.getBoundingClientRect();
-        const vertical = orientation === "vertical";
+        const vertical = orientationSnapshot === "vertical";
         const indicatorStyle = getComputedStyle(list);
         const inlineInset = Number.parseFloat(indicatorStyle.getPropertyValue("--slex-tabs-indicator-inline-inset")) || 0;
         const blockInset = Number.parseFloat(indicatorStyle.getPropertyValue("--slex-tabs-indicator-block-inset")) || 0;
@@ -104,6 +141,7 @@
     }
 
     function applyNow() {
+      if (destroyed) return;
       const triggers = node.querySelectorAll<HTMLElement>(".slex-tabs-trigger");
       const list = node.querySelector<HTMLElement>(".slex-tabs-list");
       let selectedTrigger: HTMLElement | undefined;
@@ -118,12 +156,15 @@
         trigger.setAttribute("aria-selected", String(selected));
         if (selected) selectedTrigger = trigger;
       });
-      if (list) scheduleIndicatorUpdate(list, selectedTrigger);
+      if (list) scheduleIndicatorUpdate(list, selectedTrigger, orientation);
     }
 
     function apply() {
+      if (destroyed) return;
       applyNow();
-      queueMicrotask(applyNow);
+      queueMicrotask(() => {
+        if (!destroyed) applyNow();
+      });
     }
 
     apply();
@@ -137,6 +178,7 @@
         apply();
       },
       destroy() {
+        destroyed = true;
         cancelScheduledFrame(ctx, frame);
         resizeObserver?.disconnect();
       },
@@ -145,44 +187,56 @@
 </script>
 
 <div class="slex-tabs" data-orientation={orientation} use:annotateTabs={{ value, items, iconVersion }}>
-  <FlowbiteTabs
+  <div
     class="slex-tabs-list"
-    tabStyle="none"
-    divider={false}
-    selected={text(value)}
+    role="tablist"
     aria-orientation={orientation}
-    classes={{ content: "slex-tabs-content" }}
   >
-    {#each items as item}
+    {#each items as item, index}
       {@const itemValue = item.value ?? item.label}
       {@const selected = text(itemValue) === text(value)}
       {@const hasIcon = !!text(item.icon)}
       {@const label = text(item.label ?? itemValue)}
       {@const itemIconOnly = !!item.iconOnly || (hasIcon && !item.label)}
       {@const iconClass = itemIconOnly ? "slex-tabs-trigger--icon" : hasIcon ? "slex-tabs-trigger--with-icon" : ""}
-      <FlowbiteTabItem
-        key={text(itemValue)}
-        open={selected}
+      <button
+        type="button"
+        role="tab"
+        id={`slex-tab-${ctx.id ?? "tabs"}-${index}`}
+        aria-controls={`slex-tabpanel-${ctx.id ?? "tabs"}-${index}`}
+        aria-selected={selected}
+        tabindex={selected ? 0 : -1}
         disabled={!!item.disabled}
         data-value={text(itemValue)}
-        activeClass={`${triggerClass} slex-tabs-trigger--selected ${iconClass}`}
-        inactiveClass={`${triggerClass} ${iconClass}`}
-        classes={{ button: selected ? "slex-tabs-trigger--selected" : "" }}
-        onclick={() => choose(itemValue)}
+        data-disabled={item.disabled ? "" : undefined}
+        data-selected={selected ? "" : undefined}
+        class={`${triggerClass} ${selected ? "slex-tabs-trigger--selected" : ""} ${iconClass}`.trim()}
+        onclick={() => chooseIndex(index)}
+        onkeydown={(event) => handleKeydown(event, index)}
       >
-        {#snippet titleSlot()}
-          {#if hasIcon}
-            <InlineIcon name={item.icon} selected={selected} className="slex-tabs-trigger-icon" onIconLoad={requestIndicatorUpdate} />
-          {/if}
-          {#if itemIconOnly}
-            <span class="slex-sr-only">{label}</span>
-          {:else}
-            {label}
-          {/if}
-        {/snippet}
-        {#if item.content}<div use:renderTabPanel={item}></div>{/if}
-      </FlowbiteTabItem>
+        {#if hasIcon}
+          <InlineIcon name={item.icon} selected={selected} className="slex-tabs-trigger-icon" onIconLoad={requestIndicatorUpdate} />
+        {/if}
+        {#if itemIconOnly}
+          <span class="slex-sr-only">{label}</span>
+        {:else}
+          {label}
+        {/if}
+      </button>
     {/each}
     <span class="slex-tabs-selected-indicator" aria-hidden="true"></span>
-  </FlowbiteTabs>
+  </div>
+  {#each items as item, index}
+    {@const itemValue = item.value ?? item.label}
+    {@const selected = text(itemValue) === text(value)}
+    {#if selected && item.content}
+      <div
+        id={`slex-tabpanel-${ctx.id ?? "tabs"}-${index}`}
+        class="slex-tabs-content"
+        role="tabpanel"
+        aria-labelledby={`slex-tab-${ctx.id ?? "tabs"}-${index}`}
+        use:renderTabPanel={item}
+      ></div>
+    {/if}
+  {/each}
 </div>

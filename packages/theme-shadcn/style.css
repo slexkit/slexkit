@@ -3933,15 +3933,6 @@ color-scheme: dark;
   list-style: none;
 }
 
-.slexkit-root .slex-tabs-list li {
-  margin: 0;
-  padding: 0;
-  color: inherit;
-  font: inherit;
-  line-height: inherit;
-  list-style: none;
-}
-
 .slex-tabs-selected-indicator {
   position: absolute;
   z-index: 20;

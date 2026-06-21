@@ -50,9 +50,6 @@ const specTestExpression = {
       "text:counter": {
         $content: "'Count: ' + g.counter",
       },
-      "text:error": {
-        $content: "g.undefinedProp.nested",
-      },
     },
   },
 };
@@ -170,7 +167,20 @@ describe("expression error handling", () => {
     const container = document.getElementById("spec-app")!;
 
     const consoleSpy = spyOn(console, "warn").mockImplementation(() => {});
-    mount({ ...specTestExpression, namespace: specTestExpression.namespace + "_" + Date.now() }, container);
+    mount(
+      {
+        ...specTestExpression,
+        namespace: specTestExpression.namespace + "_" + Date.now(),
+        layout: {
+          "column:main": {
+            "text:error": {
+              $content: "g.undefinedProp.nested",
+            },
+          },
+        },
+      },
+      container,
+    );
 
     const errorText = Array.from(container.querySelectorAll(".slex-text")).find(
       (el) => el.textContent === "" || el.textContent === "undefined",
