@@ -11,6 +11,7 @@ import {
   mountSecureArtifact,
   parseSlexSource,
   parseSlexKitDsl,
+  runSlexConformance,
   validateSlexSource,
   createSecureRuntime,
   SlexKitRuntimeError,
@@ -56,6 +57,7 @@ const formatSlexKitDiagnosticApi = formatSlexKitDiagnostic;
 const mountSecureArtifactApi = mountSecureArtifact;
 const parseSlexSourceApi = parseSlexSource;
 const parseSlexKitDslApi = parseSlexKitDsl;
+const runSlexConformanceApi = runSlexConformance;
 const validateSlexSourceApi = validateSlexSource;
 const createSecureRuntimeApi = createSecureRuntime;
 const SlexKitRuntimeErrorApi = SlexKitRuntimeError;
@@ -104,6 +106,7 @@ export {
   mountSecureArtifactApi as mountSecureArtifact,
   parseSlexSourceApi as parseSlexSource,
   parseSlexKitDslApi as parseSlexKitDsl,
+  runSlexConformanceApi as runSlexConformance,
   validateSlexSourceApi as validateSlexSource,
   createSecureRuntimeApi as createSecureRuntime,
   SlexKitRuntimeErrorApi as SlexKitRuntimeError,
@@ -117,6 +120,11 @@ export {
 export type { BootOptions } from "./engine/index";
 export type { SlexKitParseResult, SlexKitSourceDiagnostic } from "./engine/index";
 export type {
+  SlexConformanceCaseResult,
+  SlexConformanceExpectedWarning,
+  SlexConformanceFixture,
+  SlexConformanceOptions,
+  SlexConformanceReport,
   SlexKitValidationMode,
   SlexKitValidationOptions,
   SlexKitValidationResult,

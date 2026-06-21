@@ -37,6 +37,14 @@ export type {
   SlexKitValidationWarning,
   SlexKitValidationWarningCode,
 } from "./validation";
+export { runSlexConformance } from "./conformance";
+export type {
+  SlexConformanceCaseResult,
+  SlexConformanceExpectedWarning,
+  SlexConformanceFixture,
+  SlexConformanceOptions,
+  SlexConformanceReport,
+} from "./conformance";
 export type {
   ComponentRegistrationOptions,
   ComponentRenderer,

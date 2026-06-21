@@ -1,4 +1,5 @@
 export type SlexKitSourceDiagnostic = {
+  code: "syntax";
   message: string;
   line: number;
   column: number;
@@ -207,6 +208,7 @@ function locateSyntaxError(source: string, error: unknown): SlexKitSourceDiagnos
     : delimiter?.detail;
 
   return {
+    code: "syntax",
     message: rawMessage,
     line: position.line,
     column: position.column,

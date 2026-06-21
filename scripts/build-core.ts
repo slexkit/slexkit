@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { compile, compileModule } from "svelte/compiler";
 import { fallbackThemeCss } from "../uno.config";
 import { generateAiDocs } from "./generate-ai-docs";
+import { generateStandardArtifacts } from "./generate-standard-artifacts";
 
 const root = join(import.meta.dir, "..");
 const dist = join(root, "dist");
@@ -448,3 +449,4 @@ await writeComponentEntryStubs();
 
 // AI/agent docs for package consumers and the MCP package.
 await generateAiDocs({ outputDirs: [join(dist, "ai")] });
+await generateStandardArtifacts({ outputDirs: [join(dist, "standard")] });
