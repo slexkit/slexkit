@@ -1,54 +1,21 @@
 ---
-title: "ToolHost Dialog Demo"
+title: "Release Plan Approval"
 category: "Config Wizard"
 status: published
 order: 13
-summary: "Demonstrates SlexKit's ToolHost capability — embedding interactive forms in an AI conversation flow, collecting user input and returning structured ToolResult."
+summary: "A static Responses-style replay showing how ToolHost collects user decisions while AI drafts a release plan."
 tags: toolhost, dialog, demo, live
-components: section, card, input, select, submit, callout, code-block, grid, column
+components: section, card, input, select, checkbox, submit, callout, code-block, grid, column
 difficulty: Intermediate
 runtime: trusted
 featured: true
 slexkitRenderMode: dialog
 ---
 
-# ToolHost Dialog Demo
+# Release Plan Approval
 
-When an AI needs to collect user information during a conversation, it calls **ToolHost** to pop up an interactive form card. The user fills it out and submits, and the form data is returned to the AI as a structured `ToolResult` for continued processing.
+This page uses a static fixture to simulate an OpenAI Responses-style output stream. The user asks AI to prepare a web console release plan; when a human decision is needed, the replay pauses and maps the `function_call` into SlexKit **ToolHost**.
 
-Below is a complete conversation demo — simulating a user requesting project creation, the AI calling the `fill-form` template to collect project info, and returning ToolResult after submission.
+After the user chooses a release strategy, adds release constraints, or approves the plan through ToolHost, the demo appends a `function_call_output` item and continues replaying later messages. It is fully client-side: no live model call, no real deployment, no backend dependency, and no exposed API key.
 
-**Flow:** User request → AI determines tool call needed → ToolHost pops up form → User fills and submits → Returns ToolResult → AI continues responding
-
-Here's how the AI side calls ToolHost:
-
-```js
-import { renderToolCall } from "slexkit/toolhost";
-
-const { promise } = renderToolCall({
-  name: "fill-form",
-  arguments: {
-    title: "Create New Project",
-    description: "Please fill in the project details.",
-    submitLabel: "Submit",
-    ignoreLabel: "Cancel",
-    fields: [
-      { name: "name", label: "Project Name", type: "text", required: true },
-      { name: "type", label: "Project Type", type: "select", options: [
-        { label: "Web App", value: "web" },
-        { label: "API Service", value: "api" },
-        { label: "CLI Tool", value: "cli" },
-      ]},
-      { name: "priority", label: "Priority", type: "select", options: [
-        { label: "Low", value: "low" },
-        { label: "Medium", value: "medium" },
-        { label: "High", value: "high" },
-      ]},
-    ],
-  },
-}, container);
-
-// After user submits, promise resolves to ToolResult
-const result = await promise;
-// → { toolName: "fill-form", status: "submitted", value: { name, type, priority } }
-```
+**Flow:** release request → `function_call` → ToolHost pause → submit or ignore → `function_call_output` → release summary
