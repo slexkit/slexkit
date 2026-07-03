@@ -47,8 +47,5 @@
     "slexkit": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "slexkit": "file:../.."
   }
 }
