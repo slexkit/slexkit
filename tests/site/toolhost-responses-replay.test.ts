@@ -3,26 +3,32 @@ import {
   createToolHostReplay,
   replayUntilPause,
   submitToolResult,
-  toolHostResponsesFixtures,
+  toolHostResponsesScenarios,
 } from "../../site/examples/toolhost-responses-replay.js";
 
 describe("ToolHost Responses replay", () => {
   it("pauses when a function_call output item completes", () => {
-    const replay = createToolHostReplay(toolHostResponsesFixtures["en-US"].events);
-    const fixture = toolHostResponsesFixtures["en-US"];
+    const replay = createToolHostReplay(toolHostResponsesScenarios["en-US"].events);
+    const scenario = toolHostResponsesScenarios["en-US"];
 
     replayUntilPause(replay);
 
-    expect(fixture.eyebrow).toBe("Agent trace");
-    expect(fixture.toolLabel).toBe("Needs your confirmation");
-    expect(fixture.toolResultLabel).toBe("Returned to agent");
+    expect(scenario.eyebrow).toBe("ToolHost");
+    expect(scenario.title).toBe("ToolHost Tool Call UI");
+    expect(scenario.eventDetailsLabel).toBe("Event details");
+    expect(scenario.expectedToolOutputs).toBe(2);
+    expect(scenario.functionCallReceivedLabel).toBe("Request");
+    expect(scenario.toolHostCardLabel).toBe("Tool card");
+    expect(scenario.outputReturnedLabel).toBe("Written output");
+    expect(scenario.toolLabel).toBe("ToolHost card");
+    expect(scenario.toolResultLabel).toBe("Receipt");
     expect(replay.status).toBe("paused");
     expect(replay.pendingToolCall).toMatchObject({
       id: "call_release_parameters",
       name: "release-parameters",
     });
-    expect(replay.pendingToolCall?.arguments?.title).toBe("Complete release parameters");
-    expect(replay.transcript.filter((item) => item.kind === "message").map((item) => item.text).join("\n")).not.toMatch(/tool output|function_call/);
+    expect(replay.pendingToolCall?.arguments?.title).toBe("Release parameters tool card");
+    expect(replay.transcript.filter((item) => item.kind === "message").map((item) => item.text).join("\n")).toContain("ToolHost tool card");
     expect(replay.transcript.map((item) => item.kind)).toEqual(["message", "message", "tool-call"]);
     expect(replay.protocolItems[0].raw).toMatchObject({
       type: "message",
@@ -36,7 +42,7 @@ describe("ToolHost Responses replay", () => {
   });
 
   it("submits release parameters and resumes to approval", () => {
-    const replay = createToolHostReplay(toolHostResponsesFixtures["en-US"].events);
+    const replay = createToolHostReplay(toolHostResponsesScenarios["en-US"].events);
 
     replayUntilPause(replay);
     submitToolResult(replay, {
@@ -62,11 +68,13 @@ describe("ToolHost Responses replay", () => {
       type: "function_call_output",
       call_id: "call_release_parameters",
     });
+    expect(replay.transcript.some((item) => item.kind === "message" && item.text.includes("function_call_output"))).toBe(true);
+    expect(replay.transcript.some((item) => item.kind === "message" && item.text.includes("wrote back function_call_output"))).toBe(true);
     expect(replay.transcript.some((item) => item.kind === "message" && item.text.includes("full release"))).toBe(true);
   });
 
   it("can complete all ToolHost calls without a backend", () => {
-    const replay = createToolHostReplay(toolHostResponsesFixtures["zh-CN"].events);
+    const replay = createToolHostReplay(toolHostResponsesScenarios["zh-CN"].events);
 
     replayUntilPause(replay);
     submitToolResult(replay, {
@@ -100,5 +108,30 @@ describe("ToolHost Responses replay", () => {
       kind: "message",
       role: "assistant",
     });
+    expect(replay.transcript.at(-1)?.text).toContain("function_call_output");
+    expect(replay.transcript.at(-1)?.text).toContain("写回了");
+  });
+
+  it("documents ToolHost as tool-call UI instead of a release approval app", async () => {
+    const zh = await Bun.file("site/content/examples/toolhost-demo/zh-CN.md").text();
+    const en = await Bun.file("site/content/examples/toolhost-demo/en-US.md").text();
+
+    expect(zh).toContain('title: "ToolHost 工具调用 UI"');
+    expect(zh).toContain("`function_call` 时，浏览器宿主可以把它渲染成对话里的 ToolHost 工具卡片");
+    expect(zh).toContain("function_call_output");
+    expect(zh).toContain("写回");
+    expect(zh).not.toContain("发布确认");
+    expect(zh).not.toContain("人工输入回路");
+    expect(zh).not.toContain("人工补齐");
+    expect(zh).not.toContain("样例 payload");
+    expect(zh).not.toContain("fixture");
+
+    expect(en).toContain('title: "ToolHost Tool Call UI"');
+    expect(en).toContain("render it as an inline ToolHost card");
+    expect(en).toContain("function_call_output");
+    expect(en).toContain("writes");
+    expect(en).not.toContain("Release Approval");
+    expect(en).not.toContain("sample payload");
+    expect(en).not.toContain("client-side fixture");
   });
 });

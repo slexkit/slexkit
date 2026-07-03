@@ -29,26 +29,27 @@
   }
 
   function protocolSummary(item) {
+    const summaries = copy.protocolSummaries ?? {};
     if (item.type === "message/output_text") {
-      return `${item.label}: ${previewText(item.body, 88)}`;
+      return `${summaries.messageOutput ?? item.label}: ${previewText(item.body, 88)}`;
     }
     if (item.type === "response.output_item.added") {
-      return `agent requested ToolHost template: ${item.body?.name ?? item.label}`;
+      return `${summaries.functionCallAdded ?? "function_call received"}: ${item.body?.name ?? item.label}`;
     }
     if (item.type === "response.function_call_arguments.delta") {
-      return `OpenAI function_call arguments fragment (${String(item.body ?? "").length} chars)`;
+      return `${summaries.argumentsDelta ?? "arguments fragment"} (${String(item.body ?? "").length} chars)`;
     }
     if (item.type === "response.function_call_arguments.done") {
-      return "OpenAI function_call arguments assembled";
+      return summaries.argumentsDone ?? "arguments assembled";
     }
     if (item.type === "response.output_item.done") {
-      return `function call complete; ToolHost will compile ${item.body?.name ?? item.label}`;
+      return `${summaries.outputItemDone ?? "function_call complete"}: ${item.body?.name ?? item.label}`;
     }
     if (item.type === "toolhost.slex_expression") {
-      return "ToolHost compiled the call into Slex components";
+      return summaries.slexExpression ?? "ToolHost compiled the call into Slex components";
     }
     if (item.type === "function_call_output") {
-      return "ToolHost returned user input to the agent";
+      return summaries.functionCallOutput ?? "ToolHost returned user input to the agent";
     }
     return previewText(item.body);
   }
@@ -115,12 +116,14 @@
     </div>
   </section>
 
-  <section class="slex-toolhost-reference" aria-label={copy.referenceLabel ?? copy.protocolLabel}>
-    <header>
-      <p>{copy.referenceEyebrow ?? "SlexKit ToolHost"}</p>
-      <h3>{copy.referenceTitle ?? copy.protocolLabel}</h3>
-      <span>{copy.referenceDescription ?? ""}</span>
-    </header>
+  <details class="slex-toolhost-reference" aria-label={copy.referenceLabel ?? copy.protocolLabel}>
+    <summary class="slex-toolhost-reference-summary">
+      <span>{copy.referenceEyebrow ?? "SlexKit ToolHost"}</span>
+      <strong>{copy.referenceTitle ?? copy.protocolLabel}</strong>
+      {#if copy.referenceDescription}
+        <small>{copy.referenceDescription}</small>
+      {/if}
+    </summary>
     <div class="slex-toolhost-reference-body">
       <ol class="slex-toolhost-reference-flow">
         {#each reference.steps as step, index}
@@ -132,11 +135,11 @@
       </ol>
       <pre><code>{reference.code}</code></pre>
     </div>
-  </section>
+  </details>
 
   {#if protocolItems.length}
-    <details class="slex-toolhost-protocol" aria-label={copy.fixtureLabel ?? copy.protocolLabel}>
-      <summary>{copy.fixtureLabel ?? copy.protocolLabel}</summary>
+    <details class="slex-toolhost-protocol" aria-label={copy.eventDetailsLabel ?? copy.protocolLabel}>
+      <summary>{copy.eventDetailsLabel ?? copy.protocolLabel}</summary>
       <ol>
         {#each protocolItems as item (item.id)}
           <li data-generated={item.generated ? "true" : "false"}>
@@ -148,7 +151,7 @@
             </div>
             <p class="slex-toolhost-protocol-summary">{protocolSummary(item)}</p>
             <details class="slex-toolhost-protocol-payload">
-              <summary>Raw JSON</summary>
+              <summary>{copy.rawJsonLabel ?? "Raw JSON"}</summary>
               <pre>{formatPayload(item.raw ?? item.body)}</pre>
             </details>
           </li>
