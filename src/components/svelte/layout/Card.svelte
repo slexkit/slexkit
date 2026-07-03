@@ -9,7 +9,11 @@
   $effect(() => bindPropStore(props, (next) => (p = next)));
 </script>
 
-<div class="slex-card" data-tone={p.tone ? text(p.tone) : undefined}>
+<div
+  class="slex-card"
+  data-tone={p.tone ? text(p.tone) : undefined}
+  data-variant={p.variant || p.presentation ? text(p.variant ?? p.presentation) : undefined}
+>
   {#if p.title || p.icon}
     <div class="slex-card-title">{#if p.icon}<InlineIcon name={p.icon} className="slex-card-icon" />{/if}{#if p.title}<span>{text(p.title)}</span>{/if}</div>
   {/if}

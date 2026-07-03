@@ -11,6 +11,25 @@ slexkitRenderMode: component
 
 SlexKit 的所有重要变更。
 
+
+## v0.4.0 - 生产适配器与 ToolHost 加固
+
+### Added
+- 新增 `@slexkit/assistant-ui`：React assistant-ui 适配包，`slex` 代码块默认走 secure frame 路径。
+- 新增可在浏览器直接打开的 Assistant UI 宿主示例，以及对应的适配集成文档。
+- 新增 ToolHost 内部 `step` 组件，用于在一次 tool call 中承载多步骤人工输入流程。
+- 扩展 theme package，覆盖 base、按组件拆分的 CSS，以及 ToolHost/step 样式导出。
+
+### Changed
+- AI docs 和 standard artifacts 现在区分公开组件与 ToolHost 内部组件：`submit` 和 `step` 仍是可渲染 runtime component，但不再计入 public component catalog。
+- `smoke:release` 现在会输出 pack/install/smoke 阶段日志，通过临时 app 验证 packed tarballs，并检查 CLI conformance 与 MCP server 后才报告成功。
+- ToolHost demo 和 replay fixtures 改为使用与生产宿主一致的 step/submit 流程。
+
+### Fixed
+- Radio group list 选中态不再在已发布 runtime 或 theme CSS 中使用 `:has()`。
+- Tiptap preview controls 现在能在嵌入的 SlexKit input、select 和临时控件之间保持焦点。
+- `step` 和 `submit` 组件文档现在包含同步的 SPEC 示例和 API 表。
+- Windows 上 `smoke:release` 在 MCP 验证成功后不再挂起。
 ## v0.3.4 - 生产级文档打磨
 
 ### 变更

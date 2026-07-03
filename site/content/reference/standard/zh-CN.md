@@ -3,15 +3,15 @@ title: Slex Standard Artifacts
 category: Reference
 status: ready
 order: 65
-summary: "Slex envelope、组件目录、逻辑 profile、能力目录、一致性 fixtures 与标准 manifest 的生成物。"
+summary: "Slex envelope、组件目录、逻辑 profile、能力目录、conformance fixtures 与 manifest。"
 slexkitRenderMode: component
 ---
 
-# Slex 标准生成物
+# Slex Standard Artifacts
 
-SlexKit 发布给 AI agent、host runtime、MCP server 和 npm 包消费者使用的机器可读标准产物。它描述的是 Markdown-native logic-bearing UI artifact，而不是纯 JSON 卡片目录。
+SlexKit 提供一组机器可读 JSON 文件，供 agents、host runtimes、MCP server 和 npm 包消费者读取。它们描述的是嵌入 Markdown 的、有本地状态和逻辑的 UI artifact，不是纯 JSON 卡片目录。
 
-TypeScript runtime registry 仍然是唯一事实来源。JSON 文件由组件 specs、runtime 版本常量、表达式能力元数据和 conformance fixtures 生成。
+这些 JSON 文件由 TypeScript runtime registry、组件 specs、runtime 版本常量、表达式能力元数据和 conformance fixtures 生成。
 
 ## 文件
 
@@ -32,9 +32,9 @@ TypeScript runtime registry 仍然是唯一事实来源。JSON 文件由组件 s
 4. 按 logic profile 扫描逻辑字符串和 source。
 5. 返回稳定的 diagnostic 与 warning codes。
 
-`validateSlexSource()` 保留旧的 structured output，并新增 `schemaVersion`、`protocolVersion`、`logicProfileVersion`。Secure mode 的诊断会引导作者使用由 policy 控制的 `api.*`，而不是把所有逻辑都视为禁止。
+`validateSlexSource()` 保留旧的 structured output，并新增 `schemaVersion`、`protocolVersion`、`logicProfileVersion`。Secure mode 的诊断会引导作者使用受 policy 控制的 `api.*`，而不是把所有逻辑都视为禁止。
 
-解析成功后的 warnings 带有稳定 path。例如 `layout.text:value.$text` 里的未知 `std.*` 调用，与 `g.load` 里的原生 `fetch()` 调用，会返回不同 path，agent 可以精确修复对应表达式，而不是重写整个 artifact。
+解析成功后的 warnings 带有稳定 path。例如 `layout.text:value.$text` 里的未知 `std.*` 调用，与 `g.load` 里的原生 `fetch()` 调用，会返回不同 path，工具可以定位到具体表达式，而不是重写整个 artifact。
 
 ## 运行 Conformance
 
@@ -53,7 +53,7 @@ slex validate ./artifact.slex --mode secure
 slex validate ./artifact.slex --mode trusted --strict
 ```
 
-Conformance 校验 source 结构、logic profile diagnostics、能力限制和 warning 稳定性。它不是视觉渲染截图测试。
+Conformance 校验 source 结构、logic profile diagnostics、capability checks 和 warning 稳定性。它不是视觉渲染截图测试。
 
 ## 诊断代码
 
@@ -62,7 +62,7 @@ Conformance 校验 source 结构、logic profile diagnostics、能力限制和 w
 | Code | Severity | 含义 |
 |---|---|---|
 | `syntax` | error | JavaScript object literal 解析失败。它作为 `diagnostic.code` 返回，不是 warning。 |
-| `unsupported_protocol` | warning | 可选 `slex` 标记与当前支持的 protocol version 不一致。 |
+| `unsupported_protocol` | warning | 可选 `slex` 标记与支持的 protocol version 不一致。 |
 | `invalid_component_key` | warning | component key 不符合 `type:identifier` 形状。 |
 | `invalid_directive_type` | warning | `$if`、`$for`、`$key` 等 structural directive 的值类型不合法。 |
 | `unknown_component` | warning | component type 不在生成的 component catalog 中。 |
@@ -79,7 +79,7 @@ Path 指向解析后的 source tree，例如 `g.load` 或 `layout.text:value.$te
 `slex-conformance.json` 包含 `valid`、`warning`、`invalid` fixtures。每个 fixture 都有 `id`、`mode`、source text 和 `expected` 对象。
 
 - `expected.ok` 是 validator 的成功状态。
-- `expected.warnings` 是该 fixture 的精确 warning 集合。缺少预期 warning 或出现额外 warning 都会失败。
+- `expected.warnings` 是该 fixture 的 warning 集合。缺少预期 warning 或出现额外 warning 都会失败。
 - Warning 匹配使用 `code`，并在存在时同时匹配 `path` 和 `value`。
 - `expected.diagnostic` 是 invalid fixture 预期的 parse diagnostic code。
 - Fixture ID 保持稳定。行为变化时新增 fixture ID。
@@ -91,16 +91,16 @@ Conformance suite 只检查 source validation semantics。它不检查组件截�
 SlexKit 暴露多个 version 字段：
 
 - `packageVersion`：npm package version，来自 `package.json`。
-- `protocolVersion`：可接受的 Slex source protocol marker，当前是 `0.1`。
-- `schemaVersion`：生成 artifact 的 schema generation，当前使用 date-style。
+- `protocolVersion`：可接受的 Slex source protocol marker，值为 `0.1`。
+- `schemaVersion`：生成 artifact 的 schema generation，使用 date-style。
 - `logicProfileVersion`：expression、context、stdlib 与 secure capability profile version。
 
 兼容 package release 可以更新 catalog hash、增加组件或 props、增加 examples，或改进 message，而不改变 `protocolVersion`。
 
 如果变更会改变 source 解释、删除或重命名 diagnostic code、改变 expression semantics，或改变 secure capability 行为，就需要 protocol 或 logic profile review。Artifact hash 用于 cache invalidation，不是 semantic version。
 
-## 定位
+## 与 A2UI 的区别
 
-A2UI 标准化跨平台声明式 UI 描述。SlexKit 标准化嵌入 Markdown 的、有状态、可执行 UI artifact，并由 host 选择 trusted 或 secure runtime mode。
+A2UI 描述跨平台声明式 UI。SlexKit 描述嵌入 Markdown 的、有状态、可执行 UI artifact；host 决定使用 trusted runtime 还是 secure runtime。
 
 JSON Schema 负责描述 envelope 与 catalog。JavaScript expression profile 是标准的一部分，因为本地逻辑与状态本来就是 artifact 的组成部分。

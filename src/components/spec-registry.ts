@@ -3,7 +3,11 @@ import { componentSpecs } from "./entries/specs";
 
 export { componentSpecs };
 
-export const publicComponentTypes = componentSpecs.map((spec) => spec.type);
+const internalComponentTypes = new Set(["submit", "step"]);
+
+export const publicComponentSpecs = componentSpecs.filter((spec) => !internalComponentTypes.has(spec.type));
+
+export const publicComponentTypes = publicComponentSpecs.map((spec) => spec.type);
 
 const componentSpecByType = new Map(componentSpecs.map((spec) => [spec.type, spec]));
 

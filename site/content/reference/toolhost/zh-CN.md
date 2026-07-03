@@ -3,19 +3,25 @@ title: ToolHost
 category: Reference
 status: ready
 order: 70
-summary: "用于 confirmations、choices、forms、templates 与 submit boundaries 的结构化用户输入 UI。"
+summary: "用于 confirmations、choices、forms 和 templates 的结构化用户输入 UI。"
 slexkitRenderMode: component
 ---
 
 # ToolHost
 
-ToolHost 把 AI tool calls 连接到浏览器中的交互 UI。AI 不直接在 server-side 执行工具，而是渲染结构化输入表单，并把用户响应作为 `ToolResult` 返回。
+ToolHost 把 tool calls 连接到浏览器中的交互 UI。当模型请求确认、选择或表单输入时，ToolHost 渲染结构化表单，并把用户响应作为 `ToolResult` 返回。
 
 ## 概念
 
-当 AI model 发出 tool call（例如 `confirm-action`、`fill-form`）时，ToolHost 会把它编译成标准 `SlexExpression` 并通过 core runtime 挂载。挂载后的 UI 通过 `submit:actions` 组件形成 submit boundary，并用用户输入 resolve Promise。
+当 model 发出 tool call（例如 `confirm-action`、`fill-form`）时，ToolHost 会把它编译成标准 `SlexExpression` 并通过 core runtime 挂载。挂载后的 UI 通过 `submit:actions` 组件提交用户输入，并 resolve Promise。
 
 ToolHost 与 display-oriented `slex` fences 分离。Display components 展示信息；ToolHost components 收集结构化输入并以编程方式返回。
+
+### Submit
+
+`submit:actions` 读取 `returnKeys` 指定的字段，调用 ToolHost runtime，并用 `ToolResult` resolve `ToolRenderHandle.promise`。
+
+不要在普通 display fence 或组件示例里使用 `submit`。普通交互使用 `button`；只有宿主正在等待结构化 tool result 时，才使用 `submit:actions`。
 
 ## 公开 API
 
@@ -48,11 +54,11 @@ registerToolTemplate("review-choice", (args) => ({
   namespace: "tool_review_choice",
   layout: {
     "card:review": {
-      title: String(args.title ?? "复核"),
+      title: String(args.title ?? "Review"),
       "submit:actions": {
         options: [
-          { label: "批准", value: "approve" },
-          { label: "要求修改", value: "changes" }
+          { label: "通过", value: "approve" },
+          { label: "请求修改", value: "changes" }
         ]
       }
     }
@@ -89,14 +95,14 @@ renderToolCall({
     title: "选择部署目标",
     multiple: false,
     options: [
-      { label: "预览", value: "preview" },
+      { label: "预览环境", value: "preview" },
       { label: "生产环境", value: "production" }
     ]
   }
 }, container);
 ```
 
-Options 应包含稳定的 `value`、可见的 `label`，以及可选 description 或 metadata。`option-list` 适合更长、更需要滚动的列表。
+Options 应包含 stable `value`，visible `label`，以及可选 description 或 metadata。`option-list` 适合更长、更需要滚动的列表。
 
 ### `fill-form`
 
@@ -120,19 +126,19 @@ Fields 使用稳定 `name` 作为结果 key。表单 template 应保持 schema �
 
 ## 编写自定义 template
 
-Custom template 的作用是把 tool args 转成普通 Slex source。Template 不应绕过 runtime security model，也不应把 display UI 强行变成 tool result。
+Custom template 把 tool args 转成普通 Slex source。Template 不应绕过 runtime security model，也不应把 display UI 强行变成 tool result。
 
-推荐用法：
+建议：
 
 - Validate 或 normalize args。
 - 生成明确 namespace。
 - 使用标准 components 组成 UI。
-- 使用 `submit` component 返回 ToolHost 结果。
+- 使用 `submit` component 作为唯一提交点。
 - 在 result 中返回结构化、可序列化数据。
 
 ### 关键模式
 
 - Display UI 不应使用 `submit`。
-- ToolHost template 可以复用普通 components，但必须有明确 submit boundary。
+- ToolHost template 可以复用普通 components，但必须有明确提交动作。
 - 用户取消、容器卸载或 host teardown 时必须 cleanup。
 - 不可信 tool args 应按 host 的 trust policy 处理。

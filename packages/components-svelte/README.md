@@ -27,13 +27,13 @@ mount({
 }, document.getElementById("app"));
 ```
 
-The import side-effect registers all 29 built-in Svelte components into the global runtime registry.
+The import side-effect registers all 30 built-in Svelte components into the global runtime registry.
 
 ## Component list
 
 | Category | Components |
 |----------|------------|
-| **Action** | `button`, `submit` |
+| **Action** | `button` |
 | **Component** | `icon` |
 | **Content** | `badge`, `callout`, `code-block`, `divider`, `link`, `section` |
 | **Data** | `table` |
@@ -43,7 +43,7 @@ The import side-effect registers all 29 built-in Svelte components into the glob
 | **Input** | `checkbox`, `input`, `radio-group`, `select`, `slider`, `switch` |
 | **Layout** | `card`, `column`, `grid`, `row` |
 | **Navigation** | `tabs` |
-| **Tooling** | `playground` |
+| **Tooling** | `playground`, `step`, `submit` |
 
 All components support the shadcn/ui design token theme when using `@slexkit/theme-shadcn`. Components also support Phosphor Icons and custom icon registration via the icon system API.
 

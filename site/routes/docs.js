@@ -78,7 +78,7 @@ export function createDocsRoute({
 
   function currentDoc(docs) {
     const href = docHrefForPath();
-    return docs.find((doc) => doc.href === href || doc.markdownHref === href) ?? docs[0];
+    return docs.find((doc) => doc.href === href || doc.markdownHref === href) ?? null;
   }
 
   function renderMarkdownInto(markdown, host, options = {}) {
@@ -113,14 +113,17 @@ export function createDocsRoute({
     }
 
     const doc = currentDoc(docs);
+    const labels = siteUiLabelsForLocale(currentLocale());
+    const activeHref = doc?.href ?? docHrefForPath();
     const shellState = {
-      activeHref: withSiteBase(doc.href),
-      currentDoc: docsShellDoc(doc),
+      activeHref: withSiteBase(activeHref),
+      currentDoc: doc ? docsShellDoc(doc) : null,
       docs: docsShellItems(docs),
-      countLabel: `${docs.length} ${siteUiLabelsForLocale(currentLocale()).pagesSuffix}`,
+      countLabel: `${docs.length} ${labels.pagesSuffix}`,
       locale: currentLocale(),
       playgroundHrefBase: withSiteBase("/playground.html"),
-      uiLabels: siteUiLabelsForLocale(currentLocale()),
+      uiLabels: labels,
+      emptyText: labels.docNotFound ?? labels.noDocsFound,
     };
     let page = docsShellRoot;
 
@@ -141,6 +144,7 @@ export function createDocsRoute({
           locale: shellState.locale,
           playgroundHrefBase: shellState.playgroundHrefBase,
           uiLabels: shellState.uiLabels,
+          emptyText: shellState.emptyText,
         },
       });
     }
@@ -148,14 +152,14 @@ export function createDocsRoute({
     mobileNav.renderDocsContext(docs, doc);
     await Promise.resolve();
     const markdownHost = page.querySelector("[data-markdown-doc]");
-    if (markdownHost) {
+    if (doc && markdownHost) {
       renderMarkdownInto(doc.markdown, markdownHost, {
         domain: `doc:${doc.slug}`,
         slexkitRenderMode: doc.slexkitRenderMode ?? "playground",
       });
     }
 
-    document.title = `${doc.title} - SlexKit`;
+    document.title = doc ? `${doc.title} - SlexKit` : `${labels.docNotFound ?? labels.docsLabel} - SlexKit`;
     requestAnimationFrame(() => {
       revealActiveDocsSidebarItem(page);
       syncPageTocNavigation(window.location.hash);

@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { componentSpecs, publicComponentTypes } from "../src/components/spec-registry";
+import { componentSpecs, publicComponentSpecs, publicComponentTypes } from "../src/components/spec-registry";
 import { parseSlexSource } from "../src/engine/diagnostics";
 import {
   slexkitExpressionContext,
@@ -207,7 +207,7 @@ function componentExamplesMarkdown(spec: (typeof componentSpecs)[number]): strin
 
 function componentsText(): string {
   const byCategory = new Map<string, string[]>();
-  for (const spec of componentSpecs) {
+  for (const spec of publicComponentSpecs) {
     const entries = byCategory.get(spec.category) ?? [];
     entries.push(`- [${spec.title}](/docs/components/${spec.type}.md): \`${spec.type}\` - ${spec.summary}`);
     byCategory.set(spec.category, entries);
@@ -230,7 +230,7 @@ function componentsText(): string {
     "",
     "# Generated Component API Reference",
     "",
-    componentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
+    publicComponentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
   ].join("\n");
 }
 
@@ -451,7 +451,7 @@ async function collectPages(): Promise<{ pages: DocPage[]; sourcePages: SourcePa
     sourceHashes[sourcePath] = hashText(body);
   }
 
-  for (const spec of componentSpecs) {
+  for (const spec of publicComponentSpecs) {
     const sourcePath = `site/content/components/${spec.type}/en-US.md`;
     const body = normalizeMarkdownBody(await readProjectFile(sourcePath));
     sourcePages.push({
@@ -536,7 +536,7 @@ function fullText(version: string, sourcePages: SourcePage[]): string {
     "",
     "# Generated Component API Supplement",
     "",
-    componentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
+    publicComponentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
   ].join("\n");
 }
 
@@ -584,7 +584,7 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
     "llms-authoring.txt": authoringText(),
   };
 
-  const components = componentSpecs.map((spec) => ({
+  const components = publicComponentSpecs.map((spec) => ({
     type: spec.type,
     title: spec.title,
     category: spec.category,
@@ -631,7 +631,7 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
       components,
       sourceHashes: {
         ...sourceHashes,
-        ...Object.fromEntries(componentSpecs.map((spec) => [`component:${spec.type}`, hashText(JSON.stringify(spec))])),
+        ...Object.fromEntries(publicComponentSpecs.map((spec) => [`component:${spec.type}`, hashText(JSON.stringify(spec))])),
       },
     },
   };
@@ -665,7 +665,7 @@ export async function writeAiRawMarkdown(outputDir: string, pages: readonly DocP
 }
 
 export function getComponentExamplesMarkdown(type?: string): string {
-  const specs = type ? componentSpecs.filter((spec) => spec.type === type) : componentSpecs;
+  const specs = type ? componentSpecs.filter((spec) => spec.type === type) : publicComponentSpecs;
   return specs.map(componentExamplesMarkdown).filter(Boolean).join("\n\n---\n\n");
 }
 

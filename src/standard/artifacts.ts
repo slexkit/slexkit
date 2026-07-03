@@ -1,4 +1,4 @@
-import { componentSpecs, publicComponentTypes } from "../components/spec-registry";
+import { componentSpecs, publicComponentSpecs, publicComponentTypes } from "../components/spec-registry";
 import {
   slexkitExpressionContext,
   slexkitRuntimeCapabilities,
@@ -210,7 +210,7 @@ function expressionSchema(packageVersion: string) {
           [componentKeyPattern]: { $ref: "#/$defs/componentNode" },
         },
       },
-      components: Object.fromEntries(componentSpecs.map((spec) => [spec.type, componentPropSchema(spec)])),
+      components: Object.fromEntries(publicComponentSpecs.map((spec) => [spec.type, componentPropSchema(spec)])),
     },
     xSlexkit: {
       packageVersion,
@@ -230,7 +230,7 @@ function componentCatalog(packageVersion: string) {
     schemaVersion: SLEX_SCHEMA_VERSION,
     protocolVersion: SLEX_PROTOCOL_VERSION,
     componentCount: publicComponentTypes.length,
-    components: componentSpecs.map((spec) => ({
+    components: publicComponentSpecs.map((spec) => ({
       type: spec.type,
       category: spec.category,
       status: spec.status,

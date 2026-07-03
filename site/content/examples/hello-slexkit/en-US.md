@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # First SlexKit Card
 
-Start with a static card: no `g` object, no interaction, and the whole structure declared in `layout`.
+A static SlexKit card can be declared entirely in `layout` without a `g` object or interaction handlers.
 
 ```slex
 {

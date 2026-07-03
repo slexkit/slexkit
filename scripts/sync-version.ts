@@ -25,12 +25,23 @@ function syncSlexkitDependency(deps: Record<string, string> | undefined, version
   deps.slexkit = `^${version}`;
 }
 
+function syncScopedSlexKitDependency(deps: Record<string, string> | undefined, version: string): void {
+  if (!deps) return;
+  for (const [name, value] of Object.entries(deps)) {
+    if (!name.startsWith("@slexkit/") || value.startsWith("workspace:")) continue;
+    deps[name] = `^${version}`;
+  }
+}
+
 async function syncPackage(path: string, version: string): Promise<void> {
   const pkg = await readJson<PackageJson>(path);
   pkg.version = version;
   syncSlexkitDependency(pkg.dependencies, version);
   syncSlexkitDependency(pkg.peerDependencies, version);
   syncSlexkitDependency(pkg.devDependencies, version);
+  syncScopedSlexKitDependency(pkg.dependencies, version);
+  syncScopedSlexKitDependency(pkg.peerDependencies, version);
+  syncScopedSlexKitDependency(pkg.devDependencies, version);
   await writeJson(path, pkg);
 }
 

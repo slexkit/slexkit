@@ -152,6 +152,7 @@ function compileConfirmAction(args: ConfirmActionArguments, runtime: ToolRuntime
     },
     layout: {
       "card:tool": {
+        variant: "tool",
         title: args.title ?? "Confirm action",
         "text:description": {
           $if: args.description ? "true" : "false",
@@ -201,6 +202,7 @@ function compileChooseOptions(args: ChooseOptionsArguments, runtime: ToolRuntime
     : {
         "radio-group:option": {
           $value: "g.selected[0] || ''",
+          variant: "list",
           options,
           onchange: "g.selectOne(String($event || ''))",
         },
@@ -251,6 +253,7 @@ function compileChooseOptions(args: ChooseOptionsArguments, runtime: ToolRuntime
     },
     layout: {
       "card:tool": {
+        variant: "tool",
         title: args.title ?? "Choose options",
         "text:description": {
           $if: args.description ? "true" : "false",
@@ -391,6 +394,7 @@ function compileFillForm(args: FillFormArguments, runtime: ToolRuntime): SlexExp
     },
     layout: {
       "card:tool": {
+        variant: "tool",
         title: args.title ?? "Fill form",
         "text:description": {
           $if: args.description ? "true" : "false",

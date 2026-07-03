@@ -367,11 +367,11 @@ describe("ToolHost templates", () => {
 
             options: [
 
-              { id: "low", label: "Low" },
+              { id: "low", label: "Low", description: "Low risk" },
 
-              { id: "medium", label: "Medium" },
+              { id: "medium", label: "Medium", description: "Balanced" },
 
-              { id: "high", label: "High" },
+              { id: "high", label: "High", description: "Urgent" },
 
             ],
 
@@ -388,6 +388,12 @@ describe("ToolHost templates", () => {
 
 
       expect(document.querySelector(".slex-radio-group")).toBeTruthy();
+
+      expect(document.querySelector(".slex-card")?.getAttribute("data-variant")).toBe("tool");
+
+      expect(document.querySelector(".slex-radio-group")?.getAttribute("data-variant")).toBe("list");
+
+      expect(document.querySelector(".slex-radio-label-text small")?.textContent).toBe("Low risk");
 
       expect(document.querySelector(".slex-checkbox")).toBeFalsy();
 
@@ -609,6 +615,265 @@ describe("ToolHost templates", () => {
 
     });
 
+
+
+
+    it("ToolHost step groups multiple inputs behind one submit action", async () => {
+
+      document.body.innerHTML = '<div id="tool"></div>';
+
+      const stepCompiler: ToolTemplateCompiler = (_args, runtime) => ({
+
+        namespace: "tool_step_test",
+
+        g: {
+
+          __slexkitTool: runtime,
+
+          selected: [],
+
+          activeStep: "strategy",
+
+          window: "Tonight 22:00 - 23:00",
+
+          owner: "On-call SRE",
+
+          rollback: "Error rate above 1%",
+
+          canSubmit() {
+
+            return this.selected.length > 0 &&
+              String(this.window).trim().length > 0 &&
+              String(this.owner).trim().length > 0 &&
+              String(this.rollback).trim().length > 0;
+
+          },
+
+        },
+
+        layout: {
+
+          "card:tool": {
+
+            title: "Release parameters",
+
+            "step:strategy": {
+
+              $if: "g.activeStep === 'strategy'",
+
+              index: 1,
+              total: 2,
+
+              title: "Release strategy",
+
+              "radio-group:strategy": {
+
+                $value: "g.selected[0] || ''",
+
+                variant: "list",
+
+                options: [
+
+                  { value: "canary", label: "10% canary" },
+
+                  { value: "full", label: "Full" },
+
+                ],
+
+                onchange: "g.selected = String($event || '') ? [String($event || '')] : []",
+
+              },
+
+              "row:strategyActions": {
+
+                justify: "end",
+
+                "button:continue": {
+
+                  label: "Continue",
+
+                  $disabled: "!g.selected.length",
+
+                  onclick: "if (g.selected.length) g.activeStep = 'constraints'",
+
+                },
+
+              },
+
+            },
+
+            "step:constraints": {
+
+              $if: "g.activeStep === 'constraints'",
+
+              index: 2,
+              total: 2,
+
+              title: "Engineering constraints",
+
+              "input:window": {
+
+                label: "Window",
+
+                $value: "g.window",
+
+                onchange: "g.window = String($event || '')",
+
+              },
+
+              "input:owner": {
+
+                label: "Owner",
+
+                $value: "g.owner",
+
+                onchange: "g.owner = String($event || '')",
+
+              },
+
+              "input:rollback": {
+
+                label: "Rollback",
+
+                $value: "g.rollback",
+
+                onchange: "g.rollback = String($event || '')",
+
+              },
+
+              "button:back": {
+
+                label: "Back to strategy",
+
+                variant: "ghost",
+
+                onclick: "g.activeStep = 'strategy'",
+
+              },
+
+            },
+
+            "submit:actions": {
+
+              $if: "g.activeStep === 'constraints'",
+
+              returnKeys: ["selected", "window", "owner", "rollback"],
+
+              submitLabel: "Submit parameters",
+
+              $disabled: "!g.canSubmit()",
+
+            },
+
+          },
+
+        },
+
+      });
+
+      registerToolTemplate("step-test", stepCompiler);
+
+      const handle = renderToolCall(
+
+        { id: "call_step", name: "step-test" },
+
+        document.getElementById("tool")!,
+
+      );
+
+      expect(document.querySelectorAll(".slex-step")).toHaveLength(1);
+
+      expect(document.querySelector(".slex-step")?.textContent).toContain("Release strategy");
+
+      expect(document.querySelector(".slex-step")?.textContent).toContain("1/2");
+
+      expect(Array.from(document.querySelectorAll(".slex-button"))
+
+        .some((button) => button.textContent?.trim() === "Submit parameters")).toBe(false);
+
+      const continueButton = Array.from(document.querySelectorAll(".slex-button"))
+
+        .find((button) => button.textContent?.trim() === "Continue") as HTMLButtonElement;
+
+      expect(continueButton.disabled).toBe(true);
+
+      const full = Array.from(document.querySelectorAll(".slex-radio"))
+
+        .find((input) => (input as HTMLInputElement).value === "full") as HTMLInputElement;
+
+      full.click();
+
+      await sleep();
+
+      expect(document.querySelector(".slex-step")?.textContent).toContain("Release strategy");
+
+      expect(document.querySelector(".slex-step")?.textContent).not.toContain("Engineering constraints");
+
+      expect(continueButton.disabled).toBe(false);
+
+      continueButton.click();
+
+      await sleep();
+
+      expect(document.querySelectorAll(".slex-step")).toHaveLength(1);
+
+      expect(document.querySelector(".slex-step")?.textContent).toContain("Engineering constraints");
+
+      expect(document.querySelector(".slex-step")?.textContent).toContain("2/2");
+
+      const back = Array.from(document.querySelectorAll(".slex-button"))
+
+        .find((button) => button.textContent?.trim() === "Back to strategy") as HTMLButtonElement;
+
+      back.click();
+
+      await sleep();
+
+      expect(document.querySelector(".slex-step")?.textContent).toContain("Release strategy");
+
+      const fullAfterBack = Array.from(document.querySelectorAll(".slex-radio"))
+
+        .find((input) => (input as HTMLInputElement).value === "full") as HTMLInputElement;
+
+      expect(fullAfterBack.checked).toBe(true);
+
+      (Array.from(document.querySelectorAll(".slex-button"))
+
+        .find((button) => button.textContent?.trim() === "Continue") as HTMLButtonElement).click();
+
+      await sleep();
+
+      const submit = Array.from(document.querySelectorAll(".slex-button"))
+
+        .find((button) => button.textContent?.trim() === "Submit parameters") as HTMLButtonElement;
+
+      expect(submit.disabled).toBe(false);
+
+      submit.click();
+
+      await expect(handle.promise).resolves.toEqual({
+
+        toolCallId: "call_step",
+
+        toolName: "step-test",
+
+        status: "submitted",
+
+        value: {
+
+          selected: ["full"],
+
+          window: "Tonight 22:00 - 23:00",
+
+          owner: "On-call SRE",
+
+          rollback: "Error rate above 1%",
+
+        },
+
+      });
+
+    });
 
 
 

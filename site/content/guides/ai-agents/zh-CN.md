@@ -3,7 +3,7 @@ title: AI / Agents
 category: Guides
 status: ready
 order: 50
-summary: "SlexKit 的 LLM 文档、MCP、skills 与 agent 创作规则。"
+summary: "供 agents 使用的 LLM 文档、MCP、skills 与创作规则。"
 slexkitRenderMode: component
 ---
 
@@ -11,7 +11,7 @@ slexkitRenderMode: component
 
 ## AI 可访问文档
 
-SlexKit 的 AI 可访问文档分成几个稳定入口：文档索引、完整上下文文件、按任务划分的 skills，以及精简的 MCP 工具面。原始文档保持 `.md` 格式，交互示例使用显式 `slex` fence。
+SlexKit 遵循 assistant-ui 的信息架构：提供清晰的索引、完整上下文文件、按任务划分的 skills，以及精简的 MCP 工具面。原始文档保持 `.md` 格式，交互示例使用显式 `slex` fence。
 
 ```slex
 {
@@ -41,8 +41,8 @@ SlexKit 的 AI 可访问文档分成几个稳定入口：文档索引、完整�
 
 1. 先读 [`/llms.txt`](/llms.txt)，拿到分组索引。
 2. 需要全量上下文时读 [`/llms-full.txt`](/llms-full.txt)。
-3. 写组件时读 [`/llms-components.txt`](/llms-components.txt) 和对应原始 `.md` 页面。
-4. 需要 `std.*` 标准库或由 policy 控制的 `api.*` 能力时读 [`/llms-capabilities.txt`](/llms-capabilities.txt)。
+3. 写组件时读 [`/llms-components.txt`](/llms-components.txt) 和对应 raw `.md` 页面。
+4. 需要 `std.*` 标准库或受 policy 控制的 `api.*` 能力时读 [`/llms-capabilities.txt`](/llms-capabilities.txt)。
 5. 集成 host 或安全运行时时读 [`/llms-runtime.txt`](/llms-runtime.txt)。
 6. 只有需要用户提交结构化结果时读 [`/llms-toolhost.txt`](/llms-toolhost.txt)。
 7. 需要机器可读的创作或校验上下文时读 [`/standard/slex-standard-manifest.json`](/standard/slex-standard-manifest.json)、[`/standard/slex-logic-profile.json`](/standard/slex-logic-profile.json) 和 [`/standard/slex-component-catalog.json`](/standard/slex-component-catalog.json)。
@@ -61,21 +61,21 @@ This project uses SlexKit for Markdown-native interactive AI output.
 Documentation: https://slexkit.dev/llms-full.txt
 
 Key patterns:
-- Display UI uses explicit `slex` fenced blocks plus Markdown fallback.
-- Slex source uses `{ slex, namespace, g, layout }`; 当前公开协议使用 `slex: "0.1"`。
+- 展示型 UI 使用 explicit `slex` fenced blocks，并保留 Markdown fallback.
+- Slex source uses `{ slex, namespace, g, layout }`; 公开协议使用 `slex: "0.1"`。
 - Use `std.*` for common calculations, formatting, units, and small statistics.
 - Use `/standard/slex-logic-profile.json` and `/standard/slex-component-catalog.json` for machine-readable rules before generating Slex.
 - Run `slex validate --standard` to verify the current package against bundled standard fixtures.
-- ToolHost is only for structured user input flows.
+- ToolHost 只用于需要结构化返回值的交互。
 - Untrusted or agent-generated source should use the secure runtime.
 - Raw docs are `.md` files with `slex` fences, not `.mdx`.
 ````
 
-## Skills 入口
+## Skills
 
 仓库 `skills/` 目录提供以下任务入口：
 
-- `/slexkit`：总览、架构范围和定位
+- `/slexkit`：总览、架构和定位
 - `/author`：编写展示型 `slex` fence，保留 Markdown fallback
 - `/host`：集成 Markdown、Streamdown、Obsidian 或自定义 host
 - `/toolhost`：构建确认、选择和结构化表单
@@ -103,12 +103,12 @@ Key patterns:
       "card:examples": {
         title: "slexkitExamples",
         icon: "code",
-        "text:body": { text: "浏览组件示例、ToolHost 模板和宿主集成片段。" }
+        "text:body": { text: "浏览组件示例、ToolHost 模板和宿主接入片段。" }
       },
       "card:validate": {
         title: "slexkitValidate",
         icon: "check-circle",
-        "text:body": { text: "解析 Slex source，返回诊断和组件使用情况。" }
+        "text:body": { text: "解析 Slex source，返回 diagnostics 和 component usage。" }
       }
     }
   }

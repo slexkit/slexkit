@@ -11,6 +11,25 @@ slexkitRenderMode: component
 
 All notable changes to SlexKit.
 
+
+## v0.4.0 - Production adapters and ToolHost hardening
+
+### Added
+- `@slexkit/assistant-ui`: React assistant-ui adapter package with secure-frame defaults for `slex` code blocks.
+- Browser-openable Assistant UI host example and documentation pages for adapter integration.
+- Internal ToolHost `step` component for multi-step human-input flows inside one tool call.
+- Theme package coverage for base, per-component, and ToolHost/step CSS exports.
+
+### Changed
+- AI docs and standard artifacts now separate public components from ToolHost-only internals: `submit` and `step` remain renderable runtime components but are no longer counted in the public component catalog.
+- `smoke:release` now logs pack/install/smoke stages, validates packed tarballs through a temporary app, checks CLI conformance, and checks the MCP server before reporting success.
+- ToolHost demo and replay fixtures now use the same step/submit flow expected from production host integrations.
+
+### Fixed
+- Radio group list selection styling no longer uses `:has()` in shipped runtime or theme CSS.
+- Tiptap preview controls preserve focus across embedded SlexKit inputs, selects, and transient controls.
+- `step` and `submit` component docs now include synced SPEC examples and API tables.
+- Release smoke no longer hangs after successful MCP validation on Windows.
 ## v0.3.4 - Production documentation polish
 
 ### Changed

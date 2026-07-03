@@ -3,15 +3,15 @@ title: Getting Started
 category: Guides
 status: ready
 order: 20
-summary: "Developer-first SlexKit integration: install the runtime, mount trusted fragments, wire Markdown hosts, and choose the next integration path."
+summary: "Install SlexKit, mount a first fragment, and keep readable Markdown fallback."
 slexkitRenderMode: component
 ---
 
 # Getting Started
 
-> For Obsidian plugin installation, open **Settings -> Community plugins**, search for **SlexKit**, then install and enable it. The remaining sections cover web apps, Markdown hosts, Streamdown, and custom runtimes.
+> For Obsidian plugin installation, open **Settings -> Community plugins**, search for **SlexKit**, then install and enable it. The npm package path below targets web apps, Markdown hosts, Streamdown, and custom runtimes.
 
-Install `slexkit` and mount a trusted fragment first. Markdown, React, and Obsidian details live in dedicated guides; the steps below cover the core integration path.
+Start by installing `slexkit` and mounting a trusted fragment. Once basic rendering works, move on to Markdown hosts, Streamdown, or the Obsidian plugin.
 
 ## Installation Entry
 
@@ -26,7 +26,7 @@ import { mount } from "slexkit";
 import "slexkit/style.css";
 ```
 
-For host-specific packages, choose the scoped package that matches the integration:
+For host-specific packages, choose by scenario:
 
 | Use case | Install |
 |---|---|
@@ -36,11 +36,11 @@ For host-specific packages, choose the scoped package that matches the integrati
 | React + Streamdown Markdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
 | Obsidian vault rendering | Install **SlexKit** from Obsidian Community Plugins |
 
-`@slexkit/runtime` and `@slexkit/components-svelte` reuse the root package implementation; they are not independent implementations.
+`@slexkit/runtime` and `@slexkit/components-svelte` wrap the root package; they are not independent implementations.
 
 ## Trusted Fragment
 
-Trusted mode is the minimal integration path. Use it for application-authored source, local examples, repository-maintained content, and reviewed snippets.
+Start with trusted mode for application-authored source, local examples, repository examples, and reviewed snippets.
 
 ```ts
 import { mount } from "slexkit";
@@ -92,7 +92,7 @@ SlexKit-capable hosts render the fence. Plain Markdown hosts show the fallback. 
 
 ## Markdown Host
 
-For products rendering chat messages, docs pages, or long Markdown artifacts, use `createSlexKitMarkdownRuntimeHost`. It manages artifact scoping, block lifecycle, state-only fences, and trusted/secure mode selection.
+For chat messages, docs pages, or long Markdown content, use `createSlexKitMarkdownRuntimeHost`. It lets multiple `slex` blocks in one document share state and provides one place for cleanup and trusted/secure mode selection.
 
 ```ts
 import { createSlexKitMarkdownRuntimeHost } from "slexkit";
@@ -114,16 +114,16 @@ export function mountSlexFence(source: string, container: HTMLElement) {
 
 When the whole document or message thread is destroyed, call `runtime.disposeArtifact(artifactId)` or `runtime.disposeAll()`.
 
-## Trust Boundary
+## Content Source
 
-| Content source | Recommended mode |
+| Content source | Use |
 |---|---|
 | App-generated source, repository examples, local vault content | trusted |
 | Unreviewed user input, third-party Markdown, direct agent output | secure |
 
 Secure mode requires a sandbox iframe, a publicly served `slexkit.runtime.js`, and a host policy. See [Secure Runtime Setup](security-runtime).
 
-## Next Steps
+## Keep Reading
 
 - [Integration](integration): React/Streamdown and Obsidian plugins
 - [Secure Runtime Setup](security-runtime): untrusted or agent-generated content

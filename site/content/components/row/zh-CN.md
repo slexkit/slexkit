@@ -99,11 +99,12 @@ summary: "横向排列子组件。适合工具栏、状态行、按钮组。"
 
 ## API 参考 {#api}
 
-<!-- slex:spec-api:start component="row" sourceHash="70f941d7" -->
+<!-- slex:spec-api:start component="row" sourceHash="a483a589" -->
 | 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `justify` | string: start, center, end, space-between, space-around | 否 | 否 | `"start"` | 主轴分布方式。 |
 | `align` | string: start, center, end, baseline, stretch | 否 | 否 | `"center"` | 交叉轴对齐方式。 |
 | `gap` | string | 否 | 是 |  | 子组件之间的间距。 |
+| `variant` | string: actions | 否 | 否 |  | Use actions for compact ToolHost action rows. |
 | 子组件 | object | 否 | 否 |  | 嵌套组件字段会按字段顺序渲染为子内容。 |
 <!-- slex:spec-api:end -->

@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Software Project Cost Estimator
 
-Team size, timeline, rates, and risk buffer feed the total project cost, monthly burn, and per-person cost.
+The estimator calculates total project cost, monthly burn, and per-person cost from team size, timeline, rates, and risk buffer.
 
 ```slex
 {

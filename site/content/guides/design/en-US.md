@@ -3,7 +3,7 @@ title: Design Philosophy
 category: Guides
 status: ready
 order: 30
-summary: "Design principles for live Markdown, components, and agent-friendly UI output."
+summary: "Design principles for live Markdown, components, and agent-generated UI."
 includeTitleInToc: true
 slexkitRenderMode: component
 ---
@@ -253,7 +253,7 @@ Design specs and component pages use Markdown for prose, with `slex` fenced bloc
 
 ## Product Shape
 
-SlexKit targets interactive fragments inside Markdown, not full applications. Typical scenarios include:
+SlexKit is for interactive fragments inside Markdown, not full applications. Typical scenarios include:
 
 - A card explaining a result
 - A row of metrics

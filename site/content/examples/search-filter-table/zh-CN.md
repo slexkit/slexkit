@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 搜索与过滤表格
 
-`input` 绑定搜索关键词，动态 `table` 生成过滤后的行，`collapsible` 负责展开行详情。
+该示例用 `input` 绑定搜索关键词，用动态 `table` 生成过滤后的行，并用 `collapsible` 展开行详情。
 
 ```slex
 {
@@ -29,8 +29,8 @@ slexkitRenderMode: component
       { id: "tabs-1", name: "Tabs 选项卡", category: "Navigation", status: "ready", notes: "支持水平和垂直方向。" },
       { id: "table-1", name: "Table 表格", category: "Display", status: "ready", notes: "columns 数组 + rows 数组。" },
       { id: "formula-1", name: "Formula 公式", category: "Display", status: "ready", notes: "依赖 KaTeX 渲染 LaTeX。" },
-      { id: "toast-1", name: "Toast 通知", category: "Feedback", status: "ready", notes: "支持 type 变体。" },
-      { id: "secure-1", name: "Secure 安全运行时", category: "Tooling", status: "ready", notes: "在 iframe 沙箱中运行不可信 source。" }
+      { id: "toast-1", name: "Toast 通知", category: "Feedback", status: "preview", notes: "支持 type 变体。" },
+      { id: "secure-1", name: "Secure 安全运行时", category: "Tooling", status: "beta", notes: "基于 iframe 沙箱。" }
     ],
     filtered: function () {
       var q = this.query.toLowerCase();
@@ -61,7 +61,7 @@ slexkitRenderMode: component
 }
 ```
 
-**实现要点：**
+**核心技巧：**
 
 - `input` 的 `onchange` 更新 `g.query` → 触发 `g.filtered()` 重新计算
 - `g.filtered()` 用 `filter` 过滤 `allItems` 数组

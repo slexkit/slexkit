@@ -3,19 +3,25 @@ title: ToolHost
 category: Reference
 status: ready
 order: 70
-summary: "Structured user-input UI for confirmations, choices, forms, templates, and submit boundaries."
+summary: "Structured user-input UI for confirmations, choices, forms, and templates."
 slexkitRenderMode: component
 ---
 
 # ToolHost
 
-ToolHost bridges AI tool calls to interactive UI. Instead of the AI executing tools server-side, ToolHost renders a structured input form in the browser and returns the user's response as a `ToolResult`.
+ToolHost bridges tool calls to interactive UI. When a model asks for confirmation, a choice, or form input, ToolHost renders the structured UI in the browser and returns the user's response as a `ToolResult`.
 
 ## Concepts
 
-When an AI model emits a tool call (e.g., `confirm-action`, `fill-form`), ToolHost compiles it into a standard `SlexExpression` and mounts it using the core runtime. The mounted UI has a **submit boundary** (`submit:actions` component) that settles a Promise with the user's input.
+When a model emits a tool call such as `confirm-action` or `fill-form`, ToolHost compiles it into a standard `SlexExpression` and mounts it using the core runtime. The mounted UI uses `submit:actions` to submit the user's input and settle a Promise.
 
 ToolHost is **separate from display-oriented `slex` fences**. Display components render information; ToolHost components collect structured user input and return it programmatically.
+
+### Submit
+
+`submit:actions` reads the fields listed in `returnKeys`, calls the ToolHost runtime, and resolves the `ToolRenderHandle.promise` with a `ToolResult`.
+
+Do not use `submit` in display fences or component demos. Use `button` for ordinary interactions; use `submit:actions` only when the host is waiting for a structured tool result.
 
 ## Public API
 
@@ -279,7 +285,7 @@ renderToolCall(
 ### Key patterns
 
 1. **`__slexkitTool`** — Set `g.__slexkitTool = runtime` to give expressions access to `submit()` and `ignore()`
-2. **`submit:actions`** — Always include a `submit:actions` component to return the ToolHost result. Set `returnKeys` to the property names that should be included in the result value
+2. **`submit:actions`** — Always include a `submit:actions` component to submit the result. Set `returnKeys` to the property names that should be included in the result value
 3. **`canSubmit`** — Add a `g.canSubmit()` method to control the submit button's disabled state
 4. **Unique namespace** — Use a timestamp-based namespace to avoid collisions with other tool calls
 5. **Validation** — Implement validation logic in `g` methods and wire `$disabled` on the submit button

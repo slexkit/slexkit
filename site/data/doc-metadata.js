@@ -60,7 +60,7 @@ export const componentTitleLabels = {
   select: "Select 下拉选择",
   slider: "Slider 滑块",
   stat: "Stat 指标",
-  submit: "Submit 提交按钮",
+  submit: "Submit 提交",
   switch: "Switch 开关",
   table: "Table 表格",
   tabs: "Tabs 选项卡",

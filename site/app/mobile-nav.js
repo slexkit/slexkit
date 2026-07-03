@@ -213,6 +213,7 @@ export function createMobileNav({ currentLocale, hydratePhosphorIcons }) {
   function renderDocsContext(docs, activeDoc) {
     if (!mobileNavContext) return;
     const labels = siteUiLabelsForLocale(currentLocale());
+    const activeHref = activeDoc?.href ?? "";
     mobileNavContext.replaceChildren();
     mobileNavContext.hidden = !docs.length;
     if (!docs.length) return;
@@ -232,7 +233,7 @@ export function createMobileNav({ currentLocale, hydratePhosphorIcons }) {
       header.textContent = group.label;
       section.appendChild(header);
       for (const doc of group.items) {
-        section.appendChild(navLink(doc, activeDoc.href));
+        section.appendChild(navLink(doc, activeHref));
       }
       nav.appendChild(section);
     }

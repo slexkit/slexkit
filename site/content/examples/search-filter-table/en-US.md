@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Search and Filter Table
 
-An `input` value holds the search keywords, dynamic `table` rows reflect the filter, and `collapsible` opens row details.
+The table binds an `input` value to search keywords, generates filtered rows dynamically, and expands row details with `collapsible`.
 
 ```slex
 {
@@ -29,8 +29,8 @@ An `input` value holds the search keywords, dynamic `table` rows reflect the fil
       { id: "tabs-1", name: "Tabs", category: "Navigation", status: "ready", notes: "Supports horizontal and vertical orientation." },
       { id: "table-1", name: "Table", category: "Display", status: "ready", notes: "columns array + rows array." },
       { id: "formula-1", name: "Formula", category: "Display", status: "ready", notes: "Depends on KaTeX for LaTeX rendering." },
-      { id: "toast-1", name: "Toast", category: "Feedback", status: "ready", notes: "Supports type variants." },
-      { id: "secure-1", name: "Secure Runtime", category: "Tooling", status: "ready", notes: "Runs untrusted source in an iframe sandbox." }
+      { id: "toast-1", name: "Toast", category: "Feedback", status: "preview", notes: "Supports type variants." },
+      { id: "secure-1", name: "Secure Runtime", category: "Tooling", status: "beta", notes: "Based on iframe sandbox." }
     ],
     filtered: function () {
       var q = this.query.toLowerCase();
@@ -61,7 +61,7 @@ An `input` value holds the search keywords, dynamic `table` rows reflect the fil
 }
 ```
 
-**Implementation notes:**
+**Core techniques in the table:**
 
 - `input`'s `onchange` updates `g.query` → triggers `g.filtered()` to recompute
 - `g.filtered()` uses `filter` to filter the `allItems` array

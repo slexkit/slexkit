@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Tech Stack Evaluation
 
-Frontend framework selection is split into four adjustable dimensions: performance, ecosystem, learning curve, and maintenance cost. Select a stack, and the scores and recommendation update below.
+The evaluator breaks frontend framework selection into four adjustable dimensions: performance, ecosystem, learning curve, and maintenance cost. Select a stack, and the scores and recommendation update below.
 
 ```slex
 {
@@ -132,4 +132,4 @@ Default score reference:
 | Svelte | 95 | 70 | 90 | 90 | 85.5 |
 | Angular | 80 | 80 | 60 | 75 | 73.75 |
 
-Weight distribution: Performance 30%, Ecosystem 25%, Learning Curve 20%, Maintenance 25%. Teams can adjust the weights for their own criteria.
+Weight distribution: Performance 30%, Ecosystem 25%, Learning Curve 20%, Maintenance 25%. Adjust based on your team's actual situation.

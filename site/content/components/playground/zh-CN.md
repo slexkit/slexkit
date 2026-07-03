@@ -40,9 +40,9 @@ SlexKit 的交互预览组件，可在页面内嵌入可编辑、可运行的 Sl
 - 不适合：普通组件渲染（应当直接使用 layout 中的组件）。
 - 关联组件：code-block 用于只读代码展示。
 - 嵌套的 source 会被隔离渲染，不会与父级 namespace 冲突。
-- Playground 是用于文档和教学的工具组件，不作为产品 UI 的组成单元。
+- Playground 用于文档和教学场景，不用于产品 UI。
 - 公开字段覆盖源码解析、预览位置、主题切换控件、按钮文案以及打开/复制 URL。
-- `domain`、`pluginVersion`、`version` 是宿主集成元数据，不作为公开组件 API。
+- `domain`、`pluginVersion`、`version` 是宿主集成元数据，不是公开组件字段。
 
 ## API 参考 {#api}
 

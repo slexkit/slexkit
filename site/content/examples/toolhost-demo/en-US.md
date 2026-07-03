@@ -3,9 +3,9 @@ title: "Release Plan Approval"
 category: "Config Wizard"
 status: published
 order: 13
-summary: "Static Responses-style replay for ToolHost release-plan decisions."
+summary: "ToolHost replays a release-plan flow and collects release parameters at key points."
 tags: toolhost, dialog, demo, live
-components: section, card, input, select, checkbox, submit, callout, code-block, grid, column
+components: toolhost, card, radio-group, input, button
 difficulty: Intermediate
 runtime: trusted
 featured: true
@@ -14,8 +14,6 @@ slexkitRenderMode: dialog
 
 # Release Plan Approval
 
-A static fixture simulates an OpenAI Responses-style output stream. When the release-plan flow reaches a human decision point, the replay pauses and maps the corresponding `function_call` into SlexKit **ToolHost**.
+The replay walks through a web console release plan. When the flow reaches a human-input point, the page pauses and renders the matching ToolHost card: first the release strategy, then the window, owner, and rollback criteria, and finally the approval decision.
 
-After the release strategy, constraints, or approval decision are submitted through ToolHost, the demo appends a `function_call_output` item and continues replaying later messages. It is fully client-side: no live model call, no real deployment, no backend dependency, and no exposed API key.
-
-**Flow:** release request → `function_call` → ToolHost pause → submit or ignore → `function_call_output` → release summary
+This is a client-side fixture: no model call and no deployment execution. Protocol details are kept in the event log at the bottom.

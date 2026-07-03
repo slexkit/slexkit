@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Social Insurance Calculator
 
-Pre-tax salary and city determine China's social insurance breakdown, including personal deductions, employer contributions, and take-home pay.
+The calculator derives China's social insurance breakdown from pre-tax salary and city, including personal deductions, employer contributions, and take-home pay.
 
 ```slex
 {
@@ -73,7 +73,7 @@ Pre-tax salary and city determine China's social insurance breakdown, including 
 }
 ```
 
-Switching cities changes the housing fund ratio and affects take-home pay; Beijing uses 12% and Shanghai uses 7%.
+Switching cities changes the housing fund ratio and affects take-home pay; the calculator uses 12% for Beijing and 7% for Shanghai.
 
 ```slex
 {

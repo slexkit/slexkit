@@ -19,7 +19,7 @@ An artifact is a group of Slex blocks belonging to the same document, message, o
 
 In **trusted mode**, the runtime prefixes each block's namespace with the artifact ID to prevent cross-document state pollution. `disposeArtifact()` releases all namespace stores for that artifact.
 
-In **secure mode**, all fences in one artifact are combined into a single sandbox iframe. The runtime maintains artifact slots, syncing rendered heights back to the original Markdown placeholder containers.
+In **secure mode**, all fences in one artifact are combined into a single sandbox iframe. The runtime uses artifact slots to sync rendered heights back to the original Markdown placeholder containers.
 
 ### Block
 
@@ -258,7 +258,7 @@ Each editor instance gets one trusted Markdown runtime host by default. Blocks i
 
 ## Obsidian integration
 
-The official Obsidian plugin lives in <https://github.com/slexkit/obsidian-slexkit> and registers the `slex` fenced code block processor:
+The official Obsidian plugin is available at <https://github.com/slexkit/obsidian-slexkit> and registers the `slex` fenced code block processor:
 
 ```ts
 // In the plugin:

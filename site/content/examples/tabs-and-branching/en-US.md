@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Branching: Mode Selector
 
-`select` switches the `mode` state; the current mode determines which inputs and results render.
+The branching demo uses `select` to switch the `mode` state and render different inputs and results.
 
 The pattern is `UI = f(state)`: change `mode`, and the view switches with it.
 
@@ -56,7 +56,7 @@ The pattern is `UI = f(state)`: change `mode`, and the view switches with it.
       "stat:result": { "$label": "g.label()", "$value": "g.convert()" },
       "callout:guide": {
         "$tone": "g.mode === 'temp' ? 'warning' : 'info'",
-        "$text": "g.mode === 'length' ? '1 meter = 100 cm; divide by 100.' : g.mode === 'weight' ? '1 kg ≈ 2.20462 lbs.' : '°F = °C × 9/5 + 32. Fahrenheit values use a wider numeric range.'"
+        "$text": "g.mode === 'length' ? '1 meter = 100 cm — just divide by 100.' : g.mode === 'weight' ? '1 kg ≈ 2.20462 lbs.' : '°F = °C × 9/5 + 32. Fahrenheit has a wider range — watch your precision.'"
       }
     }
   }

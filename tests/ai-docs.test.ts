@@ -13,7 +13,6 @@ describe("AI documentation generation", () => {
 
   const generatedDocStyleMarkers: Array<{ label: string; pattern: RegExp }> = [
     { label: "old package reference title", pattern: /\bPackage Boundaries\b/i },
-    { label: "assistant-ui package residue", pattern: /@slexkit\/assistant-ui/i },
     { label: "assistant-ui template lineage", pattern: /\bassistant-ui information architecture\b/i },
     { label: "source of truth", pattern: /\bsource of truth\b/i },
     { label: "quality gate", pattern: /\bquality gate\b/i },

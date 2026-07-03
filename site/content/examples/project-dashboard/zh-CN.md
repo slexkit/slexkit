@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 项目仪表盘
 
-`section` 做区块分组，`grid` 做多列布局，多张 card 分别展示 Sprint 进度、质量指标和团队健康度。
+该示例用 `section` 做区块分组，`grid` 做多列布局，并用多张 card 展示 Sprint 进度、质量指标和团队健康度。
 
 ```slex
 {

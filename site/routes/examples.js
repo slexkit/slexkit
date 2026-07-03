@@ -30,6 +30,7 @@ function localizedCopy(locale) {
       calculators: "计算器示例",
       calculatorsDesc: "工程、电子和成本估算场景。",
       hostAdapters: "宿主接入",
+      assistantUiAdapterDesc: "assistant-ui Streamdown text wrapper。",
       streamdownAdapterDesc: "Streamdown renderer 插件。",
       tiptapAdapterDesc: "Tiptap editor extension。",
       openExample: "打开示例",
@@ -69,6 +70,7 @@ function localizedCopy(locale) {
     calculators: "Calculator examples",
     calculatorsDesc: "Engineering, electronics, and cost-estimation scenarios.",
     hostAdapters: "Host integration",
+    assistantUiAdapterDesc: "assistant-ui Streamdown text wrapper.",
     streamdownAdapterDesc: "Streamdown renderer plugin.",
     tiptapAdapterDesc: "Tiptap editor extension.",
     openExample: "Open example",
@@ -157,6 +159,7 @@ function examplesLandingHtml(examples, copy, locale) {
   const calculators = groupExamples(examples, locale === "zh-CN" ? "计算器" : "Calculator");
   const integrationHref = withSiteBase(locale === "zh-CN" ? "/zh-CN/docs/guides/integration" : "/docs/guides/integration");
   const obsidianHref = `${integrationHref}#obsidian`;
+  const assistantUiHref = hrefForExample(examples, "assistant-ui-host");
   const streamdownHref = hrefForExample(examples, "streamdown-host");
   const tiptapHref = hrefForExample(examples, "tiptap-host");
 
@@ -196,6 +199,10 @@ function examplesLandingHtml(examples, copy, locale) {
           <a href="${escapeAttribute(integrationHref)}">${escapeAttribute(copy.openGuide)}</a>
         </div>
         <div class="slex-examples-adapter-grid">
+          <a class="slex-examples-adapter-card" href="${escapeAttribute(assistantUiHref)}">
+            <strong>assistant-ui</strong>
+            <span>${escapeAttribute(copy.assistantUiAdapterDesc)}</span>
+          </a>
           <a class="slex-examples-adapter-card" href="${escapeAttribute(streamdownHref)}">
             <strong>Streamdown</strong>
             <span>${escapeAttribute(copy.streamdownAdapterDesc)}</span>

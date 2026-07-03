@@ -30,7 +30,7 @@ import {
 } from "slexkit";
 
 const DEFAULT_LANGUAGES = ["slex"] as const;
-const STREAMDOWN_RENDERER_VERSION = "0.3.4";
+const STREAMDOWN_RENDERER_VERSION = "0.4.0";
 const DEFAULT_SECURE_POLICY: HostRuntimePolicy = {};
 let nextPreviewId = 0;
 

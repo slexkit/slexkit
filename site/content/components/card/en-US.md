@@ -3,11 +3,11 @@ title: "Card"
 category: Layout
 status: ready
 order: 50
-summary: "Bordered grouping container for related content."
+summary: "Grouping container for related content."
 ---
 # Card
 
-Bordered container with optional title and semantic tone.
+Card-style container with optional title and semantic tone.
 
 <!-- slex:spec-example:start component="card" id="basic" sourceHash="74b8c7a0" -->
 ```slex
@@ -80,11 +80,12 @@ Bordered container with optional title and semantic tone.
 
 ## API Reference {#api}
 
-<!-- slex:spec-api:start component="card" sourceHash="add47956" -->
+<!-- slex:spec-api:start component="card" sourceHash="fd8bc1c8" -->
 | Field | Type | Required | Dynamic | Default | Description |
 |---|---|---|---|---|---|
 | `title` | string | No | Yes |  | Card title. |
 | `icon` | string | No | No |  | Icon name shown before the title. |
 | `tone` | string: info, success, warning, danger, muted | No | No |  | Optional semantic tone for the card surface. |
+| `variant` | string: tool | No | No |  | Use tool for ToolHost input cards with compact chrome. |
 | child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
 <!-- slex:spec-api:end -->

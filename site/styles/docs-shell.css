@@ -1189,10 +1189,20 @@
   overflow: hidden;
 }
 
+.slex-doc-prose :where(.slex-example-live-frame[src*="assistant-ui"]) {
+  height: 720px;
+  min-height: 620px;
+}
+
 @media (max-width: 480px) {
   .slex-doc-prose :where(.slex-example-live-frame) {
     height: 980px;
     min-height: 440px;
+  }
+
+  .slex-doc-prose :where(.slex-example-live-frame[src*="assistant-ui"]) {
+    height: 820px;
+    min-height: 620px;
   }
 }
 
@@ -1290,7 +1300,6 @@
 .slex-docs-markdown .slex-toolhost-replay *::before,
 .slex-docs-markdown .slex-toolhost-replay *::after {
   box-sizing: border-box;
-  min-width: 0;
 }
 
 .slex-docs-markdown .slex-toolhost-replay :where(h2, h3, p, span, small, code, dt, dd, button, summary) {
@@ -1501,10 +1510,6 @@
 
 .slex-docs-markdown .slex-toolhost-call-mount {
   padding: 0.75rem 0 0;
-}
-
-.slex-docs-markdown .slex-toolhost-call-mount .slex-card {
-  box-shadow: none;
 }
 
 .slex-docs-markdown .slex-toolhost-output {
@@ -1721,11 +1726,6 @@
   padding: 0.75rem;
 }
 
-.slex-docs-markdown .slex-toolhost-call-mount .slex-card {
-  border-color: color-mix(in oklab, var(--border) 82%, transparent);
-  box-shadow: none;
-}
-
 @container (max-width: 43.999rem) {
   .slex-docs-markdown .slex-toolhost-dialog-state {
     grid-template-columns: 1fr;
@@ -1743,6 +1743,609 @@
   .slex-docs-markdown .slex-toolhost-message {
     width: 100%;
     max-width: 100%;
+  }
+}
+
+.slex-docs-markdown .slex-toolhost-replay {
+  overflow: hidden;
+  border-color: color-mix(in oklab, var(--border) 78%, transparent);
+  border-radius: calc(var(--radius) + 2px);
+  background: var(--card);
+  box-shadow: none;
+}
+
+.slex-docs-markdown .slex-toolhost-replay-header {
+  align-items: center;
+  padding: 1.125rem 1.25rem;
+  border-bottom-color: color-mix(in oklab, var(--border) 72%, transparent);
+  background: var(--card);
+}
+
+.slex-docs-markdown .slex-toolhost-replay-header h2 {
+  font-size: 1.0625rem;
+  font-weight: 660;
+}
+
+.slex-docs-markdown .slex-toolhost-replay-header p:not(.slex-toolhost-replay-eyebrow) {
+  margin-top: 0.375rem;
+  max-width: 46rem;
+  font-size: 0.875rem;
+}
+
+.slex-docs-markdown .slex-toolhost-replay-eyebrow {
+  color: color-mix(in oklab, var(--muted-foreground) 88%, transparent);
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.slex-docs-markdown .slex-toolhost-replay-reset {
+  min-height: 2.125rem;
+  border-color: color-mix(in oklab, var(--border) 80%, transparent);
+  background: var(--card);
+  color: var(--foreground);
+}
+
+.slex-docs-markdown .slex-toolhost-dialog-state {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom-color: color-mix(in oklab, var(--border) 72%, transparent);
+  background: color-mix(in oklab, var(--muted) 14%, var(--card));
+}
+
+.slex-docs-markdown .slex-toolhost-dialog-state div {
+  gap: 0.25rem;
+  border-right-color: color-mix(in oklab, var(--border) 72%, transparent);
+  padding: 0.8125rem 1.25rem;
+}
+
+.slex-docs-markdown .slex-toolhost-dialog-state dt {
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.slex-docs-markdown .slex-toolhost-dialog-state dd {
+  font-size: 0.875rem;
+  font-weight: 520;
+}
+
+.slex-docs-markdown .slex-toolhost-replay-panel {
+  background: var(--card);
+}
+
+.slex-docs-markdown .slex-toolhost-replay-transcript {
+  gap: 0.875rem;
+  max-height: 44rem;
+  padding: 1.125rem 1.25rem 1.25rem;
+  background: var(--background);
+}
+
+.slex-docs-markdown .slex-toolhost-message {
+  width: min(100%, 41rem);
+  max-width: 74%;
+  gap: 0.375rem;
+}
+
+.slex-docs-markdown .slex-toolhost-message[data-role="user"] {
+  max-width: 70%;
+}
+
+.slex-docs-markdown .slex-toolhost-tool-turn {
+  width: min(100%, 40rem);
+  max-width: 76%;
+}
+
+.slex-docs-markdown .slex-toolhost-active-turn {
+  width: min(100%, 40rem);
+  max-width: 76%;
+}
+
+.slex-docs-markdown .slex-toolhost-receipt-turn {
+  width: min(100%, 34rem);
+  max-width: 68%;
+}
+
+.slex-docs-markdown .slex-toolhost-message-role {
+  padding: 0 0.125rem;
+  color: color-mix(in oklab, var(--muted-foreground) 88%, transparent);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  text-transform: none;
+}
+
+.slex-docs-markdown .slex-toolhost-message[data-role="user"] .slex-toolhost-message-role::after {
+  content: "";
+}
+
+.slex-docs-markdown .slex-toolhost-message-bubble {
+  border-color: color-mix(in oklab, var(--border) 72%, transparent);
+  border-radius: calc(var(--radius) + 2px);
+  background: var(--card);
+  padding: 0.6875rem 0.875rem;
+  box-shadow: none;
+}
+
+.slex-docs-markdown .slex-toolhost-message[data-role="user"] .slex-toolhost-message-bubble {
+  border-color: color-mix(in oklab, var(--primary) 18%, var(--border));
+  background: color-mix(in oklab, var(--primary) 5%, var(--card));
+}
+
+.slex-docs-markdown .slex-toolhost-message-bubble p {
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.slex-docs-markdown .slex-toolhost-call,
+.slex-docs-markdown .slex-toolhost-output {
+  border-color: color-mix(in oklab, var(--border) 72%, transparent);
+  border-radius: calc(var(--radius) + 2px);
+  background: var(--card);
+  box-shadow: none;
+}
+
+.slex-docs-markdown .slex-toolhost-call:not([data-status="pending"]) {
+  border-color: color-mix(in oklab, var(--border) 58%, transparent);
+  background: color-mix(in oklab, var(--muted) 8%, var(--card));
+}
+
+.slex-docs-markdown .slex-toolhost-call[data-status="pending"] {
+  border-color: transparent;
+  background: transparent;
+}
+
+.slex-docs-markdown .slex-toolhost-call-head,
+.slex-docs-markdown .slex-toolhost-output-head {
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  border-bottom-color: color-mix(in oklab, var(--border) 66%, transparent);
+  background: color-mix(in oklab, var(--muted) 10%, var(--card));
+}
+
+.slex-docs-markdown .slex-toolhost-call:not([data-status="pending"]) .slex-toolhost-call-head {
+  border-bottom: 0;
+  background: transparent;
+}
+
+.slex-docs-markdown .slex-toolhost-call[data-status="pending"] .slex-toolhost-call-head {
+  border: 0;
+  border-bottom: 0;
+  background: transparent;
+  padding: 0 0.125rem 0.5rem;
+}
+
+.slex-docs-markdown .slex-toolhost-call-head span,
+.slex-docs-markdown .slex-toolhost-output-head span {
+  font-size: 0.8125rem;
+  font-weight: 660;
+}
+
+.slex-docs-markdown .slex-toolhost-call-head small {
+  color: color-mix(in oklab, var(--muted-foreground) 90%, transparent);
+  font-size: 0.75rem;
+}
+
+.slex-docs-markdown .slex-toolhost-call code,
+.slex-docs-markdown .slex-toolhost-output code,
+.slex-docs-markdown .slex-toolhost-protocol code {
+  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklab, var(--muted) 28%, var(--card));
+  padding: 0.125rem 0.4375rem;
+  color: var(--foreground);
+  font-size: 0.75rem;
+}
+
+.slex-docs-markdown .slex-toolhost-call-mount {
+  padding: 0;
+}
+
+.slex-docs-markdown .slex-toolhost-call-mount .slex-collapsible {
+  border-color: color-mix(in oklab, var(--border) 58%, transparent);
+  border-radius: calc(var(--radius) - 1px);
+  background: color-mix(in oklab, var(--muted) 5%, var(--card));
+}
+
+.slex-docs-markdown .slex-toolhost-call-mount .slex-collapsible + .slex-collapsible {
+  margin-top: 0.5rem;
+}
+
+.slex-docs-markdown .slex-toolhost-call-mount .slex-collapsible-trigger {
+  min-height: 2.35rem;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+
+.slex-docs-markdown .slex-toolhost-call-mount .slex-collapsible-content-inner {
+  padding: 0 0.625rem;
+}
+
+.slex-docs-markdown .slex-toolhost-call-mount .slex-collapsible-content[data-state="open"] .slex-collapsible-content-inner {
+  padding-bottom: 0.625rem;
+}
+
+.slex-docs-markdown .slex-toolhost-output {
+  border-color: color-mix(in oklab, var(--border) 58%, transparent);
+  background: color-mix(in oklab, var(--muted) 8%, var(--card));
+}
+
+.slex-docs-markdown .slex-toolhost-output-summary {
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+}
+
+.slex-docs-markdown .slex-toolhost-receipt-turn:has(.slex-toolhost-call:not([data-status="pending"])) {
+  display: none;
+}
+
+.slex-docs-markdown .slex-toolhost-output code,
+.slex-docs-markdown .slex-toolhost-output .slex-toolhost-json {
+  display: none;
+}
+
+.slex-docs-markdown .slex-toolhost-output {
+  border: 0;
+  background: transparent;
+}
+
+.slex-docs-markdown .slex-toolhost-output-head {
+  display: none;
+}
+
+.slex-docs-markdown .slex-toolhost-output-summary {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  border: 1px solid color-mix(in oklab, var(--primary) 18%, var(--border));
+  border-radius: calc(var(--radius) + 2px);
+  background: color-mix(in oklab, var(--primary) 5%, var(--card));
+  color: var(--foreground);
+  font-weight: 520;
+}
+
+.slex-docs-markdown .slex-toolhost-result-turn {
+  width: min(100%, 32rem);
+  max-width: 62%;
+}
+
+.slex-docs-markdown .slex-toolhost-result {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.375rem;
+  width: fit-content;
+  max-width: 100%;
+  border-left: 2px solid color-mix(in oklab, var(--border) 86%, transparent);
+  padding: 0.125rem 0 0.125rem 0.625rem;
+}
+
+.slex-docs-markdown .slex-toolhost-result span,
+.slex-docs-markdown .slex-toolhost-result strong {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.slex-docs-markdown .slex-toolhost-result strong {
+  color: color-mix(in oklab, var(--foreground) 72%, var(--muted-foreground));
+}
+
+.slex-docs-markdown .slex-toolhost-result p {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 520;
+  line-height: 1.4;
+}
+
+.slex-docs-markdown .slex-toolhost-result em {
+  margin: 0 0.25rem;
+  color: var(--muted-foreground);
+  font-style: normal;
+}
+
+.slex-docs-markdown .slex-toolhost-json {
+  padding: 0.625rem 0.875rem;
+}
+
+.slex-docs-markdown .slex-toolhost-call:not([data-status="pending"]) .slex-toolhost-json {
+  border-top: 1px solid color-mix(in oklab, var(--border) 52%, transparent);
+  padding-top: 0.5rem;
+}
+
+.slex-docs-markdown .slex-toolhost-output .slex-toolhost-json {
+  border-top-color: color-mix(in oklab, var(--border) 58%, transparent);
+}
+
+.slex-docs-markdown .slex-toolhost-json summary,
+.slex-docs-markdown .slex-toolhost-protocol summary {
+  color: color-mix(in oklab, var(--muted-foreground) 92%, transparent);
+  font-size: 0.8125rem;
+}
+
+.slex-docs-markdown .slex-toolhost-call pre,
+.slex-docs-markdown .slex-toolhost-output pre,
+.slex-docs-markdown .slex-toolhost-json pre {
+  border: 1px solid color-mix(in oklab, var(--border) 64%, transparent);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklab, var(--muted) 14%, var(--card));
+  color: var(--muted-foreground);
+}
+
+.slex-docs-markdown .slex-toolhost-protocol {
+  border-top-color: color-mix(in oklab, var(--border) 72%, transparent);
+  background: var(--card);
+}
+
+.slex-docs-markdown .slex-toolhost-reference {
+  border-top: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  background: var(--card);
+  padding: 1.25rem;
+}
+
+.slex-docs-markdown .slex-toolhost-reference header {
+  margin: 0 0 1rem;
+}
+
+.slex-docs-markdown .slex-toolhost-reference header p {
+  margin: 0 0 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.slex-docs-markdown .slex-toolhost-reference h3 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 1rem;
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+.slex-docs-markdown .slex-toolhost-reference header span {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.slex-docs-markdown .slex-toolhost-reference-body {
+  display: grid;
+  grid-template-columns: minmax(13rem, 0.55fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.slex-docs-markdown .slex-toolhost-reference-flow {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slex-docs-markdown .slex-toolhost-reference-flow li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.625rem;
+  align-items: start;
+  border: 1px solid color-mix(in oklab, var(--border) 66%, transparent);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklab, var(--muted) 6%, var(--card));
+  padding: 0.625rem 0.75rem;
+}
+
+.slex-docs-markdown .slex-toolhost-reference-flow span {
+  display: inline-grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.slex-docs-markdown .slex-toolhost-reference-flow p {
+  margin: 0;
+  color: color-mix(in oklab, var(--foreground) 82%, var(--muted-foreground));
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.slex-docs-markdown .slex-toolhost-reference pre {
+  overflow: auto;
+  margin: 0;
+  border: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklab, var(--background) 88%, var(--muted));
+  padding: 0.75rem;
+  color: color-mix(in oklab, var(--foreground) 84%, var(--muted-foreground));
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.slex-docs-markdown .slex-toolhost-reference code {
+  white-space: pre;
+}
+
+.slex-docs-markdown .slex-toolhost-protocol summary {
+  padding: 0.75rem 1.25rem;
+}
+
+.slex-docs-markdown .slex-toolhost-protocol ol {
+  border-top-color: color-mix(in oklab, var(--border) 70%, transparent);
+}
+
+.slex-docs-markdown .slex-toolhost-replay-transcript,
+.slex-docs-markdown .slex-toolhost-protocol ol {
+  max-height: none;
+  overflow: visible;
+}
+
+.slex-docs-markdown .slex-toolhost-protocol li {
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.slex-docs-markdown .slex-toolhost-protocol-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.slex-docs-markdown .slex-toolhost-protocol-summary {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.slex-docs-markdown .slex-toolhost-protocol-payload {
+  border: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  border-radius: calc(var(--radius) - 2px);
+  background: color-mix(in oklab, var(--muted) 6%, var(--card));
+}
+
+.slex-docs-markdown .slex-toolhost-protocol-payload summary {
+  padding: 0.5rem 0.75rem;
+}
+
+.slex-docs-markdown .slex-toolhost-protocol-payload code {
+  display: inline-block;
+  margin: 0 0.75rem 0.5rem;
+}
+
+.slex-docs-markdown .slex-toolhost-protocol pre {
+  overflow: auto;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  border-radius: 0;
+  background: color-mix(in oklab, var(--muted) 10%, var(--card));
+  padding: 0.75rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+@container (max-width: 43.999rem) {
+  .slex-docs-markdown .slex-toolhost-replay-header {
+    align-items: flex-start;
+  }
+
+  .slex-docs-markdown .slex-toolhost-replay-transcript {
+    padding: 1rem;
+  }
+
+  .slex-docs-markdown .slex-toolhost-reference {
+    padding: 1rem;
+  }
+
+  .slex-docs-markdown .slex-toolhost-reference-body {
+    grid-template-columns: 1fr;
+  }
+
+  .slex-docs-markdown .slex-toolhost-message,
+  .slex-docs-markdown .slex-toolhost-message[data-role="user"],
+  .slex-docs-markdown .slex-toolhost-tool-turn,
+  .slex-docs-markdown .slex-toolhost-active-turn,
+  .slex-docs-markdown .slex-toolhost-receipt-turn {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .slex-docs-markdown .slex-toolhost-result-turn {
+    max-width: 100%;
+  }
+
+  .slex-docs-markdown .slex-toolhost-call-mount {
+    padding: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .slex-docs-markdown .slex-toolhost-replay {
+    border-inline-color: color-mix(in oklab, var(--border) 68%, transparent);
+    overflow: hidden;
+  }
+
+  .slex-docs-markdown .slex-toolhost-replay-header {
+    padding: 1rem;
+  }
+
+  .slex-docs-markdown .slex-toolhost-dialog-state {
+    grid-template-columns: 1fr;
+  }
+
+  .slex-docs-markdown .slex-toolhost-dialog-state div {
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--border) 66%, transparent);
+    padding: 0.75rem 1rem;
+  }
+
+  .slex-docs-markdown .slex-toolhost-dialog-state div:last-child {
+    border-bottom: 0;
+  }
+
+  .slex-docs-markdown .slex-toolhost-replay-transcript {
+    padding: 1rem;
+  }
+
+  .slex-docs-markdown .slex-toolhost-message,
+  .slex-docs-markdown .slex-toolhost-message[data-role="user"],
+  .slex-docs-markdown .slex-toolhost-tool-turn,
+  .slex-docs-markdown .slex-toolhost-active-turn,
+  .slex-docs-markdown .slex-toolhost-receipt-turn {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .slex-docs-markdown .slex-toolhost-message[data-role="user"] {
+    align-items: stretch;
+  }
+
+  .slex-docs-markdown .slex-toolhost-message-bubble,
+  .slex-docs-markdown .slex-toolhost-call,
+  .slex-docs-markdown .slex-toolhost-call-mount,
+  .slex-docs-markdown .slex-toolhost-call-mount .slexkit-root,
+  .slex-docs-markdown .slex-toolhost-call-mount .slex-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .slex-docs-markdown .slex-toolhost-call-head,
+  .slex-docs-markdown .slex-toolhost-output-head {
+    align-items: flex-start;
+  }
+
+  .slex-docs-markdown .slex-toolhost-call-head small {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .slex-docs-markdown .slex-toolhost-call-mount {
+    padding: 0;
+  }
+
+  .slex-docs-markdown .slex-toolhost-call-mount .slex-submit-bar {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .slex-docs-markdown .slex-toolhost-call-mount .slex-submit-bar .slex-button {
+    min-width: 0;
+    white-space: normal;
   }
 }
 

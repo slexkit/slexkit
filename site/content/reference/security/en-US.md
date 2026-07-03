@@ -219,7 +219,7 @@ Messages are verified: the sandbox checks `event.source === window.parent`; the 
 
 Multiple Markdown fences belonging to one artifact share a single sandbox iframe. The host sends slot rectangles to the sandbox, which renders each fence's output inside the corresponding slot container. The sandbox reports each slot's rendered height back via `slot-size` messages.
 
-A `ResizeObserver` on the host side and inside the sandbox keeps positions and heights synchronized. This allows visual continuity across fence boundaries while keeping all execution confined to one isolation context.
+A `ResizeObserver` on the host side and inside the sandbox keeps positions and heights synchronized. This preserves visual continuity across fences while keeping all execution confined to one isolation context.
 
 ## Heartbeat watchdog
 

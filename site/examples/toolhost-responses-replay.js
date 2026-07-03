@@ -10,6 +10,15 @@ function textEvent(role, text) {
   };
 }
 
+function dynamicTextEvent(role, kind, locale) {
+  return {
+    type: "message/output_text.dynamic",
+    role,
+    kind,
+    locale,
+  };
+}
+
 function functionCallEvents({ itemId, callId, name, arguments: args }) {
   const json = JSON.stringify(args);
   const splitAt = Math.max(1, Math.floor(json.length * 0.58));
@@ -63,25 +72,100 @@ function parseArguments(source) {
   }
 }
 
+function outputFor(state, callId) {
+  return state.transcript.find((item) => item.kind === "tool-output" && item.callId === callId)?.output ?? null;
+}
+
+const strategyLabels = {
+  "zh-CN": {
+    canary: "10% 灰度发布",
+    full: "全量发布",
+    hold: "暂缓发布",
+  },
+  "en-US": {
+    canary: "10% canary release",
+    full: "full release",
+    hold: "hold release",
+  },
+};
+
+function selectedStrategy(state, locale) {
+  const selected = outputFor(state, "call_release_parameters")?.selected?.[0];
+  return strategyLabels[locale]?.[selected] ?? strategyLabels[locale]?.canary ?? "";
+}
+
+function releaseConstraints(state, locale) {
+  const fallback = locale === "zh-CN"
+    ? {
+        window: "今晚 22:00 - 23:00",
+        owner: "值班 SRE / Web 平台负责人",
+        rollback: "错误率超过 1% 或 P95 延迟连续 5 分钟高于 800ms",
+      }
+    : {
+        window: "Tonight 22:00 - 23:00",
+        owner: "on-call SRE / Web platform lead",
+        rollback: "error rate exceeds 1% or P95 latency stays above 800ms",
+      };
+  return { ...fallback, ...(outputFor(state, "call_release_parameters") ?? {}) };
+}
+
+function renderDynamicText(state, event) {
+  const locale = event.locale ?? "en-US";
+  const strategy = selectedStrategy(state, locale);
+  const constraints = releaseConstraints(state, locale);
+
+  if (locale === "zh-CN") {
+    if (event.kind === "plan_followup") {
+      return `收到。计划会按${strategy}处理，窗口是${constraints.window}，由${constraints.owner}看护；回滚条件也会写进摘要。`;
+    }
+    if (event.kind === "final_summary") {
+      return `发布计划已确认：${constraints.window} 采用${strategy}，由${constraints.owner}看护；若${constraints.rollback}，则立即回滚。`;
+    }
+  }
+
+  if (event.kind === "plan_followup") {
+    return `Received. I will shape the plan as a ${strategy} during ${constraints.window}, owned by ${constraints.owner}, with rollback criteria in the summary.`;
+  }
+  if (event.kind === "final_summary") {
+    return `Release plan approved: use ${strategy} during ${constraints.window}, watched by ${constraints.owner}. Roll back immediately if ${constraints.rollback}.`;
+  }
+
+  return "";
+}
+
 const zhCNFixture = {
   title: "发布计划确认",
-  subtitle: "AI 生成发布计划时在关键节点暂停，由 ToolHost 收集用户决定，再继续输出摘要。",
+  subtitle: "AI 起草计划，在需要确认的位置暂停。",
   restartLabel: "重新播放",
-  pendingLabel: "等待用户输入",
+  pendingLabel: "待确认",
   completedLabel: "已返回",
   ignoredLabel: "已忽略",
-  transcriptLabel: "对话与工具调用",
-  protocolLabel: "Responses 事件",
+  transcriptLabel: "Agent 运行轨迹",
+  protocolLabel: "接入参考",
+  referenceLabel: "SlexKit ToolHost 接入参考",
+  referenceEyebrow: "SlexKit ToolHost",
+  referenceTitle: "Function call 的接入位置",
+  referenceDescription: "ToolHost 是一个 human-input tool：agent 发起 function call，浏览器渲染 Slex 卡片，提交结果再以 function_call_output 回到 agent。",
+  fixtureLabel: "Fixture 回放明细",
   generatedLabel: "生成",
-  userLabel: "你",
-  assistantLabel: "AI",
-  toolLabel: "ToolHost",
-  eyebrow: "ToolHost · Responses 回放",
-  decisionLabel: "当前决策",
-  awaitingDecisionLabel: "等待用户选择",
+  userLabel: "用户目标",
+  assistantLabel: "Agent",
+  toolLabel: "需要你确认",
+  toolResultLabel: "返回给 Agent",
+  toolCallLabel: "function call",
+  toolOutputLabel: "function_call_output",
+  argumentsLabel: "function_call arguments",
+  rawOutputLabel: "Raw JSON",
+  eyebrow: "Agent 运行轨迹",
+  decisionLabel: "当前发布参数",
+  awaitingDecisionLabel: "需要确认",
   directionLabel: "发布策略",
   constraintsLabel: "发布窗口",
   approvalLabel: "确认状态",
+  releaseParametersLabel: "发布参数",
+  releaseParametersSubmittedLabel: "发布参数已提交",
+  approvalResultLabel: "确认结果",
+  approvalSubmittedLabel: "发布计划已确认",
   notSetLabel: "未提交",
   approvedLabel: "已确认采用",
   directions: {
@@ -91,78 +175,77 @@ const zhCNFixture = {
   },
   events: [
     textEvent("user", "帮我准备一次 Web 控制台发布计划。目标是低风险上线，必须可回滚，先不要真的执行。"),
-    textEvent("assistant", "我会先整理发布方案。发布策略会影响窗口、监控和回滚条件，需要你先确认采用哪一种方式。"),
+    textEvent("assistant", "可以。我先需要你确认发布策略，并补齐发布窗口、负责人和回滚条件。"),
     ...functionCallEvents({
-      itemId: "fc_direction",
-      callId: "call_direction",
-      name: "choose-options",
+      itemId: "fc_release_parameters",
+      callId: "call_release_parameters",
+      name: "release-parameters",
       arguments: {
-        title: "选择发布策略",
-        description: "这个选择只用于生成发布计划，不会触发真实部署。",
-        submitLabel: "采用策略",
+        title: "补齐发布参数",
+        description: "一次性确认发布策略、窗口、负责人和回滚条件。",
+        submitLabel: "提交发布参数",
         ignoreLabel: "跳过",
-        multiple: false,
-        minSelected: 1,
-        maxSelected: 1,
         options: [
           { id: "canary", label: "10% 灰度发布", description: "先开放少量流量，观察核心指标后再扩大范围" },
           { id: "full", label: "全量发布", description: "一次性切换全部流量，适合低风险补丁" },
           { id: "hold", label: "暂缓发布", description: "保留计划但不进入发布窗口" },
         ],
+        values: {
+          window: "今晚 22:00 - 23:00",
+          owner: "值班 SRE / Web 平台负责人",
+          rollback: "错误率超过 1% 或 P95 延迟连续 5 分钟高于 800ms",
+        },
       },
     }),
-    textEvent("assistant", "我会按 10% 灰度发布准备计划。还需要补充发布窗口、负责人和回滚条件，便于生成可审阅的发布摘要。"),
+    dynamicTextEvent("assistant", "plan_followup", "zh-CN"),
     ...functionCallEvents({
-      itemId: "fc_constraints",
-      callId: "call_constraints",
-      name: "fill-form",
-      arguments: {
-        title: "补充发布约束",
-        description: "这些字段会作为结构化结果返回给宿主，用于继续生成发布计划。",
-        submitLabel: "提交约束",
-        ignoreLabel: "取消",
-        fields: [
-          { name: "window", label: "发布窗口", type: "text", value: "今晚 22:00 - 23:00", required: true },
-          { name: "owner", label: "负责人", type: "text", value: "值班 SRE / Web 平台负责人", required: true },
-          { name: "rollback", label: "回滚条件", type: "text", value: "错误率超过 1% 或 P95 延迟连续 5 分钟高于 800ms", required: true },
-        ],
-      },
-    }),
-    textEvent("assistant", "约束已收到。我会把发布计划整理为可审阅版本：包含灰度范围、观察指标、负责人和回滚条件。最后需要你确认是否采用这份计划。"),
-    ...functionCallEvents({
-      itemId: "fc_confirm",
-      callId: "call_confirm",
+      itemId: "fc_approval",
+      callId: "call_approval",
       name: "confirm-action",
       arguments: {
-        title: "确认采用发布计划",
-        description: "确认后，结果会作为 function_call_output 回填；这只表示采用计划，不会执行真实发布。",
+        title: "采用发布计划",
+        description: "确认后只生成计划摘要，不会触发真实部署。",
         confirmLabel: "采用计划",
         ignoreLabel: "暂不采用",
       },
     }),
-    textEvent("assistant", "发布计划已确认：今晚 22:00 开始 10% 灰度发布，由值班 SRE 和 Web 平台负责人看护；若错误率超过 1% 或 P95 延迟持续异常，则立即回滚。这个演示仍然是静态回放，没有连接真实发布系统。"),
+    dynamicTextEvent("assistant", "final_summary", "zh-CN"),
   ],
 };
 
 const enUSFixture = {
   title: "Release Plan Approval",
-  subtitle: "The replay pauses at key release decisions, collects user input through ToolHost, then continues.",
+  subtitle: "AI drafts the plan and pauses where approval is needed.",
   restartLabel: "Replay",
-  pendingLabel: "Waiting for input",
+  pendingLabel: "Pending",
   completedLabel: "Returned",
   ignoredLabel: "Ignored",
-  transcriptLabel: "Conversation and tool calls",
-  protocolLabel: "Responses items",
+  transcriptLabel: "Agent trace",
+  protocolLabel: "Integration reference",
+  referenceLabel: "SlexKit ToolHost integration reference",
+  referenceEyebrow: "SlexKit ToolHost",
+  referenceTitle: "Where ToolHost sits in function calling",
+  referenceDescription: "ToolHost is a human-input tool: the agent emits a function call, the browser renders a Slex card, and the submitted value returns as function_call_output.",
+  fixtureLabel: "Fixture replay details",
   generatedLabel: "Generated",
-  userLabel: "You",
-  assistantLabel: "AI",
-  toolLabel: "ToolHost",
-  eyebrow: "ToolHost · Responses replay",
-  decisionLabel: "Current decision",
-  awaitingDecisionLabel: "Waiting for user choice",
+  userLabel: "User goal",
+  assistantLabel: "Agent",
+  toolLabel: "Needs your confirmation",
+  toolResultLabel: "Returned to agent",
+  toolCallLabel: "function call",
+  toolOutputLabel: "function_call_output",
+  argumentsLabel: "function_call arguments",
+  rawOutputLabel: "Raw JSON",
+  eyebrow: "Agent trace",
+  decisionLabel: "Current release parameters",
+  awaitingDecisionLabel: "Needs approval",
   directionLabel: "Release strategy",
   constraintsLabel: "Release window",
   approvalLabel: "Approval state",
+  releaseParametersLabel: "Release parameters",
+  releaseParametersSubmittedLabel: "Release parameters submitted",
+  approvalResultLabel: "Approval result",
+  approvalSubmittedLabel: "Release plan approved",
   notSetLabel: "Not submitted",
   approvedLabel: "Plan approved",
   directions: {
@@ -172,56 +255,41 @@ const enUSFixture = {
   },
   events: [
     textEvent("user", "Prepare a release plan for the web console. Keep it low risk, make it rollbackable, and do not execute anything yet."),
-    textEvent("assistant", "I will draft the release plan. The strategy changes the window, monitoring, and rollback criteria, so I need you to choose how to proceed first."),
+    textEvent("assistant", "I need you to confirm the release strategy and complete the release window, owner, and rollback criteria first."),
     ...functionCallEvents({
-      itemId: "fc_direction",
-      callId: "call_direction",
-      name: "choose-options",
+      itemId: "fc_release_parameters",
+      callId: "call_release_parameters",
+      name: "release-parameters",
       arguments: {
-        title: "Choose the release strategy",
-        description: "This choice is only used to generate the release plan. It does not trigger deployment.",
-        submitLabel: "Use strategy",
+        title: "Complete release parameters",
+        description: "Confirm the release strategy, window, owner, and rollback criteria in one step.",
+        submitLabel: "Submit release parameters",
         ignoreLabel: "Skip",
-        multiple: false,
-        minSelected: 1,
-        maxSelected: 1,
         options: [
           { id: "canary", label: "10% canary release", description: "Open a small amount of traffic first, then expand after checks pass" },
           { id: "full", label: "Full release", description: "Switch all traffic at once, suitable for low-risk patches" },
           { id: "hold", label: "Hold release", description: "Keep the plan but do not enter a release window" },
         ],
+        values: {
+          window: "Tonight 22:00 - 23:00",
+          owner: "On-call SRE / Web platform lead",
+          rollback: "Error rate above 1% or P95 latency above 800ms for 5 minutes",
+        },
       },
     }),
-    textEvent("assistant", "I will prepare a 10% canary plan. I still need the release window, owner, and rollback criteria so the summary is reviewable."),
+    dynamicTextEvent("assistant", "plan_followup", "en-US"),
     ...functionCallEvents({
-      itemId: "fc_constraints",
-      callId: "call_constraints",
-      name: "fill-form",
-      arguments: {
-        title: "Add release constraints",
-        description: "ToolHost returns these fields as structured data so the host can continue the release plan.",
-        submitLabel: "Submit constraints",
-        ignoreLabel: "Cancel",
-        fields: [
-          { name: "window", label: "Release window", type: "text", value: "Tonight 22:00 - 23:00", required: true },
-          { name: "owner", label: "Owner", type: "text", value: "On-call SRE / Web platform lead", required: true },
-          { name: "rollback", label: "Rollback criteria", type: "text", value: "Error rate above 1% or P95 latency above 800ms for 5 minutes", required: true },
-        ],
-      },
-    }),
-    textEvent("assistant", "Constraints received. I will turn this into a reviewable plan with canary scope, monitoring checks, owners, and rollback criteria. Please confirm whether to adopt it."),
-    ...functionCallEvents({
-      itemId: "fc_confirm",
-      callId: "call_confirm",
+      itemId: "fc_approval",
+      callId: "call_approval",
       name: "confirm-action",
       arguments: {
-        title: "Approve this release plan",
-        description: "After confirmation, the result is appended as function_call_output. This approves the plan only; it does not execute a deployment.",
+        title: "Adopt the release plan",
+        description: "This only generates the approved plan summary. It does not deploy anything.",
         confirmLabel: "Approve plan",
         ignoreLabel: "Do not approve",
       },
     }),
-    textEvent("assistant", "Release plan approved: start a 10% canary tonight at 22:00, watched by the on-call SRE and Web platform lead. Roll back immediately if error rate exceeds 1% or P95 latency stays above 800ms. This demo remains a static replay and is not connected to a real deployment system."),
+    dynamicTextEvent("assistant", "final_summary", "en-US"),
   ],
 };
 
@@ -249,19 +317,25 @@ export function replayUntilPause(state) {
     const event = state.events[state.index];
     state.index += 1;
 
-    if (event.type === "message/output_text") {
+    if (event.type === "message/output_text" || event.type === "message/output_text.dynamic") {
+      const text = event.type === "message/output_text.dynamic" ? renderDynamicText(state, event) : event.text;
       const id = `message_${state.transcript.length}`;
       state.transcript.push({
         id,
         kind: "message",
         role: event.role,
-        text: event.text,
+        text,
       });
       state.protocolItems.push({
         id,
-        type: event.type,
+        type: "message/output_text",
         label: event.role,
-        body: event.text,
+        body: text,
+        raw: {
+          type: "message",
+          role: event.role,
+          content: [{ type: "output_text", text }],
+        },
       });
       continue;
     }
@@ -278,6 +352,10 @@ export function replayUntilPause(state) {
         type: event.type,
         label: event.item.name,
         body: { call_id: event.item.call_id, name: event.item.name },
+        raw: {
+          type: event.type,
+          item: event.item,
+        },
       });
       continue;
     }
@@ -290,6 +368,11 @@ export function replayUntilPause(state) {
         type: event.type,
         label: event.item_id,
         body: event.delta ?? "",
+        raw: {
+          type: event.type,
+          item_id: event.item_id,
+          delta: event.delta ?? "",
+        },
       });
       continue;
     }
@@ -302,6 +385,11 @@ export function replayUntilPause(state) {
         type: event.type,
         label: event.item_id,
         body: parseArguments(event.arguments),
+        raw: {
+          type: event.type,
+          item_id: event.item_id,
+          arguments: event.arguments ?? "",
+        },
       });
       continue;
     }
@@ -320,21 +408,28 @@ export function replayUntilPause(state) {
         name: draft.name,
         arguments: args,
       };
-      state.pendingToolCall = call;
-      state.status = "paused";
-      state.transcript.push({
-        id: `tool_call_${draft.callId}`,
-        kind: "tool-call",
-        callId: draft.callId,
-        name: draft.name,
-        arguments: args,
-        status: "pending",
-      });
       state.protocolItems.push({
         id: `${event.item.id}_done`,
         type: event.type,
         label: event.item.name,
         body: { call_id: draft.callId, name: draft.name, arguments: args },
+        raw: {
+          type: event.type,
+          item: {
+            ...event.item,
+            arguments: argsText,
+          },
+        },
+      });
+      state.pendingToolCall = call;
+      state.status = "paused";
+      state.transcript.push({
+        id: `tool_call_${call.id ?? event.item.id}_${state.transcript.length}`,
+        kind: "tool-call",
+        callId: call.id,
+        name: call.name,
+        arguments: call.arguments,
+        status: "pending",
       });
       return state;
     }
@@ -350,34 +445,42 @@ export function submitToolResult(state, result) {
     throw new Error("Cannot submit a ToolResult without a pending tool call.");
   }
 
-  const callId = result.toolCallId ?? state.pendingToolCall.id;
+  const call = state.pendingToolCall;
   const status = result.status === "ignored" ? "ignored" : "submitted";
   const output = status === "submitted" ? (result.value ?? {}) : { ignored: true };
 
   for (const item of state.transcript) {
-    if (item.kind === "tool-call" && item.callId === callId) {
+    if (item.kind === "tool-call" && item.callId === call.id) {
       item.status = status;
     }
   }
 
   state.transcript.push({
-    id: `tool_output_${callId}`,
+    id: `tool_output_${call.id}_${state.transcript.length}`,
     kind: "tool-output",
-    callId,
+    callId: call.id,
+    toolName: call.name,
     status,
     output,
   });
+
   state.protocolItems.push({
-    id: `function_call_output_${callId}`,
+    id: `function_call_output_${call.id}`,
     type: "function_call_output",
-    label: callId,
+    label: call.id,
     body: {
       type: "function_call_output",
-      call_id: callId,
+      call_id: call.id,
+      output: JSON.stringify(output),
+    },
+    raw: {
+      type: "function_call_output",
+      call_id: call.id,
       output: JSON.stringify(output),
     },
     generated: true,
   });
+
   state.pendingToolCall = null;
   return replayUntilPause(state);
 }

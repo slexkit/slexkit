@@ -353,7 +353,6 @@ const proseTemplateMarkers: Array<{ label: string; pattern: RegExp }> = [
   { label: "old package reference title", pattern: /\bpackage boundaries\b/i },
   { label: "AI marketing adjective", pattern: /\b(?:powerful|seamless|effortless)\b/i },
   { label: "assistant-ui template lineage", pattern: /\bassistant-ui information architecture\b/i },
-  { label: "unsupported assistant-ui package", pattern: /@slexkit\/assistant-ui/i },
   { label: "user asks AI report framing", pattern: /\bThe user asks AI\b/i },
   { label: "Chinese this example", pattern: /\u8fd9\u4e2a\u793a\u4f8b/ },
   { label: "Chinese this page", pattern: /\u8fd9\u4e2a\u9875\u9762/ },
@@ -696,6 +695,10 @@ The workbench is embedded on the home page.
     );
 
     expect(publicComponentSlugs.has("slider")).toBe(true);
+    expect(publicComponentSlugs.has("submit")).toBe(false);
+    expect(publicComponentSlugs.has("step")).toBe(false);
+    expect(componentSpecs.some((spec) => spec.type === "submit")).toBe(true);
+    expect(componentSpecs.some((spec) => spec.type === "step")).toBe(true);
     expect(doc.summary).toBe("数值范围输入。");
     expect(doc.markdown).toContain("| `value` | number |");
     expect(doc.markdown).toContain("当前数值。");
@@ -787,6 +790,7 @@ order: 1
     const releaseDocs = await discoverReleaseMarkdown({ siteRoot: "site", locale: "zh-CN" });
     const specDoc = referenceDocs.find((doc) => doc.slug === "spec");
     const integrationDoc = referenceDocs.find((doc) => doc.slug === "integration");
+    const toolhostDoc = referenceDocs.find((doc) => doc.slug === "toolhost");
     const changelogDoc = releaseDocs[0];
 
     expect(referenceDocs.map((doc) => doc.href)).toContain("/zh-CN/docs/reference/spec");
@@ -798,8 +802,11 @@ order: 1
       specDoc?.contentLocale === "zh-CN" ? "/zh-CN/docs/reference/spec.md" : "/docs/reference/spec.md",
     );
     const integrationMarkdown = integrationDoc && ("markdown" in integrationDoc ? integrationDoc.markdown : integrationDoc.content);
+    const toolhostMarkdown = toolhostDoc && ("markdown" in toolhostDoc ? toolhostDoc.markdown : toolhostDoc.content);
     expect(integrationMarkdown).toContain("executionMode");
     expect(integrationMarkdown).toContain('streaming="repair"');
+    expect(toolhostMarkdown).toContain("submit:actions");
+    expect(toolhostMarkdown).toContain("submit:actions");
     expect(releaseDocs).toHaveLength(1);
     expect(changelogDoc).toMatchObject({
       slug: "changelog",
@@ -829,8 +836,10 @@ order: 1
     expect(enExamples.map((example) => example.slug).sort()).toEqual(exampleSlugs);
     expect(featured).toHaveLength(exampleSlugs.length);
     expect(zhExamples.map((example) => example.category)).toContain("配置向导");
+    expect(zhExamples.map((example) => example.slug)).toContain("assistant-ui-host");
     expect(zhExamples.map((example) => example.slug)).toContain("streamdown-host");
     expect(zhExamples.map((example) => example.slug)).toContain("tiptap-host");
+    expect(enExamples.map((example) => example.slug)).toContain("assistant-ui-host");
     expect(enExamples.map((example) => example.slug)).toContain("streamdown-host");
     expect(enExamples.map((example) => example.slug)).toContain("tiptap-host");
     expect(zhExamples.every((example) => example.slexkitRenderMode === "component" || example.slexkitRenderMode === "dialog")).toBe(true);
@@ -1017,7 +1026,10 @@ order: 1
     ];
     const issues: string[] = [];
 
-    const extraComponentSlugs = directorySlugs("site/content/components").filter((slug) => !publicComponentSlugs.has(slug));
+    const internalComponentDocSlugs = new Set(["step", "submit"]);
+    const extraComponentSlugs = directorySlugs("site/content/components").filter(
+      (slug) => !publicComponentSlugs.has(slug) && !internalComponentDocSlugs.has(slug),
+    );
     for (const slug of extraComponentSlugs) {
       issues.push(`site/content/components/${slug}: component docs exist outside publicComponentSlugs`);
     }

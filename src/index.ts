@@ -185,7 +185,10 @@ export {
   registerSvelteComponentApi as registerSvelteComponent,
   registerSubsetApi as registerSubset,
 };
-export { renderToolCallApi as renderToolCall, registerToolTemplateApi as registerToolTemplate };
+export {
+  renderToolCallApi as renderToolCall,
+  registerToolTemplateApi as registerToolTemplate,
+};
 export { startSlexKitSandboxRunnerApi as startSlexKitSandboxRunner };
 export {
   clearRegisteredIconsApi as clearRegisteredIcons,
@@ -211,6 +214,7 @@ export {
   hashSpecText,
   localizeComponentSpec,
   localizeComponentSpecs,
+  publicComponentSpecs,
   publicComponentTypes,
 } from "./components/spec-registry";
 export type {

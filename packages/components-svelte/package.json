@@ -1,6 +1,6 @@
 {
   "name": "@slexkit/components-svelte",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Official Svelte component registrations for SlexKit.",
   "author": "SlexKit contributors",
   "type": "module",
@@ -41,7 +41,7 @@
     "access": "public"
   },
   "peerDependencies": {
-    "slexkit": "^0.3.4"
+    "slexkit": "^0.4.0"
   },
   "peerDependenciesMeta": {
     "slexkit": {

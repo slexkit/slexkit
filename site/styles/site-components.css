@@ -1036,6 +1036,7 @@
 
 .slex-doc-prose pre {
   overflow: auto;
+  max-width: 100%;
   margin: 1rem 0;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1053,14 +1054,43 @@
   --slex-code-function: color-mix(in oklab, var(--info) 64%, var(--foreground));
   --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
   --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 76%, transparent);
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 40%, transparent) transparent;
+  scrollbar-width: thin;
 }
 
 .slex-doc-prose .slex-markdown-code .hljs {
   display: block;
-  overflow-x: auto;
+  min-width: 100%;
+  overflow: visible;
   background: transparent;
   color: inherit;
   padding: 0;
+}
+
+.slex-doc-prose pre.slex-markdown-code::-webkit-scrollbar {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.slex-doc-prose pre.slex-markdown-code::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.slex-doc-prose pre.slex-markdown-code::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.slex-doc-prose pre.slex-markdown-code::-webkit-scrollbar-thumb {
+  border: 0.1875rem solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: color-mix(in oklab, var(--muted-foreground) 34%, transparent);
+}
+
+.slex-doc-prose pre.slex-markdown-code::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in oklab, var(--muted-foreground) 52%, transparent);
 }
 
 .slex-doc-prose .slex-markdown-code :where(.hljs-comment, .hljs-quote) {

@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 分支与切换：模式选择器
 
-`select` 切换 `mode` 状态；当前模式决定要渲染的输入和结果。
+该示例用 `select` 切换 `mode` 状态，并根据当前模式渲染不同输入和结果。
 
 模式切换遵循 `UI = f(state)`：更新 `mode` 后，视图区域随状态切换。
 

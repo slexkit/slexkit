@@ -92,24 +92,24 @@ function validateSlexSource(
 
 ### `runSlexConformance(options)`
 
-用当前 validator 运行内置标准 fixtures。传入 `fixtureId` 可以只运行单个 fixture。
+用随包发布的 validator 运行内置标准 fixtures。传入 `fixtureId` 可以只运行单个 fixture。
 
 ```ts
 function runSlexConformance(options?: { fixtureId?: string }): ConformanceReport;
 ```
 
-## Namespace 存储
+## 命名空间存储
 
 `namespace` 是状态域。多个 mount 使用同一 namespace 时共享 store：
 
 - 新 `g` 会 deep merge 到旧 `g`：函数覆盖，对象递归合并，数组替换，scalar 覆盖。
-- 新 `layout` 替换当前 layout，不做 deep merge。
-- 组件实例 state 在 namespace 内持久化。
+- 新的 `layout` 替换旧 layout，不做 deep merge。
+- Component instance state 在 namespace 内持久化。
 - Expression caches 按 namespace 管理。
 
 这允许文档、消息域或工具面板增量更新 UI，同时保留状态。
 
-## 组件实例 state
+## 组件实例状态
 
 命名组件可以暴露实例状态，具体可写 prop 由组件注册时的 state mode 决定：
 
@@ -137,14 +137,14 @@ function runSlexConformance(options?: { fixtureId?: string }): ConformanceReport
 Runtime 会按约定调用 `g` 上的 hooks：
 
 ```txt
-g.onMount_<name>()      // after component is appended to DOM
-g.onUnmount_<name>()    // before component is removed from DOM
-g.onUpdate_<name>()     // after $for item index or item reference changes
+g.onMount_<name>()      -after component is appended to DOM
+g.onUnmount_<name>()    -before component is removed from DOM
+g.onUpdate_<name>()     -after $for item index or item reference changes
 ```
 
-这些 hooks 适用于普通组件、`$if` branch 和 `$for` slot。root cleanup 与 `disposeNamespace()` 都会触发 `onUnmount`。
+这些 hooks 会在普通组件、`$if` branch 和 `$for` slot 中触发。root cleanup 与 `disposeNamespace()` 都会触发 `onUnmount`。
 
-## 组件 disposer
+## 组件清理器
 
 Framework 组件、event listeners、subscriptions 和外部资源应把 cleanup 绑定到组件 DOM 元素：
 
@@ -167,12 +167,12 @@ register("custom", (props, name, ctx) => {
 
 | 变量 | 类型 | 可用范围 |
 |----------|------|--------------|
-| `g` | 响应式 state proxy | 始终可用 |
+| `g` | 响应式状态代理 | 所有表达式 |
 | `api` | host-injected capabilities | `mount()` 传入 `api` 时 |
-| `$event` | 事件数据 | `on*` handlers |
-| `$item` | 当前数组项 | `$for` context |
-| `$index` | 当前数组索引 | `$for` context |
-| `$key` | 当前项 key | `$for` context |
-| 命名组件 state | 如 `threshold.value` | 命名组件 |
+| `$event` | 事件数据 | `on*` 处理器 |
+| `$item` | 当前数组项 | `$for` 上下文 |
+| `$index` | 当前数组索引 | `$for` 上下文 |
+| `$key` | 当前项 key | `$for` 上下文 |
+| 命名组件状态 | 例如 `threshold.value` | 命名组件 |
 
 Trusted mode 使用 `new Function()` 进行表达式求值。求值错误会被捕获，并以包含 namespace 和 path 的 warning 输出；运行时使用上一次有效值作为 fallback。

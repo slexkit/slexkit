@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 第一个 SlexKit 卡片
 
-先从静态卡片开始：不使用 `g` 对象或交互，只用 `layout` 声明页面结构。
+该示例不使用 `g` 对象或交互，只用 `layout` 声明一张静态卡片。
 
 ```slex
 {

@@ -75,7 +75,7 @@ Key patterns:
 
 The `skills/` directory provides these task entry points:
 
-- `/slexkit`: overview, architecture boundaries, and positioning
+- `/slexkit`: overview, architecture, and positioning
 - `/author`: write display-oriented `slex` fences with Markdown fallback
 - `/host`: integrate Markdown, Streamdown, Obsidian, or custom hosts
 - `/toolhost`: build confirmations, choices, and structured forms

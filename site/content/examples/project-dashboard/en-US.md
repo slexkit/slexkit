@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Project Dashboard
 
-`section` handles grouping, `grid` handles the multi-column layout, and separate cards cover sprint progress, quality metrics, and team health.
+The dashboard uses `section` for grouping, `grid` for multi-column layout, and separate cards for sprint progress, quality metrics, and team health.
 
 ```slex
 {

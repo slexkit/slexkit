@@ -3,15 +3,15 @@ title: Slex Standard Artifacts
 category: Reference
 status: ready
 order: 65
-summary: "Generated JSON artifacts for the Slex envelope, component catalog, logic profile, capabilities, conformance fixtures, and standard manifest."
+summary: "JSON artifacts for the Slex envelope, component catalog, logic profile, capabilities, conformance fixtures, and manifest."
 slexkitRenderMode: component
 ---
 
 # Slex Standard Artifacts
 
-SlexKit publishes machine-readable standard artifacts for AI agents, host runtimes, MCP servers, and package consumers. These artifacts describe Slex as a Markdown-native logic-bearing UI artifact, not as a pure JSON card catalog.
+SlexKit provides machine-readable JSON files for agents, host runtimes, MCP servers, and package users. These files describe Slex as a Markdown-embedded UI artifact with local state and logic, not as a pure JSON card catalog.
 
-The TypeScript runtime registry defines the component data. The generated JSON files are derived from component specs, runtime version constants, expression capability metadata, and conformance fixtures.
+The JSON files are generated from the TypeScript runtime registry, component specs, runtime version constants, expression capability metadata, and conformance fixtures.
 
 ## Files
 
@@ -34,7 +34,7 @@ Validation is parse-first:
 
 `validateSlexSource()` keeps its previous structured output and adds `schemaVersion`, `protocolVersion`, and `logicProfileVersion`. Secure-mode diagnostics should guide authors toward policy-gated `api.*` capabilities instead of treating all logic as forbidden.
 
-Warnings are path-aware after parsing. For example, an unknown `std.*` call in `layout.text:value.$text` and a native `fetch()` call in `g.load` produce different stable paths, so an agent can repair the exact expression instead of rewriting the whole artifact.
+Warnings are path-aware after parsing. For example, an unknown `std.*` call in `layout.text:value.$text` and a native `fetch()` call in `g.load` produce different stable paths, so tools can point to one expression instead of rewriting the whole artifact.
 
 ## Run Conformance
 
@@ -53,7 +53,7 @@ slex validate ./artifact.slex --mode secure
 slex validate ./artifact.slex --mode trusted --strict
 ```
 
-Conformance validates source shape, logic profile diagnostics, capability boundaries, and warning stability. It is not a visual renderer screenshot test.
+Conformance validates source shape, logic profile diagnostics, capability checks, and warning stability. It is not a visual renderer screenshot test.
 
 ## Diagnostic Codes
 
@@ -79,7 +79,7 @@ Paths refer to the parsed source tree, for example `g.load` or `layout.text:valu
 `slex-conformance.json` contains `valid`, `warning`, and `invalid` fixtures. Each fixture has an `id`, `mode`, source text, and an `expected` object.
 
 - `expected.ok` is the validator success state.
-- `expected.warnings` is an exact warning set for the fixture. The runner fails if an expected warning is missing or if an extra warning appears.
+- `expected.warnings` is the warning set for the fixture. The runner fails if an expected warning is missing or if an extra warning appears.
 - Warning matching uses `code`, and when present also `path` and `value`.
 - `expected.diagnostic` is the expected parse diagnostic code for invalid fixtures.
 - Fixture IDs stay stable. If behavior changes, add a new fixture ID.
@@ -92,15 +92,15 @@ SlexKit exposes separate version fields:
 
 - `packageVersion`: npm package version, from `package.json`.
 - `protocolVersion`: accepted Slex source protocol marker, `0.1`.
-- `schemaVersion`: generated artifact schema generation, date-style.
+- `schemaVersion`: generated artifact schema generation, using date-style values.
 - `logicProfileVersion`: expression, context, stdlib, and secure capability profile version.
 
 Compatible package releases may update catalog hashes, add components or props, add examples, or improve messages without changing `protocolVersion`.
 
 Changes that alter source interpretation, remove or rename diagnostic codes, change expression semantics, or change secure capability behavior require a protocol or logic profile review. Artifact hashes are for cache invalidation, not semantic versioning.
 
-## Positioning
+## Difference From A2UI
 
-A2UI standardizes cross-platform declarative UI description. SlexKit standardizes Markdown-embedded, stateful, executable UI artifacts with a host-selected trusted or secure runtime boundary.
+A2UI describes cross-platform declarative UI. SlexKit describes Markdown-embedded, stateful, executable UI artifacts; the host chooses trusted runtime or secure runtime.
 
 JSON Schema describes the envelope and catalog. The JavaScript expression profile is part of the standard because local logic and state are part of the artifact.

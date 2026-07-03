@@ -47,6 +47,7 @@ const homeLabelsByLocale = {
     hostAdaptersTitle: "Host integration",
     hostAdaptersDesc: "Multiple mainstream host integrations are available.",
     hostAdapters: [
+      ["assistant-ui", "assistant-ui Streamdown text wrapper.", "/examples/assistant-ui-host"],
       ["Streamdown", "Streamdown renderer plugin.", "/examples/streamdown-host"],
       ["Tiptap", "Tiptap editor extension.", "/examples/tiptap-host"],
       ["Svelte Markdown", "Svelte Markdown renderer adapter.", "/docs/guides/integration"],

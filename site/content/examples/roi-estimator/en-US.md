@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Build vs Buy Decision
 
-A build-vs-buy decision is split into four dimensions: feature coverage, cost, timeline, and risk. Adjust the scores and the recommendation updates automatically.
+The worksheet breaks a build-vs-buy decision into four dimensions: feature coverage, cost, timeline, and risk. Adjust the scores and the recommendation updates automatically.
 
 ```slex
 {

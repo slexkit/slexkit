@@ -5,6 +5,7 @@ import { buildSiteAssets } from "./scripts/build";
 import { sourceLocale } from "./data/component-docs.js";
 import { discoverExampleMarkdown, discoverWikiMarkdown } from "./data/content-discovery.js";
 import { createSeoIndex, injectSeoHead, renderRobotsTxt, renderSitemapXml } from "./data/seo.js";
+import { SLEXKIT_VERSION, SLEX_PROTOCOL_VERSION } from "../src/version";
 
 const hostname = Bun.env.HOST ?? "0.0.0.0";
 const port = Number(Bun.env.PORT ?? 4000);
@@ -41,6 +42,7 @@ function contentType(path: string) {
     case ".css":
       return "text/css; charset=utf-8";
     case ".js":
+    case ".jsx":
       return "text/javascript; charset=utf-8";
     case ".map":
       return "application/json; charset=utf-8";
@@ -91,7 +93,7 @@ async function localStaticResponse(root: string, relative: string) {
 }
 
 async function adapterDemoResponse(pathname: string) {
-  const match = pathname.match(/^\/adapter-demos\/(streamdown|tiptap)(?:\/(.*))?$/);
+  const match = pathname.match(/^\/adapter-demos\/(assistant-ui|streamdown|tiptap)(?:\/(.*))?$/);
   if (!match) return null;
 
   const demo = match[1];
@@ -116,7 +118,7 @@ async function officialExampleResponse(pathname: string) {
 }
 
 async function packageAdapterResponse(pathname: string) {
-  const match = pathname.match(/^\/packages\/(streamdown|tiptap)\/(.+)$/);
+  const match = pathname.match(/^\/packages\/(assistant-ui|streamdown|tiptap)\/(.+)$/);
   if (!match) return null;
   return localStaticResponse(join(projectRoot, "packages", match[1]), match[2]);
 }
@@ -305,6 +307,24 @@ async function htmlResponse(path: string, options: { page?: any; publicBaseUrl?:
 
 function publicBaseUrl(requestUrl: URL) {
   return `${requestUrl.protocol}//${requestUrl.host}/`;
+}
+
+function healthResponse() {
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      service: "slexkit-site",
+      version: SLEXKIT_VERSION,
+      protocolVersion: SLEX_PROTOCOL_VERSION,
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      headers: {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+      },
+    },
+  );
 }
 
 async function readmeResponse() {
@@ -498,6 +518,7 @@ Bun.serve({
     }
 
     if (enableLiveReload && url.pathname === "/__slexkit/reload") return liveReloadResponse();
+    if (url.pathname === "/healthz" || url.pathname === "/api/health") return healthResponse();
     if (url.pathname === "/api/wiki-docs") return wikiDocsResponse();
     if (url.pathname === "/api/examples-docs") return examplesDocsResponse();
     if (

@@ -6,6 +6,7 @@ export function createPage({
   locale = "en-US",
   playgroundHrefBase = "/playground.html",
   uiLabels = {},
+  emptyText = uiLabels.docNotFound || uiLabels.noDocsFound || "Document not found.",
 } = {}) {
   return {
     namespace: "site_docs_wiki",
@@ -17,6 +18,7 @@ export function createPage({
       locale,
       playgroundHrefBase,
       uiLabels,
+      emptyText,
     },
     layout: {
       "docs-shell:site": {
@@ -25,6 +27,7 @@ export function createPage({
         $active: "g.activeHref",
         $countLabel: "g.countLabel",
         $doc: "g.doc",
+        $emptyText: "g.emptyText",
         $locale: "g.locale",
         $playgroundHrefBase: "g.playgroundHrefBase",
         $uiLabels: "g.uiLabels",

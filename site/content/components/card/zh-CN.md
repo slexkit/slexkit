@@ -3,11 +3,11 @@ title: "Card"
 category: Layout
 status: ready
 order: 50
-summary: "分组容器。用于把一组相关内容放在一个带边框的表面里。"
+summary: "分组容器。用于把一组相关内容放在卡片表面里。"
 ---
 # Card 卡片
 
-带边框的容器，可选标题和语义色调。
+卡片式容器，可选标题和语义色调。
 
 <!-- slex:spec-example:start component="card" id="basic" sourceHash="74b8c7a0" -->
 ```slex
@@ -16,17 +16,17 @@ summary: "分组容器。用于把一组相关内容放在一个带边框的表�
   "namespace": "doc_card_typical",
   "layout": {
     "card:metrics": {
-      "title": "指标",
+      "title": "Metrics",
       "icon": "chart-bar",
       "grid:items": {
         "columns": 2,
         "stat:requests": {
-          "label": "请求数",
+          "label": "Requests",
           "value": "1.2k",
           "unit": "/min"
         },
         "stat:latency": {
-          "label": "延迟",
+          "label": "Latency",
           "value": "42",
           "unit": "ms"
         }
@@ -53,24 +53,24 @@ summary: "分组容器。用于把一组相关内容放在一个带边框的表�
   layout: {
     "row:tones": {
       "card:info": {
-        title: "信息",
+        title: "Info",
         tone: "info",
         "text:body": {
-          text: "信息卡片。"
+          text: "Information card."
         }
       },
       "card:success": {
-        title: "成功",
+        title: "Success",
         tone: "success",
         "text:body": {
-          text: "成功卡片。"
+          text: "Success card."
         }
       },
       "card:warning": {
-        title: "警告",
+        title: "Warning",
         tone: "warning",
         "text:body": {
-          text: "警告卡片。"
+          text: "Warning card."
         }
       }
     }
@@ -80,11 +80,12 @@ summary: "分组容器。用于把一组相关内容放在一个带边框的表�
 
 ## API 参考 {#api}
 
-<!-- slex:spec-api:start component="card" sourceHash="add47956" -->
+<!-- slex:spec-api:start component="card" sourceHash="fd8bc1c8" -->
 | 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `title` | string | 否 | 是 |  | 卡片标题。 |
 | `icon` | string | 否 | 否 |  | 显示在标题前的图标名称。 |
 | `tone` | string: info, success, warning, danger, muted | 否 | 否 |  | 卡片表面的可选语义色调。 |
+| `variant` | string: tool | 否 | 否 |  | Use tool for ToolHost input cards with compact chrome. |
 | 子组件 | object | 否 | 否 |  | 嵌套组件字段会按字段顺序渲染为子内容。 |
 <!-- slex:spec-api:end -->

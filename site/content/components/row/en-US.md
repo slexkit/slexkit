@@ -99,11 +99,12 @@ Basic horizontal layout container.
 
 ## API Reference {#api}
 
-<!-- slex:spec-api:start component="row" sourceHash="70f941d7" -->
+<!-- slex:spec-api:start component="row" sourceHash="a483a589" -->
 | Field | Type | Required | Dynamic | Default | Description |
 |---|---|---|---|---|---|
 | `justify` | string: start, center, end, space-between, space-around | No | No | `"start"` | Main-axis distribution. |
 | `align` | string: start, center, end, baseline, stretch | No | No | `"center"` | Cross-axis alignment. |
 | `gap` | string | No | Yes |  | Spacing between children. |
+| `variant` | string: actions | No | No |  | Use actions for compact ToolHost action rows. |
 | child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
 <!-- slex:spec-api:end -->
