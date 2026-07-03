@@ -23,16 +23,19 @@ Make static documents come alive. Give AI agents the power to output interactive
       columns: 1,
       lgColumns: 3,
       "card:task": {
+        tone: "primary",
         "heading:title": { level: 4, title: "Task-First" },
         "text:bodyA": { text: "Start from the task the user needs to complete." },
         "text:bodyB": { text: "Every design decision serves the core task." }
       },
       "card:intuitive": {
+        tone: "info",
         "heading:title": { level: 4, title: "Intuitive" },
         "text:bodyA": { text: "Docs include live examples that update instantly." },
         "text:bodyB": { text: "Data flows across components through scoped binding." }
       },
       "card:breath": {
+        tone: "success",
         "heading:title": { level: 4, title: "Visual Breath" },
         "text:bodyA": { text: "Whitespace and spacing create visual rhythm." },
         "text:bodyB": { text: "Typography and color build clear hierarchy." }
@@ -55,31 +58,37 @@ Color expresses role, not personal preference.
       mdColumns: 2,
       lgColumns: 3,
       "card:primary": {
+        tone: "primary",
         "swatch:primary": { tone: "primary" },
         "heading:title": { level: 4, title: "Primary" },
         "text:body": { text: "Main actions, current selection, high-priority emphasis. Do not use as decoration." }
       },
       "card:info": {
+        tone: "info",
         "swatch:info": { tone: "info" },
         "heading:title": { level: 4, title: "Info" },
         "text:body": { text: "Guidance, hints, informational states. Do not replace Primary." }
       },
       "card:success": {
+        tone: "success",
         "swatch:success": { tone: "success" },
         "heading:title": { level: 4, title: "Success" },
         "text:body": { text: "Completed, passed, safe to continue. Use only when the result is confirmed." }
       },
       "card:warning": {
+        tone: "warning",
         "swatch:warning": { tone: "warning" },
         "heading:title": { level: 4, title: "Warning" },
         "text:body": { text: "Risk, threshold, needs attention but not failed. Do not use to brighten pages." }
       },
       "card:destructive": {
+        tone: "destructive",
         "swatch:destructive": { tone: "destructive" },
         "heading:title": { level: 4, title: "Destructive" },
         "text:body": { text: "Errors, deletions, irreversible actions. Must include consequence description." }
       },
       "card:neutral": {
+        tone: "neutral",
         "swatch:neutral": { tone: "neutral" },
         "heading:title": { level: 4, title: "Neutral" },
         "text:body": { text: "Backgrounds, dividers, secondary information, default containers. Provides structure, not emphasis." }
@@ -286,22 +295,27 @@ Components support semantic tone values for expressing state roles.
       mdColumns: 2,
       lgColumns: 3,
       "card:info": {
+        tone: "info",
         "badge:tone": { label: "info", tone: "info" },
         "text:body": { text: "Neutral guidance, current process, or informational state." }
       },
       "card:success": {
+        tone: "success",
         "badge:tone": { label: "success", tone: "success" },
         "text:body": { text: "Completed, accepted, or safe-to-continue state." }
       },
       "card:warning": {
+        tone: "warning",
         "badge:tone": { label: "warning", tone: "warning" },
         "text:body": { text: "Risk, threshold, or review-needed state." }
       },
       "card:danger": {
+        tone: "danger",
         "badge:tone": { label: "danger", tone: "danger" },
         "text:body": { text: "Error, destructive action, or blocked state." }
       },
       "card:muted": {
+        tone: "muted",
         "badge:tone": { label: "muted", tone: "muted" },
         "text:body": { text: "Secondary or background information." }
       }
@@ -322,11 +336,13 @@ Display UI is for information presentation and local interaction. ToolHost mode 
       columns: 1,
       mdColumns: 2,
       "card:display": {
+        tone: "muted",
         title: "Display UI",
         "text:body": { text: "Use slex fences for status, metrics, previews, and local controls." },
         "badge:kind": { label: "No host result", tone: "muted" }
       },
       "card:toolhost": {
+        tone: "info",
         title: "ToolHost",
         "text:body": { text: "Use tool templates when confirmation or form data must return to the host." },
         "badge:kind": { label: "Returns ToolResult", tone: "info" }
@@ -335,4 +351,3 @@ Display UI is for information presentation and local interaction. ToolHost mode 
   }
 }
 ```
-

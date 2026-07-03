@@ -760,7 +760,7 @@
   min-width: 0;
 }
 
-.slex-page--site-design .slex-doc-prose h1 {
+:where(.slex-page--site-design .slex-doc-prose, .slex-docs-markdown[data-markdown-doc="design"]) h1 {
   max-width: 48rem;
   margin: 0 0 0.625rem;
   color: var(--foreground);
@@ -770,31 +770,31 @@
   letter-spacing: 0;
 }
 
-.slex-page--site-design .slex-doc-prose h2 {
+:where(.slex-page--site-design .slex-doc-prose, .slex-docs-markdown[data-markdown-doc="design"]) h2 {
   margin-top: 2.25rem;
   font-size: 1.45rem;
 }
 
-.slex-page--site-design .slex-doc-prose p {
+:where(.slex-page--site-design .slex-doc-prose, .slex-docs-markdown[data-markdown-doc="design"]) p {
   max-width: 58rem;
   font-size: 0.9375rem;
 }
 
-.slex-page--site-design .slex-doc-slexkit-demo .slex-card {
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card {
   min-height: 0;
-  border-color: color-mix(in oklab, var(--border) 78%, transparent);
+  border-color: color-mix(in oklab, var(--border) 68%, transparent);
   border-radius: var(--radius);
   background: var(--card);
   padding: 1rem;
   box-shadow: none;
 }
 
-.slex-page--site-design .slex-doc-slexkit-demo .slex-card:hover {
-  border-color: var(--border);
-  box-shadow: none;
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card:hover {
+  border-color: color-mix(in oklab, var(--border) 86%, transparent);
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--foreground) 5%, transparent);
 }
 
-.slex-page--site-design .slex-doc-slexkit-demo .slex-card .slex-card-body {
+:where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"]) .slex-doc-slexkit-demo .slex-card .slex-card-body {
   gap: 0.75rem;
 }
 
@@ -1175,15 +1175,20 @@
     padding: 0.875rem;
   }
 
-  .slex-page--site-design .slex-doc-slexkit-demo .slex-row--balanced-tiles[data-tile-kind="stat"] {
+  :where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"])
+    .slex-doc-slexkit-demo
+    .slex-row--balanced-tiles[data-tile-kind="stat"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .slex-page--site-design .slex-doc-slexkit-demo .slex-row--balanced-tiles[data-tile-kind="stat"] > .slex-stat {
+  :where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"])
+    .slex-doc-slexkit-demo
+    .slex-row--balanced-tiles[data-tile-kind="stat"]
+    > .slex-stat {
     grid-column: auto !important;
   }
 
-  .slex-page--site-design
+  :where(.slex-page--site-design, .slex-docs-markdown[data-markdown-doc="design"])
     .slex-doc-slexkit-demo
     .slex-row--balanced-tiles[data-tile-kind="stat"]
     > .slex-stat:last-child:nth-child(odd) {
