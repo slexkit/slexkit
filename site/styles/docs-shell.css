@@ -1204,6 +1204,12 @@
 
   .slex-examples-list-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .slex-examples-list-grid .slex-examples-link-row {
+    min-height: 5.75rem;
+    align-content: start;
   }
 }
 
