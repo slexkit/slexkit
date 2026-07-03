@@ -16,17 +16,17 @@ summary: "分组容器。用于把一组相关内容放在卡片表面里。"
   "namespace": "doc_card_typical",
   "layout": {
     "card:metrics": {
-      "title": "Metrics",
+      "title": "指标",
       "icon": "chart-bar",
       "grid:items": {
         "columns": 2,
         "stat:requests": {
-          "label": "Requests",
+          "label": "请求数",
           "value": "1.2k",
           "unit": "/min"
         },
         "stat:latency": {
-          "label": "Latency",
+          "label": "延迟",
           "value": "42",
           "unit": "ms"
         }
