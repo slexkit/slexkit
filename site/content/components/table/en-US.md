@@ -2,6 +2,7 @@
 title: "Table"
 category: Data
 status: ready
+order: 10
 summary: "Structured table with columns and rows."
 ---
 # Table

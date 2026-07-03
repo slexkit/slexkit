@@ -2,6 +2,7 @@
 title: "Playground"
 category: Tooling
 status: ready
+order: 10
 summary: "Interactive preview and editor for SlexKit / Markdown source."
 ---
 # Playground
@@ -39,9 +40,9 @@ Interactive preview component that embeds editable, runnable SlexKit or Markdown
 - Not suitable for ordinary component rendering (use layout components directly).
 - Related components: `code-block` for read-only code display.
 - Nested source is rendered in an isolated scope — it does not conflict with the parent namespace.
-- Playground is a documentation and teaching surface, not part of the product UI.
+- Use Playground for documentation and teaching surfaces, not product UI.
 - Public fields cover source parsing, preview placement, theme toggle controls, labels, and open/copy URLs.
-- `domain`, `pluginVersion`, and `version` are host integration metadata and are not part of the public component API.
+- `domain`, `pluginVersion`, and `version` are host integration metadata, not public component fields.
 
 ## API Reference {#api}
 

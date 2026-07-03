@@ -152,6 +152,7 @@ function compileConfirmAction(args: ConfirmActionArguments, runtime: ToolRuntime
     },
     layout: {
       "card:tool": {
+        variant: "tool",
         title: args.title ?? "Confirm action",
         "text:description": {
           $if: args.description ? "true" : "false",
@@ -189,18 +190,19 @@ function compileChooseOptions(args: ChooseOptionsArguments, runtime: ToolRuntime
   const maxSelected = normalizeNumber(args.maxSelected, Number.POSITIVE_INFINITY);
   const choiceNode = multiple
     ? {
-        "checkbox:option": {
+        "checkbox:": {
           $for: "g.options",
           $key: "id",
-          $checked: "g.selected.includes(option.id)",
-          $label: "option.description ? option.label + ' - ' + option.description : option.label",
-          $disabled: "option.disabled",
-          onchange: "g.toggle(option.id, Boolean($event))",
+          $checked: "g.selected.includes($item.id)",
+          $label: "$item.description ? $item.label + ' - ' + $item.description : $item.label",
+          $disabled: "$item.disabled",
+          onchange: "g.toggle($item.id, Boolean($event))",
         },
       }
     : {
         "radio-group:option": {
           $value: "g.selected[0] || ''",
+          variant: "list",
           options,
           onchange: "g.selectOne(String($event || ''))",
         },
@@ -251,6 +253,7 @@ function compileChooseOptions(args: ChooseOptionsArguments, runtime: ToolRuntime
     },
     layout: {
       "card:tool": {
+        variant: "tool",
         title: args.title ?? "Choose options",
         "text:description": {
           $if: args.description ? "true" : "false",
@@ -391,6 +394,7 @@ function compileFillForm(args: FillFormArguments, runtime: ToolRuntime): SlexExp
     },
     layout: {
       "card:tool": {
+        variant: "tool",
         title: args.title ?? "Fill form",
         "text:description": {
           $if: args.description ? "true" : "false",

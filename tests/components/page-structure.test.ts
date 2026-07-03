@@ -226,6 +226,8 @@ describe("page structure components", () => {
     expect(document.querySelector(".slex-docs-shell")).toBeTruthy();
     expect(document.querySelectorAll(".slex-docs-flowbite-sidebar")).toHaveLength(1);
     expect(document.querySelector(".slex-docs-sidebar-trigger")?.getAttribute("aria-label")).toBe("打开文档导航");
+    expect(document.querySelector(".slex-docs-sidebar-trigger")?.textContent).not.toContain("Open sidebar");
+    expect(document.querySelector(".slex-docs-sidebar-trigger svg")).toBeTruthy();
     expect(Array.from(document.querySelectorAll(".slex-docs-section-trigger")).map((node) => node.textContent?.trim())).toEqual([
       "Guides",
       "Components",

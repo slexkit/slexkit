@@ -55,6 +55,7 @@ export type MountOptions = {
   dir?: DirectionMode;
   labels?: RuntimeLabels;
   api?: Record<string, unknown>;
+  executionMode?: "live" | "preview";
 };
 
 export type RenderContext = {

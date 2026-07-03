@@ -17,16 +17,16 @@ summary: "普通操作按钮。"
   "layout": {
     "row:actions": {
       "button:save": {
-        "label": "Save",
+        "label": "保存",
         "icon": "floppy-disk",
         "variant": "primary"
       },
       "button:cancel": {
-        "label": "Cancel",
+        "label": "取消",
         "variant": "secondary"
       },
       "button:delete": {
-        "label": "Delete",
+        "label": "删除",
         "variant": "danger"
       }
     }
@@ -52,19 +52,19 @@ summary: "普通操作按钮。"
   layout: {
     "row:variants": {
       "button:primary": {
-        label: "Primary",
+        label: "主要",
         variant: "primary"
       },
       "button:secondary": {
-        label: "Secondary",
+        label: "次要",
         variant: "secondary"
       },
       "button:danger": {
-        label: "Danger",
+        label: "危险",
         variant: "danger"
       },
       "button:ghost": {
-        label: "Ghost",
+        label: "弱化",
         variant: "ghost"
       }
     }
@@ -80,10 +80,10 @@ summary: "普通操作按钮。"
   layout: {
     "row:disabled": {
       "button:enabled": {
-        label: "Enabled"
+        label: "已启用"
       },
       "button:disabled": {
-        label: "Disabled",
+        label: "已禁用",
         disabled: true
       }
     }

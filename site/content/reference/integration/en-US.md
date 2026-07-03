@@ -19,7 +19,7 @@ An artifact is a group of Slex blocks belonging to the same document, message, o
 
 In **trusted mode**, the runtime prefixes each block's namespace with the artifact ID to prevent cross-document state pollution. `disposeArtifact()` releases all namespace stores for that artifact.
 
-In **secure mode**, all fences in one artifact are combined into a single sandbox iframe. The runtime maintains artifact slots, syncing rendered heights back to the original Markdown placeholder containers.
+In **secure mode**, all fences in one artifact are combined into a single sandbox iframe. The runtime uses artifact slots to sync rendered heights back to the original Markdown placeholder containers.
 
 ### Block
 
@@ -65,6 +65,7 @@ type SlexKitMarkdownBlock = {
   theme?: ThemeMode;
   dir?: MountOptions["dir"];
   labels?: MountOptions["labels"];
+  executionMode?: MountOptions["executionMode"];
 };
 
 type SlexKitMarkdownRuntimeOptions = {
@@ -75,8 +76,11 @@ type SlexKitMarkdownRuntimeOptions = {
   theme?: ThemeMode;
   dir?: MountOptions["dir"];
   labels?: MountOptions["labels"];
+  executionMode?: MountOptions["executionMode"];
 };
 ```
+
+`executionMode: "preview"` is for speculative renders of repaired streaming prefixes. In preview mode, trusted mounts render readable UI but freeze write handlers, component emits, lifecycle hooks, and `api.*` capabilities. Blocks can override a host-level default by passing `executionMode` directly to `mountBlock()`.
 
 ### Global singleton
 
@@ -154,7 +158,7 @@ Omitted capability policies deny access by default. Add `network`, `timer`, `ani
 
 ### Artifact slot bridge
 
-When multiple secure blocks belong to the same artifact, they share one sandbox iframe. The first block (in document order) becomes the iframe anchor. Other blocks act as slots -their containers receive position and height updates from the sandbox via the postMessage bridge.
+When multiple secure blocks belong to the same artifact, they share one sandbox iframe. The first block (in document order) becomes the iframe anchor. Other blocks act as slots; their containers receive position and height updates from the sandbox via the postMessage bridge.
 
 ```html
 <!-- In Markdown, the first fence becomes the anchor -->
@@ -174,7 +178,7 @@ Access-Control-Allow-Origin: *
 Content-Type: text/javascript
 ```
 
-The build output includes `dist/runtime.js` for this purpose. The `slex copy-runtime` command copies that module to `public/slexkit.runtime.js` by default so existing secure-frame URLs can stay stable. Configure your CDN or static file server to serve it with the correct headers.
+The build output includes `dist/runtime.js` for this purpose. The `slex copy-runtime` command copies that module to `public/slexkit.runtime.js` by default so existing secure-frame URLs can stay stable. Configure the CDN or static file server to serve it with the correct headers.
 
 ## Svelte custom Markdown host
 
@@ -228,6 +232,8 @@ export function Message({ markdown }: { markdown: string }) {
 
 The renderer handles `slex` fences. It supports both trusted and secure runtime modes and can delegate to a shared Markdown runtime host instance.
 
+During token streaming, `streaming="repair"` is the default for trusted renders. A parseable source mounts immediately; a source missing only EOF closing tokens mounts as preview; uncertain prefixes stay on the placeholder; clear syntax errors still render diagnostics. Use `streaming="stable"` to render only already-parseable prefixes, or `streaming={false}` to wait for the closing fence. Secure runtime and secure runtime-host renders do not execute repaired prefixes in the host realm.
+
 ## Tiptap integration
 
 The `@slexkit/tiptap` package provides a framework-free Tiptap `CodeBlock` extension:
@@ -252,7 +258,7 @@ Each editor instance gets one trusted Markdown runtime host by default. Blocks i
 
 ## Obsidian integration
 
-The official Obsidian plugin lives in <https://github.com/slexkit/obsidian-slexkit> and registers the `slex` fenced code block processor:
+The official Obsidian plugin is available at <https://github.com/slexkit/obsidian-slexkit> and registers the `slex` fenced code block processor:
 
 ```ts
 // In the plugin:

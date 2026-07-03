@@ -16,17 +16,17 @@ summary: "互斥单选组。"
   "namespace": "doc_radio_group_typical",
   "layout": {
     "radio-group:mode": {
-      "label": "Mode",
+      "label": "模式",
       "icon": "sliders-horizontal",
       "value": "auto",
       "options": [
         {
-          "label": "Auto",
+          "label": "自动",
           "value": "auto",
           "icon": "sparkle"
         },
         {
-          "label": "Manual",
+          "label": "手动",
           "value": "manual",
           "icon": "wrench"
         }
@@ -47,7 +47,7 @@ summary: "互斥单选组。"
 
 ## API 参考 {#api}
 
-<!-- slex:spec-api:start component="radio-group" sourceHash="9770be28" -->
+<!-- slex:spec-api:start component="radio-group" sourceHash="f6028c59" -->
 | 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
 |---|---|---|---|---|---|
 | `value` | string | 否 | 是 |  | 当前选中值。 |
@@ -55,8 +55,10 @@ summary: "互斥单选组。"
 | `icon` | string | 否 | 否 |  | 显示在分组标签前的图标名称。 |
 | `options` | array | 否 | 否 |  | 选项列表，包含 label、value 和可选 icon。 |
 | `options[].icon` | string | 否 | 否 |  | 显示在单个选项标签前的图标名称。 |
+| `options[].description` | string | 否 | 否 |  | Secondary text shown below the option label. |
 | `disabled` | boolean | 否 | 是 | `false` | 禁用组内所有单选项。 |
 | `orientation` | string: vertical, horizontal | 否 | 否 | `"vertical"` | 单选项布局方向。 |
+| `variant` | string: list | 否 | 否 |  | Use list for full-row option surfaces in ToolHost decision cards. |
 | `haptic` | boolean | 否 | 否 | `true` | 在支持的设备上启用振动反馈。 |
 | `haptics` | boolean | 否 | 否 | `true` | haptic 的别名。 |
 | `name` | string | 否 | 否 |  | 选项共享的原生 radio group name。 |

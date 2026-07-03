@@ -6,7 +6,7 @@ Official default SlexKit theme CSS built from the same source as `slexkit/dist/s
 import "@slexkit/theme-shadcn/style.css";
 ```
 
-For smaller bundles, import the fallback tokens/base styles and only the component styles you render:
+For smaller bundles, import the fallback tokens/base styles and only the component styles that render on the page:
 
 ```js
 import "@slexkit/theme-shadcn/base.css";

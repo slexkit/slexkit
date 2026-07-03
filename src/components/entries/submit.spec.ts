@@ -2,10 +2,10 @@ import { component, example, noChildren } from "../spec-helpers";
 
 export const submitSpec = component({
     type: "submit",
-    category: "Action",
+    category: "Tooling",
     title: "Submit",
     summary: "ToolHost submit and ignore controls.",
-    description: "Use submit inside tool templates to return selected state fields to the host.",
+    description: "Use submit only inside ToolHost templates to return selected state fields to the host.",
     props: {
       submitLabel: { type: "string", default: "Submit", description: "Submit button text." },
       ignoreLabel: { type: "string", default: "Ignore", description: "Ignore button text." },

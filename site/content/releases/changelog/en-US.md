@@ -11,6 +11,36 @@ slexkitRenderMode: component
 
 All notable changes to SlexKit.
 
+
+## v0.4.0 - Production adapters and ToolHost hardening
+
+### Added
+- `@slexkit/assistant-ui`: React assistant-ui adapter package with secure-frame defaults for `slex` code blocks.
+- Browser-openable Assistant UI host example and documentation pages for adapter integration.
+- Internal ToolHost `step` component for multi-step human-input flows inside one tool call.
+- Theme package coverage for base, per-component, and ToolHost/step CSS exports.
+
+### Changed
+- AI docs and standard artifacts now separate public components from ToolHost-only internals: `submit` and `step` remain renderable runtime components but are no longer counted in the public component catalog.
+- `smoke:release` now logs pack/install/smoke stages, validates packed tarballs through a temporary app, checks CLI conformance, and checks the MCP server before reporting success.
+- ToolHost demo and replay fixtures now use the same step/submit flow expected from production host integrations.
+
+### Fixed
+- Radio group list selection styling no longer uses `:has()` in shipped runtime or theme CSS.
+- Tiptap preview controls preserve focus across embedded SlexKit inputs, selects, and transient controls.
+- `step` and `submit` component docs now include synced SPEC examples and API tables.
+- Release smoke no longer hangs after successful MCP validation on Windows.
+## v0.3.4 - Production documentation polish
+
+### Changed
+- Reworked the documentation site shell labels, language menu, mobile navigation, and theme controls so localized pages no longer expose English-only UI chrome.
+- Polished guide, reference, component, example, package README, and AI-facing documentation copy to remove report-like wording and visible placeholder phrasing.
+- Localized generated Chinese component examples and API descriptions, including Formula props, through the component spec documentation pipeline.
+
+### Fixed
+- Chinese documentation no longer renders copied English UI phrases such as counter labels, ToolHost examples, Obsidian status text, or design-system tone labels.
+- Markdown documentation tests now guard against copied English skeleton headings, visible English-only list rows, double-question-mark replacement corruption, stale generated spec blocks, and previously fixed English UI phrase regressions.
+
 ## v0.3.3 - Obsidian input control hardening
 
 ### Fixed
@@ -148,7 +178,7 @@ All notable changes to SlexKit.
 - `mountSecureArtifact()` for isolated iframe rendering
 - `createSlexKitMarkdownRuntimeHost()` for Markdown-hosted SlexKit blocks
 - Streamdown React renderer (`@slexkit/streamdown`)
-- Obsidian plugin adapter (`@slexkit/obsidian`)
+- Obsidian plugin adapter (now released through `slexkit/obsidian-slexkit`)
 - Shadcn-compatible CSS theme (`@slexkit/theme-shadcn`)
 - Package boundary wrappers (`@slexkit/runtime`, `@slexkit/components-svelte`)
 - ToolHost with built-in templates: `confirm-action`, `choose-options`, `fill-form`

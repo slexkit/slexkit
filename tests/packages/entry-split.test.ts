@@ -1,12 +1,24 @@
 import { describe, expect, it } from "bun:test";
 import { existsSync } from "node:fs";
-import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { disposeNamespace, mount } from "../../src/runtime";
 
 async function sleep(ms = 40): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function runCli(args: string[]) {
+  const result = Bun.spawnSync(["node", "scripts/cli.mjs", ...args], {
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  return {
+    exitCode: result.exitCode,
+    stdout: new TextDecoder().decode(result.stdout),
+    stderr: new TextDecoder().decode(result.stderr),
+  };
 }
 
 describe("split runtime and Svelte component entries", () => {
@@ -91,11 +103,13 @@ describe("split runtime and Svelte component entries", () => {
   });
 
   it("keeps scoped package wrappers on the root split entries", async () => {
-    const [rootPackage, runtimePackage, componentsPackage, streamdownPackage, themePackage, runtimeEntry, componentsEntry] = await Promise.all([
+    const [rootPackage, runtimePackage, componentsPackage, streamdownPackage, assistantUiPackage, tiptapPackage, themePackage, runtimeEntry, componentsEntry] = await Promise.all([
       readFile("package.json", "utf-8").then(JSON.parse),
       readFile("packages/runtime/package.json", "utf-8").then(JSON.parse),
       readFile("packages/components-svelte/package.json", "utf-8").then(JSON.parse),
       readFile("packages/streamdown/package.json", "utf-8").then(JSON.parse),
+      readFile("packages/assistant-ui/package.json", "utf-8").then(JSON.parse),
+      readFile("packages/tiptap/package.json", "utf-8").then(JSON.parse),
       readFile("packages/theme-shadcn/package.json", "utf-8").then(JSON.parse),
       readFile("packages/runtime/index.js", "utf-8"),
       readFile("packages/components-svelte/index.js", "utf-8"),
@@ -107,15 +121,21 @@ describe("split runtime and Svelte component entries", () => {
     expect(runtimePackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
     expect(componentsPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
     expect(streamdownPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
+    expect(assistantUiPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
+    expect(assistantUiPackage.peerDependencies["@slexkit/streamdown"]).toBe(`^${rootPackage.version}`);
+    expect(tiptapPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
     expect(runtimePackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
     expect(componentsPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
     expect(streamdownPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
+    expect(assistantUiPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
+    expect(tiptapPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
     expect(runtimeEntry).toContain('from "slexkit/runtime"');
     expect(componentsEntry).toContain('from "slexkit/components"');
     expect(componentsEntry).not.toContain("registerSiteComponents");
     expect(rootPackage.exports["./style.css"]).toBe("./dist/slexkit.css");
     expect(rootPackage.exports["./base.css"]).toBe("./dist/base.css");
     expect(rootPackage.exports["./components/*.css"]).toBe("./dist/components/*.css");
+    expect(rootPackage.exports["./standard/*"]).toBe("./dist/standard/*");
     expect(themePackage.exports["./style.css"]).toBe("./style.css");
     expect(themePackage.exports["./base.css"]).toBe("./base.css");
     expect(themePackage.exports["./components/*.css"]).toBe("./components/*.css");
@@ -133,6 +153,7 @@ describe("split runtime and Svelte component entries", () => {
       "components-svelte",
       "theme-shadcn",
       "streamdown",
+      "assistant-ui",
       "tiptap",
       "mcp",
     ];
@@ -166,6 +187,8 @@ describe("split runtime and Svelte component entries", () => {
 
     expect(existsSync("packages/mcp/dist/index.js")).toBe(true);
     expect(existsSync("packages/mcp/dist/data/slexkit-ai-manifest.json")).toBe(true);
+    expect(existsSync("dist/standard/slex-standard-manifest.json")).toBe(true);
+    expect(existsSync("packages/mcp/dist/data/standard/slex-logic-profile.json")).toBe(true);
     expect(rootPackage.repository?.type).toBe("git");
     expect(rootPackage.repository?.url).toContain("github.com/slexkit/slexkit");
     expect(rootPackage.homepage).toContain("github.com/slexkit/slexkit");
@@ -188,6 +211,12 @@ describe("split runtime and Svelte component entries", () => {
     });
     expect(runtime.SLEXKIT_VERSION).toBe(rootPackage.version);
     expect(runtime.getSlexKitInfo()).toEqual(root.getSlexKitInfo());
+    expect(root.runSlexConformance().ok).toBe(true);
+    expect(runtime.runSlexConformance().ok).toBe(true);
+    expect(root.isLikelyIncompleteSlexSource("{ layout: {")).toBe(true);
+    expect(runtime.isLikelyIncompleteSlexSource("{ layout: {")).toBe(true);
+    expect(root.parseSlexStreamingSource("{ layout: {", { mode: "repair" }).status).toBe("repaired");
+    expect(runtime.parseSlexStreamingSource("{ layout: {", { mode: "repair" }).status).toBe("repaired");
     expect(siteVersion.SLEXKIT_SITE_VERSION).toBe(rootPackage.version);
     expect(siteVersion.SLEX_PROTOCOL_VERSION).toBe("0.1");
   });
@@ -206,6 +235,36 @@ describe("split runtime and Svelte component entries", () => {
 
       expect(targetInfo.size).toBe(sourceInfo.size);
       expect(copied).toBe(source);
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it("validates source files and standard fixtures through the published CLI", async () => {
+    const standard = runCli(["validate", "--standard", "--json"]);
+    expect(standard.exitCode, standard.stderr).toBe(0);
+    expect(JSON.parse(standard.stdout)).toMatchObject({
+      ok: true,
+      failed: 0,
+      total: expect.any(Number),
+    });
+
+    const tempDir = await mkdtemp(join(tmpdir(), "slexkit-validate-"));
+    try {
+      const validPath = join(tempDir, "valid.slex");
+      await writeFile(validPath, '{ slex: "0.1", namespace: "cli_valid", layout: { "text:message": { text: "ok" } } }', "utf-8");
+      const valid = runCli(["validate", validPath, "--json"]);
+      expect(valid.exitCode, valid.stderr).toBe(0);
+      expect(JSON.parse(valid.stdout)).toMatchObject({ ok: true, componentUsage: ["text"] });
+
+      const warningPath = join(tempDir, "warning.slex");
+      await writeFile(warningPath, '{ namespace: "cli_warning", layout: { "text:message": { madeUp: true } } }', "utf-8");
+      const warning = runCli(["validate", warningPath, "--strict", "--json"]);
+      expect(warning.exitCode).toBe(1);
+      expect(JSON.parse(warning.stdout)).toMatchObject({
+        ok: true,
+        warnings: expect.arrayContaining([expect.objectContaining({ code: "unknown_prop" })]),
+      });
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }

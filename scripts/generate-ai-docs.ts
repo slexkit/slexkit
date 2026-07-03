@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { componentSpecs, publicComponentTypes } from "../src/components/spec-registry";
+import { componentSpecs, publicComponentSpecs, publicComponentTypes } from "../src/components/spec-registry";
 import { parseSlexSource } from "../src/engine/diagnostics";
 import {
   slexkitExpressionContext,
@@ -9,6 +9,12 @@ import {
 } from "../src/engine/capabilities";
 import { discoverExampleMarkdown } from "../site/data/content-discovery.js";
 import { loadExampleDocs } from "../site/data/examples.js";
+import {
+  createStandardArtifacts,
+  hashStandardText,
+  SLEX_STANDARD_ARTIFACTS,
+  type SlexStandardArtifactFilename,
+} from "../src/standard/artifacts";
 
 export const aiDocFilenames = [
   "llms.txt",
@@ -46,6 +52,7 @@ export type SlexKitAiManifest = {
   expressionContext: typeof slexkitExpressionContext;
   stdlib: typeof slexkitStdlibDocs;
   capabilities: typeof slexkitRuntimeCapabilities;
+  standardArtifacts: Record<SlexStandardArtifactFilename, { path: string; hash: string }>;
   components: Array<{
     type: string;
     title: string;
@@ -94,7 +101,8 @@ const referencePages = [
   ["runtime", "Runtime Model", "Mounting, ingestion, boot, namespace store, lifecycle, and runtime APIs."],
   ["integration", "Host Integration", "Markdown renderers, Svelte custom hosts, Streamdown, Tiptap, Obsidian, and artifact lifecycle."],
   ["security", "Security Runtime", "Threat model, sandbox iframe, postMessage bridge, policy, and fail-closed behavior."],
-  ["packages", "Package Boundaries", "Package relationships, installation matrix, and packaging strategy."],
+  ["packages", "Packages", "Package roles, installation matrix, and packaging strategy."],
+  ["standard", "Slex Standard Artifacts", "JSON Schema, component catalog, logic profile, capabilities catalog, conformance fixtures, and manifest."],
   ["toolhost", "ToolHost", "Tool call rendering, built-in templates, custom templates, and submit boundaries."],
   ["icons", "Icon System", "Phosphor icons, custom icon registration, Iconify fallback, and API reference."],
   ["rationale", "Design Rationale", "Why SlexKit uses object literals, expressions, explicit fences, and secure/trusted modes."],
@@ -199,7 +207,7 @@ function componentExamplesMarkdown(spec: (typeof componentSpecs)[number]): strin
 
 function componentsText(): string {
   const byCategory = new Map<string, string[]>();
-  for (const spec of componentSpecs) {
+  for (const spec of publicComponentSpecs) {
     const entries = byCategory.get(spec.category) ?? [];
     entries.push(`- [${spec.title}](/docs/components/${spec.type}.md): \`${spec.type}\` - ${spec.summary}`);
     byCategory.set(spec.category, entries);
@@ -222,7 +230,7 @@ function componentsText(): string {
     "",
     "# Generated Component API Reference",
     "",
-    componentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
+    publicComponentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
   ].join("\n");
 }
 
@@ -443,7 +451,7 @@ async function collectPages(): Promise<{ pages: DocPage[]; sourcePages: SourcePa
     sourceHashes[sourcePath] = hashText(body);
   }
 
-  for (const spec of componentSpecs) {
+  for (const spec of publicComponentSpecs) {
     const sourcePath = `site/content/components/${spec.type}/en-US.md`;
     const body = normalizeMarkdownBody(await readProjectFile(sourcePath));
     sourcePages.push({
@@ -490,6 +498,9 @@ function indexText(version: string, pages: AiDocPage[]): string {
     "- [ToolHost docs](/llms-toolhost.txt): structured user-input UI docs.",
     "- [Authoring rules](/llms-authoring.txt): concise rules for Markdown `slex` fences.",
     "- [AI manifest](/slexkit-ai-manifest.json): structured page, component, and hash metadata.",
+    "- [Standard manifest](/standard/slex-standard-manifest.json): schema, component catalog, logic profile, capabilities, and conformance metadata.",
+    "- [Logic profile](/standard/slex-logic-profile.json): `$` read-pipes, `on*` write-pipes, directives, context, and secure-mode guidance.",
+    "- [Component catalog](/standard/slex-component-catalog.json): public component props, state modes, children, examples, docs, and hashes.",
     "",
     "SlexKit raw docs are Markdown (`.md`) with explicit `slex` fences. The interactive layer is the fenced `slex` source inside each Markdown page.",
     "",
@@ -525,7 +536,7 @@ function fullText(version: string, sourcePages: SourcePage[]): string {
     "",
     "# Generated Component API Supplement",
     "",
-    componentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
+    publicComponentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
   ].join("\n");
 }
 
@@ -547,8 +558,9 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
   const packageJson = JSON.parse(await readProjectFile("package.json")) as { version?: string };
   const version = packageJson.version ?? "0.0.0";
   const { pages, sourcePages, sourceHashes } = await collectPages();
+  const standard = createStandardArtifacts(version, generatedAt);
   const runtimePages = sourcePages.filter(
-    (page) => page.group === "Reference" && ["spec", "usage", "runtime", "integration", "security", "packages"].some((slug) => page.id === `reference/${slug}`),
+    (page) => page.group === "Reference" && ["spec", "usage", "runtime", "integration", "security", "packages", "standard"].some((slug) => page.id === `reference/${slug}`),
   );
   const toolhostPages = sourcePages.filter((page) => page.id === "reference/toolhost");
 
@@ -572,7 +584,7 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
     "llms-authoring.txt": authoringText(),
   };
 
-  const components = componentSpecs.map((spec) => ({
+  const components = publicComponentSpecs.map((spec) => ({
     type: spec.type,
     title: spec.title,
     category: spec.category,
@@ -607,10 +619,19 @@ export async function createAiDocs(generatedAt = new Date().toISOString()): Prom
       expressionContext: slexkitExpressionContext,
       stdlib: slexkitStdlibDocs,
       capabilities: slexkitRuntimeCapabilities,
+      standardArtifacts: Object.fromEntries(
+        SLEX_STANDARD_ARTIFACTS.map((filename) => [
+          filename,
+          {
+            path: `/standard/${filename}`,
+            hash: hashStandardText(standard.files[filename]),
+          },
+        ]),
+      ) as SlexKitAiManifest["standardArtifacts"],
       components,
       sourceHashes: {
         ...sourceHashes,
-        ...Object.fromEntries(componentSpecs.map((spec) => [`component:${spec.type}`, hashText(JSON.stringify(spec))])),
+        ...Object.fromEntries(publicComponentSpecs.map((spec) => [`component:${spec.type}`, hashText(JSON.stringify(spec))])),
       },
     },
   };
@@ -644,7 +665,7 @@ export async function writeAiRawMarkdown(outputDir: string, pages: readonly DocP
 }
 
 export function getComponentExamplesMarkdown(type?: string): string {
-  const specs = type ? componentSpecs.filter((spec) => spec.type === type) : componentSpecs;
+  const specs = type ? componentSpecs.filter((spec) => spec.type === type) : publicComponentSpecs;
   return specs.map(componentExamplesMarkdown).filter(Boolean).join("\n\n---\n\n");
 }
 

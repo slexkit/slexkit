@@ -7,6 +7,7 @@ import { basename, join, resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const packDir = mkdtempSync(join(tmpdir(), "slexkit-pack-"));
 const appDir = mkdtempSync(join(tmpdir(), "slexkit-smoke-"));
+const commandTimeoutMs = Number(process.env.SLEXKIT_SMOKE_TIMEOUT_MS ?? 120000);
 const npmExecPath = process.env.npm_execpath;
 const npmExecName = npmExecPath ? basename(npmExecPath).toLowerCase() : "";
 const npmExecIsBun = npmExecName === "bun" || npmExecName === "bun.exe";
@@ -27,6 +28,7 @@ function run(command, args, options = {}) {
     encoding: "utf8",
     shell: false,
     stdio: options.stdio ?? "pipe",
+    timeout: options.timeout ?? commandTimeoutMs,
   });
   return String(output ?? "").trim();
 }
@@ -37,7 +39,13 @@ function runAsync(command, args, options = {}) {
     const child = execFile(
       isWindowsCmd ? "cmd.exe" : command,
       isWindowsCmd ? ["/d", "/s", "/c", command, ...args] : args,
-      { cwd: options.cwd ?? root, encoding: "utf8", shell: false, maxBuffer: 50 * 1024 * 1024 },
+      {
+        cwd: options.cwd ?? root,
+        encoding: "utf8",
+        shell: false,
+        maxBuffer: 50 * 1024 * 1024,
+        timeout: options.timeout ?? commandTimeoutMs,
+      },
       (error, stdout) => {
         if (error) reject(error);
         else resolve(String(stdout ?? "").trim());
@@ -67,12 +75,13 @@ function installPackedApp(args, options = {}) {
 }
 
 async function pack(packagePath = ".") {
+  console.log(`packing ${packagePath}`);
   const output = await runNpmAsync(["pack", packagePath, "--pack-destination", packDir]);
   return join(packDir, output.split(/\r?\n/).at(-1));
 }
 
 const tarballs = [];
-for (const pkg of [".", "./packages/runtime", "./packages/components-svelte", "./packages/streamdown", "./packages/tiptap", "./packages/theme-shadcn", "./packages/mcp"]) {
+for (const pkg of [".", "./packages/runtime", "./packages/components-svelte", "./packages/streamdown", "./packages/assistant-ui", "./packages/tiptap", "./packages/theme-shadcn", "./packages/mcp"]) {
   tarballs.push(await pack(pkg));
 }
 
@@ -81,16 +90,18 @@ writeFileSync(
   JSON.stringify({ private: true, type: "module" }, null, 2),
 );
 
-installPackedApp([...tarballs, "react", "react-dom", "streamdown", "@tiptap/core", "@tiptap/pm", "@tiptap/extension-code-block"], { cwd: appDir, stdio: "inherit" });
+console.log("installing packed smoke app");
+installPackedApp([...tarballs, "react", "react-dom", "streamdown", "@assistant-ui/react", "@assistant-ui/react-streamdown", "@tiptap/core", "@tiptap/pm", "@tiptap/extension-code-block"], { cwd: appDir, stdio: "inherit" });
 
 writeFileSync(
   join(appDir, "smoke.mjs"),
   [
-    "import { spawn } from 'node:child_process';",
+    "import { spawn, spawnSync } from 'node:child_process';",
     "import { mount as rootMount } from 'slexkit/runtime';",
     "import { mount as scopedMount } from '@slexkit/runtime';",
     "import '@slexkit/components-svelte';",
     "import { SlexKitRenderer, createSlexKitRenderer, slexkitRenderer } from '@slexkit/streamdown';",
+    "import { SlexKitAssistantStreamdownText, createSlexKitAssistantStreamdownComponents } from '@slexkit/assistant-ui';",
     "import { SlexKitTiptapExtension, createSlexKitTiptapExtension } from '@slexkit/tiptap';",
     "import { existsSync } from 'node:fs';",
     "import { join } from 'node:path';",
@@ -100,19 +111,33 @@ writeFileSync(
     "const themeBaseCss = require.resolve('@slexkit/theme-shadcn/base.css');",
     "const themeButtonCss = require.resolve('@slexkit/theme-shadcn/components/button.css');",
     "const streamdownCss = require.resolve('@slexkit/streamdown/style.css');",
+    "const assistantUiCss = require.resolve('@slexkit/assistant-ui/style.css');",
     "const tiptapCss = require.resolve('@slexkit/tiptap/style.css');",
     "if (typeof rootMount !== 'function') throw new Error('slexkit/runtime mount missing');",
     "if (typeof scopedMount !== 'function') throw new Error('@slexkit/runtime mount missing');",
     "if (typeof slexkitRenderer !== 'object') throw new Error('@slexkit/streamdown renderer missing');",
     "if (typeof createSlexKitRenderer !== 'function') throw new Error('@slexkit/streamdown factory missing');",
     "if (typeof SlexKitRenderer !== 'function') throw new Error('@slexkit/streamdown component missing');",
+    "if (typeof SlexKitAssistantStreamdownText !== 'function') throw new Error('@slexkit/assistant-ui component missing');",
+    "if (typeof createSlexKitAssistantStreamdownComponents !== 'function') throw new Error('@slexkit/assistant-ui factory missing');",
     "if (typeof createSlexKitTiptapExtension !== 'function') throw new Error('@slexkit/tiptap factory missing');",
     "if (typeof SlexKitTiptapExtension !== 'object') throw new Error('@slexkit/tiptap extension missing');",
     "if (!themeCss.endsWith('style.css')) throw new Error('theme CSS export did not resolve');",
     "if (!themeBaseCss.endsWith('base.css')) throw new Error('theme base CSS export did not resolve');",
     "if (!themeButtonCss.endsWith('button.css')) throw new Error('theme component CSS export did not resolve');",
     "if (!streamdownCss.endsWith('style.css')) throw new Error('streamdown CSS export did not resolve');",
+    "if (!assistantUiCss.endsWith('style.css')) throw new Error('assistant-ui CSS export did not resolve');",
     "if (!tiptapCss.endsWith('style.css')) throw new Error('tiptap CSS export did not resolve');",
+    "console.log('smoke: imports and CSS exports ok');",
+    "const slexBinBase = join(process.cwd(), 'node_modules', '.bin', 'slex');",
+    "const slexBin = (process.platform === 'win32' ? [`${slexBinBase}.cmd`, `${slexBinBase}.exe`, `${slexBinBase}.bunx`, slexBinBase] : [slexBinBase]).find(existsSync);",
+    "if (!slexBin) throw new Error('slex binary missing');",
+    "const slexCommand = process.platform === 'win32' && slexBin.endsWith('.cmd') ? ['cmd.exe', ['/d', '/s', '/c', slexBin, 'validate', '--standard', '--json']] : [slexBin, ['validate', '--standard', '--json']];",
+    "const slexValidate = spawnSync(slexCommand[0], slexCommand[1], { cwd: process.cwd(), encoding: 'utf8', shell: false, timeout: 30000 });",
+    "if (slexValidate.status !== 0) throw new Error(`slex validate --standard failed: ${slexValidate.stderr || slexValidate.stdout}`);",
+    "const slexReport = JSON.parse(slexValidate.stdout);",
+    "if (slexReport.ok !== true || slexReport.failed !== 0) throw new Error('slex conformance report failed');",
+    "console.log('smoke: CLI conformance ok');",
     "const mcpBinBase = join(process.cwd(), 'node_modules', '.bin', 'slexkit-mcp');",
     "const mcpBin = (process.platform === 'win32' ? [`${mcpBinBase}.cmd`, `${mcpBinBase}.exe`, `${mcpBinBase}.bunx`, mcpBinBase] : [mcpBinBase]).find(existsSync);",
     "if (!mcpBin) throw new Error('slexkit-mcp binary missing');",
@@ -123,7 +148,7 @@ writeFileSync(
     "mcp.stderr.on('data', (chunk) => { stderr += chunk.toString('utf8'); });",
     "function waitForLine() {",
     "  return new Promise((resolve, reject) => {",
-    "    const timer = setTimeout(() => reject(new Error('MCP smoke timed out')), 5000);",
+    "    const timer = setTimeout(() => { mcp.kill(); reject(new Error('MCP smoke timed out')); }, 5000);",
     "    function cleanup() { clearTimeout(timer); mcp.stdout.off('data', onData); mcp.off('exit', onExit); }",
     "    function onExit(code) { cleanup(); reject(new Error(`MCP exited before response: ${code}${stderr ? `\\n${stderr}` : ''}`)); }",
     "    function onData(chunk) {",
@@ -150,10 +175,20 @@ writeFileSync(
     "if (toolNames !== 'slexkitDocs,slexkitExamples,slexkitValidate') throw new Error('@slexkit/mcp tool list mismatch');",
     "const validated = await rpc(3, 'tools/call', { name: 'slexkitValidate', arguments: { source: '{ slex: \"0.1\", namespace: \"smoke\", layout: { \"text:message\": { text: \"ok\" } } }' } });",
     "if (validated.result?.structuredContent?.ok !== true) throw new Error('@slexkit/mcp validate smoke failed');",
+    "console.log('smoke: MCP server ok');",
     "mcp.kill();",
+    "await new Promise((resolve) => {",
+    "  if (mcp.exitCode !== null || mcp.signalCode) resolve();",
+    "  else {",
+    "    const timer = setTimeout(resolve, 1000);",
+    "    mcp.once('exit', () => { clearTimeout(timer); resolve(); });",
+    "  }",
+    "});",
+    "process.exit(0);",
   ].join("\n"),
 );
 
+console.log("running packed app smoke");
 run("node", ["smoke.mjs"], { cwd: appDir, stdio: "inherit" });
 
 console.log(`release smoke ok\npackDir=${packDir}\nappDir=${appDir}`);

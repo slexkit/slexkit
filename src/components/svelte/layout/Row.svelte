@@ -98,6 +98,7 @@
 <div
   class={`slex-row${p.class ? ` ${text(p.class)}` : ""}`}
   id={p.id ? text(p.id) : undefined}
+  data-variant={p.variant || p.presentation ? text(p.variant ?? p.presentation) : undefined}
   style:align-items={text(p.align)}
   style:justify-content={text(p.justify)}
   style:gap={text(p.gap)}

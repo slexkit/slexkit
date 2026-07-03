@@ -1,4 +1,5 @@
 export type SlexKitSourceDiagnostic = {
+  code: "syntax";
   message: string;
   line: number;
   column: number;
@@ -10,6 +11,30 @@ export type SlexKitParseResult =
   | { ok: true; value: unknown }
   | { ok: false; error: SlexKitSyntaxError; diagnostic: SlexKitSourceDiagnostic };
 
+export type SlexStreamingMode = false | "stable" | "repair";
+
+export type SlexStreamingRepair =
+  | { kind: "string"; value: string; position: number }
+  | { kind: "comment"; value: string; position: number }
+  | { kind: "delimiter"; value: string; position: number; opener: string };
+
+export type SlexStreamingParseResult =
+  | { status: "complete"; source: string; value: unknown }
+  | {
+      status: "repaired";
+      source: string;
+      repairedSource: string;
+      value: unknown;
+      repairs: SlexStreamingRepair[];
+      diagnostic: SlexKitSourceDiagnostic;
+    }
+  | { status: "pending"; source: string; diagnostic?: SlexKitSourceDiagnostic; repairs?: SlexStreamingRepair[] }
+  | { status: "invalid"; source: string; error: SlexKitSyntaxError; diagnostic: SlexKitSourceDiagnostic };
+
+export type SlexStreamingParseOptions = {
+  mode?: SlexStreamingMode | true;
+};
+
 type Position = {
   line: number;
   column: number;
@@ -18,6 +43,14 @@ type Position = {
 type LocatedChar = Position & {
   char: string;
   index: number;
+};
+
+type SourceScan = {
+  chars: LocatedChar[];
+  stack: LocatedChar[];
+  openQuote?: string;
+  escaped?: boolean;
+  mismatchedDelimiter?: LocatedChar;
 };
 
 export class SlexKitSyntaxError extends SyntaxError {
@@ -65,12 +98,15 @@ function stackLine(error: unknown): number | null {
   return Number.isFinite(parsed) ? Math.max(1, parsed - 2) : null;
 }
 
-function scanSource(source: string): LocatedChar[] {
+function scanSourceState(source: string): SourceScan {
   const chars: LocatedChar[] = [];
+  const stack: LocatedChar[] = [];
+  const pairs: Record<string, string> = { "}": "{", "]": "[", ")": "(" };
   let quote = "";
   let escaped = false;
   let line = 1;
   let column = 0;
+  let mismatchedDelimiter: LocatedChar | undefined;
 
   for (let index = 0; index < source.length; index += 1) {
     const char = source[index];
@@ -115,10 +151,31 @@ function scanSource(source: string): LocatedChar[] {
       continue;
     }
 
-    chars.push({ char, index, line, column });
+    const located = { char, index, line, column };
+    chars.push(located);
+
+    if (char === "{" || char === "[" || char === "(") {
+      stack.push(located);
+    } else if (char === "}" || char === "]" || char === ")") {
+      const expected = pairs[char];
+      const opener = stack.pop();
+      if (!opener || opener.char !== expected) {
+        mismatchedDelimiter = located;
+      }
+    }
   }
 
-  return chars;
+  return {
+    chars,
+    stack,
+    openQuote: quote || undefined,
+    escaped,
+    mismatchedDelimiter,
+  };
+}
+
+function scanSource(source: string): LocatedChar[] {
+  return scanSourceState(source).chars;
 }
 
 function tokenDiagnostic(source: string, message: string): Position | null {
@@ -159,29 +216,16 @@ function tokenDiagnostic(source: string, message: string): Position | null {
 }
 
 function delimiterDiagnostic(source: string): (Position & { detail: string }) | null {
-  const stack: LocatedChar[] = [];
-  const pairs: Record<string, string> = { "}": "{", "]": "[", ")": "(" };
-
-  for (const item of scanSource(source)) {
-    if (item.char === "{" || item.char === "[" || item.char === "(") {
-      stack.push(item);
-      continue;
-    }
-
-    if (item.char === "}" || item.char === "]" || item.char === ")") {
-      const expected = pairs[item.char];
-      const opener = stack.pop();
-      if (!opener || opener.char !== expected) {
-        return {
-          line: item.line,
-          column: item.column,
-          detail: `Unexpected closing delimiter ${item.char}.`,
-        };
-      }
-    }
+  const scan = scanSourceState(source);
+  if (scan.mismatchedDelimiter) {
+    return {
+      line: scan.mismatchedDelimiter.line,
+      column: scan.mismatchedDelimiter.column,
+      detail: `Unexpected closing delimiter ${scan.mismatchedDelimiter.char}.`,
+    };
   }
 
-  const opener = stack.at(-1);
+  const opener = scan.stack.at(-1);
   if (!opener) return null;
   const end = lineColumnAt(source, source.length);
   return {
@@ -189,6 +233,64 @@ function delimiterDiagnostic(source: string): (Position & { detail: string }) | 
     column: end.column,
     detail: `Expected closing delimiter for ${opener.char} opened at line ${opener.line}, column ${opener.column}.`,
   };
+}
+
+export function isLikelyIncompleteSlexSource(
+  source: string,
+  diagnostic?: Pick<SlexKitSourceDiagnostic, "message" | "detail">,
+): boolean {
+  if (source.trim().length === 0) return true;
+
+  const scan = scanSourceState(source);
+  if (scan.openQuote && scan.openQuote !== "//") return true;
+
+  const delimiter = delimiterDiagnostic(source);
+  if (delimiter?.detail.startsWith("Expected closing delimiter")) return true;
+
+  const message = diagnostic?.message ?? "";
+  if (/unexpected end of input|unterminated|missing\)|missing \}/i.test(message)) return true;
+
+  return false;
+}
+
+function streamingMode(value: SlexStreamingParseOptions["mode"]): SlexStreamingMode {
+  if (value === true || value === undefined) return "repair";
+  return value;
+}
+
+function closingDelimiter(open: string): string {
+  if (open === "{") return "}";
+  if (open === "[") return "]";
+  return ")";
+}
+
+function repairSlexStreamingSource(source: string): { source: string; repairs: SlexStreamingRepair[] } | null {
+  const scan = scanSourceState(source);
+  if (scan.mismatchedDelimiter) return null;
+  if (scan.openQuote === "//") return null;
+  if (scan.openQuote && scan.escaped) return null;
+
+  const repairs: SlexStreamingRepair[] = [];
+  let repairedSource = source;
+  const position = source.length;
+
+  if (scan.openQuote === "/*") {
+    repairedSource += "*/";
+    repairs.push({ kind: "comment", value: "*/", position });
+  } else if (scan.openQuote) {
+    repairedSource += scan.openQuote;
+    repairs.push({ kind: "string", value: scan.openQuote, position });
+  }
+
+  for (let index = scan.stack.length - 1; index >= 0; index -= 1) {
+    const opener = scan.stack[index];
+    const value = closingDelimiter(opener.char);
+    repairedSource += value;
+    repairs.push({ kind: "delimiter", value, position: source.length, opener: opener.char });
+  }
+
+  if (repairs.length === 0) return null;
+  return { source: repairedSource, repairs };
 }
 
 function locateSyntaxError(source: string, error: unknown): SlexKitSourceDiagnostic {
@@ -207,6 +309,7 @@ function locateSyntaxError(source: string, error: unknown): SlexKitSourceDiagnos
     : delimiter?.detail;
 
   return {
+    code: "syntax",
     message: rawMessage,
     line: position.line,
     column: position.column,
@@ -347,6 +450,67 @@ export function parseSlexSource(source: string): SlexKitParseResult {
       error: new SlexKitSyntaxError(diagnostic),
     };
   }
+}
+
+export function parseSlexStreamingSource(
+  source: string,
+  options: SlexStreamingParseOptions = {},
+): SlexStreamingParseResult {
+  const parsed = parseSlexSource(source);
+  if (parsed.ok) {
+    return {
+      status: "complete",
+      source,
+      value: parsed.value,
+    };
+  }
+
+  const mode = streamingMode(options.mode);
+  const incomplete = isLikelyIncompleteSlexSource(source, parsed.diagnostic);
+  if (mode === false) {
+    return incomplete
+      ? { status: "pending", source, diagnostic: parsed.diagnostic }
+      : { status: "invalid", source, diagnostic: parsed.diagnostic, error: parsed.error };
+  }
+
+  if (mode === "stable") {
+    return incomplete
+      ? { status: "pending", source, diagnostic: parsed.diagnostic }
+      : { status: "invalid", source, diagnostic: parsed.diagnostic, error: parsed.error };
+  }
+
+  if (!incomplete) {
+    return {
+      status: "invalid",
+      source,
+      diagnostic: parsed.diagnostic,
+      error: parsed.error,
+    };
+  }
+
+  const repaired = repairSlexStreamingSource(source);
+  if (!repaired) {
+    return { status: "pending", source, diagnostic: parsed.diagnostic };
+  }
+
+  const repairedParsed = parseSlexSource(repaired.source);
+  if (repairedParsed.ok) {
+    return {
+      status: "repaired",
+      source,
+      repairedSource: repaired.source,
+      value: repairedParsed.value,
+      repairs: repaired.repairs,
+      diagnostic: parsed.diagnostic,
+    };
+  }
+
+  return {
+    status: "pending",
+    source,
+    diagnostic: parsed.diagnostic,
+    repairs: repaired.repairs,
+  };
 }
 
 /** @deprecated Use parseSlexSource instead. */

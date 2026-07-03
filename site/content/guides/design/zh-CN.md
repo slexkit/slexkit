@@ -3,7 +3,7 @@ title: 设计哲学
 category: Guides
 status: ready
 order: 30
-summary: "面向动态 Markdown、组件和 Agent 友好 UI 输出的设计原则。"
+summary: "动态 Markdown、组件和 agent 生成 UI 的设计原则。"
 includeTitleInToc: true
 slexkitRenderMode: component
 ---
@@ -12,7 +12,7 @@ slexkitRenderMode: component
 
 **文档即工具，工具即文档。**
 
-让静态文档活起来，让 Agents 输出具备交互性。
+静态文档可以嵌入可交互组件，agent 输出也可以携带结构化 UI。
 
 ```slex
 {
@@ -23,16 +23,19 @@ slexkitRenderMode: component
       columns: 1,
       lgColumns: 3,
       "card:task": {
+        tone: "primary",
         "heading:title": { level: 4, title: "任务优先" },
         "text:bodyA": { text: "从用户需要完成的任务出发。" },
         "text:bodyB": { text: "每一步设计都服务于核心任务。" }
       },
       "card:intuitive": {
+        tone: "info",
         "heading:title": { level: 4, title: "直觉交互" },
         "text:bodyA": { text: "文档自带示例，操作后立即呈现结果。" },
         "text:bodyB": { text: "按域分块，数据穿越式绑定。" }
       },
       "card:breath": {
+        tone: "success",
         "heading:title": { level: 4, title: "视觉呼吸" },
         "text:bodyA": { text: "留白、间距创造视觉节奏。" },
         "text:bodyB": { text: "字体、颜色构建清晰层次。" }
@@ -55,33 +58,39 @@ slexkitRenderMode: component
       mdColumns: 2,
       lgColumns: 3,
       "card:primary": {
+        tone: "primary",
         "swatch:primary": { tone: "primary" },
         "heading:title": { level: 4, title: "Primary" },
         "text:body": { text: "主操作、当前选中、高优先级强调。不要当普通装饰色。" }
       },
       "card:info": {
+        tone: "info",
         "swatch:info": { tone: "info" },
         "heading:title": { level: 4, title: "Info" },
         "text:body": { text: "提示、引导、说明性状态。不要替代 Primary。" }
       },
       "card:success": {
+        tone: "success",
         "swatch:success": { tone: "success" },
         "heading:title": { level: 4, title: "Success" },
         "text:body": { text: "完成、通过、可继续。只在结果明确后使用。" }
       },
       "card:warning": {
+        tone: "warning",
         "swatch:warning": { tone: "warning" },
         "heading:title": { level: 4, title: "Warning" },
         "text:body": { text: "风险、阈值、需要注意但未失败。不要用来提亮页面。" }
       },
       "card:destructive": {
+        tone: "destructive",
         "swatch:destructive": { tone: "destructive" },
-        "heading:title": { level: 4, title: "Destructive" },
+        "heading:title": { level: 4, title: "破坏性" },
         "text:body": { text: "错误、删除、不可逆操作。必须伴随后果说明。" }
       },
       "card:neutral": {
+        tone: "neutral",
         "swatch:neutral": { tone: "neutral" },
-        "heading:title": { level: 4, title: "Neutral" },
+        "heading:title": { level: 4, title: "中性" },
         "text:body": { text: "背景、分隔、辅助信息和默认容器。负责结构，不负责强调。" }
       }
     }
@@ -226,7 +235,7 @@ SlexKit 的字体设计追求冷静、清楚、工程感；图标风格轻量、
       "card:write": {
         "diagram:markdown": {},
         "heading:title": { level: 4, title: "正文用 Markdown" },
-        "text:body": { text: "说明场景、边界和判断规则，不把说明写进 UI 组件里。" }
+        "text:body": { text: "说明场景和判断规则，不把长说明写进 UI 组件里。" }
       },
       "card:run": {
         "diagram:fence": {},
@@ -245,7 +254,7 @@ SlexKit 的字体设计追求冷静、清楚、工程感；图标风格轻量、
 
 ## 产品形态
 
-SlexKit 面向 Markdown 中的交互片段，而非完整应用。典型场景包括：
+SlexKit 用于 Markdown 中的交互片段，而非完整应用。典型场景包括：
 
 - 解释结果的卡片
 - 一组指标总览
@@ -259,7 +268,7 @@ SlexKit 面向 Markdown 中的交互片段，而非完整应用。典型场景�
   namespace: "design_shape",
   layout: {
     "card:status": {
-      title: "Build summary",
+      title: "构建摘要",
       tone: "info",
       "row:metrics": {
         "stat:passed": { label: "Passed", value: 28, tone: "success" },
@@ -287,22 +296,27 @@ SlexKit 面向 Markdown 中的交互片段，而非完整应用。典型场景�
       mdColumns: 2,
       lgColumns: 3,
       "card:info": {
+        tone: "info",
         "badge:tone": { label: "info", tone: "info" },
         "text:body": { text: "中性引导、当前过程或信息状态。" }
       },
       "card:success": {
+        tone: "success",
         "badge:tone": { label: "success", tone: "success" },
         "text:body": { text: "已完成、已接受或可继续状态。" }
       },
       "card:warning": {
+        tone: "warning",
         "badge:tone": { label: "warning", tone: "warning" },
         "text:body": { text: "风险、阈值或需要复核的状态。" }
       },
       "card:danger": {
+        tone: "danger",
         "badge:tone": { label: "danger", tone: "danger" },
         "text:body": { text: "错误、破坏性操作或阻塞状态。" }
       },
       "card:muted": {
+        tone: "muted",
         "badge:tone": { label: "muted", tone: "muted" },
         "text:body": { text: "次要或背景信息。" }
       }
@@ -311,7 +325,7 @@ SlexKit 面向 Markdown 中的交互片段，而非完整应用。典型场景�
 }
 ```
 
-## Display UI 与 ToolHost
+## 展示 UI 与 ToolHost
 
 展示型 UI 用于信息呈现和局部交互。当宿主需要从用户处获取结构化结果时，使用 ToolHost 模式。
 
@@ -323,17 +337,18 @@ SlexKit 面向 Markdown 中的交互片段，而非完整应用。典型场景�
       columns: 1,
       mdColumns: 2,
       "card:display": {
-        title: "Display UI",
-        "text:body": { text: "Use slex fences for status, metrics, previews, and local controls." },
+        tone: "muted",
+        title: "展示 UI",
+        "text:body": { text: "普通 slex fence 呈现信息，不向宿主返回结构化结果。" },
         "badge:kind": { label: "No host result", tone: "muted" }
       },
       "card:toolhost": {
+        tone: "info",
         title: "ToolHost",
-        "text:body": { text: "Use tool templates when confirmation or form data must return to the host." },
-        "badge:kind": { label: "Returns ToolResult", tone: "info" }
+        "text:body": { text: "需要确认、选择或表单提交时使用 tool template。" },
+        "badge:kind": { label: "返回 ToolResult", tone: "info" }
       }
     }
   }
 }
 ```
-

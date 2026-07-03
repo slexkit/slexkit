@@ -7,10 +7,14 @@ import { slexkitStd } from "./stdlib";
 import type { LayoutNode, ForContext, RenderContext, ForSlot, ComponentRenderer, MountOptions, ComponentStateMap, ComponentTypeMap } from "./types";
 
 const FALLBACK_CSS = "background:var(--muted);border:1px solid var(--border);border-radius:calc(var(--radius) - 2px);padding:0.5rem;text-align:center;font-size:0.75rem;color:var(--muted-foreground)";
-type RenderOptions = Required<Pick<MountOptions, "labels">> & { dir: RenderContext["dir"] };
+type RenderOptions = Required<Pick<MountOptions, "labels">> & {
+  dir: RenderContext["dir"];
+  executionMode: NonNullable<MountOptions["executionMode"]>;
+};
 
 const defaultRenderOptions: RenderOptions = {
   dir: "ltr",
+  executionMode: "live",
   labels: {},
 };
 
@@ -43,12 +47,26 @@ function callHook(
   g: Record<string, unknown>,
   name: string,
   type: "onMount" | "onUnmount" | "onUpdate",
+  options: RenderOptions,
 ): void {
+  if (options.executionMode === "preview") return;
   const key = name ? `${type}_${name}` : `${type}_`;
   const fn = g[key];
   if (typeof fn === "function") {
     fn.call(g);
   }
+}
+
+function previewApi(api: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
+  if (!api) return undefined;
+  return new Proxy({}, {
+    get(_target, key) {
+      if (typeof key === "symbol") return undefined;
+      return () => {
+        throw new Error(`api.${key} is disabled during SlexKit preview rendering.`);
+      };
+    },
+  });
 }
 
 function applyEnterAnimation(
@@ -121,6 +139,7 @@ function resolveDynamicProps(
   forCtx: ForContext | undefined,
   ns: string,
   fullKey: string,
+  options: RenderOptions,
 ): void {
   const evalCtx = buildComponentEvalContext(g, components, componentTypes, api, forCtx);
   for (const [k, v] of Object.entries(props)) {
@@ -135,6 +154,10 @@ function resolveDynamicProps(
       const memo = createMemo(() => evalRead(v, evalCtx, ns, path));
       props[k] = createComponentAccessor(memo);
     } else if (k.startsWith("on") && typeof v === "string") {
+      if (options.executionMode === "preview") {
+        props[k] = () => {};
+        continue;
+      }
       const stmt = v;
       const path = `${fullKey}:${k}`;
       props[k] = ($event?: unknown) => execWrite(stmt, { ...evalCtx, $event: $event ?? null }, ns, path);
@@ -222,7 +245,7 @@ function renderIfNode(
     if (current === instance) current = null;
     disposeComponent(instance.el);
     instance.dispose();
-    callHook(g, name, "onUnmount");
+    callHook(g, name, "onUnmount", options);
     instance.el.remove();
   };
 
@@ -237,10 +260,11 @@ function renderIfNode(
           innerProps = {};
           innerChildren = {};
           separatePropsAndChildren(props, innerProps, innerChildren);
-          resolveDynamicProps(innerProps, g, components, componentTypes, api, forCtx, ns, fullKey);
+          resolveDynamicProps(innerProps, g, components, componentTypes, api, forCtx, ns, fullKey, options);
           const componentState = syncComponentProps(type, name, innerProps, components, componentTypes);
           bindInputStateProps(type, componentState, innerProps);
           emit = (event: string, data?: unknown) => {
+            if (options.executionMode === "preview") return;
             if (event === "change") applyComponentEventState(type, name, data, components, componentTypes);
             const h = innerProps[`on${event}`];
             if (typeof h === "function") h(data);
@@ -266,7 +290,7 @@ function renderIfNode(
         if (currentEl) {
           container.appendChild(currentEl);
           applyEnterAnimation(currentEl, innerProps);
-          callHook(g, name, "onMount");
+          callHook(g, name, "onMount", options);
           current = {
             el: currentEl,
             props: innerProps,
@@ -339,11 +363,12 @@ function renderAndMountSlot(
     innerProps = {};
     innerChildren = {};
     separatePropsAndChildren(props, innerProps, innerChildren);
-    resolveDynamicProps(innerProps, g, components, componentTypes, api, innerForCtx, ns, fullKey);
+    resolveDynamicProps(innerProps, g, components, componentTypes, api, innerForCtx, ns, fullKey, options);
     const componentState = syncComponentProps(type, name, innerProps, components, componentTypes);
     bindInputStateProps(type, componentState, innerProps);
 
     fEmit = (event, data) => {
+      if (options.executionMode === "preview") return;
       if (event === "change") applyComponentEventState(type, name, data, components, componentTypes);
       const h = innerProps[`on${event}`];
       if (typeof h === "function") h(data);
@@ -415,7 +440,7 @@ function renderForNode(
     if (disposedSlots.has(slot)) return;
     disposedSlots.add(slot);
     leavingSlots.delete(slot);
-    callHook(g, name, "onUnmount");
+    callHook(g, name, "onUnmount", options);
     if (slot.el) {
       disposeComponent(slot.el);
       slot.el.remove();
@@ -482,7 +507,7 @@ function renderForNode(
           if (indexChanged && slot.indexSignal) {
             slot.indexSignal[1](index);
           }
-          callHook(g, name, "onUpdate");
+          callHook(g, name, "onUpdate", options);
         }
       } else {
         const indexSignal = createSignal(index);
@@ -493,7 +518,7 @@ function renderForNode(
           return;
         }
         applyEnterAnimation(slot.el, slot.props);
-        callHook(g, name, "onMount");
+        callHook(g, name, "onMount", options);
         slotMap.set(keyVal, slot);
       }
 
@@ -535,11 +560,12 @@ function renderNormalNode(
   const nodeProps: Record<string, unknown> = {};
   const nodeChildren: Record<string, unknown> = {};
   separatePropsAndChildren(props, nodeProps, nodeChildren);
-  resolveDynamicProps(nodeProps, g, components, componentTypes, api, forCtx, ns, fullKey);
+  resolveDynamicProps(nodeProps, g, components, componentTypes, api, forCtx, ns, fullKey, options);
   const componentState = syncComponentProps(type, name, nodeProps, components, componentTypes);
   bindInputStateProps(type, componentState, nodeProps);
 
   const nEmit: RenderContext["emit"] = (event, data) => {
+    if (options.executionMode === "preview") return;
     if (event === "change") applyComponentEventState(type, name, data, components, componentTypes);
     const h = nodeProps[`on${event}`];
     if (typeof h === "function") h(data);
@@ -562,8 +588,8 @@ function renderNormalNode(
   if (el) {
     container.appendChild(el);
     applyEnterAnimation(el, nodeProps);
-    callHook(g, name, "onMount");
-    onCleanup(() => callHook(g, name, "onUnmount"));
+    callHook(g, name, "onMount", options);
+    onCleanup(() => callHook(g, name, "onUnmount", options));
     onCleanup(() => disposeComponent(el));
   }
 }
@@ -605,12 +631,14 @@ export function renderTree(
 ): void {
   if (!layout || typeof layout !== "object") return;
 
+  const runtimeApi = options.executionMode === "preview" ? previewApi(api) : api;
+
   if (prepare) prepareComponentStates(layout, components, componentTypes, ns);
 
   for (const [key, val] of Object.entries(layout)) {
     if (!key.includes(":")) continue;
     if (typeof val === "object" && val !== null) {
-      renderNode(key, val as Record<string, unknown>, container, g, components, componentTypes, api, forCtx, ns, options);
+      renderNode(key, val as Record<string, unknown>, container, g, components, componentTypes, runtimeApi, forCtx, ns, options);
     }
   }
 }

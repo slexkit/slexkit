@@ -3,37 +3,42 @@ title: 集成
 category: Guides
 status: ready
 order: 25
-summary: "面向 Streamdown、Tiptap、Obsidian 与自定义 Markdown 宿主的插件接入指南，用于渲染显式 Slex fence。"
+summary: "在 assistant-ui、Streamdown、Tiptap、Obsidian 或自定义 Markdown 渲染器中接入 slex 代码块。"
 slexkitRenderMode: component
 ---
 
 # 集成
 
-SlexKit 在本仓库提供 Streamdown 与 Tiptap 包，并在独立发布仓库维护官方 Obsidian 插件。官网自身也使用自定义 Markdown host 路径。完整 API 和 host 契约见 [Host Integration reference](/docs/reference/integration)。
+这页按宿主说明怎么接入 SlexKit。所有接入方式都只渲染明确标记为 `slex` 的代码块；普通 `js`、`json` 或未标记代码块仍按原来的 Markdown 代码块显示。
 
-## 插件选择
+需要更完整的 API 说明时，再看 [Host Integration reference](/docs/reference/integration)。
 
-| 宿主 | 使用包 | 适用场景 | 运行边界 |
+## 选择接入方式
+
+| 宿主 | 安装或使用 | 渲染位置 | 默认模式 |
 |---|---|---|---|
-| React / Streamdown | `@slexkit/streamdown` | 聊天消息、AI 输出、React Markdown 页面 | trusted 或 secure |
-| Tiptap | `@slexkit/tiptap` | 需要 `slex` 代码块预览，并保留 Markdown 导入/导出的编辑器文档 | trusted |
-| Obsidian | `slexkit/obsidian-slexkit` | 本地 vault reading mode 中的 Slex fence | trusted readonly |
-| 自定义 Markdown 宿主 | `slexkit` | 产品自己的 Markdown renderer、文档查看器或 Svelte 官网 renderer | trusted 或 secure |
+| assistant-ui | `@slexkit/assistant-ui` | 聊天消息文本 | secure |
+| React / Streamdown | `@slexkit/streamdown` | 聊天消息、React Markdown 页面 | trusted 或 secure |
+| Tiptap | `@slexkit/tiptap` | 编辑器里的 `slex` 代码块预览 | trusted |
+| Svelte Markdown | `slexkit` | 自己的 Markdown renderer | trusted 或 secure |
+| Obsidian | Community Plugins 里的 **SlexKit** | 本地笔记阅读模式 | trusted readonly |
+| 自定义 Markdown 宿主 | `slexkit` | 产品文档页、文档查看器、站点 renderer | trusted 或 secure |
 
-宿主是 Streamdown 或 Tiptap 时使用本仓库里的包；Obsidian 安装和发布以独立的 [SlexKit 插件仓库](https://github.com/slexkit/obsidian-slexkit) 为准。自定义 Markdown renderer 直接使用 `createSlexKitMarkdownRuntimeHost`。
+assistant-ui、Streamdown 和 Tiptap 有现成包。自定义 Markdown renderer 可直接使用 `createSlexKitMarkdownRuntimeHost`。Obsidian 插件可从 Community Plugins 安装；测试未发布版本时再看 [插件仓库](https://github.com/slexkit/obsidian-slexkit)。
 
-包安装细节和发布边界由 [Package Boundaries](/docs/reference/packages) 维护。
+每个 npm 包的 exports 和安装组合见 [包与安装](/docs/reference/packages)。
 
 ## 可运行示例
 
-仓库里包含两个可直接在浏览器打开的宿主示例。两者使用同一份 RC 低通滤波器 Markdown source，方便对比不同宿主的行为：
+可运行示例用于确认实际渲染行为。Streamdown 和 Tiptap 使用同一段 RC 低通滤波器 Markdown，便于对比只读渲染和编辑器预览的差异：
 
-- [Streamdown 接入](/zh-CN/examples/streamdown-host) 对应 `examples/streamdown`。
-- [Tiptap 编辑器接入](/zh-CN/examples/tiptap-host) 对应 `examples/tiptap`。
+- [Streamdown 接入](/zh-CN/examples/streamdown-host)：源码在 `examples/streamdown`。
+- [Tiptap 编辑器接入](/zh-CN/examples/tiptap-host)：源码在 `examples/tiptap`。
+- [assistant-ui 接入](/zh-CN/examples/assistant-ui-host)：源码在 `examples/assistant-ui`。
 
 ## Svelte Markdown 宿主
 
-SlexKit 官网是 Svelte 应用，但它的 Markdown 集成不是一个独立公开 adapter 包。它是自定义 Markdown renderer 的参考形态：
+官网本身就是 Svelte 应用里的自定义 Markdown renderer。这个接入没有单独发布 adapter 包；应用自行解析 Markdown 时，可以按下面的方式把 `slex` 代码块交给 SlexKit：
 
 ```js
 import { createSlexKitMarkdownRuntimeHost } from "slexkit";
@@ -55,7 +60,7 @@ mount(MarkdownRenderer, {
 });
 ```
 
-产品自己拥有 Markdown parser、Svelte component tree 或文档壳时，使用这个模式。宿主职责不变：只识别 `slex` fence，普通代码块继续作为代码显示，传入稳定的 `artifactId`，并在文档卸载时调用 cleanup。
+这个模式适合产品自行控制 Markdown parser、Svelte component tree 或文档壳的场景。接入时保留三件事：只识别 `slex` 代码块，给同一篇文档传入稳定的 `artifactId`，文档卸载时调用 cleanup。
 
 ## Streamdown
 
@@ -87,11 +92,51 @@ export function Message({ markdown }: { markdown: string }) {
 }
 ```
 
-默认 renderer 只处理 `slex` fence，普通代码块由 Streamdown 自行渲染。
+上面的 renderer 只替换 `slex` 代码块，其他代码块仍由 Streamdown 渲染。
+
+## assistant-ui
+
+如果 assistant-ui 项目已经用 `@assistant-ui/react-streamdown` 渲染文本消息，可以换成 `@slexkit/assistant-ui`。它只替换 text part 里的 `slex` 代码块，线程、输入框、消息状态和工具调用 UI 仍按 assistant-ui 原来的方式处理。
+
+```sh
+npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown @slexkit/assistant-ui @assistant-ui/react @assistant-ui/react-streamdown streamdown react react-dom
+```
+
+应用入口导入样式：
+
+```ts
+import "@slexkit/theme-shadcn/style.css";
+import "@slexkit/assistant-ui/style.css";
+```
+
+```tsx
+import { MessagePrimitive } from "@assistant-ui/react";
+import { SlexKitAssistantStreamdownText } from "@slexkit/assistant-ui";
+
+export function AssistantMessage() {
+  return (
+    <MessagePrimitive.Root>
+      <MessagePrimitive.Parts>
+        {({ part }) =>
+          part.type === "text" ? (
+            <SlexKitAssistantStreamdownText
+              artifactId="message-1"
+              runtime="secure"
+              secureFrame={{ runtimeUrl: "/slexkit.runtime.js" }}
+            />
+          ) : null
+        }
+      </MessagePrimitive.Parts>
+    </MessagePrimitive.Root>
+  );
+}
+```
+
+这个包不接管 assistant-ui 的 tool call、审批或表单提交。需要结构化用户输入时，仍使用 ToolHost 或既有 assistant-ui 工具调用层。
 
 ## Tiptap
 
-安装 runtime、主题、adapter 和 Tiptap peer dependencies：
+安装 SlexKit adapter、主题和 Tiptap 依赖：
 
 ```sh
 npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown
@@ -104,7 +149,7 @@ import "@slexkit/theme-shadcn/style.css";
 import "@slexkit/tiptap/style.css";
 ```
 
-禁用 StarterKit 默认 code block，并注册 SlexKit adapter：
+禁用 StarterKit 默认 code block，然后注册 SlexKit 扩展：
 
 ```ts
 import { Editor } from "@tiptap/core";
@@ -124,11 +169,13 @@ const editor = new Editor({
 });
 ```
 
-这个 adapter 扩展 Tiptap 的 `CodeBlock`，只接管语言严格等于 `slex` 的块，普通 code block 仍作为可编辑源码保留。同一个 editor 内的 block 共享 artifact runtime，所以 state-only fence 可以影响后续可渲染 fence。当前默认 trusted runtime；不可信 Markdown 应放到 secure Web host 中处理。
+这个扩展只接管语言等于 `slex` 的代码块。其他代码块仍是普通 Tiptap code block，可以继续编辑和导出。
+
+同一个 editor 里的 `slex` 块共享状态：前面的 state-only 块可以给后面的 layout 块提供数据。Tiptap 接入默认使用 trusted mode；如果 Markdown 来自未审查用户输入或第三方内容，应放到 Web host 里用 secure mode 渲染。
 
 ## Streamdown 选项
 
-需要明确 domain、源码控制、playground mode 或 secure mode 时，使用 `createSlexKitRenderer`：
+需要自己设置 message/domain、隐藏源码、开启 playground 或切到 secure mode 时，使用 `createSlexKitRenderer`：
 
 ```tsx
 import { createSlexKitRenderer } from "@slexkit/streamdown";
@@ -141,7 +188,7 @@ const renderer = createSlexKitRenderer({
 });
 ```
 
-同一 `domain` 下的 state-only fence 可为后续 layout fence 提供状态：
+同一个 `domain` 下，前面的 state-only 代码块可以给后面的 layout 代码块提供状态：
 
 ````md
 ```slex
@@ -161,7 +208,7 @@ const renderer = createSlexKitRenderer({
 ```
 ````
 
-内容来自未经审查的用户输入、第三方 Markdown 或 agent 直接输出时，切换到 secure mode 并配置 host policy：
+内容来自未经审查的用户输入、第三方 Markdown 或 agent 直接输出时，切到 secure mode：
 
 ```tsx
 const renderer = createSlexKitRenderer({
@@ -177,13 +224,13 @@ const renderer = createSlexKitRenderer({
 });
 ```
 
-安全运行时部署清单见 [安全运行时接入](security-runtime)。精确 policy 字段见 [Security Runtime Contract](/docs/reference/security)。
+部署 sandbox iframe、runtime 文件和 policy 字段时，参考 [安全运行时接入](security-runtime) 和 [安全运行时契约](/docs/reference/security)。
 
 ## Obsidian
 
-> 如果你的目标只是安装 Obsidian 插件，不需要阅读本页前面的开发者集成内容。直接在 Obsidian 的 **Community plugins** 中搜索 **SlexKit**，安装并启用即可。
+> 只安装 Obsidian 插件时，不需要阅读本页前面的开发者集成内容。直接在 Obsidian 的 **Community plugins** 中搜索 **SlexKit**，安装并启用即可。
 
-Obsidian 插件面向本地 vault 内容。它在 reading mode 中注册 `slex` code block processor，将 fence 渲染为只读交互片段，不将结果写回笔记。
+Obsidian 插件只在阅读模式里渲染本地 vault 中的 `slex` 代码块，不会把渲染结果写回笔记。
 
 现在可直接从 Obsidian Community Plugins 安装：
 
@@ -192,9 +239,9 @@ Obsidian 插件面向本地 vault 内容。它在 reading mode 中注册 `slex` 
 3. 搜索 **SlexKit**。
 4. 安装并启用插件。
 
-当前社区版本为 desktop-only，兼容 Obsidian 1.5.0+。移动端支持应在真实 mobile vault 测试通过后再开启。
+社区插件声明支持 Obsidian 1.5.0+，并且只标记为桌面端可用。
 
-BRAT 和手动 release assets 仍可用于测试尚未发布的构建：
+测试尚未发布的构建时，可以用 BRAT：
 
 ```text
 BRAT repository: https://github.com/slexkit/obsidian-slexkit
@@ -223,28 +270,27 @@ BRAT repository: https://github.com/slexkit/obsidian-slexkit
     "card:status": {
       title: "Vault status",
       "badge:ready": { label: "Ready", tone: "success" },
-      "text:note": { text: "Rendered by SlexKit in reading mode." }
+      "text:note": { text: "由 SlexKit 在阅读模式渲染。" }
     }
   }
 }
 ```
 
-Vault status: Ready.
+Vault 状态：已就绪。
 ````
 
-同一笔记中的 block 共享一个 Markdown artifact runtime，state-only fence 可影响后续可渲染 fence。
+同一篇笔记里的 `slex` 代码块共享状态；前面的状态块可以影响后面的渲染块。
 
-## Obsidian 边界
+## Obsidian 安全说明
 
-官方插件是 trusted readonly adapter。内容来自用户本地 vault，不是第三方 Markdown 或 agent 输出的安全沙箱。
+官方插件按本地 vault 内容处理，不是第三方 Markdown 或 agent 输出的安全沙箱。
 
-渲染不可信内容时，应在 Web host 中使用 secure mode，并显式配置 sandbox frame 与 host policy。
+渲染不可信内容时，在 Web host 中使用 secure mode，并配置 sandbox frame 与 host policy。
 
-## 集成清单
+## 接入时检查
 
 - 只处理语言标记为 `slex` 的 fence
 - 为不支持 SlexKit 的环境保留 Markdown fallback
 - 为每个文档、消息或笔记设置稳定 artifact/domain
 - 容器卸载时调用 cleanup；文档销毁时 dispose artifact
 - 不可信内容使用 secure mode，不使用 trusted mode
-- API、生命周期、包边界和安全细节链接到 reference 页面，不在宿主指南中重复维护

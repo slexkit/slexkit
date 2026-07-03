@@ -5,6 +5,7 @@ import { buildSiteAssets } from "./scripts/build";
 import { sourceLocale } from "./data/component-docs.js";
 import { discoverExampleMarkdown, discoverWikiMarkdown } from "./data/content-discovery.js";
 import { createSeoIndex, injectSeoHead, renderRobotsTxt, renderSitemapXml } from "./data/seo.js";
+import { SLEXKIT_VERSION, SLEX_PROTOCOL_VERSION } from "../src/version";
 
 const hostname = Bun.env.HOST ?? "0.0.0.0";
 const port = Number(Bun.env.PORT ?? 4000);
@@ -41,6 +42,7 @@ function contentType(path: string) {
     case ".css":
       return "text/css; charset=utf-8";
     case ".js":
+    case ".jsx":
       return "text/javascript; charset=utf-8";
     case ".map":
       return "application/json; charset=utf-8";
@@ -91,7 +93,7 @@ async function localStaticResponse(root: string, relative: string) {
 }
 
 async function adapterDemoResponse(pathname: string) {
-  const match = pathname.match(/^\/adapter-demos\/(streamdown|tiptap)(?:\/(.*))?$/);
+  const match = pathname.match(/^\/adapter-demos\/(assistant-ui|streamdown|tiptap)(?:\/(.*))?$/);
   if (!match) return null;
 
   const demo = match[1];
@@ -116,7 +118,7 @@ async function officialExampleResponse(pathname: string) {
 }
 
 async function packageAdapterResponse(pathname: string) {
-  const match = pathname.match(/^\/packages\/(streamdown|tiptap)\/(.+)$/);
+  const match = pathname.match(/^\/packages\/(assistant-ui|streamdown|tiptap)\/(.+)$/);
   if (!match) return null;
   return localStaticResponse(join(projectRoot, "packages", match[1]), match[2]);
 }
@@ -307,6 +309,24 @@ function publicBaseUrl(requestUrl: URL) {
   return `${requestUrl.protocol}//${requestUrl.host}/`;
 }
 
+function healthResponse() {
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      service: "slexkit-site",
+      version: SLEXKIT_VERSION,
+      protocolVersion: SLEX_PROTOCOL_VERSION,
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      headers: {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+      },
+    },
+  );
+}
+
 async function readmeResponse() {
   const path = join(siteRoot, "..", "README.md");
   return new Response(await readFile(path, "utf-8"), {
@@ -317,6 +337,21 @@ async function readmeResponse() {
 async function aiDocsResponse(pathname: string) {
   const filename = pathname.slice(1);
   const path = join(projectRoot, "dist", "ai", filename);
+  try {
+    return new Response(await readFile(path), {
+      headers: { "content-type": contentType(path), "cache-control": "no-store" },
+    });
+  } catch {
+    return new Response("Not found", { status: 404 });
+  }
+}
+
+async function standardArtifactResponse(pathname: string) {
+  const filename = pathname.slice("/standard/".length);
+  if (!filename || filename.includes("..") || filename.includes("/") || filename.includes("\\")) {
+    return new Response("Not found", { status: 404 });
+  }
+  const path = join(projectRoot, "dist", "standard", filename);
   try {
     return new Response(await readFile(path), {
       headers: { "content-type": contentType(path), "cache-control": "no-store" },
@@ -360,7 +395,7 @@ async function markdownAssetResponse(pathname: string) {
   }
 
   const wikiReferenceDocMatch = relative.match(
-    /^docs\/reference\/(usage|runtime|security|spec|rationale|packages|integration|toolhost|icons)\.md$/,
+    /^docs\/reference\/(usage|runtime|security|spec|rationale|packages|integration|standard|toolhost|icons)\.md$/,
   );
   if (wikiReferenceDocMatch) {
     relative = `content/reference/${wikiReferenceDocMatch[1]}/${locale}.md`;
@@ -380,7 +415,7 @@ async function markdownAssetResponse(pathname: string) {
     relative = `content/guides/${docsDocMatch[1]}/${locale}.md`;
   }
 
-  const legacyReferenceDocMatch = relative.match(/^docs\/(guide|runtime|security|spec|packages|integration|toolhost|icons|rationale|design)\.md$/);
+  const legacyReferenceDocMatch = relative.match(/^docs\/(guide|runtime|security|spec|packages|integration|standard|toolhost|icons|rationale|design)\.md$/);
   if (legacyReferenceDocMatch) {
     const slug = legacyReferenceDocMatch[1] === "guide" ? "usage" : legacyReferenceDocMatch[1] === "design" ? "rationale" : legacyReferenceDocMatch[1];
     relative = `content/reference/${slug}/${locale}.md`;
@@ -483,6 +518,7 @@ Bun.serve({
     }
 
     if (enableLiveReload && url.pathname === "/__slexkit/reload") return liveReloadResponse();
+    if (url.pathname === "/healthz" || url.pathname === "/api/health") return healthResponse();
     if (url.pathname === "/api/wiki-docs") return wikiDocsResponse();
     if (url.pathname === "/api/examples-docs") return examplesDocsResponse();
     if (
@@ -543,6 +579,7 @@ Bun.serve({
     ) {
       return aiDocsResponse(url.pathname);
     }
+    if (url.pathname.startsWith("/standard/")) return standardArtifactResponse(url.pathname);
     if (url.pathname.endsWith(".md")) return markdownAssetResponse(url.pathname);
     if (request.headers.get("accept")?.includes("text/markdown")) {
       const markdownPath = `${url.pathname.replace(/\/$/, "")}.md`;

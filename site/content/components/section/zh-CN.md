@@ -16,12 +16,12 @@ summary: "页面区块，带标题、动作和内容区域。"
   "namespace": "doc_section_typical",
   "layout": {
     "section:overview": {
-      "eyebrow": "Dashboard",
-      "title": "Runtime overview",
+      "eyebrow": "仪表盘",
+      "title": "运行时概览",
       "icon": "chart-bar",
-      "subtitle": "This section groups the most important state.",
+      "subtitle": "本节汇总最重要的状态。",
       "stat:latency": {
-        "label": "Latency",
+        "label": "延迟",
         "value": "42",
         "unit": "ms"
       }
@@ -47,16 +47,16 @@ summary: "页面区块，带标题、动作和内容区域。"
     "column:demo": {
       "section:with-eyebrow": {
         eyebrow: "Overview",
-        title: "With eyebrow",
+        title: "带眉题",
         "text:body": {
-          text: "Eyebrow appears above the title."
+          text: "眉题显示在标题上方。"
         }
       },
       "section:with-subtitle": {
-        title: "With subtitle",
-        subtitle: "Additional context below the title.",
+        title: "带副标题",
+        subtitle: "标题下方的补充说明。",
         "text:body": {
-          text: "Subtitle provides extra context."
+          text: "副标题提供额外上下文。"
         }
       }
     }

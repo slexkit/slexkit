@@ -55,7 +55,7 @@ function findDoc(href) {
   const locale = localeFromHref(href);
   const docs = wikiDocsByLocale.get(locale) ?? wikiDocs;
   if (!docs.length) return null;
-  return docs.find((doc) => doc.href === href) ?? docs[0] ?? null;
+  return docs.find((doc) => doc.href === href) ?? null;
 }
 
 function toNavItem(doc) {

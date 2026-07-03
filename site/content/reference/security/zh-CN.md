@@ -11,7 +11,7 @@ slexkitRenderMode: component
 
 Secure runtime 决定了不可信 Slex source 能做什么、不能做什么，宿主如何授权能力，以及 sandbox isolation 如何工作。
 
-## Threat model
+## 威胁模型
 
 - 宿主页和宿主应用是可信的。
 - Slex source 可能不可信。
@@ -21,9 +21,9 @@ Secure runtime 决定了不可信 Slex source 能做什么、不能做什么，�
 
 Secure mode 隔离 expression execution，敏感能力收敛到 host `policy` 和 `api.*`。
 
-## Authorization source
+## 授权来源
 
-唯一授权来源是宿主提供的 `HostRuntimePolicy`。Slex source 中的 `capabilities`、`permissions`、`api` 或其他 top-level declarations 都不能自我授权。
+只有宿主提供的 `HostRuntimePolicy` 可以授权能力。Slex source 中的 `capabilities`、`permissions`、`api` 或其他 top-level declarations 都不能自我授权。
 
 所有能力通过 `api.*` 访问：
 
@@ -83,28 +83,28 @@ type HostRuntimePolicy = {
 };
 ```
 
-### Network policy
+### 网络策略
 
 Network 默认拒绝，除非 `policy.network.enabled` 为 `true`。Policy 限制：
 
-- HTTP method
+- HTTP 方法
 - Origin，支持 `*`、exact match、`protocol://*` 和 `protocol://*.domain`
-- Request headers
-- Credentials mode
-- Request body size
-- Request timeout
-- Response body size
-- Response content-type
+- 允许的 request headers
+- credentials 策略
+- request body 大小
+- response 大小
+- response body 大小
+- response content-type 类型
 
 `Authorization`、`Cookie`、`Proxy-Authorization`、`Set-Cookie` 和 Sec-Fetch headers 始终阻断。`hostAdapter.fetch` 可替换实际请求实现；`hostAdapter.onNetworkLog` 只能观察，不能改变 runtime 行为。
 
-### Timer, animation, and canvas
+### 定时器、动画与 canvas
 
 - **Timer**：默认拒绝。开启后受 `maxTimers` 和 `minIntervalMs` 限制，dispose 时清理全部 timers 与 intervals。
 - **Animation**：默认拒绝。只通过 `api.raf` 暴露。
 - **Canvas**：默认拒绝。开启后受 `maxCanvases`、`maxPixels`、`allowedContexts` 限制。
 
-### Execution monitoring
+### 执行监控
 
 `execution.heartbeatIntervalMs` 控制 sandbox heartbeat 频率。`execution.maxUnresponsiveMs` 定义最大静默时间，超过后 sandbox 会被视为 unresponsive 并终止。
 
@@ -129,7 +129,7 @@ type HostRuntimeAdapter = {
 
 `onNetworkLog` 和 `onRuntimeError` 是 audit hooks，不能改变 runtime behavior；内部抛错会被静默捕获。
 
-## Sandbox iframe deployment
+## Sandbox iframe 部署
 
 Secure frame 从 `runtimeUrl` 导入主 runtime module：
 
@@ -180,46 +180,46 @@ frame: {
 
 不要为了修复 CORS 或调试问题添加 `allow-same-origin`。
 
-## postMessage bridge protocol
+## postMessage bridge 协议
 
 宿主和 sandbox 通过 `window.postMessage` 通信。所有消息都带有 `channel: "slexkit-secure"`。
 
-### Host to sandbox messages
+### 宿主到 sandbox 消息
 
-| Type | Purpose |
+| 类型 | 用途 |
 |------|---------|
 | `mount` | 发送 Slex source、policy、theme |
 | `dispose` | 通知 sandbox teardown |
 | `fetch-result` | 返回 fetch response 或 error |
 | `slots` | 同步 artifact slot positions |
 
-### Sandbox to host messages
+### Sandbox 到宿主消息
 
-| Type | Purpose |
+| 类型 | 用途 |
 |------|---------|
 | `ready` | Runner module 已加载并监听 |
-| `mounted` | Artifact render confirmed |
-| `disposed` | Sandbox teardown acknowledged |
-| `heartbeat` | liveness signal |
+| `mounted` | Artifact 渲染完成 |
+| `disposed` | Sandbox 清理已确认 |
+| `heartbeat` | 心跳信号 |
 | `error` | mount 或 runtime error |
-| `fetch` | proxied network request |
-| `slot-size` | artifact slot height report |
+| `fetch` | 请求宿主代发网络访问 |
+| `slot-size` | artifact slot 高度报告 |
 
 每条 host-to-sandbox message 包含 `id` 和 `token`。Token 是 opaque、cryptographically random，并绑定到单个 mount instance。Token 不匹配的消息会被拒绝。
 
 Sandbox 验证 `event.source === window.parent`；host 验证 `event.source === iframe.contentWindow`。
 
-## Artifact slot bridge
+## Artifact slot 桥接
 
 属于同一 artifact 的多个 Markdown fences 共享一个 sandbox iframe。Host 把 slot rectangles 发送给 sandbox；sandbox 在对应 slot container 中渲染每个 fence 的输出，并通过 `slot-size` 回传高度。
 
-Host 和 sandbox 两侧的 `ResizeObserver` 保持位置与高度同步。这允许 fence 边界之间保持视觉连续，同时所有执行都限制在一个隔离上下文中。
+Host 和 sandbox 两侧的 `ResizeObserver` 保持位置与高度同步。这让多个 fence 之间保持视觉连续，同时所有执行都限制在一个隔离上下文中。
 
-## Heartbeat watchdog
+## Heartbeat 看门狗
 
 配置 `execution.maxUnresponsiveMs` 后，host 会监控 sandbox heartbeat。若超过阈值没有 heartbeat，iframe 会被终止，页面渲染 `role="alert"` diagnostic，并输出 `console.error`。
 
-## Fail-closed behavior
+## Fail-closed 行为
 
 如果 iframe 无法加载 runtime、没有发送 ready/mounted message，或 heartbeat timeout，SlexKit 会：
 
@@ -229,7 +229,7 @@ Host 和 sandbox 两侧的 `ResizeObserver` 保持位置与高度同步。这允
 
 Load timeout 可通过 `frame.loadTimeoutMs` 配置，默认 8000ms。
 
-## Escape hatches
+## 逃生开关
 
 ### `unsafeInlineExecution`
 
@@ -246,7 +246,7 @@ frame: {
 }
 ```
 
-## Sandbox hardening
+## Sandbox 加固
 
 Sandbox runner 启动时会 harden global scope：
 
@@ -254,7 +254,7 @@ Sandbox runner 启动时会 harden global scope：
 - **Blocked scheduling globals**：`setTimeout`、`setInterval`、`requestAnimationFrame` 会被替换为 throwing functions，引导代码使用 `api.setTimeout()`、`api.setInterval()` 和 `api.raf()`。
 - **Canvas prototype wrapping**：包装 `HTMLCanvasElement.prototype.getContext`，并用 subclass 替换 `OffscreenCanvas` 以校验尺寸。
 
-## Maintenance principles
+## 维护原则
 
 - 新 capability 必须先定义 policy field，再定义 `api.*` method，最后接入 bridge。
 - Slex source declarations 永远不是授权来源。

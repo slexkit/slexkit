@@ -1,54 +1,19 @@
 ---
-title: "ToolHost 对话演示"
+title: "发布计划确认"
 category: "配置向导"
 status: published
 order: 13
-summary: "展示 SlexKit 的 ToolHost 能力：在 AI 对话流中内嵌交互式表单，收集用户输入后返回结构化 ToolResult。"
+summary: "ToolHost 回放发布计划流程，并在关键节点收集发布参数。"
 tags: toolhost, dialog, demo, live
-components: section, card, input, select, submit, callout, code-block, grid, column
+components: toolhost, card, radio-group, input, button
 difficulty: 进阶
 runtime: trusted
 featured: true
 slexkitRenderMode: dialog
 ---
 
-# ToolHost 对话演示
+# 发布计划确认
 
-AI 对话中需要收集用户信息时，会调用 **ToolHost** 弹出交互式表单卡片。用户填写并提交后，表单数据以结构化的 `ToolResult` 返回给 AI，AI 继续处理。
+该示例回放一次 Web 控制台发布计划。流程到达人工输入节点时，页面会暂停并渲染对应的 ToolHost 卡片：先确认发布策略，再补充窗口、负责人和回滚条件，最后确认是否采用计划。
 
-下方是一个完整的对话演示——模拟用户请求创建项目，AI 调用 `fill-form` 模板收集项目信息，提交后返回 ToolResult。
-
-**流程：** 用户发起请求 → AI 判断需要工具调用 → ToolHost 弹出表单 → 用户填写并提交 → 返回 ToolResult → AI 继续响应
-
-AI 端调用 ToolHost 的代码如下：
-
-```js
-import { renderToolCall } from "slexkit/toolhost";
-
-const { promise } = renderToolCall({
-  name: "fill-form",
-  arguments: {
-    title: "创建新项目",
-    description: "请填写项目的基本信息。",
-    submitLabel: "提交",
-    ignoreLabel: "取消",
-    fields: [
-      { name: "name", label: "项目名称", type: "text", required: true },
-      { name: "type", label: "项目类型", type: "select", options: [
-        { label: "Web 应用", value: "web" },
-        { label: "API 服务", value: "api" },
-        { label: "CLI 工具", value: "cli" },
-      ]},
-      { name: "priority", label: "优先级", type: "select", options: [
-        { label: "低", value: "low" },
-        { label: "中", value: "medium" },
-        { label: "高", value: "high" },
-      ]},
-    ],
-  },
-}, container);
-
-// 用户提交后，promise resolve 为 ToolResult
-const result = await promise;
-// → { toolName: "fill-form", status: "submitted", value: { name, type, priority } }
-```
+该示例是纯前端 fixture：不连接模型，不执行发布。协议细节收在底部事件区。

@@ -15,7 +15,7 @@
     <a href="README.zh-CN.md">简体中文</a>
   </p>
   <p>
-    <img alt="version" src="https://img.shields.io/badge/version-0.3.3-18181b">
+    <img alt="version" src="https://img.shields.io/badge/version-0.4.0-18181b">
     <img alt="script" src="https://img.shields.io/badge/Slex-v0.1-18181b">
     <img alt="TypeScript" src="https://img.shields.io/badge/runtime-TypeScript-3178c6">
     <img alt="Svelte 5" src="https://img.shields.io/badge/components-Svelte_5-ff3e00">
@@ -105,7 +105,7 @@ Markdown platforms without SlexKit support show the fallback text. Hosts with Sl
 - **Reactive `g` / `layout` model**: centralized state and logic with declarative component trees.
 - **Expression pipes**: `$` read expressions for dynamic props and `on*` write expressions for events.
 - **Directives**: `$if` and `$for` for conditional rendering and keyed list reconciliation.
-- **Official Svelte components**: 40+ layout, input, content, display, disclosure, feedback, and tooling components.
+- **Official Svelte components**: 30 components across layout, input, content, display, disclosure, feedback, and tooling.
 - **Extensible registry**: custom component types, Svelte renderers, and component state modes.
 - **Trusted and secure runtimes**: host-realm rendering for trusted content, sandbox iframe rendering for untrusted source.
 - **ToolHost**: confirm, choose, and fill-form templates for structured AI tool-call UX.
@@ -120,10 +120,11 @@ Markdown platforms without SlexKit support show the fallback text. Hosts with Sl
 | `@slexkit/components-svelte` | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` | Svelte component registration |
 | `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS theme tokens |
 | `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React / Streamdown Markdown renderer |
+| `@slexkit/assistant-ui` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown @slexkit/assistant-ui @assistant-ui/react @assistant-ui/react-streamdown streamdown react react-dom` | assistant-ui message text wrapper for `slex` fences |
 | `@slexkit/tiptap` | `npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown` | Tiptap code block NodeView for `slex` fences |
 | `@slexkit/mcp` | `npx -y @slexkit/mcp` | Read-only MCP server for docs, examples, and source validation |
 
-See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
+See [Packages](site/content/reference/packages/en-US.md) for details.
 
 ## Integrations
 
@@ -131,6 +132,7 @@ See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
 | --- | --- |
 | Browser DOM | `mount()`, `ingest()`, `boot()`, `disposeNamespace()` |
 | Markdown renderers | `createSlexKitMarkdownRuntimeHost()` |
+| assistant-ui | `@slexkit/assistant-ui` |
 | React / Streamdown | `@slexkit/streamdown` |
 | Tiptap | `@slexkit/tiptap` |
 | Obsidian | Install **SlexKit** from Community Plugins; release repo: <https://github.com/slexkit/obsidian-slexkit> |

@@ -3,13 +3,13 @@ title: Slex 用法参考
 category: Reference
 status: ready
 order: 20
-summary: "Slex source 结构、props、directives、events、theming、自定义组件与 ToolHost 边界参考。"
+summary: "Slex source 结构、props、directives、events、theming、自定义组件与 ToolHost 用法。"
 slexkitRenderMode: component
 ---
 
 # Slex 用法参考
 
-Slex source 怎么写？props、directives、events、theming、自定义组件，以及 ToolHost 边界都在这里。首次接入请先阅读 [开始使用](/docs/guides/quick-start)。精确协议兼容性以 [Slex Specification](/docs/reference/spec) 为准。
+这页说明 Slex source 的写法：props、directives、events、theming、自定义组件和 ToolHost。首次接入请先阅读 [开始使用](/docs/guides/quick-start)。协议兼容性见 [Slex Specification](/docs/reference/spec)。
 
 ## 安装
 
@@ -32,11 +32,11 @@ npm install slexkit @slexkit/runtime
 
 ```js
 import { mount, register } from "@slexkit/runtime";
-import "@slexkit/components-svelte";
-import "@slexkit/theme-shadcn/style.css";
 ```
 
-包边界和宿主安装组合见 [Package Boundaries](/docs/reference/packages)。
+这个入口不会自动注册官方 Svelte components。需要官方组件时，使用根包 `slexkit`，或显式导入 `@slexkit/components-svelte`。
+
+包角色和宿主安装组合见 [包与安装](/docs/reference/packages)。
 
 ## Slex source 结构
 
@@ -49,12 +49,12 @@ Slex source 是 JavaScript object literal：
   g: { count: 0 },
   layout: {
     "button:add": { text: "Add", onclick: "g.count++" },
-    "text:value": { "$content": "'Count: ' + g.count" }
+    "text:value": { "$content": "'计数：' + g.count" }
   }
 }
 ```
 
-- `slex`：可选协议标记；当前公开协议使用 `"0.1"`。
+- `slex`：可选协议标记；公开协议使用 `"0.1"`。
 - `namespace`：状态域标识，默认是 `"default"`。
 - `g`：响应式状态和逻辑，包括函数与数据。
 - `layout`：组件树。
@@ -68,7 +68,7 @@ Slex source 是 JavaScript object literal：
 静态值会原样传给组件：
 
 ```js
-"text:title": { text: "Hello World" }
+"text:title": { text: "你好，Slex" }
 ```
 
 ### 动态读管道（`$`）
@@ -76,7 +76,7 @@ Slex source 是 JavaScript object literal：
 `$` 前缀 key 的字符串值会作为 JavaScript 表达式求值，传给组件时去掉 `$` 前缀：
 
 ```js
-"text:value": { "$content": "'Count: ' + g.count" }
+"text:value": { "$content": "'计数：' + g.count" }
 ```
 
 最终传给组件的是 `content`。表达式读取到的响应式依赖变化后会自动重新求值。
@@ -103,7 +103,7 @@ Slex source 是 JavaScript object literal：
 ```js
 "card:panel": {
   "$if": "g.visible",
-  "text:body": { text: "I am visible" }
+  "text:body": { text: "内容已显示" }
 }
 ```
 
@@ -141,7 +141,7 @@ primitive 数组应显式写 `$key: "$value"`。
 
 当 item 的 index 或引用变化时，会调用 `onUpdate_<name>`。
 
-## Events
+## 事件
 
 事件处理器使用 `on*` 写管道。对可写组件（`value`、`checked` 或 `enabled` mode），组件原生 change/input 会先同步组件实例状态，再执行 handler。
 
@@ -155,7 +155,7 @@ primitive 数组应显式写 `$key: "$value"`。
 
 ### Trusted mode（默认）
 
-Trusted mode 在宿主页 realm 中执行 Slex source，适用于应用生成内容、仓库维护内容或已审查片段。
+Trusted mode 在宿主页 realm 中执行 Slex source，用于应用生成内容、仓库示例或已审查片段。
 
 ```js
 import { mount } from "slexkit";
@@ -176,18 +176,18 @@ mountSecureArtifact(script, container, {
 });
 ```
 
-部署清单见 [安全运行时接入](/docs/guides/security-runtime)。完整 policy、sandbox、bridge 与 fail-closed 行为见 [Security Runtime Contract](/docs/reference/security)。
+部署步骤见 [安全运行时接入](/docs/guides/security-runtime)。policy、sandbox、bridge 与 fail-closed 行为见 [安全运行时契约](/docs/reference/security)。
 
-## Theming
+## 主题
 
 主题模式由 `theme` option 决定：
 
-| Value | Behavior |
+| 值 | 行为 |
 |-------|----------|
 | `"auto"` | 从 container 检测已知 theme class，默认回退到 `"uno"` |
-| `"host-shadcn"` | shadcn/ui compatible |
-| `"uno"` | Uno/Flowbite compatible |
-| `"flowbite"` | Flowbite compatible |
+| `"host-shadcn"` | 兼容 shadcn/ui token |
+| `"uno"` | 兼容 Uno / Flowbite |
+| `"flowbite"` | 兼容 Flowbite |
 
 `dir` 支持 `ltr`、`rtl`、`auto`，会从继承的 `dir` 属性或 document element 解析。
 
@@ -211,9 +211,9 @@ register("custom", (props, name, ctx) => {
 
 `RenderContext` 提供：
 
-| Property | Type | Description |
+| 属性 | 类型 | 说明 |
 |----------|------|-------------|
-| `g` | reactive proxy | 全局状态 |
+| `g` | 响应式代理 | 全局状态 |
 | `std` | `SlexKitStdlib` | 纯确定性 helper |
 | `api` | `Record<string, unknown>` | 宿主注入能力 |
 | `dir` | `"ltr"` 或 `"rtl"` | 解析后的方向 |
@@ -221,7 +221,7 @@ register("custom", (props, name, ctx) => {
 | `id` | `string \| null` | 组件 name |
 | `emit` | `(event, data?) => void` | 事件发射器 |
 | `children` | `Record<string, unknown>` | 嵌套组件树 |
-| `document` | `Document` | owner document |
+| `document` | `Document` | 所属 document |
 | `renderTree` | function | 递归渲染 helper |
 
 使用 `attachComponentDisposer(el, fn)` 将清理逻辑绑定到组件 DOM 生命周期。
@@ -237,4 +237,4 @@ ToolHost 处理需要向宿主返回结构化用户输入的 UI，例如确认�
 - `option-list`：可滚动选项列表
 - `fill-form`：带 submit 的结构化表单
 
-Templates 会编译成标准 Slex source。`submit` 组件是完成边界；它只用于 tool templates，不用于普通 display fences。
+Templates 会编译成标准 Slex source。`submit` 组件负责提交结果；它只用于 tool templates，不用于普通 display fences。

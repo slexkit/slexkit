@@ -1,4 +1,4 @@
-import { describe, expect, it, mock } from "bun:test";
+import { afterEach, describe, expect, it, mock } from "bun:test";
 import { boot, mount } from "../../src/engine/index";
 import { renderToolCall, registerToolTemplate } from "../../src/toolhost/index";
 import type { ToolTemplateCompiler } from "../../src/toolhost/index";
@@ -10,6 +10,22 @@ function sleep(ms = 40) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+let cleanups: Array<() => void> = [];
+
+function trackedMount(...args: Parameters<typeof mount>) {
+  const cleanup = mount(...args);
+  cleanups.push(cleanup);
+  return cleanup;
+}
+
+afterEach(() => {
+  for (let index = cleanups.length - 1; index >= 0; index -= 1) {
+    cleanups[index]();
+  }
+  cleanups = [];
+  document.body.innerHTML = "";
+});
+
 describe("playground component", () => {
 
     it("renders reusable playground components with code, preview, jump, and copy controls", async () => {
@@ -18,7 +34,7 @@ describe("playground component", () => {
 
 
 
-      const cleanup = mount(
+      const cleanup = trackedMount(
 
         {
 
@@ -134,7 +150,7 @@ describe("playground component", () => {
       window.localStorage.clear();
       document.body.innerHTML = '<div id="app"></div>';
 
-      const cleanup = mount(
+      const cleanup = trackedMount(
         {
           namespace: "playground_theme_toggle_test",
           g: {},
@@ -190,7 +206,7 @@ describe("playground component", () => {
 
 
 
-      const cleanup = mount(
+      const cleanup = trackedMount(
 
         {
 
@@ -299,7 +315,7 @@ describe("playground component", () => {
 
       const source = homePlaygroundSource("zh-CN");
 
-      const cleanup = mount(
+      const cleanup = trackedMount(
 
         {
 
@@ -369,7 +385,7 @@ describe("playground component", () => {
 
       document.body.innerHTML = '<div id="app"></div>';
 
-      const cleanup = mount(
+      const cleanup = trackedMount(
 
         {
 
@@ -427,7 +443,7 @@ status: draft
 
       document.body.innerHTML = '<div id="app"></div>';
 
-      const cleanup = mount(
+      const cleanup = trackedMount(
 
         {
 
@@ -483,7 +499,7 @@ status: draft
 
       document.body.innerHTML = '<div id="app"></div>';
 
-      const cleanup = mount(
+      const cleanup = trackedMount(
 
         {
 

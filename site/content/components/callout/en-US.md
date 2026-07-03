@@ -2,6 +2,7 @@
 title: "Callout"
 category: Content
 status: ready
+order: 40
 summary: "Highlighted contextual message for notes, warnings, and tips."
 ---
 # Callout

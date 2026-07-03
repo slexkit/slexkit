@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { afterEach, describe, it, expect } from "bun:test";
 import { mount } from "../../src/engine/index";
 import "../../src/components/index";
 
@@ -10,8 +10,24 @@ function unique(ns = "v017") {
   return `${ns}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
 }
 
+let cleanups: Array<() => void> = [];
+
+function trackedMount(...args: Parameters<typeof mount>) {
+  const cleanup = mount(...args);
+  cleanups.push(cleanup);
+  return cleanup;
+}
+
+afterEach(() => {
+  for (let index = cleanups.length - 1; index >= 0; index -= 1) {
+    cleanups[index]();
+  }
+  cleanups = [];
+  document.body.innerHTML = "";
+});
+
 describe("tabs component", () => {
-  it("removes Flowbite's default gray panel chrome from tab content", async () => {
+  it("keeps tab content chrome neutral", async () => {
     const css = await Bun.file("src/styles/components/tabs.css").text();
 
     expect(css).toContain(".slex-tabs-content");
@@ -27,7 +43,7 @@ describe("tabs component", () => {
     document.body.innerHTML = '<div id="app"></div>';
     const emitted: unknown[] = [];
     const ns = unique("tabs_orient");
-    mount(
+    trackedMount(
       {
         namespace: ns,
         g: {
@@ -76,7 +92,7 @@ describe("tabs component", () => {
     }) as typeof requestAnimationFrame;
 
     try {
-      mount(
+      trackedMount(
         {
           namespace: unique("tabs_no_native_raf"),
           g: { active: "tab1" },
@@ -106,7 +122,7 @@ describe("tabs component", () => {
   it("renders rich component content inside tab panels", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const ns = unique("tabs_content");
-    mount(
+    trackedMount(
       {
         namespace: ns,
         g: { active: "cursor" },
@@ -155,7 +171,7 @@ describe("tabs component", () => {
   it("uses duotone icons for selected icon tabs", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const ns = unique("tabs_icons");
-    mount(
+    trackedMount(
       {
         namespace: ns,
         g: { active: "render" },
@@ -187,7 +203,7 @@ describe("tabs component", () => {
   it("keeps icon labels readable when tabs are not icon-only", async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const ns = unique("tabs_icon_labels");
-    mount(
+    trackedMount(
       {
         namespace: ns,
         g: { active: "overview" },
@@ -230,7 +246,7 @@ describe("tabs component", () => {
     }) as typeof fetch;
 
     try {
-      mount(
+      trackedMount(
         {
           namespace: ns,
           g: { active: "overview" },
@@ -271,7 +287,7 @@ describe("tabs component", () => {
     const ns = unique("tabs_sync");
     const emitted: unknown[] = [];
     const container = document.getElementById("app")!;
-    mount(
+    trackedMount(
       {
         namespace: ns,
         g: {
@@ -299,7 +315,7 @@ describe("tabs component", () => {
     expect(emitted).toHaveLength(1);
     expect(emitted[0]).toBe("tab2");
     // Remount with active=tab1 to test external sync
-    mount(
+    trackedMount(
       {
         namespace: ns,
         g: {

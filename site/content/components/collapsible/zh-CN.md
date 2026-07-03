@@ -19,7 +19,7 @@ summary: "单个可展开内容区域。"
       "open": true,
       "trigger": "Details",
       "icon": "caret-circle-down",
-      "content": "This secondary content can be collapsed."
+      "content": "这段补充内容可以折叠。"
     }
   }
 }

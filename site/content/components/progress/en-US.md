@@ -2,6 +2,7 @@
 title: "Progress"
 category: Feedback
 status: ready
+order: 10
 summary: "Progress bar."
 ---
 # Progress

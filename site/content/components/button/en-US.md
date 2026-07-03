@@ -2,6 +2,7 @@
 title: "Button"
 category: Action
 status: ready
+order: 10
 summary: "Action trigger button."
 ---
 # Button

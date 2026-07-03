@@ -8,9 +8,12 @@ import {
   diagnoseSlexKitSource,
   SlexKitSyntaxError,
   formatSlexKitDiagnostic,
+  isLikelyIncompleteSlexSource,
+  parseSlexStreamingSource,
   mountSecureArtifact,
   parseSlexSource,
   parseSlexKitDsl,
+  runSlexConformance,
   validateSlexSource,
   createSecureRuntime,
   SlexKitRuntimeError,
@@ -53,9 +56,12 @@ const getRendererApi = getRenderer;
 const diagnoseSlexKitSourceApi = diagnoseSlexKitSource;
 const SlexKitSyntaxErrorApi = SlexKitSyntaxError;
 const formatSlexKitDiagnosticApi = formatSlexKitDiagnostic;
+const isLikelyIncompleteSlexSourceApi = isLikelyIncompleteSlexSource;
+const parseSlexStreamingSourceApi = parseSlexStreamingSource;
 const mountSecureArtifactApi = mountSecureArtifact;
 const parseSlexSourceApi = parseSlexSource;
 const parseSlexKitDslApi = parseSlexKitDsl;
+const runSlexConformanceApi = runSlexConformance;
 const validateSlexSourceApi = validateSlexSource;
 const createSecureRuntimeApi = createSecureRuntime;
 const SlexKitRuntimeErrorApi = SlexKitRuntimeError;
@@ -101,9 +107,12 @@ export {
   diagnoseSlexKitSourceApi as diagnoseSlexKitSource,
   SlexKitSyntaxErrorApi as SlexKitSyntaxError,
   formatSlexKitDiagnosticApi as formatSlexKitDiagnostic,
+  isLikelyIncompleteSlexSourceApi as isLikelyIncompleteSlexSource,
+  parseSlexStreamingSourceApi as parseSlexStreamingSource,
   mountSecureArtifactApi as mountSecureArtifact,
   parseSlexSourceApi as parseSlexSource,
   parseSlexKitDslApi as parseSlexKitDsl,
+  runSlexConformanceApi as runSlexConformance,
   validateSlexSourceApi as validateSlexSource,
   createSecureRuntimeApi as createSecureRuntime,
   SlexKitRuntimeErrorApi as SlexKitRuntimeError,
@@ -115,8 +124,20 @@ export {
   slexkitStdApi as slexkitStd,
 };
 export type { BootOptions } from "./engine/index";
-export type { SlexKitParseResult, SlexKitSourceDiagnostic } from "./engine/index";
 export type {
+  SlexKitParseResult,
+  SlexKitSourceDiagnostic,
+  SlexStreamingMode,
+  SlexStreamingParseOptions,
+  SlexStreamingParseResult,
+  SlexStreamingRepair,
+} from "./engine/index";
+export type {
+  SlexConformanceCaseResult,
+  SlexConformanceExpectedWarning,
+  SlexConformanceFixture,
+  SlexConformanceOptions,
+  SlexConformanceReport,
   SlexKitValidationMode,
   SlexKitValidationOptions,
   SlexKitValidationResult,
@@ -164,7 +185,10 @@ export {
   registerSvelteComponentApi as registerSvelteComponent,
   registerSubsetApi as registerSubset,
 };
-export { renderToolCallApi as renderToolCall, registerToolTemplateApi as registerToolTemplate };
+export {
+  renderToolCallApi as renderToolCall,
+  registerToolTemplateApi as registerToolTemplate,
+};
 export { startSlexKitSandboxRunnerApi as startSlexKitSandboxRunner };
 export {
   clearRegisteredIconsApi as clearRegisteredIcons,
@@ -190,6 +214,7 @@ export {
   hashSpecText,
   localizeComponentSpec,
   localizeComponentSpecs,
+  publicComponentSpecs,
   publicComponentTypes,
 } from "./components/spec-registry";
 export type {

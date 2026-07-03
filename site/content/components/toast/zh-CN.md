@@ -17,9 +17,9 @@ summary: "临时通知。"
   "layout": {
     "toast:saved": {
       "type": "success",
-      "title": "Saved",
+      "title": "已保存",
       "icon": "check-circle",
-      "description": "Changes have been written."
+      "description": "更改已写入。"
     }
   }
 }
@@ -43,23 +43,23 @@ summary: "临时通知。"
     "column:types": {
       "toast:info": {
         type: "info",
-        title: "Info",
+        title: "信息",
         description: "A new update is available."
       },
       "toast:success": {
         type: "success",
-        title: "Success",
-        description: "Operation completed."
+        title: "成功",
+        description: "操作已完成。"
       },
       "toast:warning": {
         type: "warning",
-        title: "Warning",
-        description: "Review before proceeding."
+        title: "警告",
+        description: "继续前请复核。"
       },
       "toast:danger": {
         type: "danger",
-        title: "Error",
-        description: "Something went wrong."
+        title: "错误",
+        description: "出现错误。"
       }
     }
   }

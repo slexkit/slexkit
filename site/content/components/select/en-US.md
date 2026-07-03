@@ -2,6 +2,7 @@
 title: "Select"
 category: Input
 status: ready
+order: 20
 summary: "Single-select dropdown."
 ---
 # Select

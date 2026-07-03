@@ -3,7 +3,7 @@ title: 宿主集成
 category: Reference
 status: ready
 order: 40
-summary: "MarkdownRuntimeHost、trusted/secure host integration、Svelte custom host、Streamdown、Tiptap、Obsidian 与 custom adapters。"
+summary: "MarkdownRuntimeHost、trusted/secure 宿主接入、Svelte custom host、Streamdown、Tiptap、Obsidian 与 custom adapters。"
 slexkitRenderMode: component
 ---
 
@@ -11,7 +11,7 @@ slexkitRenderMode: component
 
 把 SlexKit 接入 Markdown renderers、chat hosts、document viewers 和 custom platforms 的方法。
 
-## Core concepts
+## 核心概念
 
 ### Artifact
 
@@ -19,7 +19,7 @@ Artifact 是属于同一文档、消息或笔记的一组 Slex blocks。宿主�
 
 Trusted mode 下，runtime 会用 artifact ID 前缀化每个 block 的 namespace，避免跨文档状态污染。`disposeArtifact()` 会释放该 artifact 下的 namespace stores。
 
-Secure mode 下，同一个 artifact 的所有 fences 会合并进一个 sandbox iframe。Runtime 维护 artifact slots，并把渲染高度同步回原 Markdown placeholder containers。
+Secure mode 下，同一个 artifact 的所有 fences 会合并进一个 sandbox iframe。Runtime 使用 artifact slots，把渲染高度同步回原 Markdown placeholder containers。
 
 ### Block
 
@@ -58,7 +58,7 @@ type SlexKitMarkdownRuntimeHost = {
 };
 ```
 
-`SlexKitMarkdownBlock` 包含 `artifactId`、`blockId`、`source`、`container`、`stateOnly`、`theme`、`dir`、`labels`。`SlexKitMarkdownRuntimeOptions` 包含 `mode`、`policy`、`hostAdapter`、`secureFrame`、`theme`、`dir`、`labels`。
+`SlexKitMarkdownBlock` 包含 `artifactId`、`blockId`、`source`、`container`、`stateOnly`、`theme`、`dir`、`labels`、`executionMode`。`SlexKitMarkdownRuntimeOptions` 包含 `mode`、`policy`、`hostAdapter`、`secureFrame`、`theme`、`dir`、`labels`、`executionMode`。
 
 ### Global singleton
 
@@ -78,7 +78,7 @@ const runtime = getSlexKitMarkdownRuntimeHost();
 
 ## Trusted mode integration
 
-Trusted mode 在宿主页 realm 运行 Slex source。适用于本地文档、应用生成内容或已审查 source。
+Trusted mode 在宿主页 realm 运行 Slex source，用于本地文档、应用生成内容或已审查 source。
 
 ```ts
 const runtime = createSlexKitMarkdownRuntimeHost({
@@ -103,7 +103,7 @@ State-only blocks（无 `layout`，只有 `g` 更新）会自动通过 `ingest()
 
 ## Secure mode integration
 
-Secure mode 在 sandbox iframe 中运行 Slex source。适用于不可信或 agent-generated Markdown。
+Secure mode 在 sandbox iframe 中运行 Slex source，用于不可信或 agent-generated Markdown。
 
 ```ts
 const runtime = createSlexKitMarkdownRuntimeHost({
@@ -126,7 +126,7 @@ const cleanup = runtime.mountBlock({
 
 省略的 capability policies 默认拒绝访问。只有宿主明确启用时才添加 `network`、`timer`、`animation` 或 `canvas` policy objects。
 
-### Artifact slot bridge
+### Artifact slot 桥接
 
 同一 secure artifact 中的多个 blocks 共享一个 sandbox iframe。第一个 block 作为 iframe anchor，其他 blocks 作为 slots；slot containers 接收来自 sandbox 的 position 和 height 更新。
 
@@ -151,7 +151,7 @@ Build output 包含 `dist/runtime.js`。`slex copy-runtime` 命令默认复制�
 
 ## Svelte custom Markdown host
 
-SlexKit 官网使用 Svelte 和自定义 Markdown renderer，而不是一个独立发布的 Svelte Markdown adapter。公开契约仍然是 `createSlexKitMarkdownRuntimeHost`；Svelte 部分属于宿主代码。
+SlexKit 官网使用 Svelte 和自定义 Markdown renderer，而不是一个独立发布的 Svelte Markdown adapter。对外 API 是 `createSlexKitMarkdownRuntimeHost`；Svelte 部分属于宿主代码。
 
 ```js
 import { mount, unmount } from "svelte";
@@ -201,6 +201,8 @@ export function Message({ markdown }: { markdown: string }) {
 
 该 renderer 处理 `slex` fences，支持 trusted 和 secure runtime modes，也可以委托给 shared Markdown runtime host instance。
 
+流式输出时，trusted renderer 默认使用 `streaming="repair"`：完整可解析源码会直接挂载；只缺 EOF 闭合符的前缀会以 preview 模式挂载；无法确定的前缀继续显示 placeholder；明确语法错误仍显示 diagnostics。`streaming="stable"` 只渲染已经可解析的前缀，`streaming={false}` 会等待 closing fence。Secure runtime 和 secure runtime host 不会在宿主 realm 执行 repaired prefix。
+
 ## Tiptap integration
 
 `@slexkit/tiptap` 提供 framework-free Tiptap `CodeBlock` extension：
@@ -233,7 +235,7 @@ registerMarkdownCodeBlockProcessor("slex", (source, el, ctx) => { ... });
 
 Adapter 只在 reading mode 渲染，不写回 vault。同一 note 内的 blocks 共享 trusted artifact runtime。
 
-重要：Obsidian adapter 使用 trusted mode，因为它渲染用户本地 vault 内容。它不是不可信或 agent-generated Markdown 的安全边界。
+Obsidian adapter 使用 trusted mode，因为它渲染用户本地 vault 内容。不要用它隔离不可信或 agent-generated Markdown。
 
 ## Writing a custom host adapter
 
@@ -281,6 +283,6 @@ runtime.disposeAll();
 
 使用 secure mode 时，确保 `slexkit.runtime.js` 作为 public ES module 提供，并配置 `secureFrame.runtimeUrl`。
 
-## Fallback rendering
+## Fallback 渲染
 
-支持 SlexKit 的宿主仍应在 DOM 中保留 raw fence content 或 plain text fallback，以便不支持 SlexKit 的环境可读。Runtime 会替换 container children，因此 fallback 只在 mount 前或 disposal 后可见。
+支持 SlexKit 的宿主应在 DOM 中保留 raw fence content 或 plain text fallback，以便不支持 SlexKit 的环境可读。Runtime 会替换 container children，因此 fallback 只在 mount 前或 disposal 后可见。

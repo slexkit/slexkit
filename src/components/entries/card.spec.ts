@@ -4,12 +4,13 @@ export const cardSpec = component({
     type: "card",
     category: "Layout",
     title: "Card",
-    summary: "Bordered grouping container.",
-    description: "Use card to group related content on a bounded surface.",
+    summary: "Grouping container for related content.",
+    description: "Use card to group related content on a framed surface.",
     props: {
       title: { type: "string", dynamic: true, description: "Card title." },
       icon: { type: "string", description: "Icon name shown before the title." },
       tone: { type: "string", values: semanticTones, description: "Optional semantic tone for the card surface." },
+      variant: { type: "string", values: ["tool"], description: "Use tool for ToolHost input cards with compact chrome." },
     },
     children: childContent,
     examples: [example("card", {

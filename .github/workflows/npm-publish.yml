@@ -30,13 +30,17 @@ jobs:
           package-manager-cache: false
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: |
+          bun install
+          git diff --exit-code bun.lock
 
       - name: Build packages
         run: bun run build
 
       - name: Refresh local file dependencies
-        run: bun install --frozen-lockfile
+        run: |
+          bun install
+          git diff --exit-code bun.lock
 
       - name: Run tests
         run: bun run test

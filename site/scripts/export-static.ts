@@ -12,6 +12,7 @@ import {
 import { normalizeSiteBase } from "../app/site-base.js";
 import { buildSiteAssets } from "./build";
 import { generateAiDocs, writeAiRawMarkdown } from "../../scripts/generate-ai-docs";
+import { generateStandardArtifacts } from "../../scripts/generate-standard-artifacts";
 import { createSeoIndex, injectSeoHead, prerenderedHomeHtml, renderRobotsTxt, renderSitemapXml } from "../data/seo.js";
 import { prerenderMarkdown } from "./prerender-markdown.js";
 import { loadExampleDocs } from "../data/examples.js";
@@ -106,6 +107,8 @@ async function copyCanonicalMarkdown() {
   await copyExampleMarkdown("zh-CN", outDir);
 }
 
+type AdapterDemoName = "assistant-ui" | "streamdown" | "tiptap";
+
 function rewriteAdapterDemoHtml(html: string) {
   return rewriteHtmlForStatic(html, "en-US")
     .replaceAll('"/dist/', `"${withBase("/dist/")}`)
@@ -114,7 +117,7 @@ function rewriteAdapterDemoHtml(html: string) {
     .replaceAll('"/vendor/', `"${withBase("/vendor/")}`);
 }
 
-async function copyAdapterPackage(name: "streamdown" | "tiptap") {
+async function copyAdapterPackage(name: AdapterDemoName) {
   const source = join(projectRoot, "packages", name);
   const target = join(outDir, "packages", name);
   await mkdir(target, { recursive: true });
@@ -122,19 +125,20 @@ async function copyAdapterPackage(name: "streamdown" | "tiptap") {
   await cp(join(source, "dist"), join(target, "dist"), { recursive: true });
 }
 
-async function copyAdapterDemo(name: "streamdown" | "tiptap") {
+async function copyAdapterDemo(name: AdapterDemoName) {
   const target = join(outDir, "adapter-demos", name);
   await cp(join(projectRoot, "examples", name), target, { recursive: true });
 
   const indexPath = join(target, "index.html");
   await writeFile(indexPath, rewriteAdapterDemoHtml(await readFile(indexPath, "utf-8")), "utf-8");
 
-  const mainPath = join(target, "main.js");
+  const mainPath = join(target, name === "assistant-ui" ? "main.jsx" : "main.js");
   const mainSource = await readFile(mainPath, "utf-8");
   await writeFile(mainPath, mainSource.replace('from "/shared/adapter-demo.js"', 'from "../../shared/adapter-demo.js"'), "utf-8");
 }
 
 async function copyAdapterDemoFiles() {
+  await copyAdapterDemo("assistant-ui");
   await copyAdapterDemo("streamdown");
   await copyAdapterDemo("tiptap");
   await cp(join(projectRoot, "examples", "shared"), join(outDir, "shared"), { recursive: true });
@@ -142,6 +146,7 @@ async function copyAdapterDemoFiles() {
   await cp(join(projectRoot, "node_modules", "katex", "dist", "katex.min.css"), join(outDir, "vendor", "katex", "katex.min.css"));
   await cp(join(projectRoot, "node_modules", "katex", "dist", "fonts"), join(outDir, "vendor", "katex", "fonts"), { recursive: true });
   await cp(join(siteRoot, "content", "examples"), join(outDir, "official-examples"), { recursive: true });
+  await copyAdapterPackage("assistant-ui");
   await copyAdapterPackage("streamdown");
   await copyAdapterPackage("tiptap");
 
@@ -260,6 +265,7 @@ export async function exportStaticSite() {
   await writeFile(join(outDir, "playground.html"), playgroundHtml, "utf-8");
   await writeFile(join(outDir, ".nojekyll"), "", "utf-8");
   const aiDocs = await generateAiDocs({ outputDirs: [outDir, join(projectRoot, "dist", "ai")] });
+  await generateStandardArtifacts({ outputDirs: [join(outDir, "standard"), join(projectRoot, "dist", "standard")] });
   await writeAiRawMarkdown(outDir, aiDocs.manifest.pages);
 
   console.log(`Exported static site to ${outDir} with SITE_BASE=${siteBase}`);

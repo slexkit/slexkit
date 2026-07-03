@@ -17,9 +17,9 @@ summary: "提示块，用于说明、注意、警告、建议。"
   "layout": {
     "callout:notice": {
       "tone": "info",
-      "title": "Notice",
+      "title": "提示",
       "icon": "info",
-      "text": "Use callout for information that should stand out."
+      "text": "用提示块突出需要注意的信息。"
     }
   }
 }
@@ -43,23 +43,23 @@ summary: "提示块，用于说明、注意、警告、建议。"
     "column:tones": {
       "callout:info": {
         tone: "info",
-        title: "Info",
-        text: "This is an informational message."
+        title: "信息",
+        text: "这是一条说明信息。"
       },
       "callout:success": {
         tone: "success",
-        title: "Success",
-        text: "Operation completed successfully."
+        title: "成功",
+        text: "操作已完成。"
       },
       "callout:warning": {
         tone: "warning",
-        title: "Warning",
-        text: "Please review before proceeding."
+        title: "警告",
+        text: "继续前请复核。"
       },
       "callout:danger": {
         tone: "danger",
-        title: "Danger",
-        text: "This action cannot be undone."
+        title: "危险",
+        text: "此操作无法撤销。"
       }
     }
   }

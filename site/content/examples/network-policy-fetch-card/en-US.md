@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # JSONPlaceholder Network Request Lab
 
-This example goes beyond showing a policy configuration — it lets users select real network tasks inside the sandbox: read posts, view details, pull comments, filter by user, or send a demo POST to JSONPlaceholder. Requests don't leave the iframe directly; they go through `api.fetch()` to the host, which decides whether to proxy based on allowlist, method, timeout, body size, and response type.
+The secure runtime demo lets users select network tasks inside the sandbox: read posts, view details, pull comments, filter by user, or send a demo POST to JSONPlaceholder. Requests do not leave the iframe directly; they go through `api.fetch()` to the host, which decides whether to proxy based on allowlist, method, timeout, body size, and response type.
 
 ```slex
 {

@@ -16,7 +16,7 @@ summary: "所有支持 icon 字段的组件共享的图标管理能力。"
   "namespace": "spec_button_basic",
   "layout": {
     "button:demo": {
-      "label": "Settings",
+      "label": "设置",
       "icon": "gear-six",
       "iconOnly": true,
       "variant": "ghost"
@@ -63,16 +63,16 @@ summary: "所有支持 icon 字段的组件共享的图标管理能力。"
   layout: {
     "row:icons": {
       "button:chart": {
-        label: "Chart",
+        label: "图表",
         icon: "ChartBar"
       },
       "button:copy": {
-        label: "Copy",
+        label: "复制",
         icon: "lucide:copy",
         variant: "secondary"
       },
       "button:settings": {
-        label: "Settings",
+        label: "设置",
         icon: "gear-six",
         iconOnly: true,
         variant: "ghost"
@@ -103,17 +103,17 @@ summary: "所有支持 icon 字段的组件共享的图标管理能力。"
       tabs: [
         {
           value: "overview",
-          label: "Overview",
+          label: "概览",
           icon: "ChartBar"
         },
         {
           value: "activity",
-          label: "Activity",
+          label: "活动",
           icon: "pulse"
         },
         {
           value: "settings",
-          label: "Settings",
+          label: "设置",
           icon: "Gear",
           iconOnly: true
         }
@@ -131,43 +131,43 @@ summary: "所有支持 icon 字段的组件共享的图标管理能力。"
   layout: {
     "column:demo": {
       "callout:notice": {
-        title: "Notice",
+        title: "提示",
         icon: "info",
-        text: "Title-bearing components can use the same icon field."
+        text: "带标题的组件也使用同一个 icon 字段。"
       },
       "accordion:faq": {
         value: "install",
         items: [
           {
             value: "install",
-            label: "Install",
+            label: "安装",
             icon: "download-simple",
-            content: "Prepare dependencies."
+            content: "准备依赖。"
           },
           {
             value: "review",
-            label: "Review",
+            label: "复核",
             icon: "check-circle",
-            content: "Verify the result."
+            content: "验证结果。"
           }
         ]
       },
       "select:env": {
-        label: "Environment",
+        label: "环境",
         icon: "server",
         value: "prod",
         options: [
-          { label: "Development", value: "dev", icon: "code" },
-          { label: "Production", value: "prod", icon: "rocket-launch" }
+          { label: "开发环境", value: "dev", icon: "code" },
+          { label: "生产环境", value: "prod", icon: "rocket-launch" }
         ]
       },
       "radio-group:mode": {
-        label: "Mode",
+        label: "模式",
         icon: "sliders-horizontal",
         value: "auto",
         options: [
-          { label: "Auto", value: "auto", icon: "sparkle" },
-          { label: "Manual", value: "manual", icon: "wrench" }
+          { label: "自动", value: "auto", icon: "sparkle" },
+          { label: "手动", value: "manual", icon: "wrench" }
         ]
       }
     }

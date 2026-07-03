@@ -2,6 +2,7 @@
 title: "Divider"
 category: Content
 status: ready
+order: 35
 summary: "Separator line, optionally with label."
 ---
 # Divider

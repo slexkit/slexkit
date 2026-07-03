@@ -2,6 +2,7 @@
 title: "Text"
 category: Display
 status: ready
+order: 20
 summary: "Short text output for status, description, and results."
 ---
 # Text

@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # JSONPlaceholder 网络请求实验台
 
-这个示例不再只是展示一段策略配置，而是让用户在沙盒内选择真实的网络任务：读取 posts、查看详情、拉取评论、按用户过滤，或者向 JSONPlaceholder 发起一个演示用 POST。请求不会从 iframe 直接出网，而是通过 `api.fetch()` 交给宿主，由宿主按 allowlist、方法、超时、请求体大小和响应类型决定是否代理。
+该示例让用户在 secure runtime 沙盒内选择网络任务：读取 posts、查看详情、拉取评论、按用户过滤，或向 JSONPlaceholder 发起演示 POST。请求不会从 iframe 直接出网，而是通过 `api.fetch()` 交给宿主，由宿主按 allowlist、方法、超时、请求体大小和响应类型决定是否代理。
 
 ```slex
 {

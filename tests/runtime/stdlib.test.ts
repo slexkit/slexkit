@@ -122,5 +122,11 @@ describe("SlexKit stdlib", () => {
       "unknown_api_member",
       "native_secure_capability",
     ]));
+    expect(result.warnings).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: "unknown_std_member", path: "g.load", value: "std.math.nope" }),
+      expect.objectContaining({ code: "unknown_api_member", path: "g.load", value: "api.socket" }),
+      expect.objectContaining({ code: "native_secure_capability", path: "g.load", value: "fetch" }),
+      expect.objectContaining({ code: "unknown_prop", path: "layout.text:message.madeUp", value: "madeUp" }),
+    ]));
   });
 });

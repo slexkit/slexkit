@@ -10,6 +10,7 @@ export const rowSpec = component({
       justify: { type: "string", values: ["start", "center", "end", "space-between", "space-around"], default: "start", description: "Main-axis distribution." },
       align: { type: "string", values: ["start", "center", "end", "baseline", "stretch"], default: "center", description: "Cross-axis alignment." },
       gap: { type: "string", dynamic: true, description: "Spacing between children." },
+      variant: { type: "string", values: ["actions"], description: "Use actions for compact ToolHost action rows." },
     },
     children: childContent,
     examples: [example("row", {

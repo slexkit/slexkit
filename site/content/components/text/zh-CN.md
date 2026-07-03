@@ -16,7 +16,7 @@ summary: "短文本输出，用于状态、说明、结果。"
   "namespace": "doc_text_typical",
   "layout": {
     "text:status": {
-      "text": "System is healthy"
+      "text": "系统正常"
     }
   }
 }

@@ -1,9 +1,17 @@
 import { mount, unmount } from "svelte";
-import { createSlexKitMarkdownRuntimeHost } from "slexkit";
+import { attachComponentDisposer, createSlexKitMarkdownRuntimeHost, register } from "slexkit";
 import { withSiteBase } from "../app/site-base.js";
+import { registerSiteComponents } from "../app/site-components.js";
 import MarkdownRenderer from "./MarkdownRenderer.svelte";
 
 let markdownDomainId = 0;
+let siteComponentsRegistered = false;
+
+function ensureSiteComponentsRegistered() {
+  if (siteComponentsRegistered) return;
+  registerSiteComponents({ register, attachComponentDisposer });
+  siteComponentsRegistered = true;
+}
 
 function containerDomain(container) {
   if (!container.dataset.slexkitMarkdownDomain) {
@@ -121,6 +129,7 @@ function bindLiveExampleFrames(container) {
 }
 
 export function renderMarkdown(content, container, options = {}) {
+  ensureSiteComponentsRegistered();
   const domain = options.domain ?? containerDomain(container);
   const ownsRuntimeHost = !options.slexkitRuntimeHost;
   const runtimeHost = options.slexkitRuntimeHost ?? createSlexKitMarkdownRuntimeHost({
@@ -141,6 +150,8 @@ export function renderMarkdown(content, container, options = {}) {
       slexkitSecurePolicy: options.slexkitSecurePolicy ?? {},
       slexkitHostAdapter: options.slexkitHostAdapter,
       slexkitSecureFrame: options.slexkitSecureFrame ?? true,
+      slexkitStreaming: options.slexkitStreaming ?? false,
+      slexkitIncomplete: options.slexkitIncomplete ?? false,
     },
   });
   let active = true;

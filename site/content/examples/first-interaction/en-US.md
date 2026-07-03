@@ -3,7 +3,7 @@ title: "First Interaction: Slider Controls Data"
 category: "Getting Started"
 status: published
 order: 2
-summary: "Introduces the g object and your first slider interaction — experience reactive data binding in SlexKit."
+summary: "Adds the g object, a slider input, and reactive expressions to a SlexKit card."
 tags: beginner, reactive, slider
 components: section, slider, stat, callout, badge, column
 difficulty: Beginner
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # First Interaction: Slider Controls Data
 
-The previous section was all static data. To bring UI "to life," you need three things:
+Moving from static content to interaction requires three pieces:
 
 1. **`g` object** — reactive state container
 2. **`$value` / `$label` / `$tone`** — read expressions (render values from g)
@@ -29,7 +29,7 @@ The previous section was all static data. To bring UI "to life," you need three 
     "section:interact": {
       eyebrow: "Getting Started · 2/4",
       title: "First Interaction: Slider Controls Data",
-      subtitle: "Slide the slider below, and the stat and callout will follow. This is SlexKit's reactive core.",
+      subtitle: "Move the slider, and the stat and callout update from g.count.",
       "column:controls": {
         "slider:count": {
           label: "Choose a value",
@@ -59,4 +59,4 @@ Core formula:
 User action → onchange → g → SlexKit detects change → all $value/$tone/$text recompute → UI updates
 ```
 
-This is **unidirectional data flow** + **reactive re-rendering**. No manual `setState`, no DOM manipulation needed.
+This is a unidirectional data flow: user actions write to `g`, expressions read from `g`, and the UI re-renders. No manual `setState` or DOM manipulation is needed.

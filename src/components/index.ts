@@ -14,6 +14,7 @@ import Input from "./svelte/input/Input.svelte";
 import RadioGroup from "./svelte/input/RadioGroup.svelte";
 import Select from "./svelte/input/Select.svelte";
 import Submit from "./svelte/input/Submit.svelte";
+import Step from "./svelte/input/Step.svelte";
 import Tabs from "./svelte/input/Tabs.svelte";
 import Accordion from "./svelte/disclosure/Accordion.svelte";
 import Collapsible from "./svelte/disclosure/Collapsible.svelte";
@@ -43,6 +44,7 @@ const runtimeComponents = {
   "radio-group": RadioGroup,
   select: Select,
   submit: Submit,
+  step: Step,
   tabs: Tabs,
   accordion: Accordion,
   collapsible: Collapsible,

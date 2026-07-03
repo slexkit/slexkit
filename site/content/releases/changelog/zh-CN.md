@@ -11,30 +11,66 @@ slexkitRenderMode: component
 
 SlexKit 的所有重要变更。
 
-## v0.3.2 - 宿主 CSS 隔离与重复布局加固
+
+## v0.4.0 - 生产适配器与 ToolHost 加固
+
+### Added
+- 新增 `@slexkit/assistant-ui`：React assistant-ui 适配包，`slex` 代码块默认走 secure frame 路径。
+- 新增可在浏览器直接打开的 Assistant UI 宿主示例，以及对应的适配集成文档。
+- 新增 ToolHost 内部 `step` 组件，用于在一次 tool call 中承载多步骤人工输入流程。
+- 扩展 theme package，覆盖 base、按组件拆分的 CSS，以及 ToolHost/step 样式导出。
 
 ### Changed
+- AI docs 和 standard artifacts 现在区分公开组件与 ToolHost 内部组件：`submit` 和 `step` 仍是可渲染 runtime component，但不再计入 public component catalog。
+- `smoke:release` 现在会输出 pack/install/smoke 阶段日志，通过临时 app 验证 packed tarballs，并检查 CLI conformance 与 MCP server 后才报告成功。
+- ToolHost demo 和 replay fixtures 改为使用与生产宿主一致的 step/submit 流程。
+
+### Fixed
+- Radio group list 选中态不再在已发布 runtime 或 theme CSS 中使用 `:has()`。
+- Tiptap preview controls 现在能在嵌入的 SlexKit input、select 和临时控件之间保持焦点。
+- `step` 和 `submit` 组件文档现在包含同步的 SPEC 示例和 API 表。
+- Windows 上 `smoke:release` 在 MCP 验证成功后不再挂起。
+## v0.3.4 - 生产级文档打磨
+
+### 变更
+- 重写文档站点外壳标签、语言菜单、移动导航和主题控件，让本地化页面不再暴露只适合英文页面的 UI chrome。
+- 打磨指南、参考、组件、示例、包 README 和 AI 可访问文档文案，移除汇报式表达和可见占位语气。
+- 通过组件规格文档管线本地化中文组件示例和 API 描述，包括 Formula props。
+
+### 修复
+- 中文文档不再渲染复制来的英文 UI 短语，例如计数器标签、ToolHost 示例、Obsidian 状态文本或设计系统 tone 标签。
+- Markdown 文档测试现在会防止英文骨架标题、可见英文列表行、双问号替换污染、过期生成规格块，以及已修复英文 UI 短语回归。
+
+## v0.3.3 - Obsidian 输入控件加固
+
+### 修复
+- Slider 现在把视觉轨道绘制在原生 range input 外侧，同时保留原生 input 负责交互和无障碍，避免 Obsidian 和其他宿主主题中出现方形 thumb 伪影。
+- 带尾部单位的 Input 字段现在使用作用域选择器重置宿主 input chrome，让单位附加区域在 Obsidian dark theme 中仍能和文本框对齐。
+
+## v0.3.2 - 宿主 CSS 隔离与重复布局加固
+
+### 变更
 - `$for` 渲染改为使用 comment anchors 和直接子节点插入，不再依赖带 `display: contents` 的 wrapper 元素。
 - 站点专用的移动导航 CSS 已从 runtime base stylesheet 移到文档站点 shell。
 - Component accessor 现在会在多个订阅者之间共享一个 reactive effect，不再产生重复的 subscriber fan-out 工作。
 
-### Fixed
+### 修复
 - Obsidian 和其他 Markdown 宿主不再需要重写 `$for` wrapper CSS 来规避 `display: contents`，重复项在 grid 和 row 中会保持原本布局。
 - 发布版 runtime base CSS 不再把 `#mobileNav` 或 `body[data-mobile-nav-open]` 选择器泄漏到宿主页面。
 - 自定义 renderer 返回空元素时，不再在 `$for` diff 或 cleanup 中留下无效 slot。
 
 ## v0.3.1 - 宿主稳定性与控件渲染加固
 
-### Added
+### 新增
 - 新增 runtime 样式安全测试，阻止已发布 CSS 中出现宽泛 `:has()`、`clip-path` 和 slider 轨道回归。
 - 新增 Switch、Checkbox、Radio 禁用状态属性的回归覆盖。
 
-### Changed
+### 变更
 - CI 现在使用 `bun install --frozen-lockfile`，并在测试前运行 lint。
 - Switch、Checkbox、Radio 的禁用态样式改用显式 `data-disabled` 属性，不再依赖宽泛关系选择器。
 - Select 和 sr-only 辅助样式不再使用 `clip-path`，提升宿主和 Obsidian CSS 兼容性。
 
-### Fixed
+### 修复
 - 修复 range track 绘制在原生 input 盒子上导致的 Slider 圆点方形背景伪影。
 - 修复移除工程输入自绘 stepper 后 Input 聚焦态不可见的问题。
 - 首页 RC 示例改用 Input 组件自身 label，避免单独文本标签造成样式不一致。
@@ -43,13 +79,13 @@ SlexKit 的所有重要变更。
 
 ## v0.3.0 - 示例体系重构、组件审计与国际化
 
-### Added
+### 新增
 - 示例画廊：17 个高质量示例，按使用场景分类（入门教程、计算器、数据浏览、仪表盘、配置向导、决策辅助、平台能力）
 - 全部 17 个示例的英文翻译
 - `toolhost-demo`：使用真实 `renderToolCall` API 的对话式 ToolHost 演示
 - 示例渲染基础设施：`site/routes/examples.js`、`site/pages/examples.slex.js`、`site/data/examples.js`
 - Formula 组件（`src/components/svelte/content/Formula.svelte`），支持 KaTeX 渲染
-- `src/engine/capabilities.ts`：面向 AI Agent 的结构化能力文档
+- `src/engine/capabilities.ts`：AI Agent 使用的结构化能力文档
 - `src/engine/validation.ts`：SPEC 合约验证
 - `src/engine/stdlib.ts`：标准库，包含 `math.clamp`、`math.safeDivide` 等工具函数
 - `src/engine/sandbox-runner.ts`：安全运行时沙箱执行器
@@ -57,7 +93,7 @@ SlexKit 的所有重要变更。
 - Collapsible 和 Callout 双重渲染回归测试
 - Slider 组件名遮蔽回归测试
 
-### Changed
+### 变更
 - 示例从 64 个精简为 17 个高质量示例，按用户故事重新组织
 - 示例源语言：`zh-CN`（附 `en-US` 翻译）
 - `renderChildren`（`helpers.ts`）在有子节点时清除已有内容
@@ -66,7 +102,7 @@ SlexKit 的所有重要变更。
 - 组件：Input、Select、Tabs、Table、PlaygroundMarkdown 优化
 - CSS：theme-shadcn、text-input、docs-shell 样式更新
 
-### Fixed
+### 修复
 - eval 上下文遮蔽：组件名 `g` 和 `api` 不再覆盖保留上下文键
 - `renderChildren` 在 Collapsible 和 Callout 中的双重渲染
 - 分压器摘要错别字（"输入输入电压"）
@@ -74,14 +110,14 @@ SlexKit 的所有重要变更。
 - tabs-and-branching 标题和长度转换不匹配
 - 4 个预先存在的测试失败（ai-docs、page-structure、theme、markdown-content）
 
-### Removed
+### 移除
 - 47 个低质量/重复示例（从 64 个精简为 17 个）
 - 所有示例文件中的死文案"Fallback"行
 - 未使用的 `DialogShell.svelte` 组件
 
 ## v0.2.0
 
-### Added
+### 新增
 - `@slexkit/mcp`：AI Agent Model Context Protocol 服务器，提供 `slexkitDocs`、`slexkitExamples`、`slexkitValidate` 工具
 - 协议标记：所有 Slex 表达式和 ToolHost 模板必须包含 `"slex": "0.1"`
 - SPEC 合约验证：组件规范现已与运行时合约进行验证
@@ -91,13 +127,13 @@ SlexKit 的所有重要变更。
 - 所有参考文档和指南页面的中文文档
 - 增强的组件状态管理，支持生命周期钩子（`onMount`、`onUnmount`、`onUpdate`）
 
-### Changed
+### 变更
 - Switch 组件从 `checked` 状态模式迁移至 `enabled`
 - 文档：重构站点内容，同步 en-US 与 zh-CN，新增参考章节
 - 主题：优化 Select 样式、下拉阴影、页脚和信息语调
 - AI 文档生成增强，支持中英文语言环境感知
 
-### Fixed
+### 修复
 - 28 个组件的规范与文档对齐修正
 - 站点路由和代码块高亮修复
 - 简介和快速开始指南措辞优化
@@ -105,42 +141,42 @@ SlexKit 的所有重要变更。
 
 ## v0.1.9 - 首个公开版本
 
-### Added
+### 新增
 - 图标管理器，集成 Phosphor 图标系统（`registerIcon`、`registerIcons`、`getIcon`、`loadIcon`）
 - 扩展了对带标签组件的图标支持（badge、button、callout 等）
 - 图标文档页面及注册 API 参考
 
-### Fixed
+### 修复
 - 优化了静态站点导出中的组件交互
 - 恢复了 Tabs 指示器动画
 - 修复了 Callout 和 Toast 图标在标题中的位置
 - 数字值显示格式修正
 
-### Changed
+### 变更
 - 站点文档外壳重构以支持静态导出
 - 站点导航和主题控件对齐
 - 统一了代码库中的 Slex 命名
 
 ## v0.1.8
 
-### Added
+### 新增
 - 基于 CSP 加固的安全运行时沙箱，含心跳看门狗
 - `mountSecureArtifact()` 用于隔离 iframe 渲染
 - `createSlexKitMarkdownRuntimeHost()` 用于 Markdown 托管的 SlexKit 块
 - Streamdown React 渲染器（`@slexkit/streamdown`）
-- Obsidian 插件适配器（`@slexkit/obsidian`）
+- Obsidian 插件适配器（当前通过 `slexkit/obsidian-slexkit` 发布）
 - Shadcn 兼容 CSS 主题（`@slexkit/theme-shadcn`）
-- 包边界封装（`@slexkit/runtime`、`@slexkit/components-svelte`）
+- 包入口封装（`@slexkit/runtime`、`@slexkit/components-svelte`）
 - ToolHost 内置模板：`confirm-action`、`choose-options`、`fill-form`
 
-### Changed
+### 变更
 - 组件注册模型：通过副作用导入自动注册所有组件
 - 样式重组为按组件划分的 CSS 文件
 - 构建系统：使用 Bun.build + Svelte 插件，拆分 ESM 入口
 
 ## v0.1.7
 
-### Added
+### 新增
 - `$for` 列表渲染，支持键控协调（删除 / 增删改排序 / 修剪三个阶段）
 - `$if` 条件渲染，支持进入/离开动画
 - `$key` 策略：`$value`、基于属性、或回退到索引
@@ -149,14 +185,14 @@ SlexKit 的所有重要变更。
 - 工程数值输入，支持 SI 前缀解析
 - 丰富的错误诊断，支持行/列/代码片段显示
 
-### Changed
+### 变更
 - 表达式求值：使用 `new Function()` 编译，配合响应式依赖追踪
 - 布局树渲染器现支持三种渲染路径（普通、`$if`、`$for`）
 - `g` 深层合并保留新状态中不存在的键
 
 ## v0.1.6 及更早版本
 
-### Added
+### 新增
 - 响应式 `g`/`layout` 分离，配表达式管道（`$` 读取管道、`on*` 写入管道）
 - 自定义细粒度响应式系统（约 280 行，无外部依赖）
 - 组件注册表，带可扩展渲染器接口

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SlexKit assistant-ui example</title>
+    <script>
+      if (new URLSearchParams(window.location.search).get("embed") === "1") {
+        document.documentElement.dataset.embed = "true";
+      }
+    </script>
+    <link rel="stylesheet" href="/dist/slexkit.css">
+    <link rel="stylesheet" href="/packages/assistant-ui/style.css">
+    <link rel="stylesheet" href="/shared/examples.css">
+    <link rel="stylesheet" href="/shared/adapter-host.css">
+    <link rel="stylesheet" href="./style.css">
+    <script type="importmap">
+      {
+        "imports": {
+          "slexkit": "/dist/slexkit.js",
+          "@slexkit/streamdown": "/packages/streamdown/dist/index.js",
+          "@slexkit/assistant-ui": "/packages/assistant-ui/dist/index.js",
+          "@assistant-ui/react": "https://esm.sh/@assistant-ui/react@0.14.23?deps=react@19.2.6,react-dom@19.2.6",
+          "@assistant-ui/react-streamdown": "https://esm.sh/@assistant-ui/react-streamdown@0.3.4?deps=@assistant-ui/react@0.14.23,react@19.2.6,react-dom@19.2.6",
+          "react": "https://esm.sh/react@19.2.6",
+          "react/jsx-runtime": "https://esm.sh/react@19.2.6/jsx-runtime",
+          "react-dom": "https://esm.sh/react-dom@19.2.6?deps=react@19.2.6",
+          "react-dom/client": "https://esm.sh/react-dom@19.2.6/client?deps=react@19.2.6",
+          "streamdown": "https://esm.sh/streamdown@2.5.0?deps=react@19.2.6,react-dom@19.2.6"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main class="example-shell adapter-example-shell assistant-ui-example-shell">
+      <section class="assistant-ui-chat-shell" aria-label="assistant-ui chat demo">
+        <header class="assistant-ui-chat-header">
+          <div>
+            <div class="assistant-ui-chat-kicker">assistant-ui host</div>
+            <h1>Static assistant-ui Thread</h1>
+            <p>
+              assistant-ui owns the thread and message parts. SlexKit only
+              renders explicit <code>slex</code> fences inside text.
+            </p>
+          </div>
+          <span class="assistant-ui-chat-status">secure fence</span>
+        </header>
+
+        <section class="assistant-ui-stage" aria-label="assistant-ui static conversation">
+          <div id="assistant-ui-root" class="assistant-ui-root"></div>
+        </section>
+
+        <div class="assistant-ui-static-composer" aria-hidden="true">
+          <span>Ask SlexKit to render a `slex` artifact...</span>
+          <button type="button" tabindex="-1">Send</button>
+        </div>
+      </section>
+
+      <details class="adapter-source-panel">
+        <summary>Assistant Markdown source</summary>
+        <pre id="assistant-markdown-source" class="example-code adapter-source"></pre>
+      </details>
+    </main>
+    <script type="module" src="./main.jsx"></script>
+  </body>
+</html>

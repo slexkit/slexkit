@@ -34,11 +34,24 @@ export function createMobileNav({ currentLocale, hydratePhosphorIcons }) {
   const mobileNavCloseButtons = Array.from(document.querySelectorAll("[data-mobile-nav-close]"));
   let mobileNavGesture = null;
 
+  function setButtonLabel(button, label) {
+    if (!(button instanceof HTMLButtonElement)) return;
+    button.setAttribute("aria-label", label);
+    button.title = label;
+  }
+
+  function syncMobileNavLabels(open = isMobileNavOpen()) {
+    const labels = siteUiLabelsForLocale(currentLocale());
+    setButtonLabel(navMenuBtn, open ? labels.closeMenu || "Close menu" : labels.openNavigation || "Open navigation");
+    for (const button of mobileNavCloseButtons) setButtonLabel(button, labels.closeMenu || "Close menu");
+  }
+
   function setMobileNavOpen(open) {
     if (!mobileNav) return;
     mobileNav.dataset.open = open ? "true" : "false";
     mobileNav.setAttribute("aria-hidden", open ? "false" : "true");
     navMenuBtn?.setAttribute("aria-expanded", open ? "true" : "false");
+    syncMobileNavLabels(open);
     document.body.toggleAttribute("data-mobile-nav-open", open);
     const icon = navMenuBtn?.querySelector("[data-phosphor-icon]");
     if (icon instanceof HTMLElement) {
@@ -200,6 +213,7 @@ export function createMobileNav({ currentLocale, hydratePhosphorIcons }) {
   function renderDocsContext(docs, activeDoc) {
     if (!mobileNavContext) return;
     const labels = siteUiLabelsForLocale(currentLocale());
+    const activeHref = activeDoc?.href ?? "";
     mobileNavContext.replaceChildren();
     mobileNavContext.hidden = !docs.length;
     if (!docs.length) return;
@@ -219,7 +233,7 @@ export function createMobileNav({ currentLocale, hydratePhosphorIcons }) {
       header.textContent = group.label;
       section.appendChild(header);
       for (const doc of group.items) {
-        section.appendChild(navLink(doc, activeDoc.href));
+        section.appendChild(navLink(doc, activeHref));
       }
       nav.appendChild(section);
     }

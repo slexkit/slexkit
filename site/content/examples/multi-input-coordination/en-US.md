@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Multi-Input Coordination: Two Linked Sliders
 
-Real-world scenarios often have multiple input variables that affect each other. This requires two new concepts:
+When multiple inputs affect each other, put derived calculations in `g.method()` and use `$if` for conditional display.
 1. **`g.method()`** — computed values that depend on other state (like Vue's computed)
 2. **`$if`** — conditional rendering (show or hide components based on state)
 
@@ -33,7 +33,7 @@ Real-world scenarios often have multiple input variables that affect each other.
     "section:coordinated": {
       eyebrow: "Getting Started · 3/4",
       title: "Multi-Input Coordination: Rectangle Size",
-      subtitle: "Adjust both width and height — area and aspect ratio recalculate automatically. This is the power of g methods.",
+      subtitle: "Adjust both width and height, and area plus aspect ratio recalculate automatically.",
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:w": {

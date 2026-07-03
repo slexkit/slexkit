@@ -31,12 +31,32 @@ export function prerenderedHomeHtml(locale = "en-US") {
       </ul>
       <h2>快速示例</h2>
       <p>在 Markdown 中写一个交互式计算器：</p>
-      <pre><code>\\\`\\\`\\\`slex
-type:row
-- type:input number:g.price label:"单价" value:99
-- type:input number:g.qty label:"数量" value:3
-- type:stat label:"总价" value:\${g.price * g.qty}
-\\\`\\\`\\\`</code></pre>
+      <pre><code>\`\`\`slex
+{
+  namespace: "seo_home_calculator",
+  g: { price: 99, qty: 3 },
+  layout: {
+    "row:inputs": {
+      "input:price": {
+        type: "number",
+        label: "单价",
+        "$value": "g.price",
+        onchange: "g.price = Number($event || 0)"
+      },
+      "input:qty": {
+        type: "number",
+        label: "数量",
+        "$value": "g.qty",
+        onchange: "g.qty = Number($event || 0)"
+      },
+      "stat:total": {
+        label: "总价",
+        "$value": "g.price * g.qty"
+      }
+    }
+  }
+}
+\`\`\`</code></pre>
       <h2>开始使用</h2>
       <ul>
         <li><a href="/docs/guides/intro">简介</a> — 了解 SlexKit 的设计理念</li>
@@ -82,10 +102,30 @@ type:row
       <h2>Quick Example</h2>
       <p>Write an interactive calculator in Markdown:</p>
       <pre><code>\`\`\`slex
-type:row
-- type:input number:g.price label:"Price" value:99
-- type:input number:g.qty label:"Qty" value:3
-- type:stat label:"Total" value:\${g.price * g.qty}
+{
+  namespace: "seo_home_calculator",
+  g: { price: 99, qty: 3 },
+  layout: {
+    "row:inputs": {
+      "input:price": {
+        type: "number",
+        label: "Price",
+        "$value": "g.price",
+        onchange: "g.price = Number($event || 0)"
+      },
+      "input:qty": {
+        type: "number",
+        label: "Qty",
+        "$value": "g.qty",
+        onchange: "g.qty = Number($event || 0)"
+      },
+      "stat:total": {
+        label: "Total",
+        "$value": "g.price * g.qty"
+      }
+    }
+  }
+}
 \`\`\`</code></pre>
       <h2>Get Started</h2>
       <ul>

@@ -3,7 +3,7 @@ title: "Streamdown 接入"
 category: "宿主集成"
 status: published
 order: 18
-summary: "React/Streamdown 适配器示例，展示如何在 Markdown 页面中渲染 SlexKit 组件。"
+summary: "React/Streamdown 适配器示例，在 Markdown 页面中渲染显式 `slex` 代码块。"
 tags: streamdown, react, markdown, adapter
 components: section, table, callout, code-block
 difficulty: 中级
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Streamdown 接入
 
-`@slexkit/streamdown` 适用于已经使用 Streamdown 渲染 Markdown 的 React 页面。这个示例复用官网的 RC 低通滤波器内容，展示 SlexKit 组件如何放进 Streamdown 页面。
+如果 React 页面已经使用 Streamdown 渲染 Markdown，可以用 `@slexkit/streamdown` 接入 SlexKit。该示例复用官网的 RC 低通滤波器内容，演示 SlexKit 组件在 Streamdown 页面中的渲染方式。
 
 本地运行：
 

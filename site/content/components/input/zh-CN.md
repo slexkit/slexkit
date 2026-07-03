@@ -16,10 +16,10 @@ summary: "单行文本输入。"
   "namespace": "doc_input_typical",
   "layout": {
     "input:name": {
-      "label": "Project",
+      "label": "项目",
       "value": "SlexKit",
-      "placeholder": "Enter name",
-      "description": "Visible labels keep form fields scannable."
+      "placeholder": "输入名称",
+      "description": "可见标签让表单字段更易扫读。"
     }
   }
 }
@@ -48,7 +48,7 @@ summary: "单行文本输入。"
   namespace: "doc_input_label_unit",
   layout: {
     "input:voltage": {
-      label: "Voltage",
+      label: "电压",
       value: "3.3",
       unit: "V",
       description: "Supply rail"
@@ -66,10 +66,10 @@ summary: "单行文本输入。"
     "row:diff": {
       "input:enabled": {
         value: "Editable",
-        placeholder: "Type here"
+        placeholder: "在此输入"
       },
       "input:disabled": {
-        value: "Disabled",
+        value: "测试值",
         disabled: true
       }
     }
@@ -90,7 +90,7 @@ summary: "单行文本输入。"
       value: "4.7kΩ"
     },
     "stat:parsed": {
-      label: "Parsed value",
+      label: "解析值",
       $value: "resistance.valid ? resistance.number : 'Invalid'",
       $unit: "resistance.unit"
     }

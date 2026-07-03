@@ -2,7 +2,7 @@
 import { createInterface } from "node:readline";
 import { readFile } from "node:fs/promises";
 
-import { parseSlexSource, validateSlexSource } from "slexkit/runtime";
+import { parseSlexSource, runSlexConformance, validateSlexSource } from "slexkit/runtime";
 
 type JsonRpcRequest = {
   jsonrpc?: "2.0";
@@ -33,6 +33,7 @@ type Manifest = {
   expressionContext: unknown;
   stdlib: unknown;
   capabilities: unknown;
+  standardArtifacts?: Record<string, { path: string; hash: string }>;
   components: Array<{
     type: string;
     title: string;
@@ -50,9 +51,23 @@ type Manifest = {
 };
 
 const dataBase = new URL("./data/", import.meta.url);
+const standardArtifactNames = [
+  "slex-expression.schema.json",
+  "slex-component-catalog.json",
+  "slex-logic-profile.json",
+  "slex-capabilities.catalog.json",
+  "slex-conformance.json",
+  "slex-standard-manifest.json",
+] as const;
+type StandardArtifactName = (typeof standardArtifactNames)[number];
+const standardArtifactNameSet = new Set<string>(standardArtifactNames);
 
 async function readDataFile(name: string): Promise<string> {
   return readFile(new URL(name, dataBase), "utf-8");
+}
+
+async function readStandardArtifact(filename: StandardArtifactName) {
+  return JSON.parse(await readDataFile(`standard/${filename}`)) as unknown;
 }
 
 const manifest = JSON.parse(await readDataFile("slexkit-ai-manifest.json")) as Manifest;
@@ -233,8 +248,41 @@ const tools: ToolDefinition[] = [
       slug: { type: "string", description: "Optional page id or slug to fetch, such as components/card or card." },
       url: { type: "string", description: "Optional href or raw .md URL to fetch." },
       includeCapabilities: { type: "boolean", description: "When true, include expression context, stdlib, and api capability summaries." },
+      conformanceReport: {
+        type: "boolean",
+        description: "When true, run SlexKit's bundled standard conformance fixtures and return a structured report.",
+      },
+      conformanceFixture: {
+        type: "string",
+        description: "Optional fixture id to run when conformanceReport is true.",
+      },
+      standardArtifact: {
+        type: "string",
+        enum: standardArtifactNames,
+        description: "Optional standard artifact JSON to fetch, such as slex-standard-manifest.json, slex-component-catalog.json, or slex-logic-profile.json.",
+      },
     }),
-    handler(args) {
+    async handler(args) {
+      if (booleanArg(args, "conformanceReport")) {
+        return {
+          version: manifest.version,
+          conformanceReport: runSlexConformance({ fixtureId: optionalStringArg(args, "conformanceFixture") }),
+        };
+      }
+      const standardArtifact = optionalStringArg(args, "standardArtifact");
+      if (standardArtifact) {
+        if (!standardArtifactNameSet.has(standardArtifact)) {
+          return { error: "standard_artifact_not_found", standardArtifact, available: standardArtifactNames };
+        }
+        return {
+          version: manifest.version,
+          standardArtifact: {
+            filename: standardArtifact,
+            metadata: manifest.standardArtifacts?.[standardArtifact],
+            content: await readStandardArtifact(standardArtifact as StandardArtifactName),
+          },
+        };
+      }
       const capabilities = booleanArg(args, "includeCapabilities")
         ? {
             expressionContext: manifest.expressionContext,
@@ -243,8 +291,8 @@ const tools: ToolDefinition[] = [
           }
         : undefined;
       const page = findPage(args);
-      if (page) return { version: manifest.version, page, capabilities };
-      return { version: manifest.version, pages: searchPages(args), capabilities };
+      if (page) return { version: manifest.version, page, capabilities, standardArtifacts: manifest.standardArtifacts };
+      return { version: manifest.version, pages: searchPages(args), capabilities, standardArtifacts: manifest.standardArtifacts };
     },
   },
   {

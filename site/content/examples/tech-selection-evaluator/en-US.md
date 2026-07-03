@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Tech Stack Evaluation
 
-Your team needs to pick a frontend framework — React, Vue, Svelte, Angular. Each has its strengths. Performance, ecosystem, learning curve, maintenance cost — how do you quantify the comparison? Here we use cross-fence coordination: select a stack, and the scores and recommendations below update automatically.
+The evaluator breaks frontend framework selection into four adjustable dimensions: performance, ecosystem, learning curve, and maintenance cost. Select a stack, and the scores and recommendation update below.
 
 ```slex
 {
@@ -68,7 +68,7 @@ Your team needs to pick a frontend framework — React, Vue, Svelte, Angular. Ea
 }
 ```
 
-Selected React but think the performance score is too low? Drag the slider to adjust — the recommendation and risk level update in real time. This is the value of cross-fence coordination — three independent code blocks sharing the same state.
+Drag a slider to adjust the selected stack. The recommendation and risk level update in real time because three independent blocks share the same state.
 
 ```slex
 {

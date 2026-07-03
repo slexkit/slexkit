@@ -1,13 +1,13 @@
 ---
 title: "Submit"
-category: Action
+category: Tooling
 status: ready
 order: 20
-summary: "ToolHost 提交边界，把当前选择或表单值返回宿主。"
+summary: "ToolHost 专用提交动作，把当前选择或表单值返回宿主。"
 ---
-# Submit 提交按钮
+# Submit 提交
 
-ToolHost 的提交边界组件，提供提交/忽略两个操作。
+`submit` 是 ToolHost 模板里的提交动作，负责把 `returnKeys` 指定的状态字段提交给宿主。它不是普通按钮组件；普通交互请使用 `button`。
 
 <!-- slex:spec-example:start component="submit" id="basic" sourceHash="b5d89128" -->
 ```slex
@@ -35,7 +35,7 @@ ToolHost 的提交边界组件，提供提交/忽略两个操作。
 
 ## 使用提示
 
-- 适合：AI 工具链的确认表单、参数设置面板、选择确认流程。
+- 适合：ToolHost 的确认表单、参数设置面板、选择确认流程。
 - 不适合：普通操作按钮（应当用 button）。
 - 关联组件：button 用于本地操作触发。
 - 与 input、select 等输入组件配合使用读取用户选择。

@@ -1,16 +1,20 @@
 import { describe, expect, it } from "bun:test";
 import { ALL_COMPONENT_TYPES } from "../../src/components/index";
-import { componentSpecs, publicComponentTypes } from "../../src/components/spec-registry";
+import { componentSpecs, publicComponentSpecs, publicComponentTypes } from "../../src/components/spec-registry";
 import { getRenderer, parseSlexSource } from "../../src/engine/index";
 import { SLEX_PROTOCOL_VERSION } from "../../src/version";
 
 const documentedNonRuntimeSpecs = new Set(["icon", "playground"]);
+const internalRuntimeSpecs = new Set(["step", "submit"]);
 
 describe("component SPEC registry", () => {
   it("keeps component SPEC types unique and parseable", () => {
     const types = componentSpecs.map((spec) => spec.type);
     expect(new Set(types).size).toBe(types.length);
-    expect(publicComponentTypes).toEqual(types);
+    expect(publicComponentTypes).toEqual(publicComponentSpecs.map((spec) => spec.type));
+    expect(publicComponentTypes).not.toContain("submit");
+    expect(publicComponentTypes).not.toContain("step");
+    expect(types).toEqual(expect.arrayContaining(["submit", "step"]));
 
     for (const spec of componentSpecs) {
       expect(spec.type, `${spec.type} type`).toBeTruthy();
@@ -32,11 +36,16 @@ describe("component SPEC registry", () => {
   });
 
   it("keeps runtime component registrations aligned with renderable SPEC entries", () => {
-    const specRuntimeTypes = publicComponentTypes
+    const publicRuntimeTypes = publicComponentTypes
+      .filter((type) => !documentedNonRuntimeSpecs.has(type))
+      .toSorted();
+    const specRuntimeTypes = componentSpecs
+      .map((spec) => spec.type)
       .filter((type) => !documentedNonRuntimeSpecs.has(type))
       .toSorted();
 
     expect(ALL_COMPONENT_TYPES.toSorted()).toEqual(specRuntimeTypes);
+    expect(ALL_COMPONENT_TYPES.toSorted()).toEqual([...publicRuntimeTypes, ...internalRuntimeSpecs].toSorted());
     expect(publicComponentTypes).toContain("icon");
     expect(publicComponentTypes).toContain("playground");
     expect(ALL_COMPONENT_TYPES).not.toContain("icon");

@@ -10,6 +10,7 @@ const distRoot = join(root, "dist");
 const sharedRoot = join(examplesRoot, "shared");
 const vendorRoot = join(root, "node_modules");
 const streamdownPackageRoot = join(root, "packages", "streamdown");
+const assistantUiPackageRoot = join(root, "packages", "assistant-ui");
 const tiptapPackageRoot = join(root, "packages", "tiptap");
 const exampleName = process.argv[2];
 const port = Number(process.env.PORT || 4174);
@@ -17,6 +18,7 @@ const port = Number(process.env.PORT || 4174);
 const contentTypes = new Map([
   [".html", "text/html; charset=utf-8"],
   [".js", "text/javascript; charset=utf-8"],
+  [".jsx", "text/javascript; charset=utf-8"],
   [".mjs", "text/javascript; charset=utf-8"],
   [".css", "text/css; charset=utf-8"],
   [".json", "application/json; charset=utf-8"],
@@ -48,7 +50,11 @@ async function serveFile(base, urlPath) {
   const file = resolve(base, decoded || "index.html");
   if (!within(base, file) || !existsSync(file)) return undefined;
   const type = contentTypes.get(extname(file)) || "application/octet-stream";
-  return new Response(await readFile(file), { headers: { "content-type": type } });
+  const headers = { "content-type": type };
+  if (type.startsWith("text/javascript")) {
+    headers["access-control-allow-origin"] = "*";
+  }
+  return new Response(await readFile(file), { headers });
 }
 
 if (!exampleName || exampleName === "--help" || exampleName === "-h") {
@@ -99,12 +105,16 @@ const server = Bun.serve({
     }
     if (url.pathname.startsWith("/dist/")) {
       const rest = url.pathname.slice("/dist/".length);
-      const runtimeAlias = rest === "slexkit.runtime.js" ? "runtime.js" : rest;
+      const runtimeAlias = rest === "slexkit.runtime.js" ? "slexkit.js" : rest;
       return (await serveFile(distRoot, runtimeAlias)) || response("Not found", 404);
     }
     if (url.pathname.startsWith("/packages/streamdown/")) {
       const rest = url.pathname.slice("/packages/streamdown/".length);
       return (await serveFile(streamdownPackageRoot, rest)) || response("Not found", 404);
+    }
+    if (url.pathname.startsWith("/packages/assistant-ui/")) {
+      const rest = url.pathname.slice("/packages/assistant-ui/".length);
+      return (await serveFile(assistantUiPackageRoot, rest)) || response("Not found", 404);
     }
     if (url.pathname.startsWith("/packages/tiptap/")) {
       const rest = url.pathname.slice("/packages/tiptap/".length);

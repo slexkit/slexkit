@@ -17,14 +17,14 @@ summary: "分割线，可带 label。"
   "layout": {
     "column:content": {
       "text:top": {
-        "text": "Above"
+        "text": "上方"
       },
       "divider:line": {
-        "label": "Divider",
+        "label": "分隔线",
         "icon": "flag"
       },
       "text:bottom": {
-        "text": "Below"
+        "text": "下方"
       }
     }
   }

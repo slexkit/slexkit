@@ -2,6 +2,7 @@
 title: "Input"
 category: Input
 status: ready
+order: 10
 summary: "Single-line text or engineering value input."
 ---
 # Input

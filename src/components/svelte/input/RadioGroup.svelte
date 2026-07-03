@@ -20,7 +20,11 @@
 
   function vibrate(disabled: boolean, duration = 8): void {
     if (disabled || p.haptic === false || p.haptics === false) return;
-    const api = globalThis.navigator as (Navigator & { vibrate?: (pattern: number | number[]) => boolean }) | undefined;
+    const api = globalThis.navigator as (Navigator & {
+      userActivation?: { isActive?: boolean };
+      vibrate?: (pattern: number | number[]) => boolean;
+    }) | undefined;
+    if (api?.userActivation?.isActive === false) return;
     api?.vibrate?.(duration);
   }
 
@@ -36,7 +40,15 @@
   }
 </script>
 
-<div class="slex-radio-group" data-scope="radio-group" data-part="root" data-orientation={text(p.orientation, "vertical")} role="radiogroup" aria-label={text(p["aria-label"] ?? p.ariaLabel ?? p.label) || undefined}>
+<div
+  class="slex-radio-group"
+  data-scope="radio-group"
+  data-part="root"
+  data-orientation={text(p.orientation, "vertical")}
+  data-variant={text(p.variant ?? p.presentation) || undefined}
+  role="radiogroup"
+  aria-label={text(p["aria-label"] ?? p.ariaLabel ?? p.label) || undefined}
+>
   {#if p.label || p.icon}
     <div class="slex-radio-group-label">
       {#if p.icon}<InlineIcon name={p.icon} className="slex-radio-group-icon" />{/if}
@@ -49,7 +61,11 @@
     {@const disabled = !!item.disabled || !!p.disabled}
     {@const hapticKey = text(itemValue)}
     <span class="slex-choice-event-layer" onpointerdown={() => haptic(hapticKey, disabled, 8)} onclick={() => haptic(hapticKey, disabled, 8)}>
-      <label class="slex-radio-field" data-disabled={disabled ? "true" : undefined}>
+      <label
+        class="slex-radio-field"
+        data-disabled={disabled ? "true" : undefined}
+        data-state={itemValue === value ? "checked" : "unchecked"}
+      >
         <input
           type="radio"
           class="slex-radio"
@@ -62,7 +78,12 @@
         />
         <span class="slex-radio-label">
           {#if item.icon}<InlineIcon name={item.icon} selected={itemValue === value} className="slex-radio-icon" />{/if}
-          <span>{text(item.label)}</span>
+          <span class="slex-radio-label-text">
+            <span>{text(item.label)}</span>
+            {#if item.description}
+              <small>{text(item.description)}</small>
+            {/if}
+          </span>
         </span>
       </label>
     </span>

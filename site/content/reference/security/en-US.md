@@ -102,7 +102,7 @@ Network is denied by default unless `policy.network.enabled` is `true`. The poli
 - Response body size
 - Response content-type
 
-`hostAdapter.fetch` can replace the actual request implementation. `hostAdapter.onNetworkLog` is observational only -it must not alter runtime behavior.
+`hostAdapter.fetch` can replace the actual request implementation. `hostAdapter.onNetworkLog` is observational only; it must not alter runtime behavior.
 
 ### Timer, animation, and canvas
 
@@ -133,7 +133,7 @@ type HostRuntimeAdapter = {
 };
 ```
 
-`onNetworkLog` and `onRuntimeError` are audit hooks -they must not change runtime behavior. Errors thrown within them are silently caught.
+`onNetworkLog` and `onRuntimeError` are audit hooks; they must not change runtime behavior. Errors thrown within them are silently caught.
 
 ## Sandbox iframe deployment
 
@@ -154,7 +154,7 @@ Access-Control-Allow-Origin: *
 Content-Type: text/javascript
 ```
 
-This is server or deployment layer configuration -it cannot be set from frontend JavaScript.
+This is server or deployment layer configuration; it cannot be set from frontend JavaScript.
 
 ### CSP
 
@@ -175,7 +175,7 @@ A random nonce is generated for each frame instance. `unsafe-eval` is required b
 
 ### Sandbox attribute
 
-The iframe requires `allow-scripts`. `allow-same-origin` is **blocked by default** -it would weaken the opaque origin isolation. Only set `unsafeAllowSameOrigin: true` explicitly if the host accepts the risk:
+The iframe requires `allow-scripts`. `allow-same-origin` is **blocked by default** because it would weaken the opaque origin isolation. Only set `unsafeAllowSameOrigin: true` explicitly if the host accepts the risk:
 
 ```ts
 frame: {
@@ -219,7 +219,7 @@ Messages are verified: the sandbox checks `event.source === window.parent`; the 
 
 Multiple Markdown fences belonging to one artifact share a single sandbox iframe. The host sends slot rectangles to the sandbox, which renders each fence's output inside the corresponding slot container. The sandbox reports each slot's rendered height back via `slot-size` messages.
 
-A `ResizeObserver` on the host side and inside the sandbox keeps positions and heights synchronized. This allows visual continuity across fence boundaries while keeping all execution confined to one isolation context.
+A `ResizeObserver` on the host side and inside the sandbox keeps positions and heights synchronized. This preserves visual continuity across fences while keeping all execution confined to one isolation context.
 
 ## Heartbeat watchdog
 
@@ -251,7 +251,7 @@ mountSecureArtifact(script, container, {
 
 ### `unsafeAllowSameOrigin`
 
-Allows `allow-same-origin` in the sandbox attribute. **Reduces isolation strength** -only use when the host explicitly accepts the risk.
+Allows `allow-same-origin` in the sandbox attribute. **Reduces isolation strength**; only use when the host explicitly accepts the risk.
 
 ```ts
 frame: {
@@ -276,4 +276,4 @@ When the sandbox runner starts, it hardens the global scope:
 - Slex source declarations are never an authorization source.
 - Default to opaque origin.
 - Always fail closed.
-- Log and error hooks are observational -they must not alter runtime behavior.
+- Log and error hooks are observational; they must not alter runtime behavior.

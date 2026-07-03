@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Project Dashboard
 
-Real projects need a bird's-eye view — not just a single calculation card, but a **dashboard**. Use `section` for grouping, `grid` for multi-column layout, and each card to show one area of focus.
+The dashboard uses `section` for grouping, `grid` for multi-column layout, and separate cards for sprint progress, quality metrics, and team health.
 
 ```slex
 {
@@ -75,4 +75,4 @@ Real projects need a bird's-eye view — not just a single calculation card, but
 - Use `$text` and `$tone` in callouts for conditional alerts
 
 
-This pattern works for: tech lead weekly reports, release QA dashboards, team OKR tracking, SRE service dashboards.
+Similar layouts fit tech lead weekly reports, release QA dashboards, team OKR tracking, and SRE service dashboards.

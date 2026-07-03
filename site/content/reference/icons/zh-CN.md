@@ -11,19 +11,19 @@ slexkitRenderMode: component
 
 SlexKit 的 icon system 为组件提供统一 icon 解析链：先查自定义注册，再查内置 Phosphor icon，最后可选走 Iconify fallback。
 
-## Resolution chain
+## 解析链路
 
-当组件收到 `icon` 字段时，runtime 按顺序解析：
+当组件收到 `icon` 字段时，同步解析和异步加载按顺序使用：
 
 1. `getRegisteredIcon(name, state)`：用户注册的 icon。
 2. 内置 Phosphor icon。
-3. `resolveIconifyIcon(name, state)`：Iconify fallback。
+3. `loadIcon(name, state)`：当前两步没有命中时，按 `resolveIconifyIcon()` 和 `iconifySvgUrl()` 走 Iconify async fallback。
 
-解析结果是 SVG string 或可加载 URL，具体由组件和宿主策略决定。
+同步 `getIcon()` 只返回已注册或内置 SVG string；不会发起网络请求。需要外部 Iconify fallback 的组件会调用 async `loadIcon()`。
 
-## Public API
+## 公开 API
 
-### Registration
+### 注册
 
 #### `registerIcon(name, svg, options?)`
 
@@ -52,11 +52,11 @@ registerIcons({
 
 清空自定义注册表。主要用于测试或宿主热重载。
 
-### Retrieval
+### 读取
 
 #### `getIcon(name, state?)`
 
-按完整解析链获取 icon。
+同步获取自定义注册或内置 Phosphor icon。
 
 #### `getRegisteredIcon(name, state?)`
 
@@ -66,7 +66,7 @@ registerIcons({
 
 加载 icon，必要时可触发 async fallback。
 
-### Name and weight utilities
+### 名称和 weight 工具
 
 #### `normalizeIconName(name)`
 
@@ -93,7 +93,7 @@ normalizeIconName("book_open_text"); // "book-open-text"
 
 生成用于缓存的 key，避免不同 state 或 weight 互相覆盖。
 
-## Built-in Phosphor icons
+## 内置 Phosphor 图标
 
 SlexKit 内置一组 Phosphor 风格 icons，覆盖常见 UI 动作与状态，例如：
 
@@ -110,9 +110,9 @@ SlexKit 内置一组 Phosphor 风格 icons，覆盖常见 UI 动作与状态，�
 - `cursor-click`
 - `gear-six`
 
-实际可用列表以当前 icon registry 为准。
+实际可用列表由 icon registry 决定。
 
-## Icon naming convention
+## 图标命名约定
 
 Slex expressions 使用 kebab-case 引用 icons：
 
@@ -135,7 +135,7 @@ Iconify fallback 用于宿主希望按需加载外部 icon 集合的场景。由
 
 生产宿主应优先注册必要 icons 或使用内置 Phosphor set，减少运行时外部依赖。
 
-## Usage in components
+## 组件中使用
 
 大多数组件通过 `icon` 字段使用 icon：
 

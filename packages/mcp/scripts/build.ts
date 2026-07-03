@@ -1,15 +1,19 @@
 import { copyFile, mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { generateAiDocs } from "../../../scripts/generate-ai-docs";
+import { generateStandardArtifacts } from "../../../scripts/generate-standard-artifacts";
+import { SLEX_STANDARD_ARTIFACTS } from "../../../src/standard/artifacts";
 
 const packageRoot = join(import.meta.dir, "..");
 const repoRoot = join(packageRoot, "..", "..");
 const dist = join(packageRoot, "dist");
 const dataDir = join(dist, "data");
+const standardDataDir = join(dataDir, "standard");
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(dataDir, { recursive: true });
 await generateAiDocs({ outputDirs: [join(repoRoot, "dist", "ai")] });
+await generateStandardArtifacts({ outputDirs: [join(repoRoot, "dist", "standard")] });
 
 const result = await Bun.build({
   entrypoints: [join(packageRoot, "src", "index.ts")],
@@ -47,4 +51,9 @@ for (const file of [
   "llms-authoring.txt",
 ]) {
   await copyFile(join(repoRoot, "dist", "ai", file), join(dataDir, file));
+}
+
+await mkdir(standardDataDir, { recursive: true });
+for (const file of SLEX_STANDARD_ARTIFACTS) {
+  await copyFile(join(repoRoot, "dist", "standard", file), join(standardDataDir, file));
 }

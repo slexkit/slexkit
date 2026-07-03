@@ -32,6 +32,8 @@ export function createSiteShell({
   const themeBtn = document.getElementById("themeBtn");
   const languageTrigger = document.getElementById("languageTrigger");
   const languageMenu = document.getElementById("languageMenu");
+  const navMenuBtn = document.getElementById("navMenuBtn");
+  const mobileNavCloseButtons = Array.from(document.querySelectorAll("[data-mobile-nav-close]"));
   const languageOptions = Array.from(document.querySelectorAll("[data-locale]"));
   const homeLinks = Array.from(document.querySelectorAll("[data-home-link]"));
   const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
@@ -62,8 +64,31 @@ export function createSiteShell({
     document.documentElement.lang = locale;
     document.documentElement.dataset.locale = locale;
 
+    if (themeBtn instanceof HTMLButtonElement) {
+      const label = labels.themeToggle || "Toggle theme";
+      themeBtn.setAttribute("aria-label", label);
+      themeBtn.title = label;
+    }
+
     if (languageTrigger instanceof HTMLButtonElement) {
-      languageTrigger.title = locale === "en-US" ? "Language" : "语言";
+      const label = labels.languageLabel || "Language";
+      languageTrigger.setAttribute("aria-label", label);
+      languageTrigger.title = label;
+      languageMenu?.setAttribute("aria-label", label);
+    }
+
+    if (navMenuBtn instanceof HTMLButtonElement) {
+      const open = navMenuBtn.getAttribute("aria-expanded") === "true";
+      const label = open ? labels.closeMenu || "Close menu" : labels.openNavigation || "Open navigation";
+      navMenuBtn.setAttribute("aria-label", label);
+      navMenuBtn.title = label;
+    }
+
+    for (const button of mobileNavCloseButtons) {
+      if (!(button instanceof HTMLButtonElement)) continue;
+      const label = labels.closeMenu || "Close menu";
+      button.setAttribute("aria-label", label);
+      button.title = label;
     }
 
     for (const option of languageOptions) {

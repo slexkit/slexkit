@@ -16,19 +16,23 @@ import {
 import {
   ingest,
   createSlexKitMarkdownRuntimeHost,
+  disposeNamespace,
   getSlexKitMarkdownRuntimeHost,
   mount,
   mountSecureArtifact,
   parseSlexSource,
+  parseSlexStreamingSource,
   type SlexKitMarkdownRuntimeHost,
   type HostRuntimeAdapter,
   type HostRuntimePolicy,
   type SecureFrameOptions,
+  type SlexStreamingMode,
 } from "slexkit";
 
 const DEFAULT_LANGUAGES = ["slex"] as const;
-const STREAMDOWN_RENDERER_VERSION = "0.3.3";
+const STREAMDOWN_RENDERER_VERSION = "0.4.0";
 const DEFAULT_SECURE_POLICY: HostRuntimePolicy = {};
+let nextPreviewId = 0;
 
 export type SlexKitRendererOptions = {
   languages?: string | string[];
@@ -43,6 +47,7 @@ export type SlexKitRendererOptions = {
   playgroundUrl?: string;
   showChrome?: boolean;
   showSource?: boolean;
+  streaming?: SlexStreamingMode | true;
   placeholder?: ReactNode;
   className?: string;
   onError?: (error: unknown, code: string) => void;
@@ -79,6 +84,28 @@ type SlexKitRendererCoordinator = {
 
 function languageList(languages: string | string[] | undefined): string | string[] {
   return languages ?? [...DEFAULT_LANGUAGES];
+}
+
+function normalizeStreamingMode(mode: SlexStreamingMode | true | undefined): SlexStreamingMode {
+  if (mode === undefined || mode === true) return "repair";
+  return mode;
+}
+
+function createPreviewDomainId(): string {
+  nextPreviewId += 1;
+  return `slexkit_preview_${nextPreviewId.toString(36)}`;
+}
+
+function parseFinalSlexSource(source: string) {
+  const parsed = parseSlexSource(source);
+  return parsed.ok
+    ? { status: "complete" as const, source, value: parsed.value }
+    : {
+        status: "invalid" as const,
+        source,
+        error: parsed.error,
+        diagnostic: parsed.diagnostic,
+      };
 }
 
 async function copySource(code: string): Promise<void> {
@@ -193,7 +220,16 @@ function isStateOnlySource(value: unknown): boolean {
 }
 
 function scopedSlexKitInput(code: string, source: unknown, domain: string | undefined): SlexKitInput {
-  if (!domain || !isRecord(source) || !("slex" in source || "namespace" in source || "g" in source || "layout" in source)) return code;
+  if (!domain || !isRecord(source)) return code;
+
+  if (!("slex" in source || "namespace" in source || "g" in source || "layout" in source)) {
+    if (!isRenderableSource(source)) return code;
+    return {
+      namespace: `${domain}::default`,
+      g: {},
+      layout: source,
+    } as unknown as SlexKitInput;
+  }
 
   const namespace = String(source.namespace || "default");
   if (!("layout" in source) && isRenderableSource(source)) {
@@ -210,6 +246,14 @@ function scopedSlexKitInput(code: string, source: unknown, domain: string | unde
     ...source,
     namespace: `${domain}::${namespace}`,
   } as unknown as SlexKitInput;
+}
+
+function scopedNamespace(source: unknown, domain: string | undefined): string | undefined {
+  if (!domain || !isRecord(source)) return undefined;
+  if (!("slex" in source || "namespace" in source || "g" in source || "layout" in source)) {
+    return isRenderableSource(source) ? `${domain}::default` : undefined;
+  }
+  return `${domain}::${String(source.namespace || "default")}`;
 }
 
 function playgroundOption(meta: string | undefined, key: string, fallback = ""): string {
@@ -349,6 +393,7 @@ function renderSlexKitRenderer({
   playgroundUrl,
   showChrome = true,
   showSource = false,
+  streaming,
   placeholder,
   className,
   onError,
@@ -356,41 +401,66 @@ function renderSlexKitRenderer({
 }: SlexKitRendererInternalProps) {
   const hostRef = useRef<HTMLElement>(null);
   const blockIdRef = useRef<symbol>(Symbol("slexkit-streamdown-block"));
+  const previewIdRef = useRef<string | null>(null);
+  previewIdRef.current ??= createPreviewDomainId();
   const [error, setError] = useState<unknown>(null);
   const isSecureRuntime = runtime === "secure";
   const activeRuntimeHost = coordinator?.runtimeHost ?? runtimeHost ?? (useGlobalRuntimeHost ? getSlexKitMarkdownRuntimeHost() : undefined);
   const activeRuntimeMode = activeRuntimeHost?.getMode();
   const delegatesToSecureHost = activeRuntimeMode === "secure";
-  const parsedSource = useMemo(
-    () => (isIncomplete || isSecureRuntime || delegatesToSecureHost ? undefined : parseSlexSource(code)),
-    [code, delegatesToSecureHost, isIncomplete, isSecureRuntime],
+  const streamingMode = normalizeStreamingMode(streaming);
+  const streamingResult = useMemo(
+    () => {
+      if ((streamingMode === false && isIncomplete) || isSecureRuntime || delegatesToSecureHost) return undefined;
+      return isIncomplete
+        ? parseSlexStreamingSource(code, { mode: streamingMode })
+        : parseFinalSlexSource(code);
+    },
+    [code, delegatesToSecureHost, isIncomplete, isSecureRuntime, streamingMode],
   );
+  const isPreviewSource = streamingResult?.status === "repaired";
+  const parseError = streamingResult?.status === "invalid" ? streamingResult.error : null;
+  const isPendingSource = Boolean(isIncomplete && (
+    streamingMode === false
+    || isSecureRuntime
+    || delegatesToSecureHost
+    || streamingResult?.status === "pending"
+  ));
+  const parsedValue = streamingResult?.status === "complete" || streamingResult?.status === "repaired"
+    ? streamingResult.value
+    : undefined;
+  const previewDomain = `${domain ? `${domain}::` : ""}${previewIdRef.current}`;
+  const runtimeDomain = isPreviewSource ? previewDomain : domain;
   const sourceKind = useMemo(() => {
-    if (isIncomplete) return "renderable";
+    if (isPendingSource) return "renderable";
     if (isSecureRuntime || delegatesToSecureHost) return "renderable";
-    return parsedSource?.ok && isStateOnlySource(parsedSource.value) ? "state-only" : "renderable";
-  }, [delegatesToSecureHost, isIncomplete, isSecureRuntime, parsedSource]);
+    return parsedValue && isStateOnlySource(parsedValue) ? "state-only" : "renderable";
+  }, [delegatesToSecureHost, isPendingSource, isSecureRuntime, parsedValue]);
   const isStateOnly = sourceKind === "state-only";
   const runtimeInput = useMemo(
-    () => isSecureRuntime || activeRuntimeHost ? String(code) : scopedSlexKitInput(code, parsedSource?.ok ? parsedSource.value : undefined, domain),
-    [code, activeRuntimeHost, domain, isSecureRuntime, parsedSource],
+    () => {
+      if (isSecureRuntime) return String(code);
+      if (activeRuntimeHost) return isPreviewSource && streamingResult?.status === "repaired" ? streamingResult.repairedSource : String(code);
+      return scopedSlexKitInput(String(code), parsedValue, runtimeDomain);
+    },
+    [code, activeRuntimeHost, isPreviewSource, isSecureRuntime, parsedValue, runtimeDomain, streamingResult],
   );
+  const previewNamespace = isPreviewSource ? scopedNamespace(parsedValue, runtimeDomain) : undefined;
   const effectiveRenderMode = useMemo(
     () => resolveRenderMode(meta, renderMode),
     [meta, renderMode],
   );
-  const parseError = parsedSource && !parsedSource.ok ? parsedSource.error : null;
-  const displayError = parseError ?? error;
+  const displayError = isPendingSource ? null : (parseError ?? error);
 
   useEffect(() => {
     setError(null);
 
-    if (isIncomplete) return;
+    if (isPendingSource) return;
     if (parseError) {
       onError?.(parseError, String(code));
       return;
     }
-    if (coordinator && effectiveRenderMode !== "playground") {
+    if (coordinator && !isPreviewSource && effectiveRenderMode !== "playground") {
       const host = hostRef.current;
       if (!host) return;
       coordinator.blocks.set(blockIdRef.current, {
@@ -412,11 +482,15 @@ function renderSlexKitRenderer({
         const container = document.createElement("span");
         try {
           const cleanup = activeRuntimeHost.mountBlock({
-            artifactId: domain,
+            artifactId: runtimeDomain,
+            executionMode: isPreviewSource ? "preview" : "live",
             source: runtimeInput,
             container,
           });
-          return cleanup;
+          return () => {
+            cleanup();
+            if (isPreviewSource && runtimeDomain) activeRuntimeHost.disposeArtifact(runtimeDomain);
+          };
         } catch (err) {
           setError(err);
           onError?.(err, String(code));
@@ -428,6 +502,7 @@ function renderSlexKitRenderer({
         setError(err);
         onError?.(err, String(code));
       }
+      if (isPreviewSource && previewNamespace) return () => disposeNamespace(previewNamespace);
       return;
     }
     if (effectiveRenderMode === "playground") return;
@@ -441,7 +516,8 @@ function renderSlexKitRenderer({
     try {
       cleanup = activeRuntimeHost
         ? activeRuntimeHost.mountBlock({
-            artifactId: domain,
+            artifactId: runtimeDomain,
+            executionMode: isPreviewSource ? "preview" : "live",
             source: runtimeInput,
             container: host,
             theme: undefined,
@@ -452,7 +528,7 @@ function renderSlexKitRenderer({
             hostAdapter,
             frame: secureFrame,
           })
-        : mount(runtimeInput, host);
+        : mount(runtimeInput, host, { executionMode: isPreviewSource ? "preview" : "live" });
       if (!host.querySelector(".slexkit-root")) {
         if (delegatesToSecureHost) return;
         if (isSecureRuntime && host.querySelector("iframe[data-slexkit-secure-frame='true']")) return;
@@ -470,6 +546,10 @@ function renderSlexKitRenderer({
 
     return () => {
       cleanup?.();
+      if (isPreviewSource) {
+        if (activeRuntimeHost && runtimeDomain) activeRuntimeHost.disposeArtifact(runtimeDomain);
+        if (previewNamespace) disposeNamespace(previewNamespace);
+      }
       host.replaceChildren();
     };
   }, [
@@ -479,12 +559,15 @@ function renderSlexKitRenderer({
     domain,
     effectiveRenderMode,
     hostAdapter,
-    isIncomplete,
+    isPendingSource,
+    isPreviewSource,
     isSecureRuntime,
     isStateOnly,
     onError,
     parseError,
+    previewNamespace,
     runtimeInput,
+    runtimeDomain,
     secureFrame,
     securePolicy,
   ]);
@@ -496,8 +579,8 @@ function renderSlexKitRenderer({
   const body = createElement(
     "div",
     { className: "slex-streamdown-body" },
-    isIncomplete ? (placeholder ?? defaultPlaceholder()) : null,
-    !isIncomplete && effectiveRenderMode === "playground"
+    isPendingSource ? (placeholder ?? defaultPlaceholder()) : null,
+    !isPendingSource && effectiveRenderMode === "playground"
       ? createElement(PlaygroundShell, {
           code: String(code),
           domain,

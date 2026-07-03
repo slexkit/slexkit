@@ -3,7 +3,7 @@ title: "Branching: Mode Selector"
 category: "Getting Started"
 status: published
 order: 4
-summary: "Use select to switch between scenarios — demonstrates the UI = f(state) branching rendering pattern."
+summary: "Use select to switch the mode state and render different inputs and results."
 tags: select, branching, conditional
 components: section, select, input, slider, stat, callout, column
 difficulty: Intermediate
@@ -14,9 +14,9 @@ slexkitRenderMode: component
 
 # Branching: Mode Selector
 
-The previous section demonstrated coordination within a single scenario. In reality, you need to switch between multiple scenarios in the same space — that's where **select** comes in for branching.
+The branching demo uses `select` to switch the `mode` state and render different inputs and results.
 
-Core idea: **UI = f(state)**. Switch the `mode` state variable, and the entire view area switches automatically.
+The pattern is `UI = f(state)`: change `mode`, and the view switches with it.
 
 ```slex
 {

@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 项目仪表盘
 
-真实项目需要一览全局——不是单一张计算卡片，而是一个**仪表盘**。用 `section` 做区块分组，`grid` 做多列布局，每个 card 展示一个关注领域。
+该示例用 `section` 做区块分组，`grid` 做多列布局，并用多张 card 展示 Sprint 进度、质量指标和团队健康度。
 
 ```slex
 {
@@ -75,4 +75,4 @@ slexkitRenderMode: component
 - 通过 `$text` 和 `$tone` 在 callout 中做条件提示
 
 
-这个模式适用于：技术 Leader 周报面板、发布质检看板、团队 OKR 追踪、SRE 服务大盘。
+类似结构可用于技术 Leader 周报面板、发布质检看板、团队 OKR 追踪和 SRE 服务大盘。

@@ -2,6 +2,7 @@
 title: "Tabs"
 category: Navigation
 status: ready
+order: 10
 summary: "Tabbed view switcher."
 ---
 # Tabs

@@ -218,6 +218,19 @@ color-scheme: dark;
   box-shadow: var(--shadow-md);
 }
 
+.slex-card[data-variant="tool"] {
+  border-color: color-mix(in oklab, var(--border) 60%, transparent);
+  border-radius: calc(var(--radius) + 1px);
+  background: var(--card);
+  padding: 0.875rem;
+  box-shadow: none;
+}
+
+.slex-card[data-variant="tool"]:hover {
+  border-color: color-mix(in oklab, var(--border) 60%, transparent);
+  box-shadow: none;
+}
+
 .slex-card-title {
   display: inline-flex;
   align-items: center;
@@ -231,12 +244,41 @@ color-scheme: dark;
   line-height: 1.25;
 }
 
+.slex-card[data-variant="tool"] > .slex-card-title {
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
 .slex-card-body {
   display: flex;
   width: 100%;
   min-width: 0;
   flex-direction: column;
   gap: 1rem;
+}
+
+.slex-card[data-variant="tool"] > .slex-card-body {
+  gap: 0.5rem;
+}
+
+.slex-card[data-variant="tool"] .slex-input {
+  min-height: 2.35rem;
+}
+
+.slex-card[data-variant="tool"] .slex-submit-bar {
+  margin-top: 0.625rem;
+  border-top-color: color-mix(in oklab, var(--border) 58%, transparent);
+  padding-top: 0.75rem;
+}
+
+.slex-card[data-variant="tool"] .slex-radio-group-list {
+  gap: 0.625rem;
+}
+
+.slex-card[data-variant="tool"] .slex-button {
+  min-height: 2.125rem;
 }
 
 .slex-column {
@@ -256,6 +298,14 @@ color-scheme: dark;
 
 .slex-row > * {
   min-width: 0;
+}
+
+.slex-row[data-variant="actions"] {
+  justify-content: flex-end;
+  gap: 0.625rem;
+  margin-top: 0.625rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
 }
 
 .slex-row--balanced-tiles {

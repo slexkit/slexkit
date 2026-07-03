@@ -1,6 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { colors } from "@unocss/preset-wind4/colors";
 import { fallbackThemeCss } from "../../uno.config";
+import { createMobileNav } from "../../site/app/mobile-nav.js";
+import { createSiteShell } from "../../site/app/shell.js";
 import { applySiteTheme, initSiteTheme } from "../../site/app/theme.js";
 
 function resetThemeDom() {
@@ -117,6 +119,80 @@ describe("site dark mode", () => {
     expect(shell).toContain('languageTrigger?.addEventListener("click"');
     expect(shell).toContain('languageMenu?.addEventListener("click"');
     expect(shell).toContain("data-home-link");
+  });
+
+  it("localizes global shell controls from the active locale", () => {
+    resetThemeDom();
+    globalThis.HTMLAnchorElement ||= window.HTMLAnchorElement;
+    document.body.innerHTML = `
+      <button id="themeBtn" type="button"></button>
+      <button id="languageTrigger" type="button" aria-expanded="false"></button>
+      <div id="languageMenu" role="listbox"></div>
+      <button id="navMenuBtn" type="button" aria-expanded="false"></button>
+      <button type="button" data-mobile-nav-close></button>
+      <a data-home-link></a>
+      <a data-nav-link data-nav-section="guides"></a>
+      <a data-nav-link data-nav-section="examples"></a>
+      <a data-nav-link data-nav-section="components"></a>
+    `;
+
+    const shell = createSiteShell({
+      defaultLocale: "en-US",
+      docHrefForPath: () => "/docs/guides/intro",
+      currentLocale: () => "zh-CN",
+      isDocsRoute: () => false,
+      isExamplesRoute: () => false,
+      localizedPath: (path: string) => ({ locale: "zh-CN", path }),
+      navHref: (path: string) => `/zh-CN${path === "/" ? "" : path}`,
+      renderRoute: async () => {},
+      routePath: (path: string) => path,
+      switchLocalePath: () => "/",
+      withSiteBase: (path: string) => path,
+    });
+
+    shell.syncLanguageControls();
+
+    expect(document.getElementById("themeBtn")?.getAttribute("aria-label")).toBe("切换主题");
+    expect(document.getElementById("languageTrigger")?.getAttribute("aria-label")).toBe("语言");
+    expect(document.getElementById("languageMenu")?.getAttribute("aria-label")).toBe("语言");
+    expect(document.getElementById("navMenuBtn")?.getAttribute("aria-label")).toBe("打开导航");
+    expect(document.querySelector("[data-mobile-nav-close]")?.getAttribute("aria-label")).toBe("关闭菜单");
+    expect(Array.from(document.querySelectorAll("[data-nav-link]")).map((node) => node.textContent)).toEqual([
+      "简介",
+      "示例",
+      "组件",
+    ]);
+  });
+
+  it("keeps mobile navigation trigger labels aligned with open state", () => {
+    resetThemeDom();
+    document.body.innerHTML = `
+      <button id="navMenuBtn" type="button" aria-expanded="false">
+        <span data-phosphor-icon="list"></span>
+      </button>
+      <div id="mobileNav" data-open="false" aria-hidden="true">
+        <button type="button" data-mobile-nav-close></button>
+        <div data-mobile-nav-panel></div>
+        <div data-mobile-nav-context></div>
+        <a data-mobile-nav-link href="/zh-CN/docs/guides/intro">Intro</a>
+      </div>
+    `;
+    const nav = createMobileNav({
+      currentLocale: () => "zh-CN",
+      hydratePhosphorIcons: () => {},
+    });
+    const trigger = document.getElementById("navMenuBtn") as HTMLButtonElement;
+    const closeButton = document.querySelector("[data-mobile-nav-close]") as HTMLButtonElement;
+
+    trigger.click();
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+    expect(trigger.getAttribute("aria-label")).toBe("关闭菜单");
+    expect(closeButton.getAttribute("aria-label")).toBe("关闭菜单");
+
+    nav.closeMobileNav();
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    expect(trigger.getAttribute("aria-label")).toBe("打开导航");
+    expect(closeButton.title).toBe("关闭菜单");
   });
 
   it("uses Simple Icons for npm and GitHub package links", async () => {

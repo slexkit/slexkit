@@ -13,7 +13,7 @@ SlexKit core runtime 的 entry points、namespace store、component state、life
 
 Slex source 语法见 [protocol specification](/docs/reference/spec)。Secure mode 隔离模型见 [security runtime contract](/docs/reference/security)。
 
-## Entry points
+## 入口函数
 
 ### `mount(input, container, options)`
 
@@ -77,22 +77,43 @@ function register(
 function configureComponentScope(options: { flush?: () => void }): void;
 ```
 
-## Namespace store
+## 校验与一致性
+
+### `validateSlexSource(source, options)`
+
+解析后验证 Slex source。结果包含 `schemaVersion`、`protocolVersion`、`logicProfileVersion`、usage lists 和 warning codes。语法失败时返回 diagnostic。
+
+```ts
+function validateSlexSource(
+  source: string,
+  options?: { mode?: "trusted" | "secure" }
+): ValidationResult;
+```
+
+### `runSlexConformance(options)`
+
+用随包发布的 validator 运行内置标准 fixtures。传入 `fixtureId` 可以只运行单个 fixture。
+
+```ts
+function runSlexConformance(options?: { fixtureId?: string }): ConformanceReport;
+```
+
+## 命名空间存储
 
 `namespace` 是状态域。多个 mount 使用同一 namespace 时共享 store：
 
 - 新 `g` 会 deep merge 到旧 `g`：函数覆盖，对象递归合并，数组替换，scalar 覆盖。
-- 新 `layout` 替换当前 layout，不做 deep merge。
+- 新的 `layout` 替换旧 layout，不做 deep merge。
 - Component instance state 在 namespace 内持久化。
 - Expression caches 按 namespace 管理。
 
 这允许文档、消息域或工具面板增量更新 UI，同时保留状态。
 
-## Component instance state
+## 组件实例状态
 
 命名组件可以暴露实例状态，具体可写 prop 由组件注册时的 state mode 决定：
 
-| Mode | Writable prop | Behavior |
+| 模式 | 可写 prop | 行为 |
 |------|---------------|----------|
 | `value` | `value` | 可读写 |
 | `checked` | `checked`, `value` | 两者同步，可读写 |
@@ -111,7 +132,7 @@ function configureComponentScope(options: { flush?: () => void }): void;
 
 重复使用同名组件会共享 namespace-level state。`$for` 中同名组件也共享一个 state instance。
 
-## Lifecycle hooks
+## 生命周期 hooks
 
 Runtime 会按约定调用 `g` 上的 hooks：
 
@@ -121,9 +142,9 @@ g.onUnmount_<name>()    -before component is removed from DOM
 g.onUpdate_<name>()     -after $for item index or item reference changes
 ```
 
-这些 hooks 适用于普通组件、`$if` branch 和 `$for` slot。root cleanup 与 `disposeNamespace()` 都会触发 `onUnmount`。
+这些 hooks 会在普通组件、`$if` branch 和 `$for` slot 中触发。root cleanup 与 `disposeNamespace()` 都会触发 `onUnmount`。
 
-## Component disposer
+## 组件清理器
 
 Framework 组件、event listeners、subscriptions 和外部资源应把 cleanup 绑定到组件 DOM 元素：
 
@@ -140,18 +161,18 @@ register("custom", (props, name, ctx) => {
 
 元素卸载时 runtime 会调用 disposer。官方 Svelte adapter 用这个机制销毁 Svelte component instance。
 
-## Expression evaluation context
+## 表达式求值上下文
 
 `$` read-pipes 和 `on*` write-pipes 可访问：
 
-| Variable | Type | Availability |
+| 变量 | 类型 | 可用范围 |
 |----------|------|--------------|
-| `g` | reactive state proxy | always |
+| `g` | 响应式状态代理 | 所有表达式 |
 | `api` | host-injected capabilities | `mount()` 传入 `api` 时 |
-| `$event` | event data | `on*` handlers |
-| `$item` | current array item | `$for` context |
-| `$index` | current array index | `$for` context |
-| `$key` | current item key | `$for` context |
-| named component state | e.g. `threshold.value` | named components |
+| `$event` | 事件数据 | `on*` 处理器 |
+| `$item` | 当前数组项 | `$for` 上下文 |
+| `$index` | 当前数组索引 | `$for` 上下文 |
+| `$key` | 当前项 key | `$for` 上下文 |
+| 命名组件状态 | 例如 `threshold.value` | 命名组件 |
 
 Trusted mode 使用 `new Function()` 进行表达式求值。求值错误会被捕获，并以包含 namespace 和 path 的 warning 输出；运行时使用上一次有效值作为 fallback。

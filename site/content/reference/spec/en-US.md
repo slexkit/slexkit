@@ -9,7 +9,7 @@ slexkitRenderMode: component
 
 # Slex Specification v0.1
 
-Slex expression envelope, component keys, props, directives, lifecycle, and runtime API contract — SlexKit v0's entire public protocol in one place. Source of truth for implementors, test authors, and host adapter authors.
+Slex expression envelope, component keys, props, directives, lifecycle, and runtime API contract — SlexKit v0's entire public protocol in one place. Canonical reference for implementors, test authors, and host adapter authors.
 
 **v0/beta.** The current implementation may evolve, but the protocol version (v0.1) is independent of the SlexKit package version. The same protocol may remain stable across multiple package releases.
 
@@ -228,7 +228,11 @@ Component disposal is triggered by normal unmount, `$if` toggle-off, `$for` item
 | `setSlexKitRuntimeUrl`              | `(url) => void`                             | Set default sandbox runtime URL                                      |
 | `diagnoseSlexKitSource`             | `(source, error) => Diagnostic`             | Locate syntax error in source                                        |
 | `parseSlexSource`                   | `(source) => ParseResult`                   | Parse Slex source to object                                          |
+| `validateSlexSource`                | `(source, options?) => ValidationResult`    | Parse-first validation with versions, usage, and stable warning codes |
+| `runSlexConformance`                | `(options?) => ConformanceReport`           | Run bundled standard conformance fixtures                            |
 | `formatSlexKitDiagnostic`           | `(diagnostic) => string`                    | Format diagnostic to readable string                                 |
+
+For full runtime behavior, see [Runtime Model](/docs/reference/runtime).
 
 ## 11. Error types
 
@@ -278,7 +282,7 @@ type ToolResult =
   | { toolCallId?: string; toolName: string; status: "ignored"; value: null };
 ```
 
-**Built-in templates:** `confirm-action`, `choose-options`, `option-list`, `fill-form`. Templates compile to standard Slex expressions using `card:tool` and `submit:actions` components. The `submit:actions` component serves as the completion boundary — it is only used by tool templates, not general display fences.
+**Built-in templates:** `confirm-action`, `choose-options`, `option-list`, `fill-form`. Templates compile to standard Slex expressions using `card:tool` and `submit:actions` components. The `submit:actions` component submits the tool result; it is only used by tool templates, not general display fences.
 
 For full template reference, arguments, type definitions, and custom template development, see [ToolHost documentation](/docs/reference/toolhost).
 

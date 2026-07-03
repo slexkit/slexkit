@@ -144,28 +144,191 @@ describe("streamdown renderer package", () => {
     await view.unmount();
   });
 
-  it("does not mount while the code fence is incomplete", async () => {
+  it("renders parseable trusted source before the code fence closes", async () => {
     const view = await render(
       React.createElement(SlexKitRenderer, {
-        code: renderedScript("streamdown_incomplete", "Hidden"),
+        code: renderedScript("streamdown_incomplete", "Visible while streaming"),
         isIncomplete: true,
         language: "slex",
       }),
     );
 
-    expect(view.container.querySelector(".slexkit-root")).toBeNull();
-    expect(view.container.textContent).toContain("Rendering SlexKit");
+    expect(view.container.querySelector(".slexkit-root")).toBeTruthy();
+    expect(view.container.textContent).toContain("Visible while streaming");
 
     await view.rerender(
       React.createElement(SlexKitRenderer, {
-        code: renderedScript("streamdown_incomplete", "Visible"),
+        code: renderedScript("streamdown_incomplete", "Visible after close"),
         isIncomplete: false,
         language: "slex",
       }),
     );
 
     expect(view.container.querySelector(".slexkit-root")).toBeTruthy();
-    expect(view.container.textContent).toContain("Visible");
+    expect(view.container.textContent).toContain("Visible after close");
+
+    await view.unmount();
+  });
+
+  it("can opt out of streaming render while the code fence is incomplete", async () => {
+    const view = await render(
+      React.createElement(SlexKitRenderer, {
+        code: renderedScript("streamdown_streaming_disabled", "Hidden while incomplete"),
+        isIncomplete: true,
+        language: "slex",
+        streaming: false,
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")).toBeNull();
+    expect(view.container.textContent).toContain("Rendering SlexKit");
+    expect(view.container.textContent).not.toContain("Hidden while incomplete");
+
+    await view.rerender(
+      React.createElement(SlexKitRenderer, {
+        code: renderedScript("streamdown_streaming_disabled", "Visible after close"),
+        isIncomplete: false,
+        language: "slex",
+        streaming: false,
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")).toBeTruthy();
+    expect(view.container.textContent).toContain("Visible after close");
+
+    await view.unmount();
+  });
+
+  it("renders repaired trusted source in preview mode while the code fence is incomplete", async () => {
+    const onError = mock();
+    const view = await render(
+      React.createElement(SlexKitRenderer, {
+        code: `{
+  namespace: "streamdown_partial",
+  layout: {
+    "text:message": { text: "still streaming" }`,
+        isIncomplete: true,
+        language: "slex",
+        onError,
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")).toBeTruthy();
+    expect(view.container.querySelector(".slexkit-root")?.getAttribute("data-execution-mode")).toBe("preview");
+    expect(view.container.textContent).toContain("still streaming");
+    expect(onError).not.toHaveBeenCalled();
+
+    await view.rerender(
+      React.createElement(SlexKitRenderer, {
+        code: renderedScript("streamdown_partial", "Now live"),
+        isIncomplete: false,
+        language: "slex",
+        onError,
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")).toBeTruthy();
+    expect(view.container.querySelector(".slexkit-root")?.getAttribute("data-execution-mode")).toBe("live");
+    expect(view.container.textContent).toContain("Now live");
+    expect(onError).not.toHaveBeenCalled();
+
+    await view.unmount();
+  });
+
+  it("freezes write handlers during repaired preview rendering", async () => {
+    const view = await render(
+      React.createElement(SlexKitRenderer, {
+        code: `{
+  namespace: "streamdown_preview_freeze",
+  g: { count: 0 },
+  layout: {
+    "button:add": { label: "Add", onclick: "g.count++" },
+    "text:value": { $text: "'count:' + String(g.count)" }`,
+        isIncomplete: true,
+        language: "slex",
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")?.getAttribute("data-execution-mode")).toBe("preview");
+    expect(view.container.textContent).toContain("count:0");
+    (view.container.querySelector(".slex-button") as HTMLButtonElement).click();
+    await flushReact();
+    expect(view.container.textContent).toContain("count:0");
+
+    await view.rerender(
+      React.createElement(SlexKitRenderer, {
+        code: `{
+  namespace: "streamdown_preview_freeze",
+  g: { count: 0 },
+  layout: {
+    "button:add": { label: "Add", onclick: "g.count++" },
+    "text:value": { $text: "'count:' + String(g.count)" }
+  }
+}`,
+        isIncomplete: false,
+        language: "slex",
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")?.getAttribute("data-execution-mode")).toBe("live");
+    (view.container.querySelector(".slex-button") as HTMLButtonElement).click();
+    await flushReact();
+    expect(view.container.textContent).toContain("count:1");
+
+    await view.unmount();
+  });
+
+  it("does not repair source when streaming mode is stable", async () => {
+    const view = await render(
+      React.createElement(SlexKitRenderer, {
+        code: `{
+  namespace: "streamdown_stable",
+  layout: {
+    "text:message": { text: "stable waits" }`,
+        isIncomplete: true,
+        language: "slex",
+        streaming: "stable",
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")).toBeNull();
+    expect(view.container.textContent).toContain("Rendering SlexKit");
+    expect(view.container.textContent).not.toContain("stable waits");
+
+    await view.unmount();
+  });
+
+  it("keeps non-deterministic partial trusted source pending without reporting a syntax error", async () => {
+    const onError = mock();
+    const view = await render(
+      React.createElement(SlexKitRenderer, {
+        code: `{
+  namespace: "streamdown_pending",
+  layout: {
+    "text:message": { text:`,
+        isIncomplete: true,
+        language: "slex",
+        onError,
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")).toBeNull();
+    expect(view.container.querySelector("[role='alert']")).toBeNull();
+    expect(view.container.textContent).toContain("Rendering SlexKit");
+    expect(onError).not.toHaveBeenCalled();
+
+    await view.rerender(
+      React.createElement(SlexKitRenderer, {
+        code: renderedScript("streamdown_partial", "Now renderable"),
+        isIncomplete: true,
+        language: "slex",
+        onError,
+      }),
+    );
+
+    expect(view.container.querySelector(".slexkit-root")).toBeTruthy();
+    expect(view.container.textContent).toContain("Now renderable");
+    expect(onError).not.toHaveBeenCalled();
 
     await view.unmount();
   });
@@ -221,6 +384,30 @@ describe("streamdown renderer package", () => {
     expect(view.container.querySelector(".slex-streamdown-error-excerpt")?.textContent).toContain("foo:: 1");
     expect(view.container.textContent).toContain("Copy source");
     expect(view.container.textContent).toContain("Source");
+
+    await view.unmount();
+  });
+
+  it("reports complete fences with missing values instead of leaving them pending", async () => {
+    const onError = mock();
+    const view = await render(
+      React.createElement(SlexKitRenderer, {
+        code: `{
+  namespace: "broken_value",
+  layout: {
+    "text:message": { text:
+  }
+}`,
+        isIncomplete: false,
+        language: "slex",
+        onError,
+      }),
+    );
+
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(view.container.querySelector("[role='alert']")).toBeTruthy();
+    expect(view.container.textContent).toContain("Unexpected");
+    expect(view.container.textContent).not.toContain("Rendering SlexKit");
 
     await view.unmount();
   });
@@ -538,5 +725,6 @@ ${renderedScript("streamdown_open_web", "Open me")}
 
     expect(streamdownPackage.version).toBe(rootPackage.version);
     expect(source).toContain(`const STREAMDOWN_RENDERER_VERSION = "${rootPackage.version}"`);
+    expect(source).toContain("if (isPreviewSource && previewNamespace) return () => disposeNamespace(previewNamespace);");
   });
 });

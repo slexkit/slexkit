@@ -1,12 +1,13 @@
 ---
 title: "Submit"
-category: Action
+category: Tooling
 status: ready
-summary: "ToolHost submission boundary that returns current selection or form values to the host."
+order: 20
+summary: "ToolHost-only submit action that returns current selection or form values to the host."
 ---
 # Submit
 
-ToolHost submission boundary component providing submit and ignore actions.
+`submit` is the ToolHost template action that returns the state fields listed in `returnKeys` to the host. It is not a general button component; use `button` for ordinary interactions.
 
 <!-- slex:spec-example:start component="submit" id="basic" sourceHash="b5d89128" -->
 ```slex
@@ -34,7 +35,7 @@ ToolHost submission boundary component providing submit and ignore actions.
 
 ## Usage Notes
 
-- Use for AI toolchain confirmation forms, parameter panels, and selection confirmation flows.
+- Use for ToolHost confirmation forms, parameter panels, and selection confirmation flows.
 - Not suitable for ordinary action buttons (use `button`).
 - Related components: `button` for local action triggers.
 - Combine with input components such as `input` and `select` to read user choices.

@@ -3,7 +3,7 @@ title: AI / Agents
 category: Guides
 status: ready
 order: 50
-summary: "SlexKit 面向 Agent 的 LLM 文档、MCP、skills 与创作规则。"
+summary: "供 agents 使用的 LLM 文档、MCP、skills 与创作规则。"
 slexkitRenderMode: component
 ---
 
@@ -27,7 +27,11 @@ SlexKit 遵循 assistant-ui 的信息架构：提供清晰的索引、完整上�
       "link:toolhost": { href: "/llms-toolhost.txt", text: "/llms-toolhost.txt - 结构化输入", icon: "cursor-click" },
       "link:authoring": { href: "/llms-authoring.txt", text: "/llms-authoring.txt - slex fence 写作规则", icon: "pencil-simple" },
       "link:manifest": { href: "/slexkit-ai-manifest.json", text: "/slexkit-ai-manifest.json - 机器可读索引", icon: "brackets-curly" },
-      "text:note": { text: "Raw docs 使用 .md 路由，例如 /docs/components/card.md；不要增加 .mdx 路由。" }
+      "link:standard": { href: "/standard/slex-standard-manifest.json", text: "/standard/slex-standard-manifest.json - 标准产物", icon: "brackets-curly" },
+      "link:catalog": { href: "/standard/slex-component-catalog.json", text: "/standard/slex-component-catalog.json - 组件目录", icon: "puzzle-piece" },
+      "link:logic": { href: "/standard/slex-logic-profile.json", text: "/standard/slex-logic-profile.json - 逻辑规则", icon: "function" },
+      "link:conformance": { href: "/standard/slex-conformance.json", text: "/standard/slex-conformance.json - 一致性 fixtures", icon: "check-circle" },
+      "text:note": { text: "原始文档使用 .md 路由，例如 /docs/components/card.md；不要增加 .mdx 路由。" }
     }
   }
 }
@@ -38,13 +42,14 @@ SlexKit 遵循 assistant-ui 的信息架构：提供清晰的索引、完整上�
 1. 先读 [`/llms.txt`](/llms.txt)，拿到分组索引。
 2. 需要全量上下文时读 [`/llms-full.txt`](/llms-full.txt)。
 3. 写组件时读 [`/llms-components.txt`](/llms-components.txt) 和对应 raw `.md` 页面。
-4. 需要 `std.*` 标准库或 policy-gated `api.*` 能力时读 [`/llms-capabilities.txt`](/llms-capabilities.txt)。
+4. 需要 `std.*` 标准库或受 policy 控制的 `api.*` 能力时读 [`/llms-capabilities.txt`](/llms-capabilities.txt)。
 5. 集成 host 或安全运行时时读 [`/llms-runtime.txt`](/llms-runtime.txt)。
 6. 只有需要用户提交结构化结果时读 [`/llms-toolhost.txt`](/llms-toolhost.txt)。
+7. 需要机器可读的创作或校验上下文时读 [`/standard/slex-standard-manifest.json`](/standard/slex-standard-manifest.json)、[`/standard/slex-logic-profile.json`](/standard/slex-logic-profile.json) 和 [`/standard/slex-component-catalog.json`](/standard/slex-component-catalog.json)。
 
 SlexKit 原始文档为普通 `.md` 文件，包含显式 `slex` fence。无 `.mdx` 路由，`slex` fence 即交互层。
 
-## Context Files
+## 上下文文件
 
 可以把这段加入 `AGENTS.md`、`CLAUDE.md` 或 `.cursorrules`：
 
@@ -56,10 +61,12 @@ This project uses SlexKit for Markdown-native interactive AI output.
 Documentation: https://slexkit.dev/llms-full.txt
 
 Key patterns:
-- Display UI uses explicit `slex` fenced blocks plus Markdown fallback.
-- Slex source uses `{ slex, namespace, g, layout }`; 当前公开协议使用 `slex: "0.1"`。
+- 展示型 UI 使用 explicit `slex` fenced blocks，并保留 Markdown fallback.
+- Slex source uses `{ slex, namespace, g, layout }`; 公开协议使用 `slex: "0.1"`。
 - Use `std.*` for common calculations, formatting, units, and small statistics.
-- ToolHost is only for structured user input flows.
+- Use `/standard/slex-logic-profile.json` and `/standard/slex-component-catalog.json` for machine-readable rules before generating Slex.
+- Run `slex validate --standard` to verify the current package against bundled standard fixtures.
+- ToolHost 只用于需要结构化返回值的交互。
 - Untrusted or agent-generated source should use the secure runtime.
 - Raw docs are `.md` files with `slex` fences, not `.mdx`.
 ````
@@ -68,7 +75,7 @@ Key patterns:
 
 仓库 `skills/` 目录提供以下任务入口：
 
-- `/slexkit`：总览、架构边界和定位
+- `/slexkit`：总览、架构和定位
 - `/author`：编写展示型 `slex` fence，保留 Markdown fallback
 - `/host`：集成 Markdown、Streamdown、Obsidian 或自定义 host
 - `/toolhost`：构建确认、选择和结构化表单
@@ -96,7 +103,7 @@ Key patterns:
       "card:examples": {
         title: "slexkitExamples",
         icon: "code",
-        "text:body": { text: "浏览组件示例、ToolHost templates 和 host integration 片段。" }
+        "text:body": { text: "浏览组件示例、ToolHost 模板和宿主接入片段。" }
       },
       "card:validate": {
         title: "slexkitValidate",
@@ -175,6 +182,6 @@ npx add-mcp @slexkit/mcp -a zed
 ## 排查
 
 - MCP server 启动失败：确认 `npx` 和 MCP 配置 JSON 正确，然后重启 IDE。
-- Tool call 失败：重启 MCP server，并确认 `tools/list` 只暴露 `slexkitDocs`、`slexkitExamples`、`slexkitValidate`。
+- 工具调用失败：重启 MCP server，并确认 `tools/list` 只暴露 `slexkitDocs`、`slexkitExamples`、`slexkitValidate`。
 - 文档过期：运行 `bun run ai:docs` 或 `bun run build:core`。
 - Raw source 路由不对：使用包含 `slex` fence 的 `.md` 路由，不要请求 `.mdx`。

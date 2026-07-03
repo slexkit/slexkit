@@ -2,6 +2,7 @@
 title: "Switch"
 category: Input
 status: ready
+order: 40
 summary: "Boolean toggle input for instant settings."
 ---
 # Switch

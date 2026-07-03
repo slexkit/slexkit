@@ -9,6 +9,7 @@ describe("component render error boundary", () => {
 
     document.body.innerHTML = '<div id="app"></div>';
     const container = document.getElementById("app")!;
+    const warnSpy = spyOn(console, "warn").mockImplementation(() => {});
 
     mount({
       namespace: "err_boundary_" + Date.now(),
@@ -25,6 +26,8 @@ describe("component render error boundary", () => {
 
     const text = container.querySelector(".slex-text");
     expect(text?.textContent).toBe("survived");
+    expect(warnSpy.mock.calls.some((call) => String(call[0]).includes("Render error"))).toBe(true);
+    warnSpy.mockRestore();
   });
 
   it("renders a fallback for a throwing component inside $if", () => {
@@ -32,6 +35,7 @@ describe("component render error boundary", () => {
 
     document.body.innerHTML = '<div id="app"></div>';
     const container = document.getElementById("app")!;
+    const warnSpy = spyOn(console, "warn").mockImplementation(() => {});
 
     mount({
       namespace: "err_if_" + Date.now(),
@@ -44,6 +48,8 @@ describe("component render error boundary", () => {
 
     expect(container.querySelectorAll(".slex-render-error")).toHaveLength(1);
     expect(container.querySelector(".slex-text")?.textContent).toBe("alive");
+    expect(warnSpy.mock.calls.some((call) => String(call[0]).includes("Render error"))).toBe(true);
+    warnSpy.mockRestore();
   });
 });
 
@@ -60,6 +66,7 @@ describe("$for item error isolation", () => {
 
     document.body.innerHTML = '<div id="app"></div>';
     const container = document.getElementById("app")!;
+    const warnSpy = spyOn(console, "warn").mockImplementation(() => {});
 
     mount({
       namespace: "err_for_" + Date.now(),
@@ -80,6 +87,8 @@ describe("$for item error isolation", () => {
     expect(items).toHaveLength(2);
     expect(items[0].textContent).toBe("ok1");
     expect(items[1].textContent).toBe("ok2");
+    expect(warnSpy.mock.calls.some((call) => String(call[0]).includes("Render error"))).toBe(true);
+    warnSpy.mockRestore();
   });
 });
 

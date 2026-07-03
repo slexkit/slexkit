@@ -3,7 +3,7 @@ title: "分支与切换：模式选择器"
 category: "入门教程"
 status: published
 order: 4
-summary: "用 select 实现场景切换，展示 UI = f(state) 的分支渲染模式。"
+summary: "用 select 切换 mode 状态，并根据当前模式渲染不同输入和结果。"
 tags: select, branching, conditional
 components: section, select, input, slider, stat, callout, column
 difficulty: 进阶
@@ -14,9 +14,9 @@ slexkitRenderMode: component
 
 # 分支与切换：模式选择器
 
-上一节是一个场景内的协同。现实中有多个场景需要在同一空间内切换——这时候用 **select** 实现分支。
+该示例用 `select` 切换 `mode` 状态，并根据当前模式渲染不同输入和结果。
 
-核心思想：**UI = f(state)**。切换 `mode` 状态变量，整个视图区域自动切换。
+模式切换遵循 `UI = f(state)`：更新 `mode` 后，视图区域随状态切换。
 
 ```slex
 {

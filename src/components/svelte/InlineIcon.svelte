@@ -53,11 +53,15 @@
     if (getIcon(nextName, nextState) || loadedIcons[key]) return;
 
     const request = ++iconRequest;
+    let active = true;
     void loadIcon(nextName, nextState).then((svg) => {
-      if (request !== iconRequest || !svg) return;
+      if (!active || request !== iconRequest || !svg) return;
       loadedIcons = { ...loadedIcons, [key]: svg };
       onIconLoad?.();
     });
+    return () => {
+      active = false;
+    };
   });
 </script>
 

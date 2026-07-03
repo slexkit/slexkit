@@ -18,13 +18,13 @@ summary: "指标小卡片，展示 label、value、unit。"
     "grid:stats": {
       "columns": 2,
       "stat:requests": {
-        "label": "Requests",
+        "label": "请求数",
         "icon": "activity",
         "value": "1.2k",
         "unit": "/min"
       },
       "stat:success": {
-        "label": "Success",
+        "label": "成功",
         "icon": "check-circle",
         "value": "98.4",
         "unit": "%",
@@ -52,27 +52,27 @@ summary: "指标小卡片，展示 label、value、unit。"
   layout: {
     "row:tones": {
       "stat:info": {
-        label: "Info",
+        label: "信息",
         value: "42",
         tone: "info"
       },
       "stat:success": {
-        label: "Success",
+        label: "成功",
         value: "98%",
         tone: "success"
       },
       "stat:warning": {
-        label: "Warning",
+        label: "警告",
         value: "73",
         tone: "warning"
       },
       "stat:danger": {
-        label: "Danger",
+        label: "危险",
         value: "5",
         tone: "danger"
       },
       "stat:muted": {
-        label: "Muted",
+        label: "弱化",
         value: "0",
         tone: "muted"
       }

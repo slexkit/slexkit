@@ -13,6 +13,7 @@ export type SlexKitMarkdownRuntimeOptions = {
   theme?: ThemeMode;
   dir?: MountOptions["dir"];
   labels?: MountOptions["labels"];
+  executionMode?: MountOptions["executionMode"];
 };
 
 export type SlexKitMarkdownBlock = {
@@ -24,6 +25,7 @@ export type SlexKitMarkdownBlock = {
   theme?: ThemeMode;
   dir?: MountOptions["dir"];
   labels?: MountOptions["labels"];
+  executionMode?: MountOptions["executionMode"];
 };
 
 export type SlexKitMarkdownRuntimeHost = {
@@ -364,6 +366,7 @@ export function createSlexKitMarkdownRuntimeHost(
       const cleanup = mount(trustedSource, block.container, {
         theme,
         dir: block.dir ?? options.dir,
+        executionMode: block.executionMode ?? options.executionMode ?? "live",
         labels: block.labels ?? options.labels,
       });
 

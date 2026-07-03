@@ -20,11 +20,11 @@ summary: "同一上下文内切换视图。"
       "tabs": [
         {
           "value": "overview",
-          "label": "Overview"
+          "label": "概览"
         },
         {
           "value": "settings",
-          "label": "Settings"
+          "label": "设置"
         }
       ]
     }

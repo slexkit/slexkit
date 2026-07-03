@@ -49,6 +49,24 @@ const PREVIEW_INTERACTIVE_SELECTOR = [
   "[role='textbox']",
 ].join(",");
 
+const TRANSIENT_POINTER_INTERACTIVE_SELECTOR = [
+  "a[href]",
+  "button",
+  "input[type='button']",
+  "input[type='checkbox']",
+  "input[type='image']",
+  "input[type='radio']",
+  "input[type='range']",
+  "input[type='reset']",
+  "input[type='submit']",
+  "[role='button']",
+  "[role='checkbox']",
+  "[role='radio']",
+  "[role='slider']",
+  "[role='switch']",
+  "[role='tab']",
+].join(",");
+
 const editorArtifactIds = new WeakMap<Editor, string>();
 let nextArtifactId = 0;
 const sourceOpenStates = new Map<string, boolean>();
@@ -167,11 +185,23 @@ function stopProseMirrorEvents(element: HTMLElement, events: string[]): void {
   for (const eventName of events) element.addEventListener(eventName, stopPropagation);
 }
 
-function focusPreviewInteractiveTarget(event: Event): void {
+function focusPreviewInteractiveTarget(event: Event): HTMLElement | null {
   const target = event.target;
   const targetElement = target instanceof Element ? target : target instanceof Node ? target.parentElement : null;
   const interactive = targetElement?.closest(PREVIEW_INTERACTIVE_SELECTOR);
-  if (interactive instanceof HTMLElement) interactive.focus({ preventScroll: true });
+  if (!(interactive instanceof HTMLElement)) return null;
+
+  interactive.focus({ preventScroll: true });
+  return interactive;
+}
+
+function shouldRestorePreviewFocusAfterPointer(element: HTMLElement): boolean {
+  return !!element.closest(TRANSIENT_POINTER_INTERACTIVE_SELECTOR);
+}
+
+function pointerIdFromEvent(event: Event | undefined): number | undefined {
+  const pointerEvent = event as (Event & { pointerId?: unknown }) | undefined;
+  return typeof pointerEvent?.pointerId === "number" ? pointerEvent.pointerId : undefined;
 }
 
 function markPreviewInteractive(preview: HTMLElement, force = false): void {
@@ -245,7 +275,84 @@ class SlexKitCodeBlockNodeView implements NodeView {
   private readonly preview: HTMLElement;
   private readonly runtime: TiptapArtifactRuntime;
   private readonly interactiveObserver: MutationObserver | undefined;
+  private pendingFocusRestore:
+    | { target: HTMLElement; restoreEditor: boolean; pointerId: number | null }
+    | undefined;
+  private pointerFocusContext: { restoreEditor: boolean; expiresAt: number } | undefined;
   private renderToken = 0;
+
+  private readonly focusPreviewPointerTarget = (event: PointerEvent): void => {
+    const restoreEditor = this.editor.isFocused;
+    this.pointerFocusContext = { restoreEditor, expiresAt: Date.now() + 500 };
+    const interactive = focusPreviewInteractiveTarget(event);
+    if (!interactive || !shouldRestorePreviewFocusAfterPointer(interactive)) return;
+
+    this.pendingFocusRestore = {
+      target: interactive,
+      restoreEditor,
+      pointerId: typeof event.pointerId === "number" ? event.pointerId : null,
+    };
+    this.addFocusRestoreListeners();
+  };
+
+  private readonly clearPointerFocusedPreviewTarget = (event: Event): void => {
+    const context = this.pointerFocusContext;
+    if (!context || Date.now() > context.expiresAt) return;
+
+    const target = event.target;
+    const targetElement = target instanceof Element ? target : target instanceof Node ? target.parentElement : null;
+    const interactive = targetElement?.closest(TRANSIENT_POINTER_INTERACTIVE_SELECTOR);
+    if (!(interactive instanceof HTMLElement)) return;
+    if (this.pendingFocusRestore?.target === interactive) return;
+
+    this.queuePreviewFocusCleanup({
+      target: interactive,
+      restoreEditor: context.restoreEditor,
+    });
+  };
+
+  private readonly finishPreviewPointerFocus = (event?: Event): void => {
+    const pending = this.pendingFocusRestore;
+    if (!pending) return;
+    const pointerId = pointerIdFromEvent(event);
+    if (
+      pointerId !== undefined
+      && pending.pointerId !== null
+      && pointerId !== pending.pointerId
+    ) {
+      return;
+    }
+
+    this.pendingFocusRestore = undefined;
+    this.removeFocusRestoreListeners();
+
+    this.queuePreviewFocusCleanup(pending);
+  };
+
+  private queuePreviewFocusCleanup(pending: { target: HTMLElement; restoreEditor: boolean }): void {
+    const doc = this.preview.ownerDocument || document;
+    const win = doc.defaultView;
+    const cleanupFocus = () => {
+      if (!this.dom.isConnected) return;
+      const active = doc.activeElement;
+      const clearedTarget = active === pending.target;
+      if (clearedTarget) pending.target.blur();
+      const nextActive = doc.activeElement;
+      const canRestoreEditor = pending.restoreEditor
+        && !this.editor.isDestroyed
+        && (clearedTarget || nextActive === doc.body || nextActive === doc.documentElement);
+      if (canRestoreEditor) {
+        this.editor.commands.focus(undefined, { scrollIntoView: false });
+      }
+    };
+    win?.setTimeout(cleanupFocus, 0);
+    win?.requestAnimationFrame(cleanupFocus);
+    win?.setTimeout(cleanupFocus, 50);
+  }
+
+  private readonly cancelPreviewPointerFocus = (event?: Event): void => {
+    this.finishPreviewPointerFocus(event);
+  };
 
   constructor(private node: ProseMirrorNode, props: NodeViewRendererProps, options: SlexKitTiptapNodeViewOptions) {
     this.options = options;
@@ -264,7 +371,8 @@ class SlexKitCodeBlockNodeView implements NodeView {
 
     this.preview = createElement(doc, "div", "slex-tiptap-preview");
     this.preview.setAttribute("contenteditable", "false");
-    this.preview.addEventListener("pointerdown", focusPreviewInteractiveTarget, { capture: true });
+    this.preview.addEventListener("pointerdown", this.focusPreviewPointerTarget, { capture: true });
+    this.preview.addEventListener("focusin", this.clearPointerFocusedPreviewTarget, { capture: true });
     this.preview.addEventListener("mousedown", focusPreviewInteractiveTarget, { capture: true });
     this.preview.addEventListener("click", focusPreviewInteractiveTarget, { capture: true });
     if (typeof MutationObserver !== "undefined") {
@@ -335,6 +443,8 @@ class SlexKitCodeBlockNodeView implements NodeView {
 
   destroy(): void {
     this.interactiveObserver?.disconnect();
+    this.removeFocusRestoreListeners();
+    this.preview.removeEventListener("focusin", this.clearPointerFocusedPreviewTarget, { capture: true });
     this.preview.replaceChildren();
     unregisterArtifactRuntime(this.editor, this.runtime, this);
   }
@@ -374,6 +484,20 @@ class SlexKitCodeBlockNodeView implements NodeView {
       if (token !== this.renderToken) return;
       scheduleArtifactRender(this.runtime);
     });
+  }
+
+  private addFocusRestoreListeners(): void {
+    const doc = this.preview.ownerDocument || document;
+    doc.addEventListener("pointerup", this.finishPreviewPointerFocus, { capture: true });
+    doc.addEventListener("pointercancel", this.cancelPreviewPointerFocus, { capture: true });
+    doc.defaultView?.addEventListener("blur", this.cancelPreviewPointerFocus);
+  }
+
+  private removeFocusRestoreListeners(): void {
+    const doc = this.preview.ownerDocument || document;
+    doc.removeEventListener("pointerup", this.finishPreviewPointerFocus, { capture: true });
+    doc.removeEventListener("pointercancel", this.cancelPreviewPointerFocus, { capture: true });
+    doc.defaultView?.removeEventListener("blur", this.cancelPreviewPointerFocus);
   }
 
   renderWithRuntime(runtimeHost: SlexKitMarkdownRuntimeHost): void {

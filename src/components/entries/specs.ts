@@ -21,6 +21,7 @@ import { sectionSpec } from "./section.spec";
 import { selectSpec } from "./select.spec";
 import { sliderSpec } from "./slider.spec";
 import { statSpec } from "./stat.spec";
+import { stepSpec } from "./step.spec";
 import { submitSpec } from "./submit.spec";
 import { switchSpec } from "./switch.spec";
 import { tableSpec } from "./table.spec";
@@ -52,6 +53,7 @@ export const componentSpecs = [
   selectSpec,
   sliderSpec,
   statSpec,
+  stepSpec,
   submitSpec,
   switchSpec,
   tableSpec,

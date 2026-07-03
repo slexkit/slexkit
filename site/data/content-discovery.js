@@ -32,6 +32,7 @@ const allowedExampleSlugs = new Set([
   "project-cost-estimator",
   "tech-selection-evaluator",
   // 宿主集成
+  "assistant-ui-host",
   "streamdown-host",
   "tiptap-host",
 ]);

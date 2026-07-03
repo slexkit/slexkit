@@ -5,7 +5,6 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
   import Sidebar from "../../node_modules/flowbite-svelte/dist/sidebar/Sidebar.svelte";
-  import SidebarButton from "../../node_modules/flowbite-svelte/dist/sidebar/SidebarButton.svelte";
   import SidebarGroup from "../../node_modules/flowbite-svelte/dist/sidebar/SidebarGroup.svelte";
   import SidebarItem from "../../node_modules/flowbite-svelte/dist/sidebar/SidebarItem.svelte";
   import { uiHelpers } from "../../node_modules/flowbite-svelte/dist/uiHelpers.svelte.js";
@@ -296,13 +295,15 @@
 
   <article class="slex-docs-shell-main">
     <div class="slex-docs-mobile-toolbar">
-      <SidebarButton
-        breakpoint="lg"
+      <button
+        type="button"
         class="slex-site-icon-button slex-docs-sidebar-trigger"
         onclick={docsSidebarUi.toggle}
         aria-label={labels().openDocsNavigation}
         title={labels().openDocsNavigation}
-      />
+      >
+        <span aria-hidden="true">{@html getPhosphorIcon("list")}</span>
+      </button>
     </div>
 
     {#if p.playground && typeof p.playground === "object"}

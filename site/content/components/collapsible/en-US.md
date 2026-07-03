@@ -2,6 +2,7 @@
 title: "Collapsible"
 category: Disclosure
 status: ready
+order: 20
 summary: "Single expandable content area."
 ---
 # Collapsible

@@ -2,6 +2,7 @@
 title: "Radio Group"
 category: Input
 status: ready
+order: 70
 summary: "Mutually exclusive radio selection."
 ---
 # Radio Group
@@ -46,7 +47,7 @@ Mutually exclusive option selection for small choice sets.
 
 ## API Reference {#api}
 
-<!-- slex:spec-api:start component="radio-group" sourceHash="9770be28" -->
+<!-- slex:spec-api:start component="radio-group" sourceHash="f6028c59" -->
 | Field | Type | Required | Dynamic | Default | Description |
 |---|---|---|---|---|---|
 | `value` | string | No | Yes |  | Current selected value. |
@@ -54,8 +55,10 @@ Mutually exclusive option selection for small choice sets.
 | `icon` | string | No | No |  | Icon name shown before the group label. |
 | `options` | array | No | No |  | Options with label, value, and optional icon. |
 | `options[].icon` | string | No | No |  | Icon name shown before a single option label. |
+| `options[].description` | string | No | No |  | Secondary text shown below the option label. |
 | `disabled` | boolean | No | Yes | `false` | Disable every radio option in the group. |
 | `orientation` | string: vertical, horizontal | No | No | `"vertical"` | Radio option layout direction. |
+| `variant` | string: list | No | No |  | Use list for full-row option surfaces in ToolHost decision cards. |
 | `haptic` | boolean | No | No | `true` | Enable vibration feedback on supported devices. |
 | `haptics` | boolean | No | No | `true` | Alias for haptic. |
 | `name` | string | No | No |  | Native radio group name shared by options. |
