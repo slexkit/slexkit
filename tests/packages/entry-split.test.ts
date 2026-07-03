@@ -103,12 +103,13 @@ describe("split runtime and Svelte component entries", () => {
   });
 
   it("keeps scoped package wrappers on the root split entries", async () => {
-    const [rootPackage, runtimePackage, componentsPackage, streamdownPackage, assistantUiPackage, themePackage, runtimeEntry, componentsEntry] = await Promise.all([
+    const [rootPackage, runtimePackage, componentsPackage, streamdownPackage, assistantUiPackage, tiptapPackage, themePackage, runtimeEntry, componentsEntry] = await Promise.all([
       readFile("package.json", "utf-8").then(JSON.parse),
       readFile("packages/runtime/package.json", "utf-8").then(JSON.parse),
       readFile("packages/components-svelte/package.json", "utf-8").then(JSON.parse),
       readFile("packages/streamdown/package.json", "utf-8").then(JSON.parse),
       readFile("packages/assistant-ui/package.json", "utf-8").then(JSON.parse),
+      readFile("packages/tiptap/package.json", "utf-8").then(JSON.parse),
       readFile("packages/theme-shadcn/package.json", "utf-8").then(JSON.parse),
       readFile("packages/runtime/index.js", "utf-8"),
       readFile("packages/components-svelte/index.js", "utf-8"),
@@ -122,10 +123,12 @@ describe("split runtime and Svelte component entries", () => {
     expect(streamdownPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
     expect(assistantUiPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
     expect(assistantUiPackage.peerDependencies["@slexkit/streamdown"]).toBe(`^${rootPackage.version}`);
+    expect(tiptapPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
     expect(runtimePackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
     expect(componentsPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
     expect(streamdownPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
     expect(assistantUiPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
+    expect(tiptapPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
     expect(runtimeEntry).toContain('from "slexkit/runtime"');
     expect(componentsEntry).toContain('from "slexkit/components"');
     expect(componentsEntry).not.toContain("registerSiteComponents");
