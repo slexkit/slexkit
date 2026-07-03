@@ -63,7 +63,13 @@
     return `${text(doc.href, "/docs")}.md`;
   }
 
+  function canOpenInPlayground(doc: DocItem) {
+    return text(doc.slexkitRenderMode) !== "dialog";
+  }
+
   function playgroundHref(doc: DocItem) {
+    if (!canOpenInPlayground(doc)) return "";
+
     const explicitHref = text(doc.playgroundHref ?? doc.liveHref);
     if (explicitHref) return explicitHref;
 

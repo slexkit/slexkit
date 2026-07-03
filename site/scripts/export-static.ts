@@ -109,12 +109,15 @@ async function copyCanonicalMarkdown() {
 
 type AdapterDemoName = "assistant-ui" | "streamdown" | "tiptap";
 
-function rewriteAdapterDemoHtml(html: string) {
+function rewriteAdapterDemoHtml(html: string, name: AdapterDemoName) {
+  const demoBase = `/adapter-demos/${name}`;
   return rewriteHtmlForStatic(html, "en-US")
     .replaceAll('"/dist/', `"${withBase("/dist/")}`)
     .replaceAll('"/packages/', `"${withBase("/packages/")}`)
     .replaceAll('"/shared/', `"${withBase("/shared/")}`)
-    .replaceAll('"/vendor/', `"${withBase("/vendor/")}`);
+    .replaceAll('"/vendor/', `"${withBase("/vendor/")}`)
+    .replaceAll('href="./style.css"', `href="${withBase(`${demoBase}/style.css`)}"`)
+    .replaceAll('src="./main.js"', `src="${withBase(`${demoBase}/main.js`)}"`);
 }
 
 async function copyAdapterPackage(name: AdapterDemoName) {
@@ -130,9 +133,9 @@ async function copyAdapterDemo(name: AdapterDemoName) {
   await cp(join(projectRoot, "examples", name), target, { recursive: true });
 
   const indexPath = join(target, "index.html");
-  await writeFile(indexPath, rewriteAdapterDemoHtml(await readFile(indexPath, "utf-8")), "utf-8");
+  await writeFile(indexPath, rewriteAdapterDemoHtml(await readFile(indexPath, "utf-8"), name), "utf-8");
 
-  const mainPath = join(target, name === "assistant-ui" ? "main.jsx" : "main.js");
+  const mainPath = join(target, "main.js");
   const mainSource = await readFile(mainPath, "utf-8");
   await writeFile(mainPath, mainSource.replace('from "/shared/adapter-demo.js"', 'from "../../shared/adapter-demo.js"'), "utf-8");
 }

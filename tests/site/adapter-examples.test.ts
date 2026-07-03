@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { adapterDemoSourceUrl, stripFrontmatter } from "../../examples/shared/adapter-demo.js";
 
 describe("adapter examples", () => {
@@ -28,12 +28,14 @@ describe("adapter examples", () => {
 
   it("renders the assistant-ui example through assistant-ui message context", () => {
     const html = readFileSync("examples/assistant-ui/index.html", "utf8");
-    const main = readFileSync("examples/assistant-ui/main.jsx", "utf8");
+    const main = readFileSync("examples/assistant-ui/main.js", "utf8");
 
     expect(html).toContain("@slexkit/assistant-ui");
     expect(html).toContain("@assistant-ui/react");
     expect(html).toContain("@assistant-ui/react-streamdown");
-    expect(html).toContain('src="./main.jsx"');
+    expect(html).toContain('src="./main.js"');
+    expect(html).not.toContain(".jsx");
+    expect(existsSync("examples/assistant-ui/main.jsx")).toBe(false);
     expect(html).toContain("document.documentElement.dataset.embed");
     expect(main).toContain("useExternalStoreRuntime");
     expect(main).toContain("convertMessage");
@@ -89,7 +91,7 @@ describe("adapter examples", () => {
     expect(server).toContain("assistant-ui");
     expect(server).toContain("official-examples");
     expect(server).toContain("packages");
-    expect(server).toContain('case ".jsx"');
+    expect(server).toContain("Response.redirect(redirectUrl, 308)");
     expect(server).toContain('? "slexkit.js"');
     expect(readFileSync("examples/dev-server.mjs", "utf8")).toContain(
       'rest === "slexkit.runtime.js" ? "slexkit.js" : rest',
@@ -100,6 +102,8 @@ describe("adapter examples", () => {
     expect(exporter).toContain('"assistant-ui"');
     expect(exporter).toContain('"adapter-demos"');
     expect(exporter).toContain('"official-examples"');
+    expect(exporter).toContain('href="${withBase(`${demoBase}/style.css`)}"');
+    expect(exporter).toContain('src="${withBase(`${demoBase}/main.js`)}"');
     expect(exporter).toContain('from "../../shared/adapter-demo.js"');
     expect(renderer).toContain("rewriteRootRelativeUrls");
     expect(renderer).toContain("bindLiveExampleFrames");

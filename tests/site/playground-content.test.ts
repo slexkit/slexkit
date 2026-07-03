@@ -261,6 +261,9 @@ describe("site playground markdown renderer", () => {
     expect(docsPage.g.playgroundHrefBase).toBe("/slexkit/playground.html");
     expect(examplesPage).toContain("$playgroundHrefBase");
     expect(docsShell).toContain("function playgroundHref(doc: DocItem)");
+    expect(docsShell).toContain("function canOpenInPlayground(doc: DocItem)");
+    expect(docsShell).toContain('return text(doc.slexkitRenderMode) !== "dialog";');
+    expect(docsShell).toContain('if (!canOpenInPlayground(doc)) return "";');
     expect(docsShell).toContain('mode: "live"');
     expect(docsShell).toContain('type: "markdown"');
     expect(docsShell).toContain('src: href');
