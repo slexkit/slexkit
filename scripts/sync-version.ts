@@ -1,4 +1,5 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 const root = join(import.meta.dir, "..");
@@ -37,7 +38,9 @@ async function syncWorkspacePackages(version: string): Promise<void> {
   const packagesDir = join(root, "packages");
   for (const entry of await readdir(packagesDir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
-    await syncPackage(join(packagesDir, entry.name, "package.json"), version);
+    const packageJsonPath = join(packagesDir, entry.name, "package.json");
+    if (!existsSync(packageJsonPath)) continue;
+    await syncPackage(packageJsonPath, version);
   }
   await syncPackage(join(root, "site", "package.json"), version);
 }
