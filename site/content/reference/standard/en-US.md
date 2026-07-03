@@ -11,7 +11,7 @@ slexkitRenderMode: component
 
 SlexKit publishes machine-readable standard artifacts for AI agents, host runtimes, MCP servers, and package consumers. These artifacts describe Slex as a Markdown-native logic-bearing UI artifact, not as a pure JSON card catalog.
 
-The TypeScript runtime registry remains the source of truth. The generated JSON files are derived from component specs, runtime version constants, expression capability metadata, and conformance fixtures.
+The TypeScript runtime registry defines the component data. The generated JSON files are derived from component specs, runtime version constants, expression capability metadata, and conformance fixtures.
 
 ## Files
 
@@ -91,8 +91,8 @@ The conformance suite checks source validation semantics only. It does not asser
 SlexKit exposes separate version fields:
 
 - `packageVersion`: npm package version, from `package.json`.
-- `protocolVersion`: accepted Slex source protocol marker, currently `0.1`.
-- `schemaVersion`: generated artifact schema generation, currently date-style.
+- `protocolVersion`: accepted Slex source protocol marker, `0.1`.
+- `schemaVersion`: generated artifact schema generation, date-style.
 - `logicProfileVersion`: expression, context, stdlib, and secure capability profile version.
 
 Compatible package releases may update catalog hashes, add components or props, add examples, or improve messages without changing `protocolVersion`.

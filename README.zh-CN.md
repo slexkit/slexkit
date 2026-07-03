@@ -34,7 +34,7 @@
 
 ## 安装
 
-> 只想在 Obsidian 里使用 SlexKit？打开 **Settings -> Community plugins**，搜索 **SlexKit**，安装并启用即可。下面的 npm 安装方式主要面向需要把 SlexKit 接入网页、Markdown renderer、Streamdown 或自定义宿主的开发者。
+> 在 Obsidian 里使用 SlexKit 时，打开 **Settings -> Community plugins**，搜索 **SlexKit**，安装并启用即可。下面的 npm 安装方式用于网页、Markdown renderer、Streamdown 或自定义宿主。
 
 ```sh
 npm install slexkit
@@ -105,7 +105,7 @@ import "slexkit/style.css";
 - **响应式 `g` / `layout` 模型**：状态和逻辑集中在 `g`，UI 结构由组件树声明。
 - **表达式管道**：`$` 读表达式用于动态属性，`on*` 写表达式用于事件。
 - **指令系统**：`$if` 和 `$for` 支持条件渲染和带 key 的列表协调。
-- **官方 Svelte 组件**：40+ 个 layout、input、content、display、disclosure、feedback、tooling 组件。
+- **官方 Svelte 组件**：29 个组件，覆盖 action、component、content、data、disclosure、display、feedback、input、layout、navigation 和 tooling 分类。
 - **可扩展注册表**：支持自定义组件类型、Svelte renderer 和组件状态模式。
 - **可信与安全双运行时**：可信内容在宿主域渲染，不可信源码在 sandbox iframe 中隔离渲染。
 - **ToolHost**：为 AI tool-call 提供确认、选择、填表等结构化交互模板。
@@ -121,9 +121,9 @@ import "slexkit/style.css";
 | `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS 主题 token |
 | `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React / Streamdown Markdown 渲染器 |
 | `@slexkit/tiptap` | `npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown` | Tiptap code block NodeView，用于 `slex` fences |
-| `@slexkit/mcp` | `npx -y @slexkit/mcp` | 面向文档、示例和源码校验的只读 MCP 服务 |
+| `@slexkit/mcp` | `npx -y @slexkit/mcp` | 用于文档、示例和源码校验的只读 MCP 服务 |
 
-更多说明见 [Package Boundaries](site/content/reference/packages/zh-CN.md)。
+更多说明见 [包与安装](site/content/reference/packages/zh-CN.md)。
 
 ## 集成
 

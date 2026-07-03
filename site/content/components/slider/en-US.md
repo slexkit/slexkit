@@ -2,6 +2,7 @@
 title: "Slider"
 category: Input
 status: ready
+order: 60
 summary: "Numeric range input."
 ---
 # Slider

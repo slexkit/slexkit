@@ -19,7 +19,7 @@ summary: "链接或轻量跳转动作。"
       "link:docs": {
         "href": "/components",
         "icon": "arrow-square-out",
-        "text": "View components"
+        "text": "查看组件"
       }
     }
   }

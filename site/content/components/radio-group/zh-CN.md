@@ -16,17 +16,17 @@ summary: "互斥单选组。"
   "namespace": "doc_radio_group_typical",
   "layout": {
     "radio-group:mode": {
-      "label": "Mode",
+      "label": "模式",
       "icon": "sliders-horizontal",
       "value": "auto",
       "options": [
         {
-          "label": "Auto",
+          "label": "自动",
           "value": "auto",
           "icon": "sparkle"
         },
         {
-          "label": "Manual",
+          "label": "手动",
           "value": "manual",
           "icon": "wrench"
         }

@@ -2,6 +2,7 @@
 title: "Link"
 category: Content
 status: ready
+order: 25
 summary: "Navigation or lightweight jump action."
 ---
 # Link

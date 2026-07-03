@@ -2,6 +2,7 @@
 title: "Row"
 category: Layout
 status: ready
+order: 30
 summary: "Horizontal layout container for toolbars, status lines, and button groups."
 ---
 # Row

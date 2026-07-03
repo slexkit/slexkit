@@ -12,7 +12,7 @@ slexkitRenderMode: component
 
 **Docs as tools, tools as docs.**
 
-Make static documents come alive. Give AI agents the power to output interactive experiences.
+Static documents can embed interactive components, and agent output can carry structured UI.
 
 ```slex
 {

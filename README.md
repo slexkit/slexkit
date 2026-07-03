@@ -34,7 +34,7 @@ It is built for chat messages, documents, agent panels, tool results, and AI-aut
 
 ## Installation
 
-> Just want to use SlexKit in Obsidian? Open **Settings -> Community plugins**, search for **SlexKit**, then install and enable it. The npm package below is for developers integrating SlexKit into web apps, Markdown renderers, Streamdown, or custom hosts.
+> For Obsidian usage, open **Settings -> Community plugins**, search for **SlexKit**, then install and enable it. The npm package below is for web apps, Markdown renderers, Streamdown, or custom hosts.
 
 ```sh
 npm install slexkit
@@ -105,7 +105,7 @@ Markdown platforms without SlexKit support show the fallback text. Hosts with Sl
 - **Reactive `g` / `layout` model**: centralized state and logic with declarative component trees.
 - **Expression pipes**: `$` read expressions for dynamic props and `on*` write expressions for events.
 - **Directives**: `$if` and `$for` for conditional rendering and keyed list reconciliation.
-- **Official Svelte components**: 40+ layout, input, content, display, disclosure, feedback, and tooling components.
+- **Official Svelte components**: 29 components across action, component, content, data, disclosure, display, feedback, input, layout, navigation, and tooling categories.
 - **Extensible registry**: custom component types, Svelte renderers, and component state modes.
 - **Trusted and secure runtimes**: host-realm rendering for trusted content, sandbox iframe rendering for untrusted source.
 - **ToolHost**: confirm, choose, and fill-form templates for structured AI tool-call UX.
@@ -123,7 +123,7 @@ Markdown platforms without SlexKit support show the fallback text. Hosts with Sl
 | `@slexkit/tiptap` | `npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown` | Tiptap code block NodeView for `slex` fences |
 | `@slexkit/mcp` | `npx -y @slexkit/mcp` | Read-only MCP server for docs, examples, and source validation |
 
-See [Package Boundaries](site/content/reference/packages/en-US.md) for details.
+See [Packages](site/content/reference/packages/en-US.md) for details.
 
 ## Integrations
 

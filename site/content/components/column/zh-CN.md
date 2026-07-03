@@ -17,13 +17,13 @@ summary: "垂直排列子组件。适合表单、说明文字、控制组。"
   "layout": {
     "column:form": {
       "input:name": {
-        "placeholder": "Name"
+        "placeholder": "姓名"
       },
       "input:email": {
-        "placeholder": "Email"
+        "placeholder": "邮箱"
       },
       "button:save": {
-        "label": "Save"
+        "label": "保存"
       }
     }
   }

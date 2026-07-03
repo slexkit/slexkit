@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Social Insurance Calculator
 
-You got an offer — 20,000 RMB/month. How much do you actually take home? HR says social insurance takes a big chunk, but the exact amount varies by city.
+Pre-tax salary and city determine China's social insurance breakdown, including personal deductions, employer contributions, and take-home pay.
 
 ```slex
 {
@@ -73,7 +73,7 @@ You got an offer — 20,000 RMB/month. How much do you actually take home? HR sa
 }
 ```
 
-Try switching cities — the housing fund ratio varies a lot (12% in Beijing vs 7% in Shanghai), which can make hundreds of RMB difference in take-home pay.
+Switching cities changes the housing fund ratio and affects take-home pay; Beijing uses 12% and Shanghai uses 7%.
 
 ```slex
 {

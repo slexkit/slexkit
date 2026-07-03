@@ -16,7 +16,7 @@ npm install slexkit @slexkit/runtime
 import { mount, register, attachComponentDisposer } from "@slexkit/runtime";
 ```
 
-Use this entry when you want to register your own components instead of using the bundled Svelte components. The full Svelte component set is available via `@slexkit/components-svelte`.
+Use this entry to register custom components instead of the bundled Svelte components. The full Svelte component set is available via `@slexkit/components-svelte`.
 
 ## What's included
 
@@ -29,7 +29,7 @@ All core engine APIs without component registrations:
 - **Diagnostics**: `parseSlexSource`, `diagnoseSlexKitSource`, `formatSlexKitDiagnostic`
 - **Error types**: `SlexKitSyntaxError`, `SlexKitRuntimeError`
 
-Note: the runtime entry does **not** auto-register any components. You must register your own renderers or import `@slexkit/components-svelte` for the official Svelte component set.
+Note: the runtime entry does **not** auto-register any components. Register custom renderers or import `@slexkit/components-svelte` for the official Svelte component set.
 
 ## With custom components
 
@@ -53,4 +53,4 @@ mount({
 
 - [SlexKit Runtime model](https://github.com/slexkit/slexkit/blob/main/site/content/reference/runtime/en-US.md)
 - [Usage guide](https://github.com/slexkit/slexkit/blob/main/site/content/reference/usage/en-US.md)
-- [Package boundaries](https://github.com/slexkit/slexkit/blob/main/site/content/reference/packages/en-US.md)
+- [Packages](https://github.com/slexkit/slexkit/blob/main/site/content/reference/packages/en-US.md)

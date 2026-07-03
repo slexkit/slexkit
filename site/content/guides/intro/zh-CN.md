@@ -3,7 +3,7 @@ title: SlexKit 简介
 category: Guides
 status: ready
 order: 10
-summary: "把显式 slex 代码围栏渲染成小型交互 UI。"
+summary: "面向 Markdown 的响应式 UI 运行时，用于渲染显式 slex 代码围栏。"
 slexkitRenderMode: component
 ---
 
@@ -35,9 +35,9 @@ Slex source 是 JavaScript 对象字面量，状态放在 `g`，组件树放在 
   },
   layout: {
     "card:counter": {
-      title: "Counter",
+      title: "计数器",
       "text:value": {
-        "$text": "'Count: ' + g.count"
+        "$text": "'计数：' + g.count"
       },
       "button:add": {
         label: "+1",
@@ -51,8 +51,8 @@ Slex source 是 JavaScript 对象字面量，状态放在 `g`，组件树放在 
 - `namespace` 标识状态域
 - `g` 存放响应式状态、函数和小型计算逻辑
 - `layout` 存放组件节点，节点键使用 `type:name` 格式
-- `$` 前缀 prop 是读表达式，例如 `"$text": "'Count: ' + g.count"`
-- `on*` prop 是写表达式，例如 `onclick: "g.count++"`
+- `$` 前缀属性是读表达式，例如 `"$text": "'计数：' + g.count"`
+- `on*` 属性是写表达式，例如 `onclick: "g.count++"`
 
 运行时也接受裸组件树作为简写，但公开文档和共享示例优先使用完整 envelope。
 
@@ -65,12 +65,12 @@ Slex source 是 JavaScript 对象字面量，状态放在 `g`，组件树放在 
 {
   namespace: "status",
   layout: {
-    "badge:state": { label: "Ready", tone: "success" }
+    "badge:state": { label: "就绪", tone: "success" }
   }
 }
 ```
 
-**Status:** Ready
+**状态：** 就绪
 ````
 
 围栏后的 Markdown 是降级输出。普通 Markdown 阅读器会显示降级文本；支持 SlexKit 的宿主会将围栏替换为交互式 UI。
@@ -79,15 +79,15 @@ Slex source 是 JavaScript 对象字面量，状态放在 `g`，组件树放在 
 
 ## 运行模式
 
-**Trusted mode** 在宿主页内执行 Slex source，用于应用生成内容、本地文档和仓库示例。
+**可信模式（Trusted mode）** 在宿主页内执行 Slex source，用于应用生成内容、本地文档和仓库示例。
 
-**Secure mode** 在 sandbox iframe 中执行不可信或 agent 生成的 source。网络、定时器、动画、canvas 等敏感能力仅通过宿主 policy 和 `api.*` 暴露。
+**安全模式（Secure mode）** 在 sandbox iframe 中执行不可信或 agent 生成的 source。网络、定时器、动画、canvas 等敏感能力仅通过宿主 policy 和 `api.*` 暴露。
 
 渲染第三方或未经审查内容时应使用 secure mode。详见 [安全运行时接入](security-runtime)。
 
 ## 展示 UI 与工具调用
 
-**Display UI** 通过 `slex` 代码围栏或 `mount()` 渲染，负责展示信息和局部交互，但不是函数调用。
+**展示 UI** 通过 `slex` 代码围栏或 `mount()` 渲染，负责展示信息和局部交互，但不是函数调用。
 
 **ToolHost** 用于必须把结构化输入返回给宿主的确认、选项选择和表单。`submit` 组件用于结束一个工具模板并提交结果。
 

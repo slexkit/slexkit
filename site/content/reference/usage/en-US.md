@@ -34,9 +34,9 @@ npm install slexkit @slexkit/runtime
 import { mount, register } from "@slexkit/runtime";
 ```
 
-This entry does not auto-register the official Svelte components. Use the root `slexkit` package, or explicitly import `@slexkit/components-svelte`, when you want the bundled components.
+This entry does not auto-register the official Svelte components. Use the root `slexkit` package, or explicitly import `@slexkit/components-svelte`, when bundled components are needed.
 
-For package boundaries and host-specific install commands, see [Package Boundaries](/docs/reference/packages).
+For package roles and host-specific install commands, see [Packages](/docs/reference/packages).
 
 ## Slex source structure
 
@@ -54,10 +54,10 @@ A Slex source is a JavaScript object literal:
 }
 ```
 
-- `slex` -optional Slex protocol marker; use `"0.1"` for the current public protocol.
-- `namespace` -state domain identifier (defaults to `"default"`).
-- `g` -reactive state and logic (functions, data).
-- `layout` -component tree.
+- `slex`: optional Slex protocol marker; use `"0.1"` for the current public protocol.
+- `namespace`: state domain identifier (defaults to `"default"`).
+- `g`: reactive state and logic (functions, data).
+- `layout`: component tree.
 
 As a convenience, a bare component tree (keys containing `:`) is normalized to `{ namespace: "default", g: {}, layout: <tree> }`. If the bare tree includes `slex: "0.1"`, that marker is preserved while component keys move under `layout`.
 
@@ -94,9 +94,9 @@ The handler receives `$event` as the event data.
 
 ### Structural directives
 
-`$if`, `$for`, and `$key` are structural directives -they are not passed to the component as props.
+`$if`, `$for`, and `$key` are structural directives; they are not passed to the component as props.
 
-## `$if` -conditional rendering
+## `$if` Conditional Rendering
 
 Controls whether the component and its subtree are mounted:
 
@@ -109,7 +109,7 @@ Controls whether the component and its subtree are mounted:
 
 When the expression is truthy, the component mounts (with enter animation if `$enter` is defined). When falsy, it unmounts (with leave animation if `$leave` is defined, then cleanup).
 
-## `$for` -array iteration
+## `$for` Array Iteration
 
 Renders a component for each item in an array:
 
@@ -126,17 +126,17 @@ Context variables available inside `$for`: `$item` (current item), `$index` (cur
 ### Key strategy
 
 `$key` supports:
-- `"$value"` -use the primitive item itself as key.
-- `"id"` (or any property name) -read that property from object items.
-- Omitted -uses `item.id` if available, otherwise falls back to index with a console warning.
+- `"$value"`: use the primitive item itself as key.
+- `"id"` (or any property name): read that property from object items.
+- Omitted: uses `item.id` if available, otherwise falls back to index with a console warning.
 
 Primitive array items should always specify `$key: "$value"`.
 
 ### $for update algorithm
 
-1. **Delete phase** -remove items whose keys are no longer in the array (with leave animation).
-2. **Add/update/reorder phase** -create new items, update retained items' context (index, item reference), and reorder DOM nodes to match the array.
-3. **Trim phase** -defensively remove any excess children.
+1. **Delete phase**: remove items whose keys are no longer in the array (with leave animation).
+2. **Add/update/reorder phase**: create new items, update retained items' context (index, item reference), and reorder DOM nodes to match the array.
+3. **Trim phase**: defensively remove any excess children.
 
 When an item's index or item reference changes, `onUpdate_<name>` is called.
 
@@ -230,9 +230,9 @@ Use `attachComponentDisposer(el, fn)` to bind cleanup to the component's DOM lif
 ToolHost handles UI that must return structured user input (confirmations, selections, forms). It is separate from display-oriented `slex` fences.
 
 Built-in templates:
-- `confirm-action` -yes/no confirmation
-- `choose-options` -single or multi-select
-- `option-list` -scrollable option list
-- `fill-form` -structured form with submit
+- `confirm-action`: yes/no confirmation
+- `choose-options`: single or multi-select
+- `option-list`: scrollable option list
+- `fill-form`: structured form with submit
 
-Templates compile to standard Slex source. The `submit` component serves as the completion boundary -only tool templates use it, not display fences.
+Templates compile to standard Slex source. The `submit` component returns the ToolHost result; only tool templates use it, not display fences.

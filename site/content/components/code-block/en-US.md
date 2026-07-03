@@ -2,6 +2,7 @@
 title: "Code Block"
 category: Content
 status: ready
+order: 50
 summary: "Code or configuration snippet display."
 ---
 # Code Block

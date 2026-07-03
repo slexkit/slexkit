@@ -279,7 +279,7 @@ renderToolCall(
 ### Key patterns
 
 1. **`__slexkitTool`** — Set `g.__slexkitTool = runtime` to give expressions access to `submit()` and `ignore()`
-2. **`submit:actions`** — Always include a `submit:actions` component as the completion boundary. Set `returnKeys` to the property names that should be included in the result value
+2. **`submit:actions`** — Always include a `submit:actions` component to return the ToolHost result. Set `returnKeys` to the property names that should be included in the result value
 3. **`canSubmit`** — Add a `g.canSubmit()` method to control the submit button's disabled state
 4. **Unique namespace** — Use a timestamp-based namespace to avoid collisions with other tool calls
 5. **Validation** — Implement validation logic in `g` methods and wire `$disabled` on the submit button

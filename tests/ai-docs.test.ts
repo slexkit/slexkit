@@ -11,6 +11,18 @@ describe("AI documentation generation", () => {
     return Array.from(source.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
   }
 
+  const generatedDocStyleMarkers: Array<{ label: string; pattern: RegExp }> = [
+    { label: "old package reference title", pattern: /\bPackage Boundaries\b/i },
+    { label: "assistant-ui package residue", pattern: /@slexkit\/assistant-ui/i },
+    { label: "assistant-ui template lineage", pattern: /\bassistant-ui information architecture\b/i },
+    { label: "source of truth", pattern: /\bsource of truth\b/i },
+    { label: "quality gate", pattern: /\bquality gate\b/i },
+    { label: "thin wrapper", pattern: /\bthin wrapper\b/i },
+    { label: "template page framing", pattern: /\bThis (?:example|page|guide)\b/i },
+    { label: "template shows-how phrasing", pattern: /\bshow(?:s|ing) how\b/i },
+    { label: "AI marketing adjective", pattern: /\b(?:powerful|seamless|effortless)\b/i },
+  ];
+
   it("builds non-empty llms files and a manifest from source docs", async () => {
     const build = await createAiDocs("2026-01-01T00:00:00.000Z");
 
@@ -35,6 +47,8 @@ describe("AI documentation generation", () => {
     expect(build.files["llms.txt"]).toContain("### Reference");
     expect(build.files["llms.txt"]).toContain("### Releases");
     expect(build.files["llms.txt"]).not.toContain(".mdx");
+    expect(build.files["llms.txt"]).toContain("[Packages](/docs/reference/packages.md): Package roles");
+    expect(build.files["llms.txt"]).not.toContain("Package Boundaries");
     expect(build.files["llms.txt"]).toContain("/docs/guides/integration.md");
     expect(build.files["llms.txt"]).toContain("/docs/reference/spec.md");
     expect(build.files["llms.txt"]).toContain("/docs/reference/standard.md");
@@ -43,6 +57,7 @@ describe("AI documentation generation", () => {
     expect(build.manifest.pages.some((page) => page.rawHref === "/docs/reference/spec.md")).toBe(true);
     expect(build.manifest.pages.some((page) => page.rawHref === "/docs/reference/standard.md")).toBe(true);
     expect(build.manifest.pages.some((page) => page.rawHref === "/docs/releases/changelog.md")).toBe(true);
+    expect(build.manifest.pages.find((page) => page.rawHref === "/docs/reference/packages.md")?.title).toBe("Packages");
     expect(build.files["llms-components.txt"]).toContain(`Public component count: ${publicComponentTypes.length}`);
     expect(build.files["llms-capabilities.txt"]).toContain("std.math.clamp");
     expect(build.files["llms-capabilities.txt"]).toContain("api.fetch");
@@ -65,6 +80,31 @@ describe("AI documentation generation", () => {
         expect(parsed.ok, `${component.type}:${example.id}`).toBe(true);
       }
     }
+  });
+
+  it("keeps generated AI docs away from stale package and template wording", async () => {
+    const build = await createAiDocs("2026-01-01T00:00:00.000Z");
+    const matches: string[] = [];
+
+    for (const [filename, source] of Object.entries(build.files)) {
+      for (const marker of generatedDocStyleMarkers) {
+        const match = marker.pattern.exec(source);
+        if (!match) continue;
+
+        const line = source.slice(0, match.index).split(/\r?\n/).length;
+        matches.push(`${filename}:${line} ${marker.label}: ${match[0]}`);
+      }
+    }
+
+    for (const page of build.manifest.pages) {
+      const source = `${page.title}\n${page.summary}`;
+      for (const marker of generatedDocStyleMarkers) {
+        const match = marker.pattern.exec(source);
+        if (match) matches.push(`${page.rawHref} manifest ${marker.label}: ${match[0]}`);
+      }
+    }
+
+    expect(matches).toEqual([]);
   });
 
   it("writes every indexed rawHref as Markdown for static export", async () => {

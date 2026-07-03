@@ -2,6 +2,7 @@
 title: "Stat"
 category: Display
 status: ready
+order: 10
 summary: "Metric display with label, value, unit, and semantic tone."
 ---
 # Stat

@@ -3,7 +3,7 @@ title: SlexKit Introduction
 category: Guides
 status: ready
 order: 10
-summary: "Render explicit slex fences as small interactive UI."
+summary: "Markdown-friendly reactive UI runtime for explicit slex fences."
 slexkitRenderMode: component
 ---
 
@@ -11,7 +11,7 @@ slexkitRenderMode: component
 
 SlexKit renders Markdown fences marked as `slex` into small interactive UI. Use it for local interaction inside chat messages, documents, agent panels, and dashboards without adding a build step for those fragments.
 
-SlexKit is currently v0/beta. The public surface is usable, but long-term compatibility is not yet guaranteed.
+SlexKit is v0/beta. The public surface is usable, but long-term compatibility is not yet guaranteed.
 
 ## When To Use It
 

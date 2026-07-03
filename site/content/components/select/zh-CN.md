@@ -16,17 +16,17 @@ summary: "单选下拉。"
   "namespace": "doc_select_typical",
   "layout": {
     "select:env": {
-      "label": "Environment",
+      "label": "环境",
       "icon": "server",
       "value": "prod",
       "options": [
         {
-          "label": "Development",
+          "label": "开发环境",
           "value": "dev",
           "icon": "code"
         },
         {
-          "label": "Production",
+          "label": "生产环境",
           "value": "prod",
           "icon": "rocket-launch"
         }

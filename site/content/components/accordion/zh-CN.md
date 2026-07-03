@@ -23,21 +23,21 @@ summary: "多项折叠面板，适合 FAQ 或分组详情。"
       "items": [
         {
           "value": "install",
-          "label": "Install",
+          "label": "安装",
           "icon": "download-simple",
-          "content": "Prepare dependencies."
+          "content": "准备依赖。"
         },
         {
           "value": "review",
-          "label": "Review",
+          "label": "复核",
           "icon": "check-circle",
-          "content": "Check the result."
+          "content": "检查结果。"
         },
         {
           "value": "ship",
-          "label": "Ship",
+          "label": "发布",
           "icon": "rocket-launch",
-          "content": "Publish the change."
+          "content": "发布变更。"
         }
       ]
     }

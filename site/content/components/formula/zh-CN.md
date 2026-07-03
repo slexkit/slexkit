@@ -40,10 +40,10 @@ summary: "响应式 KaTeX 公式显示。"
 <!-- slex:spec-api:start component="formula" sourceHash="144588e3" -->
 | 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
 |---|---|---|---|---|---|
-| `tex` | string | 否 | 是 |  | KaTeX source to render. |
-| `formula` | string | 否 | 是 |  | Alias for tex. |
-| `value` | string | 否 | 是 |  | Alias for tex. |
-| `displayMode` | boolean | 否 | 否 | `true` | Render as display math when true; inline math when false. |
-| `display` | boolean | 否 | 否 | `true` | Alias for displayMode. |
-| `block` | boolean | 否 | 否 | `true` | Alias for displayMode. |
+| `tex` | string | 否 | 是 |  | 要渲染的 KaTeX 源码。 |
+| `formula` | string | 否 | 是 |  | tex 的别名。 |
+| `value` | string | 否 | 是 |  | tex 的别名。 |
+| `displayMode` | boolean | 否 | 否 | `true` | 为 true 时渲染为块级公式；为 false 时渲染为行内公式。 |
+| `display` | boolean | 否 | 否 | `true` | displayMode 的别名。 |
+| `block` | boolean | 否 | 否 | `true` | displayMode 的别名。 |
 <!-- slex:spec-api:end -->

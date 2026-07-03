@@ -9,7 +9,7 @@ slexkitRenderMode: component
 
 # Slex Specification v0.1
 
-Slex expression envelope, component keys, props, directives, lifecycle, and runtime API contract — SlexKit v0's entire public protocol in one place. Source of truth for implementors, test authors, and host adapter authors.
+Slex expression envelope, component keys, props, directives, lifecycle, and runtime API contract — SlexKit v0's public protocol in one place. Implementors, test authors, and host adapter authors should treat this reference as normative.
 
 **v0/beta.** The current implementation may evolve, but the protocol version (v0.1) is independent of the SlexKit package version. The same protocol may remain stable across multiple package releases.
 
@@ -146,8 +146,8 @@ Input components (`value`/`checked`/`enabled` modes) sync `change` events to ins
 }
 ```
 
-- **Truthy** -mounts the component and its subtree with enter animation if `$enter` is defined.
-- **Falsy** -unmounts the component and subtree with leave animation if `$leave` is defined, then fires lifecycle hooks, disposers, and subtree cleanup.
+- **Truthy**: mounts the component and its subtree with enter animation if `$enter` is defined.
+- **Falsy**: unmounts the component and subtree with leave animation if `$leave` is defined, then fires lifecycle hooks, disposers, and subtree cleanup.
 
 ## 8. `$for`
 
@@ -175,18 +175,18 @@ Primitive arrays should always specify `$key: "$value"`.
 
 ### $for phases
 
-1. **Delete** -Remove items whose keys are absent from the new array (with leave animation).
-2. **Add/update/reorder** -Create new items for new keys; update retained items' `forCtx` (item reference, index); reorder DOM nodes to match array order. Updated items fire `onUpdate_<name>`.
-3. **Trim** -Defensively remove excess children.
+1. **Delete**: remove items whose keys are absent from the new array (with leave animation).
+2. **Add/update/reorder**: create new items for new keys; update retained items' `forCtx` (item reference, index); reorder DOM nodes to match array order. Updated items fire `onUpdate_<name>`.
+3. **Trim**: defensively remove excess children.
 
 ## 9. Lifecycle and cleanup
 
 Convention hooks on `g`:
 
 ```
-g.onMount_<name>()      -after component is appended to DOM
-g.onUnmount_<name>()    -before component is removed from DOM
-g.onUpdate_<name>()     -after $for item changes (index or item reference)
+g.onMount_<name>()      // after component is appended to DOM
+g.onUnmount_<name>()    // before component is removed from DOM
+g.onUpdate_<name>()     // after $for item changes (index or item reference)
 ```
 
 Component implementations can register resource cleanup:
@@ -282,7 +282,7 @@ type ToolResult =
   | { toolCallId?: string; toolName: string; status: "ignored"; value: null };
 ```
 
-**Built-in templates:** `confirm-action`, `choose-options`, `option-list`, `fill-form`. Templates compile to standard Slex expressions using `card:tool` and `submit:actions` components. The `submit:actions` component serves as the completion boundary — it is only used by tool templates, not general display fences.
+**Built-in templates:** `confirm-action`, `choose-options`, `option-list`, `fill-form`. Templates compile to standard Slex expressions using `card:tool` and `submit:actions` components. The `submit:actions` component returns the ToolHost result and is only used by tool templates, not general display fences.
 
 For full template reference, arguments, type definitions, and custom template development, see [ToolHost documentation](/docs/reference/toolhost).
 

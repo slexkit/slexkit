@@ -30,7 +30,7 @@ The source lives in [`examples/tiptap`](https://github.com/slexkit/slexkit/tree/
 
 [Open the integration guide](/docs/guides/integration) · [View runnable source](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)
 
-## Responsibilities
+## Scope
 
 | Item | Convention |
 | --- | --- |

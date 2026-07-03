@@ -17,7 +17,7 @@ Secure mode is a deployment and policy choice. The complete threat model, `HostR
 
 | Source | Recommended mode | Notes |
 |---|---|---|
-| Application-generated source | trusted | Lowest overhead; source is part of your app boundary. |
+| Application-generated source | trusted | Lowest overhead; source is part of the application boundary. |
 | Repository examples or reviewed snippets | trusted | Keep examples explicit and versioned. |
 | Local Obsidian vault notes | trusted readonly | The Obsidian adapter is not a sandbox boundary. |
 | User-submitted Markdown | secure | Treat source as untrusted even when the Markdown looks harmless. |

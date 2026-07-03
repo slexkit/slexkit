@@ -3,11 +3,11 @@ title: "Submit"
 category: Action
 status: ready
 order: 20
-summary: "ToolHost 提交边界，把当前选择或表单值返回宿主。"
+summary: "ToolHost 提交控件，把当前选择或表单值返回宿主。"
 ---
 # Submit 提交按钮
 
-ToolHost 的提交边界组件，提供提交/忽略两个操作。
+ToolHost 的提交控件，提供提交/忽略两个操作。
 
 <!-- slex:spec-example:start component="submit" id="basic" sourceHash="b5d89128" -->
 ```slex
@@ -18,11 +18,11 @@ ToolHost 的提交边界组件，提供提交/忽略两个操作。
     "column:tool": {
       "input:title": {
         "value": "Release note",
-        "placeholder": "Title"
+        "placeholder": "标题"
       },
       "submit:done": {
-        "submitLabel": "Submit",
-        "ignoreLabel": "Ignore",
+        "submitLabel": "提交",
+        "ignoreLabel": "忽略",
         "returnKeys": [
           "title"
         ]

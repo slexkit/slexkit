@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Tiptap 编辑器接入
 
-`@slexkit/tiptap` 适用于需要在编辑器中预览 SlexKit 组件的文档。这个示例复用官网的 RC 低通滤波器内容，展示 SlexKit 组件如何放进 Tiptap 编辑器。
+`@slexkit/tiptap` 适用于需要在编辑器中预览 SlexKit 组件的文档。这里复用官网的 RC 低通滤波器内容，说明 SlexKit 组件在 Tiptap 编辑器中的预览方式。
 
 本地运行：
 

@@ -27,27 +27,29 @@ mount({
 }, document.getElementById("app"));
 ```
 
-The import side-effect registers all 28 built-in Svelte components into the global runtime registry.
+The import side-effect registers all 29 built-in Svelte components into the global runtime registry.
 
 ## Component list
 
 | Category | Components |
 |----------|------------|
-| **Layout** | `column`, `row`, `grid`, `card`, `section` |
-| **Content** | `badge`, `callout`, `code-block`, `divider`, `link`, `table` |
-| **Display** | `stat`, `text` |
 | **Action** | `button`, `submit` |
-| **Input** | `input`, `select`, `switch`, `checkbox`, `slider`, `radio-group` |
-| **Navigation** | `tabs` |
+| **Component** | `icon` |
+| **Content** | `badge`, `callout`, `code-block`, `divider`, `link`, `section` |
+| **Data** | `table` |
 | **Disclosure** | `accordion`, `collapsible` |
+| **Display** | `formula`, `stat`, `text` |
 | **Feedback** | `progress`, `toast` |
-| **Tooling** | `playground`, `icon` |
+| **Input** | `checkbox`, `input`, `radio-group`, `select`, `slider`, `switch` |
+| **Layout** | `card`, `column`, `grid`, `row` |
+| **Navigation** | `tabs` |
+| **Tooling** | `playground` |
 
 All components support the shadcn/ui design token theme when using `@slexkit/theme-shadcn`. Components also support Phosphor Icons and custom icon registration via the icon system API.
 
 ## Manual registration
 
-If you need a subset, import and register manually:
+For a subset, import and register manually:
 
 ```js
 import { mount, register, getRenderer } from "@slexkit/runtime";
@@ -78,4 +80,4 @@ import "@slexkit/theme-shadcn/components/button.css"; // individual component
 
 - [SlexKit Components docs](https://slexkit.pages.dev/docs/components/accordion)
 - [Icon system](https://github.com/slexkit/slexkit/blob/main/site/content/reference/icons/en-US.md)
-- [Package boundaries](https://github.com/slexkit/slexkit/blob/main/site/content/reference/packages/en-US.md)
+- [Packages](https://github.com/slexkit/slexkit/blob/main/site/content/reference/packages/en-US.md)

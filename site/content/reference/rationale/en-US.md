@@ -42,7 +42,7 @@ A model can emit this in one shot. No project structure, no module imports, no b
 
 `g` holds state and logic. `layout` holds the component tree. Expressions read from `g`, component states, and `$for` context. Event handlers write back to `g`.
 
-This separation makes model output easier to audit: state and algorithms are centralized in one object; UI structure is centralized in a tree. It also lets the host manage state lifecycle by namespace -same-namespace mounts share and merge state.
+This separation makes model output easier to audit: state and algorithms are centralized in one object; UI structure is centralized in a tree. It also lets the host manage state lifecycle by namespace; same-namespace mounts share and merge state.
 
 ## Why expressions (not pure JSON)
 
@@ -57,11 +57,11 @@ This makes simple interactions shorter and more natural for AI generation. A pur
 
 The cost is an explicit trust boundary. Trusted content can execute in the host realm with low integration overhead. Untrusted content must go through the secure runtime (sandbox iframe, opaque origin, policy-gated capabilities).
 
-SlexKit's security choice is not about disabling expressions -it is about requiring the host to choose which trust boundary expressions run in.
+SlexKit's security choice is not about disabling expressions; it is about requiring the host to choose which trust boundary expressions run in.
 
 ## Why only explicit fences
 
-SlexKit hosts must only process explicitly-marked fences (`slex`). Plain JavaScript, JSON, or untagged code blocks could be examples, logs, or user content -they must not be automatically executed or rendered.
+SlexKit hosts must only process explicitly-marked fences (`slex`). Plain JavaScript, JSON, or untagged code blocks could be examples, logs, or user content; they must not be automatically executed or rendered.
 
 A generation should include a plain Markdown fallback so the output degrades gracefully:
 
@@ -77,9 +77,9 @@ On SlexKit-capable hosts, the fence renders as interactive UI. On plain Markdown
 
 ## Display UI vs ToolHost
 
-Most AI output is display-oriented -status cards, progress indicators, metrics, dashboards. These go through `slex` fences or `mount().`
+Most AI output is display-oriented: status cards, progress indicators, metrics, dashboards. These go through `slex` fences or `mount().`
 
-ToolHost exists only for UI that must return structured user input to the host: confirmations, selections, forms. It compiles templates to standard Slex source, but the `submit` component serves as an explicit completion boundary.
+ToolHost exists only for UI that must return structured user input to the host: confirmations, selections, forms. It compiles templates to standard Slex source and returns results through the `submit` component.
 
 This boundary prevents every display UI from being inadvertently wrapped as a function call.
 
@@ -99,9 +99,9 @@ The host chooses the trust boundary for each mount. The same Slex source syntax 
 
 SlexKit ships a minimal reactive engine (~280 lines) rather than depending on a framework:
 
-- **Zero framework dependency for the runtime core** -the `@slexkit/runtime` entry has no external dependencies.
-- **Deep tracking** -arbitrary `g` shapes require Proxy-based property access tracking that maps well to the tree-shaped Slex source model.
-- **Sufficient scope** -signal, effect, batch, memo, root/scope are the only primitives needed for this scale of UI.
+- **Zero framework dependency for the runtime core**: the `@slexkit/runtime` entry has no external dependencies.
+- **Deep tracking**: arbitrary `g` shapes require Proxy-based property access tracking that maps well to the tree-shaped Slex source model.
+- **Sufficient scope**: signal, effect, batch, memo, root/scope are the only primitives needed for this scale of UI.
 
 The component layer (Svelte) adds `svelte` as a dependency only when using `@slexkit/components-svelte`.
 

@@ -3,7 +3,7 @@ title: "搜索与过滤表格"
 category: "数据浏览"
 status: published
 order: 10
-summary: "搜索输入框实时过滤表格行，点击行展开详情，展示 input + 动态 table + collapsible 组合。"
+summary: "搜索输入框实时过滤表格行，并用 collapsible 展开行详情。"
 tags: search, filter, table, collapsible
 components: section, card, input, table, collapsible, callout, stat
 difficulty: 进阶
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 搜索与过滤表格
 
-文档里放一个静态表格很常见，但加上搜索和过滤就会变成立即可用的工具。这里用 `input` 绑搜索关键词 + 动态过滤 + `collapsible` 展开行详情。
+`input` 绑定搜索关键词，动态 `table` 生成过滤后的行，`collapsible` 负责展开行详情。
 
 ```slex
 {
@@ -29,8 +29,8 @@ slexkitRenderMode: component
       { id: "tabs-1", name: "Tabs 选项卡", category: "Navigation", status: "ready", notes: "支持水平和垂直方向。" },
       { id: "table-1", name: "Table 表格", category: "Display", status: "ready", notes: "columns 数组 + rows 数组。" },
       { id: "formula-1", name: "Formula 公式", category: "Display", status: "ready", notes: "依赖 KaTeX 渲染 LaTeX。" },
-      { id: "toast-1", name: "Toast 通知", category: "Feedback", status: "experimental", notes: "支持 type 变体。" },
-      { id: "secure-1", name: "Secure 安全运行时", category: "Tooling", status: "draft", notes: "基于 iframe 沙箱。" }
+      { id: "toast-1", name: "Toast 通知", category: "Feedback", status: "ready", notes: "支持 type 变体。" },
+      { id: "secure-1", name: "Secure 安全运行时", category: "Tooling", status: "ready", notes: "在 iframe 沙箱中运行不可信 source。" }
     ],
     filtered: function () {
       var q = this.query.toLowerCase();
@@ -61,7 +61,7 @@ slexkitRenderMode: component
 }
 ```
 
-**这个示例的核心技巧：**
+**实现要点：**
 
 - `input` 的 `onchange` 更新 `g.query` → 触发 `g.filtered()` 重新计算
 - `g.filtered()` 用 `filter` 过滤 `allItems` 数组
@@ -69,7 +69,7 @@ slexkitRenderMode: component
 - `g.matched()` 返回过滤后数量，用于 stat 和 callout 的条件显示
 - `$if` 在无匹配时显示空结果提示
 
-这就是 "搜索框 → 动态表格" 的基础范式。相比硬编码的 table rows，动态 rows 可以随输入实时变化。
+这是 `input` 驱动动态表格的基本模式。相比硬编码 rows，动态 rows 可以随输入实时变化。
 
 ---
 
@@ -98,13 +98,11 @@ slexkitRenderMode: component
 
 ## 为什么动态 rows 值得学？
 
-在静态表格中，rows 是硬编码的二维数组。一旦数据量增加，或者需要按条件筛选，静态 rows 就力不从心了。`$rows` 允许你在 g 方法中动态生成行数据——这对于：
+静态表格的 `rows` 是硬编码二维数组。数据量增加或需要条件筛选时，可以用 `"$rows"` 在 `g` 方法中动态生成行数据：
 
 - **文档内数据浏览**：目录、API 列表、配置项
 - **AI 输出展示**：大模型生成的表格结果需要可筛选
 - **知识库查询**：搜索内部组件/API/术语
-
-都非常实用。
 
 ---
 

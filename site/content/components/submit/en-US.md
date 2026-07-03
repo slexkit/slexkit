@@ -2,11 +2,12 @@
 title: "Submit"
 category: Action
 status: ready
-summary: "ToolHost submission boundary that returns current selection or form values to the host."
+order: 20
+summary: "ToolHost submit control that returns current selection or form values to the host."
 ---
 # Submit
 
-ToolHost submission boundary component providing submit and ignore actions.
+ToolHost submit control providing submit and ignore actions.
 
 <!-- slex:spec-example:start component="submit" id="basic" sourceHash="b5d89128" -->
 ```slex

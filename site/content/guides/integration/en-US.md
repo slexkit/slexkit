@@ -22,18 +22,18 @@ SlexKit ships Streamdown and Tiptap packages in this repository and maintains th
 
 Use the packaged plugins when the host is Streamdown or Tiptap. Use the separate [SlexKit plugin repository](https://github.com/slexkit/obsidian-slexkit) for Obsidian installs and releases. Use `createSlexKitMarkdownRuntimeHost` directly for custom Markdown renderers.
 
-Package installation details and release boundaries are tracked in [Package Boundaries](/docs/reference/packages).
+Package exports and install combinations are listed in [Packages](/docs/reference/packages).
 
-## Best Practice Examples
+## Runnable Examples
 
-The repository includes browser-openable best-practice examples for the packaged adapters. Both examples use the same RC low-pass Markdown source so host behavior is easy to compare:
+The repository includes browser-openable examples for the packaged adapters. Both examples use the same RC low-pass Markdown source so host behavior is easy to compare:
 
 - [Streamdown Host Adapter](/examples/streamdown-host) mirrors `examples/streamdown`.
 - [Tiptap Editor Adapter](/examples/tiptap-host) mirrors `examples/tiptap`.
 
 ## Svelte Markdown Host
 
-The SlexKit website is a Svelte application, but its Markdown integration is not a separate public adapter package. It is the reference shape for a custom Markdown renderer:
+The SlexKit website uses a custom Markdown renderer inside a Svelte app. There is no separate Svelte Markdown adapter package. When an app owns Markdown parsing, hand each `slex` code block to SlexKit like this:
 
 ```js
 import { createSlexKitMarkdownRuntimeHost } from "slexkit";
@@ -55,7 +55,7 @@ mount(MarkdownRenderer, {
 });
 ```
 
-Use this pattern when the product owns the Markdown parser, Svelte component tree, or document shell. The host still has the same responsibilities: detect only `slex` fences, keep ordinary code blocks as code, pass a stable `artifactId`, and call cleanup when the rendered document unmounts.
+Use this pattern when the product owns the Markdown parser, Svelte component tree, or document shell. The integration should detect only `slex` fences, keep ordinary code blocks as code, pass a stable `artifactId`, and call cleanup when the rendered document unmounts.
 
 ## Streamdown
 
@@ -181,7 +181,7 @@ The secure runtime deployment checklist lives in [Secure Runtime Setup](security
 
 ## Obsidian
 
-> If your goal is only to install the Obsidian plugin, you do not need the developer integration material above. Search for **SlexKit** in Obsidian **Community plugins**, then install and enable it.
+> For Obsidian plugin installation only, the developer integration material above is unnecessary. Search for **SlexKit** in Obsidian **Community plugins**, then install and enable it.
 
 The Obsidian plugin targets local vault content. It registers a `slex` code block processor in reading mode, renders the fence as a readonly interactive fragment, and does not write output back to notes.
 
@@ -192,7 +192,7 @@ Install the plugin from Obsidian Community Plugins:
 3. Search for **SlexKit**.
 4. Install and enable the plugin.
 
-The current community release is desktop-only until mobile vault testing is complete. The plugin is compatible with Obsidian 1.5.0+.
+Community plugin metadata marks the release as desktop-only and compatible with Obsidian 1.5.0+.
 
 BRAT and manual release assets remain useful for testing unreleased builds:
 

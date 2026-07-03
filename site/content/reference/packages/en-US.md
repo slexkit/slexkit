@@ -1,39 +1,39 @@
 ---
-title: Package Boundaries
+title: Packages
 category: Reference
 status: ready
 order: 60
-summary: "Package relationships, installation matrix, publish contents, and release quality gates."
+summary: "SlexKit npm package roles, install combinations, publish contents, and release checks."
 slexkitRenderMode: component
 ---
 
-# Package Boundaries
+# Packages
 
 SlexKit v0/beta npm packages, their relationships, and installation.
 
-## Package relationship
+## Package Map
 
 ```
-slexkit (root - real code)
+slexkit (root package)
  ├── runtime entry
  ├── Svelte component registrations
  ├── ToolHost
  ├── default styles
  └── secure iframe runner
 
- @slexkit/runtime (thin wrapper) ─── re-exports slexkit/runtime
- @slexkit/components-svelte (thin wrapper) ─── re-exports slexkit/components-svelte
+ @slexkit/runtime ─── re-exports slexkit/runtime
+ @slexkit/components-svelte ─── re-exports slexkit/components-svelte
  @slexkit/theme-shadcn ─── CSS only
  @slexkit/streamdown ─── React/Streamdown renderer
  @slexkit/tiptap ─── framework-free Tiptap NodeView adapter
  @slexkit/mcp ─── read-only MCP server for AI agents
 ```
 
-`@slexkit/runtime` and `@slexkit/components-svelte` are published npm packages, but their code is a thin wrapper around the root `slexkit` package. They are not independent implementation packages; installing them still requires installing `slexkit`. `@slexkit/theme-shadcn` is CSS-only and contains no runtime implementation.
+`@slexkit/runtime` and `@slexkit/components-svelte` are published npm packages, but their implementation comes from the root `slexkit` package. They are not independent implementation packages; installing them still requires installing `slexkit`. `@slexkit/theme-shadcn` is CSS-only and contains no runtime implementation.
 
 ## slexkit (root)
 
-The actual implementation package. Contains the runtime engine, official Svelte components, ToolHost, and styles.
+The main implementation package. It contains the runtime engine, official Svelte components, ToolHost, and styles.
 
 ```sh
 npm install slexkit
@@ -74,7 +74,7 @@ npm install slexkit @slexkit/runtime
 import { mount, register, createSecureRuntime } from "@slexkit/runtime";
 ```
 
-Use this when you want to register your own component set instead of the bundled Svelte components.
+Use this to register a custom component set instead of the bundled Svelte components.
 
 ## @slexkit/components-svelte
 
@@ -89,7 +89,7 @@ import { mount } from "@slexkit/runtime";
 import "@slexkit/components-svelte";
 ```
 
-Public component specs: action (2), component capability (1), content (6), data (1), disclosure (2), display (2), feedback (2), input (6), layout (4), navigation (1), tooling (1).
+Public component specs: action (2), component (1), content (6), data (1), disclosure (2), display (3), feedback (2), input (6), layout (4), navigation (1), tooling (1).
 
 ## @slexkit/theme-shadcn
 
@@ -156,9 +156,9 @@ The official Obsidian plugin lives in a separate release repository: <https://gi
 
 Install **SlexKit** through Obsidian Community Plugins for normal vault use. Use BRAT or manual GitHub release assets only when testing unreleased builds from `slexkit/obsidian-slexkit`.
 
-The community plugin is currently desktop-only and compatible with Obsidian 1.5.0+. Mobile support should be enabled only after real mobile vault testing.
+The community plugin is marked desktop-only and compatible with Obsidian 1.5.0+.
 
-The adapter uses trusted runtime mode - it renders content from the user's local vault and is not designed as a sandbox for third-party or agent-generated Markdown. Secure sandbox support is not part of the v0 adapter.
+The adapter uses trusted runtime mode because it renders local vault content. It is not a sandbox for third-party or agent-generated Markdown; the v0 adapter does not include secure sandbox support.
 
 ## @slexkit/mcp
 
@@ -183,11 +183,11 @@ The server does not modify project files. Use it when an agent needs current Sle
 | Obsidian plugin | Install **SlexKit** from Obsidian Community Plugins |
 | AI agent MCP server | `npx -y @slexkit/mcp` |
 
-## v0 packaging strategy
+## Packaging Notes
 
-The current approach keeps the root `slexkit` package as the real code carrier. Scoped `@slexkit/*` wrappers exist to define future package boundaries. If physical package splitting happens in the future, it will involve splitting source code, build output, and publishing workflows.
+In v0, the root `slexkit` package carries the implementation code. Scoped `@slexkit/*` packages provide separate entries and host adapters; future physical package splitting would also split source code, build output, and publishing workflows.
 
-## Release quality gate
+## Release Checks
 
 All scoped packages are release-checked together:
 
@@ -200,6 +200,6 @@ npm pack --dry-run --json
 slex validate --standard --json
 ```
 
-The release smoke packs and installs every scoped package in this repository, verifies public entry points, verifies CSS subpath exports, runs the installed `slex validate --standard --json`, and starts the MCP stdio binary to check `initialize`, `tools/list`, and `slexkitValidate`.
+The release smoke packs and installs each scoped package, verifies public entry points, verifies CSS subpath exports, runs the installed `slex validate --standard --json`, and starts the MCP stdio binary to check `initialize`, `tools/list`, and `slexkitValidate`.
 
 Before publishing, check that `npm pack --dry-run --json` includes `dist/standard/*` and `scripts/cli.mjs`. Standard artifacts must match `package.json`, `SLEX_PROTOCOL_VERSION`, and the bundled conformance fixtures.

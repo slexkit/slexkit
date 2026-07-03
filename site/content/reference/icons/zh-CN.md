@@ -3,7 +3,7 @@ title: 图标系统
 category: Reference
 status: ready
 order: 90
-summary: "Phosphor icons、自定义 icon 注册、Iconify fallback 与组件 icon 用法。"
+summary: "Phosphor 图标、自定义 icon 注册、Iconify fallback 与组件 icon 用法。"
 slexkitRenderMode: component
 ---
 
@@ -11,7 +11,7 @@ slexkitRenderMode: component
 
 SlexKit 的 icon system 为组件提供统一 icon 解析链：先查自定义注册，再查内置 Phosphor icon，最后可选走 Iconify fallback。
 
-## Resolution chain
+## 解析顺序
 
 当组件收到 `icon` 字段时，同步解析和异步加载按顺序使用：
 
@@ -21,9 +21,9 @@ SlexKit 的 icon system 为组件提供统一 icon 解析链：先查自定义�
 
 同步 `getIcon()` 只返回已注册或内置 SVG string；不会发起网络请求。需要外部 Iconify fallback 的组件会调用 async `loadIcon()`。
 
-## Public API
+## 公开 API
 
-### Registration
+### 注册
 
 #### `registerIcon(name, svg, options?)`
 
@@ -52,7 +52,7 @@ registerIcons({
 
 清空自定义注册表。主要用于测试或宿主热重载。
 
-### Retrieval
+### 获取
 
 #### `getIcon(name, state?)`
 
@@ -66,7 +66,7 @@ registerIcons({
 
 加载 icon，必要时可触发 async fallback。
 
-### Name and weight utilities
+### 名称与 weight 工具
 
 #### `normalizeIconName(name)`
 
@@ -93,7 +93,7 @@ normalizeIconName("book_open_text"); // "book-open-text"
 
 生成用于缓存的 key，避免不同 state 或 weight 互相覆盖。
 
-## Built-in Phosphor icons
+## 内置 Phosphor 图标
 
 SlexKit 内置一组 Phosphor 风格 icons，覆盖常见 UI 动作与状态，例如：
 
@@ -110,9 +110,9 @@ SlexKit 内置一组 Phosphor 风格 icons，覆盖常见 UI 动作与状态，�
 - `cursor-click`
 - `gear-six`
 
-实际可用列表以当前 icon registry 为准。
+实际可用列表来自当前 icon registry。
 
-## Icon naming convention
+## Icon 命名规则
 
 Slex expressions 使用 kebab-case 引用 icons：
 
@@ -121,7 +121,7 @@ Slex expressions 使用 kebab-case 引用 icons：
   layout: {
     "button:save": {
       icon: "floppy-disk",
-      label: "Save"
+      label: "保存"
     }
   }
 }
@@ -135,14 +135,14 @@ Iconify fallback 用于宿主希望按需加载外部 icon 集合的场景。由
 
 生产宿主应优先注册必要 icons 或使用内置 Phosphor set，减少运行时外部依赖。
 
-## Usage in components
+## 在组件中使用 icon
 
 大多数组件通过 `icon` 字段使用 icon：
 
 ```js
 "button:next": {
   icon: "arrow-right",
-  label: "Next"
+  label: "下一步"
 }
 ```
 
@@ -152,7 +152,7 @@ Icon-only 按钮仍必须提供可访问 label：
 "button:settings": {
   icon: "gear-six",
   iconOnly: true,
-  label: "Settings"
+  label: "设置"
 }
 ```
 

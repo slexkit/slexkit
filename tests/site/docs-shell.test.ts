@@ -87,7 +87,7 @@ describe("docs page module", () => {
     expect(markdown).toContain("# 开始使用");
     expect(markdown).toContain("## 安装入口");
     expect(markdown).toContain("## Markdown 宿主");
-    expect(markdown).toContain("## 可信边界");
+    expect(markdown).toContain("## 内容来源");
     expect(markdown).toContain("[集成](integration)");
     expect(markdown).toContain("createSlexKitMarkdownRuntimeHost");
 
@@ -101,7 +101,7 @@ describe("docs page module", () => {
     const securityMarkdown = await Bun.file("site/content/guides/security-runtime/zh-CN.md").text();
     expect(securityMarkdown).toContain("HostRuntimePolicy");
     expect(securityMarkdown).toContain("allow-same-origin");
-    expect(securityMarkdown).toContain("Security Runtime Contract");
+    expect(securityMarkdown).toContain("安全运行时契约");
     expect(securityMarkdown).toContain("createSlexKitMarkdownRuntimeHost");
     expect(securityMarkdown).toContain("上线检查");
   });
@@ -125,7 +125,7 @@ describe("design guide content", () => {
     expect(markdown).toContain('tone: "warning"');
     expect(markdown).toContain('tone: "danger"');
     expect(markdown).toContain('tone: "muted"');
-    expect(markdown).toContain("Display UI");
+    expect(markdown).toContain("展示 UI");
     expect(markdown).toContain("ToolHost");
     expect(markdown).not.toContain("class:");
     expect(markdown).not.toContain("variant:");

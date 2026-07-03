@@ -17,16 +17,16 @@ summary: "紧凑标签，用于状态、分类、轻量元信息。"
   "layout": {
     "row:badges": {
       "badge:ready": {
-        "label": "ready",
+        "label": "就绪",
         "icon": "check-circle",
         "tone": "success"
       },
       "badge:pending": {
-        "label": "pending",
+        "label": "待处理",
         "tone": "warning"
       },
       "badge:info": {
-        "label": "info",
+        "label": "信息",
         "tone": "info"
       }
     }
@@ -51,23 +51,23 @@ summary: "紧凑标签，用于状态、分类、轻量元信息。"
   layout: {
     "row:tones": {
       "badge:info": {
-        label: "info",
+        label: "信息",
         tone: "info"
       },
       "badge:success": {
-        label: "success",
+        label: "成功",
         tone: "success"
       },
       "badge:warning": {
-        label: "warning",
+        label: "警告",
         tone: "warning"
       },
       "badge:danger": {
-        label: "danger",
+        label: "危险",
         tone: "danger"
       },
       "badge:muted": {
-        label: "muted",
+        label: "弱化",
         tone: "muted"
       }
     }

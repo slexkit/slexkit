@@ -2,6 +2,7 @@
 title: "Radio Group"
 category: Input
 status: ready
+order: 70
 summary: "Mutually exclusive radio selection."
 ---
 # Radio Group

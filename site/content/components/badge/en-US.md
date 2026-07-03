@@ -2,6 +2,7 @@
 title: "Badge"
 category: Content
 status: ready
+order: 10
 summary: "Compact label for status or classification."
 ---
 # Badge

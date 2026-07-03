@@ -3,7 +3,7 @@ title: "ToolHost 表单提问"
 category: "配置向导"
 status: published
 order: 12
-summary: "AI 对话过程中突然需要收集用户信息，弹出表单卡片等待用户提交，提交后显示结果。"
+summary: "ToolHost 在对话中渲染表单卡片，收集项目信息并提交结构化结果。"
 tags: toolhost, form, ai, conversation
 components: section, card, input, select, submit, callout, code-block, grid, column
 difficulty: 进阶
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # ToolHost 表单提问
 
-AI 对话过程中，有时需要收集用户信息——创建项目、配置服务、提交工单。这时候 AI 会弹出一个表单卡片，用户填写后提交，AI 继续处理。
+当对话需要补齐项目信息、服务配置或工单字段时，ToolHost 可以渲染表单卡片。用户提交后，结果以结构化数据返回。
 
 ```slex
 {
@@ -32,11 +32,11 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
   layout: {
     "section:toolhost": {
       eyebrow: "ToolHost · 表单提问",
-      title: "AI 需要收集信息",
-      subtitle: "AI 弹出表单，用户填写后提交，AI 继续处理。",
+      title: "收集项目信息",
+      subtitle: "表单提交后，ToolHost 返回结构化结果。",
       "callout:context": {
         tone: "info",
-        text: "AI：我需要为你创建一个新项目，请填写以下信息。"
+        text: "需要创建一个新项目，请填写以下信息。"
       },
       "grid:fields": {
         columns: 1, mdColumns: 2,
@@ -73,7 +73,7 @@ AI 对话过程中，有时需要收集用户信息——创建项目、配置�
         "$text": "g.submitted ? '已提交：' + g.formData.name + '（' + g.formData.type + '）' : '等待用户填写...'"
       },
       "code-block:toolresult": {
-        title: "返回给 AI 的 ToolResult",
+        title: "返回给宿主的 ToolResult",
         language: "json",
         "$code": "g.submitted ? JSON.stringify({ toolCallId: 'call_abc123', toolName: 'create-project', status: 'submitted', value: g.formData }, null, 2) : '// 提交后显示 ToolResult'"
       }

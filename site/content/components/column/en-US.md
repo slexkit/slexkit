@@ -2,6 +2,7 @@
 title: "Column"
 category: Layout
 status: ready
+order: 20
 summary: "Vertical layout container for forms, text, and control groups."
 ---
 # Column

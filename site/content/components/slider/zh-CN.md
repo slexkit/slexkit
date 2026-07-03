@@ -16,7 +16,7 @@ summary: "数值范围输入。"
   "namespace": "doc_slider_typical",
   "layout": {
     "slider:volume": {
-      "label": "Volume",
+      "label": "音量",
       "icon": "speaker-high",
       "value": 42,
       "min": 0,

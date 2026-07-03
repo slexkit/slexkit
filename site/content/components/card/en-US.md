@@ -2,6 +2,7 @@
 title: "Card"
 category: Layout
 status: ready
+order: 50
 summary: "Bordered grouping container for related content."
 ---
 # Card

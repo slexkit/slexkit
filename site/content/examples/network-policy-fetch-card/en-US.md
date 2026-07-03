@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # JSONPlaceholder Network Request Lab
 
-This example goes beyond showing a policy configuration — it lets users select real network tasks inside the sandbox: read posts, view details, pull comments, filter by user, or send a demo POST to JSONPlaceholder. Requests don't leave the iframe directly; they go through `api.fetch()` to the host, which decides whether to proxy based on allowlist, method, timeout, body size, and response type.
+The secure runtime sandbox offers several network tasks: read posts, view details, pull comments, filter by user, or send a demo POST to JSONPlaceholder. Requests do not leave the iframe directly; they go through `api.fetch()` to the host, which decides whether to proxy based on allowlist, method, timeout, body size, and response type.
 
 ```slex
 {
@@ -116,7 +116,7 @@ This example goes beyond showing a policy configuration — it lets users select
         await api.get(targetUrl, { timeoutMs: this.timeout, credentials: "omit" });
         this.status = "Unexpected pass";
         this.statusCode = "unexpected";
-        this.response = "If you see this, the policy didn't block as expected.";
+        this.response = "Policy did not block the request as expected.";
       } catch (error) {
         this.status = api.isPolicyError(error) ? "Policy Blocked" : "Failed";
         this.statusCode = api.isPolicyError(error) ? "origin_blocked" : "network";

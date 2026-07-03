@@ -3,7 +3,7 @@ title: "ToolHost Form Question"
 category: "Config Wizard"
 status: published
 order: 12
-summary: "During an AI conversation, a form card pops up to collect user information — user fills and submits, then the result is displayed."
+summary: "ToolHost renders a form card during a conversation, collects project fields, and submits structured results."
 tags: toolhost, form, ai, conversation
 components: section, card, input, select, submit, callout, code-block, grid, column
 difficulty: Intermediate
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # ToolHost Form Question
 
-During an AI conversation, there are times when user information needs to be collected — creating a project, configuring a service, submitting a ticket. The AI pops up a form card, the user fills it out and submits, and the AI continues processing.
+When a conversation needs project details, service configuration, or ticket fields, ToolHost can render a form card. After the user submits, the result returns as structured data.
 
 ```slex
 {
@@ -32,11 +32,11 @@ During an AI conversation, there are times when user information needs to be col
   layout: {
     "section:toolhost": {
       eyebrow: "ToolHost · Form Question",
-      title: "AI Needs to Collect Information",
-      subtitle: "AI pops up a form, user fills it out and submits, AI continues processing.",
+      title: "Collect Project Information",
+      subtitle: "After submission, ToolHost returns a structured result.",
       "callout:context": {
         tone: "info",
-        text: "AI: I need to create a new project for you. Please fill in the following information."
+        text: "Create a new project by filling in the fields below."
       },
       "grid:fields": {
         columns: 1, mdColumns: 2,
@@ -73,7 +73,7 @@ During an AI conversation, there are times when user information needs to be col
         "$text": "g.submitted ? 'Submitted: ' + g.formData.name + ' (' + g.formData.type + ')' : 'Waiting for user input...'"
       },
       "code-block:toolresult": {
-        title: "ToolResult returned to AI",
+        title: "ToolResult returned to host",
         language: "json",
         "$code": "g.submitted ? JSON.stringify({ toolCallId: 'call_abc123', toolName: 'create-project', status: 'submitted', value: g.formData }, null, 2) : '// ToolResult appears after submission'"
       }

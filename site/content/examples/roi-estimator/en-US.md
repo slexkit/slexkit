@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Build vs Buy Decision
 
-The eternal tech team dilemma: should we build this feature ourselves, or buy an off-the-shelf solution? Here's a structured decision framework — not just calculating a number, but weighing multiple dimensions.
+A build-vs-buy decision is split into four dimensions: feature coverage, cost, timeline, and risk. Adjust the scores and the recommendation updates automatically.
 
 ```slex
 {
@@ -107,4 +107,4 @@ The eternal tech team dilemma: should we build this feature ourselves, or buy an
 - `recommendation()` combines positioning and scores for a recommendation
 - Accordion provides additional decision guidance (cost notes, strategy tips, hybrid approach)
 
-This framework turns "gut feeling" into "evidence-based comparison."
+This framework turns a subjective decision into comparable score inputs.

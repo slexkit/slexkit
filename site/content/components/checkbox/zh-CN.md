@@ -17,7 +17,7 @@ summary: "复选框，适合确认项或多选项。"
   "layout": {
     "checkbox:agree": {
       "checked": true,
-      "label": "I agree",
+      "label": "我同意",
       "icon": "handshake"
     }
   }
@@ -41,19 +41,19 @@ summary: "复选框，适合确认项或多选项。"
   layout: {
     "column:diff": {
       "checkbox:checked": {
-        label: "Checked",
+        label: "已选中",
         checked: true
       },
       "checkbox:unchecked": {
-        label: "Unchecked"
+        label: "未选中"
       },
       "checkbox:disabled-checked": {
-        label: "Disabled checked",
+        label: "禁用且已选",
         checked: true,
         disabled: true
       },
       "checkbox:disabled": {
-        label: "Disabled",
+        label: "已禁用",
         disabled: true
       }
     }

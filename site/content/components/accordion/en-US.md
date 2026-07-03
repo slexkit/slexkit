@@ -2,6 +2,7 @@
 title: "Accordion"
 category: Disclosure
 status: ready
+order: 10
 summary: "Multi-panel collapse for FAQs or grouped details."
 ---
 # Accordion

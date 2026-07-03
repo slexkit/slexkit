@@ -11,7 +11,7 @@ slexkitRenderMode: component
 
 ## AI Accessible Documentation
 
-SlexKit follows the assistant-ui information architecture: a clear index, a full-context file, task-oriented skills, and a minimal MCP surface. Raw docs stay as `.md` pages, and interactive examples use explicit `slex` fences.
+SlexKit exposes AI-facing documentation as a small set of predictable entry points: a clear index, a full-context file, task-oriented skills, and a minimal MCP surface. Raw docs stay as `.md` pages, and interactive examples use explicit `slex` fences.
 
 ```slex
 {

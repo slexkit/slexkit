@@ -3,7 +3,7 @@ title: "Search and Filter Table"
 category: "Data Browsing"
 status: published
 order: 10
-summary: "A search input filters table rows in real time, with expandable row details — demonstrates input + dynamic table + collapsible."
+summary: "A search input filters table rows in real time and uses collapsible for row details."
 tags: search, filter, table, collapsible
 components: section, card, input, table, collapsible, callout, stat
 difficulty: Intermediate
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Search and Filter Table
 
-Putting a static table in a document is common, but adding search and filtering turns it into a usable tool. Here we use `input` for search keywords + dynamic filtering + `collapsible` for expanded row details.
+An `input` value holds the search keywords, dynamic `table` rows reflect the filter, and `collapsible` opens row details.
 
 ```slex
 {
@@ -29,8 +29,8 @@ Putting a static table in a document is common, but adding search and filtering 
       { id: "tabs-1", name: "Tabs", category: "Navigation", status: "ready", notes: "Supports horizontal and vertical orientation." },
       { id: "table-1", name: "Table", category: "Display", status: "ready", notes: "columns array + rows array." },
       { id: "formula-1", name: "Formula", category: "Display", status: "ready", notes: "Depends on KaTeX for LaTeX rendering." },
-      { id: "toast-1", name: "Toast", category: "Feedback", status: "experimental", notes: "Supports type variants." },
-      { id: "secure-1", name: "Secure Runtime", category: "Tooling", status: "draft", notes: "Based on iframe sandbox." }
+      { id: "toast-1", name: "Toast", category: "Feedback", status: "ready", notes: "Supports type variants." },
+      { id: "secure-1", name: "Secure Runtime", category: "Tooling", status: "ready", notes: "Runs untrusted source in an iframe sandbox." }
     ],
     filtered: function () {
       var q = this.query.toLowerCase();
@@ -61,7 +61,7 @@ Putting a static table in a document is common, but adding search and filtering 
 }
 ```
 
-**Core techniques in this example:**
+**Implementation notes:**
 
 - `input`'s `onchange` updates `g.query` → triggers `g.filtered()` to recompute
 - `g.filtered()` uses `filter` to filter the `allItems` array
@@ -69,7 +69,7 @@ Putting a static table in a document is common, but adding search and filtering 
 - `g.matched()` returns the filtered count, used by stat and callout for conditional display
 - `$if` shows an empty result prompt when there are no matches
 
-This is the foundational pattern for "search box → dynamic table." Unlike hardcoded table rows, dynamic rows can change in real time with input.
+This is the basic pattern for input-driven table rows. Unlike hardcoded rows, dynamic rows can change in real time with input.
 
 ---
 
@@ -98,7 +98,7 @@ This is the foundational pattern for "search box → dynamic table." Unlike hard
 
 ## Why Dynamic Rows Matter
 
-In a static table, `rows` is a hardcoded 2D array. Once data volume grows or conditional filtering is needed, static rows can't keep up. `"$rows"` lets you dynamically generate row data in a g method — useful for:
+A static table uses a hardcoded 2D `rows` array. When data volume grows or filters are needed, use `"$rows"` to generate row data in a `g` method:
 
 - **In-document data browsing**: catalogs, API lists, configuration items
 - **AI output display**: LLM-generated table results that need filtering

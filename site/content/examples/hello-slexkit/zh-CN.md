@@ -1,9 +1,9 @@
 ---
-title: "你的第一个 SlexKit 卡片"
+title: "第一个 SlexKit 卡片"
 category: "入门教程"
 status: published
 order: 1
-summary: "零交互、纯展示的静态卡片，展示 SlexKit 声明式 DSL 的渲染效果。"
+summary: "静态 SlexKit 卡片示例，使用 section、grid、stat、table 和 callout 组织内容。"
 tags: beginner, static, overview
 components: section, grid, stat, table, callout
 difficulty: 入门
@@ -12,9 +12,9 @@ featured: true
 slexkitRenderMode: component
 ---
 
-# 你的第一个 SlexKit 卡片
+# 第一个 SlexKit 卡片
 
-SlexKit 的核心思想：**用声明式 JSON 描述 UI，而不仅是 Markdown**。下面是一个纯静态的卡片——没有 `g` 对象，没有交互，所有内容都直接写在结构中。
+先从静态卡片开始：不使用 `g` 对象或交互，只用 `layout` 声明页面结构。
 
 ```slex
 {
@@ -23,7 +23,7 @@ SlexKit 的核心思想：**用声明式 JSON 描述 UI，而不仅是 Markdown*
   layout: {
     "section:hello": {
       eyebrow: "入门教程 · 1/4",
-      title: "你的第一个 SlexKit 卡片",
+      title: "第一个 SlexKit 卡片",
       subtitle: "所有内容都是声明式的——数字、颜色、布局，全部来自 DSL。",
       "grid:top-stats": {
         columns: 1, mdColumns: 3,
@@ -41,16 +41,16 @@ SlexKit 的核心思想：**用声明式 JSON 描述 UI，而不仅是 Markdown*
       },
       "callout:tip": {
         tone: "info",
-        text: "你现在看到的每一样东西——标题、数值、表格、颜色——都来自上面的 DSL 声明，没有一行 HTML。这就是 SlexKit 的核心理念：Markdown 提供叙事，DSL 提供交互。"
+        text: "标题、数值、表格和颜色都来自上面的 DSL 声明，不需要额外 HTML。Markdown 承载正文，DSL 承载交互结构。"
       }
     }
   }
 }
 ```
 
-只看不动，感受一下结构和布局语法。下一节我们给卡片加上第一条响应式数据。
+先观察结构、组件 key 和嵌套方式。下一节会在同样的结构里加入响应式数据。
 
 ---
 
 
-思考：如果 `"12,847"` 需要从里面计算出来，显然直接写死字符串不够。这就需要引入 **`g` 对象**——下一节的主角。
+如果 `"12,847"` 需要动态计算，就需要把数据放进 `g` 对象，并用表达式读取。

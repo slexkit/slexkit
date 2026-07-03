@@ -3,7 +3,7 @@ title: "跨文档状态实验室"
 category: "平台能力"
 status: published
 order: 15
-summary: "展示 SlexKit 最独特的跨 fence 状态共享——文档不同位置的多块 slex 代码共享同一个响应式 g 对象。"
+summary: "多块 `slex` 代码使用同一个 namespace，共享同一份响应式 `g` 状态。"
 tags: cross-document, state-sharing, namespace, multi-fence
 components: section, card, slider, input, select, stat, badge, callout, grid, column, tabs
 difficulty: 入门
@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 跨文档状态实验室
 
-这是 SlexKit 最独特的能力之一：**在同一个 Markdown 文档的不同位置放置多块 `slex` 代码，只要它们使用相同的 `namespace`，就会共享同一份 `g` 状态**。
+同一篇 Markdown 中的多个 `slex` 代码块可以通过相同 `namespace` 共享 `g` 状态。
 
 下面是三个独立的 ` ```slex ` fence——一个控制面板和两个观察面板。试试修改控制面板的值，看下方两个面板实时响应。
 
@@ -109,13 +109,13 @@ slexkitRenderMode: component
 }
 ```
 
-**三个 fence 块**，同一个 `namespace: "example_cross_doc_lab"`，所有组件共享 `g` 对象。上面你在主控面板改颜色和大小，下面两个观察面板马上更新。
+**三个 fence 块**，同一个 `namespace: "example_cross_doc_lab"`，所有组件共享 `g` 对象。主控面板中的颜色和大小变化会同步到两个观察面板。
 
 ---
 
 ### 这意味着什么？
 
-假设你在一篇长篇 Markdown 文档中：
+在一篇长篇 Markdown 文档中：
 
 ```
 [控制面板 — 选择行业/指标/时间范围]
@@ -125,11 +125,10 @@ slexkitRenderMode: component
 [图表 B — 同一份状态的不同可视化]
 ```
 
-每个 ` ```slex ` 块可以独立渲染，但只要 namespace 相同，它们就共享状态。这对于：
+每个 ` ```slex ` 块可以独立渲染；namespace 相同时，它们共享状态。常见用法包括：
 
 - **技术白皮书**：顶部选参数，中间分析，底部结论，全程联动
 - **项目协作文档**：状态跟踪表格在顶部，各团队任务卡片散布在正文中
 - **AI 输出增强**：模型生成的多个可视化节点共享同一份推理结果
 
-
-都是极其强大的模式。这不是一个 "组件库" 能做到的——这是 SlexKit 的核心设计。
+这些场景都依赖同一个机制：多块 fence 共享同一份状态，而不是把每块 UI 当成完全独立的组件。

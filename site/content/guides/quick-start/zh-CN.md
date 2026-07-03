@@ -3,15 +3,15 @@ title: 开始使用
 category: Guides
 status: ready
 order: 20
-summary: "面向开发者的 SlexKit 集成入口：安装运行时、挂载可信片段、接入 Markdown host，并选择后续集成方式。"
+summary: "安装 SlexKit，挂载第一个片段，并保留可读的 Markdown fallback。"
 slexkitRenderMode: component
 ---
 
 # 开始使用
 
-> 只想在 Obsidian 里直接安装插件？打开 **Settings -> Community plugins**，搜索 **SlexKit**，安装并启用即可。下面的内容主要面向需要把 SlexKit 接入网页、Markdown host、Streamdown 或自定义运行环境的开发者。
+> 安装 Obsidian 插件时，打开 **Settings -> Community plugins**，搜索 **SlexKit**，安装并启用即可。下面的内容用于网页、Markdown host、Streamdown 或自定义运行环境。
 
-安装 `slexkit`，挂载一个可信片段，即可开始使用。后续可接入 Markdown host、Streamdown 或 Obsidian 插件。本文跳过这些集成细节，聚焦核心集成路径。
+先安装 `slexkit` 并挂载一个 trusted fragment。基础渲染可用后，再接入 Markdown host、Streamdown 或 Obsidian 插件。
 
 ## 安装入口
 
@@ -26,21 +26,21 @@ import { mount } from "slexkit";
 import "slexkit/style.css";
 ```
 
-需要更明确的包边界时，可按宿主选择 scoped packages：
+需要宿主专用 package 时，按场景选择：
 
 | 场景 | 安装 |
 |---|---|
 | 自定义组件或无组件运行时 | `npm install slexkit @slexkit/runtime` |
 | 官方 Svelte 组件注册 | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` |
 | 独立 shadcn token 主题 CSS | `npm install @slexkit/theme-shadcn` |
-| React + Streamdown Markdown host | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
+| React + Streamdown Markdown 宿主 | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` |
 | Obsidian vault 渲染 | 从 Obsidian Community Plugins 安装 **SlexKit** |
 
-`@slexkit/runtime` 和 `@slexkit/components-svelte` 是根包的 thin wrapper，不是独立实现包。
+`@slexkit/runtime` 和 `@slexkit/components-svelte` 复用根包实现，不是独立实现包。
 
 ## 可信片段
 
-Trusted mode 是最小集成路径，适用于应用自生成 source、本地示例、仓库维护内容和已审查片段。
+可信模式（`trusted`）是最小集成路径，适用于应用自生成 source、本地示例、仓库维护内容和已审查片段。
 
 ```ts
 import { mount } from "slexkit";
@@ -53,9 +53,9 @@ const source = {
   },
   layout: {
     "card:demo": {
-      title: "Counter",
+      title: "计数器",
       "text:value": {
-        "$text": "'Count: ' + g.count"
+        "$text": "'计数：' + g.count"
       },
       "button:add": {
         label: "+1",
@@ -79,13 +79,13 @@ Source 出现在 Markdown 中时，仅处理显式 `slex` fence，并在 fence �
 {
   namespace: "release_status",
   layout: {
-    "badge:status": { label: "Ready", tone: "success" },
-    "text:summary": { text: "3 of 3 checks passed." }
+    "badge:status": { label: "就绪", tone: "success" },
+    "text:summary": { text: "3 项检查全部通过。" }
   }
 }
 ```
 
-**Release status:** Ready. 3 of 3 checks passed.
+**发布状态：** 就绪。3 项检查全部通过。
 ````
 
 支持 SlexKit 的 host 渲染 fence；普通 Markdown host 显示 fallback。不应从 `js`、`json` 或未标记代码块中推断并执行 SlexKit source。
@@ -114,16 +114,16 @@ export function mountSlexFence(source: string, container: HTMLElement) {
 
 整篇文档或消息线程销毁时，调用 `runtime.disposeArtifact(artifactId)` 或 `runtime.disposeAll()`。
 
-## 可信边界
+## 内容来源
 
-| 内容来源 | 推荐模式 |
+| 内容来源 | 使用 |
 |---|---|
 | 应用代码生成、仓库维护示例、本地 vault 内容 | trusted |
 | 未审查用户输入、第三方 Markdown、agent 直接输出 | secure |
 
-Secure mode 需要 sandbox iframe、公开可加载的 `slexkit.runtime.js` 以及 host policy。具体接入见 [安全运行时接入](security-runtime)。
+安全模式（`secure`）需要 sandbox iframe、公开可加载的 `slexkit.runtime.js` 以及 host policy。具体接入见 [安全运行时接入](security-runtime)。
 
-## 后续路径
+## 继续阅读
 
 - [集成](integration)：接入 React/Streamdown 与 Obsidian 插件
 - [安全运行时接入](security-runtime)：渲染不可信或 agent 生成内容

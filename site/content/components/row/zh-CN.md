@@ -18,10 +18,10 @@ summary: "横向排列子组件。适合工具栏、状态行、按钮组。"
     "row:toolbar": {
       "justify": "space-between",
       "text:title": {
-        "text": "Runtime status"
+        "text": "运行时状态"
       },
       "button:refresh": {
-        "label": "Refresh"
+        "label": "刷新"
       }
     }
   }

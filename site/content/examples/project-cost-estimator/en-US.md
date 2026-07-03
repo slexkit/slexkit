@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # Software Project Cost Estimator
 
-Your boss asks: "How much will this project cost?" You say: "Let me calculate." Then you open Excel and fill in a bunch of formulas. Actually, you don't need to — just enter the team configuration and timeline, and the cost calculates itself.
+Team size, timeline, rates, and risk buffer feed the total project cost, monthly burn, and per-person cost.
 
 ```slex
 {
@@ -79,7 +79,7 @@ Your boss asks: "How much will this project cost?" You say: "Let me calculate." 
 }
 ```
 
-7 people for 6 months — what's the monthly burn? Will adding a tester blow the budget? Drag to find out.
+Adjust headcount, timeline, or role mix, and monthly burn plus total cost update immediately.
 
 ```slex
 {

@@ -2,6 +2,7 @@
 title: "Icon"
 category: Component
 status: ready
+order: 10
 summary: "Shared icon field capability used by all icon-supporting components."
 ---
 # Icon

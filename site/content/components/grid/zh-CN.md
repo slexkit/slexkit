@@ -19,15 +19,15 @@ summary: "响应式等宽网格。适合同级卡片、指标、字段组。"
       "columns": 1,
       "mdColumns": 3,
       "stat:a": {
-        "label": "Requests",
+        "label": "请求数",
         "value": "1.2k"
       },
       "stat:b": {
-        "label": "Success",
+        "label": "成功",
         "value": "98%"
       },
       "stat:c": {
-        "label": "Errors",
+        "label": "错误",
         "value": "3"
       }
     }

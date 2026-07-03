@@ -9,9 +9,9 @@ slexkitRenderMode: component
 
 # Slex 规范 v0.1
 
-Slex expression envelope、component keys、props、directives、lifecycle、runtime API contract——SlexKit v0 的公开协议全在这里。implementors、test authors、host adapter authors 以本文为最终依据。
+本规范定义 SlexKit v0 的公开协议：Slex expression envelope、component keys、props、directives、lifecycle 和 runtime API contract。实现者、测试作者和宿主 adapter 作者以这里的规则为准。
 
-v0/beta 阶段：当前实现可能调整，但协议版本（v0.1）独立于包版本。同一协议版本可能跨越多个包版本保持兼容。
+v0/beta 阶段可能调整，但协议版本（v0.1）独立于包版本。同一协议版本可能跨越多个包版本保持兼容。
 
 ## 1. Slex expression envelope
 
@@ -42,7 +42,7 @@ v0/beta 阶段：当前实现可能调整，但协议版本（v0.1）独立于�
 ```js
 {
   "card:summary": {
-    "text:title": { text: "Ready" }
+    "text:title": { text: "就绪" }
   }
 }
 ```
@@ -53,14 +53,14 @@ v0/beta 阶段：当前实现可能调整，但协议版本（v0.1）独立于�
 
 保留上下文名称：`g`、`std`、`api`、`$event`、`$item`、`$index`、`$key`。
 
-## 3. Props classification
+## 3. Props 分类
 
-### Static props
+### 静态 props
 
 普通 props 原样传给组件：
 
 ```js
-"badge:state": { label: "Ready", tone: "success" }
+"badge:state": { label: "就绪", tone: "success" }
 ```
 
 ### `$` read-pipes
@@ -68,8 +68,8 @@ v0/beta 阶段：当前实现可能调整，但协议版本（v0.1）独立于�
 `$` 前缀 prop（排除 `$if`、`$for`、`$key`）表示动态 read expression。Runtime 求值后去掉 `$` 前缀并传给组件：
 
 ```js
-"text:value": { "$content": "'Count: ' + g.count" }
-// 解析为: content = "Count: <g.count 的值>"
+"text:value": { "$content": "'计数：' + g.count" }
+// 解析为: content = "计数：<g.count 的值>"
 ```
 
 表达式读取 `g`、命名组件 state 或 `$for` context 后，会建立依赖；依赖变化时重新求值。
@@ -84,11 +84,11 @@ v0/beta 阶段：当前实现可能调整，但协议版本（v0.1）独立于�
 
 Handler 可访问 `$event`。Writable components 会在 handler 执行前同步自身 state。
 
-### Structural directives
+### 结构指令
 
 `$if`、`$for`、`$key` 是 structural directives，不作为 props 传给 renderer。
 
-## 4. `g` merge
+## 4. `g` 合并
 
 同一 namespace 的多次 mount 或 ingest 会合并 `g`：
 
@@ -102,11 +102,11 @@ Handler 可访问 `$event`。Writable components 会在 handler 执行前同步�
 
 `layout` 不做 deep merge；新 layout 替换旧 layout。
 
-## 5. Expression context
+## 5. 表达式上下文
 
 表达式可以访问：
 
-| Variable | Type | Scope |
+| 变量 | 类型 | 作用域 |
 |---|---|---|
 | `g` | 响应式 state proxy | 始终可用 |
 | `std` | SlexKit 纯标准库 | 始终可用 |
@@ -120,15 +120,15 @@ Handler 可访问 `$event`。Writable components 会在 handler 执行前同步�
 
 `std` 提供确定性的 math、format、units 和 stats helpers。网络、timer、animation、canvas 等敏感能力仍通过宿主注入的 `api.*` 暴露，并可能受 secure runtime policy 限制。
 
-Trusted mode 使用 `new Function()` 求值。Secure mode 在 sandbox iframe 内求值，并通过 policy-gated `api.*` 暴露能力。
+Trusted mode 使用 `new Function()` 求值。Secure mode 在 sandbox iframe 内求值，并通过由 policy 控制的 `api.*` 暴露能力。
 
 表达式求值错误会被捕获，产生包含 namespace 和路径信息的 warning。回退返回上一个已知值。
 
-## 6. Component instance state
+## 6. 组件实例 state
 
 Renderer 注册时声明 state mode：
 
-| Mode | Writable props | Notes |
+| 模式 | 可写 props | 说明 |
 |---|---|---|
 | `value` | `value` | 常见文本、输入、slider |
 | `checked` | `checked`, `value` | checkbox 等勾选型布尔组件 |
@@ -175,7 +175,7 @@ Renderer 注册时声明 state mode：
 }
 ```
 
-### `$key` strategy
+### `$key` 策略
 
 - `"$value"`：primitive item 使用自身作为 key。
 - `"id"`：object item 使用属性作为 key。
@@ -183,29 +183,29 @@ Renderer 注册时声明 state mode：
 
 Primitive arrays 应使用 `$key: "$value"`。
 
-### `$for` phases
+### `$for` 阶段
 
-1. **Delete**：移除不存在的 keys。
-2. **Add/update/reorder**：创建新 nodes，更新保留 nodes 的 item/index context，并重排 DOM。
-3. **Trim**：移除防御性多余 children。
+1. **删除**：移除不存在的 keys。
+2. **新增 / 更新 / 重排**：创建新 nodes，更新保留 nodes 的 item/index context，并重排 DOM。
+3. **裁剪**：移除防御性多余 children。
 
 Item index 或 item reference 变化时调用 `onUpdate_<name>`。
 
-## 9. Lifecycle and cleanup
+## 9. 生命周期与清理
 
 Runtime 按命名约定调用 hooks：
 
 ```txt
-g.onMount_<name>()      -after component is appended to DOM
-g.onUnmount_<name>()    -before component is removed from DOM
-g.onUpdate_<name>()     -after $for item changes
+g.onMount_<name>()      // after component is appended to DOM
+g.onUnmount_<name>()    // before component is removed from DOM
+g.onUpdate_<name>()     // after $for item changes
 ```
 
 组件 renderer 可使用 `attachComponentDisposer(el, fn)` 注册 cleanup。Runtime 在节点移除、`$if` 关闭、`$for` 项删除、root cleanup 或 `disposeNamespace()` 时调用 disposer。
 
-## 10. Public runtime API
+## 10. 公开 runtime API
 
-| Function | Signature | Description |
+| 函数 | 签名 | 说明 |
 |---|---|---|
 | `mount` | `(input, container, options?) => Cleanup` | 解析、合并 state、渲染组件树 |
 | `ingest` | `(input) => boolean` | 仅合并 state，不渲染 |
@@ -225,7 +225,7 @@ g.onUpdate_<name>()     -after $for item changes
 | `iconifySvgUrl` | `(name, state?) => string` | 构建完整 Iconify API SVG URL |
 | `configureComponentScope` | `(options) => void` | 配置框架 adapter flush |
 | `attachComponentDisposer` | `(el, dispose) => void` | 绑定 cleanup 到元素生命周期 |
-| `createSecureRuntime` | `(policy, adapter?) => SecureRuntimeHandle` | 创建 policy-gated runtime 实例 |
+| `createSecureRuntime` | `(policy, adapter?) => SecureRuntimeHandle` | 创建由 policy 控制的 runtime 实例 |
 | `mountSecureArtifact` | `(input, container, options) => Cleanup` | 在 secure sandbox 中挂载 |
 | `createSlexKitMarkdownRuntimeHost` | `(options?) => MarkdownRuntimeHost` | 创建 Markdown host 实例 |
 | `getSlexKitMarkdownRuntimeHost` | `() => MarkdownRuntimeHost` | 获取或创建全局 Markdown host |
@@ -240,7 +240,7 @@ g.onUpdate_<name>()     -after $for item changes
 
 完整 runtime 行为见 [Runtime Model](/zh-CN/docs/reference/runtime)。
 
-## 11. Error types
+## 11. 错误类型
 
 ### `SlexKitSyntaxError`
 
@@ -257,7 +257,7 @@ diagnoseSlexKitSource(source)
 formatSlexKitDiagnostic(diagnostic)
 ```
 
-## 12. Markdown language handling
+## 12. Markdown 语言标记
 
 Markdown hosts 只能处理明确标记为 `slex` 的 fenced code blocks。
 
@@ -266,12 +266,12 @@ Markdown hosts 只能处理明确标记为 `slex` 的 fenced code blocks。
 - `js`
 - `javascript`
 - `json`
-- untagged fences
-- inline code
+- 未标记语言的 fence
+- 行内 code
 
 Host 应保留普通 Markdown fallback，以便不支持 SlexKit 的环境可读。
 
-## 13. Secure runtime types
+## 13. Secure runtime 类型
 
 ```ts
 type SecureRuntimeHandle = {
@@ -286,9 +286,9 @@ type SecureRuntimeHandle = {
 
 ToolHost 把 AI tool calls 连接到返回结构化用户输入的交互 UI。它与 display-oriented `slex` fences 分离。
 
-**Public API：**
+**公开 API：**
 
-| Function | Signature | Description |
+| 函数 | 签名 | 说明 |
 |---|---|---|
 | `renderToolCall` | `(call, container) => ToolRenderHandle` | 编译并挂载 tool UI，返回 promise |
 | `registerToolTemplate` | `(name, compiler) => void` | 注册自定义 tool template 编译器 |
@@ -301,11 +301,11 @@ type ToolResult =
   | { toolCallId?: string; toolName: string; status: "ignored"; value: null };
 ```
 
-**内置 templates：** `confirm-action`、`choose-options`、`option-list`、`fill-form`。Templates 编译成标准 Slex expression，使用 `card:tool` 和 `submit:actions` 组件。`submit:actions` 是 completion boundary——仅由 tool template 使用，不作为普通 display fence。
+**内置 templates：** `confirm-action`、`choose-options`、`option-list`、`fill-form`。Templates 编译成标准 Slex expression，使用 `card:tool` 和 `submit:actions` 组件。`submit:actions` 返回 ToolHost 结果，仅由 tool template 使用，不作为普通 display fence。
 
 完整 template reference 和自定义 template 开发见 [ToolHost documentation](/docs/reference/toolhost)。
 
-## 15. Icon system
+## 15. 图标系统
 
 Icon system 提供：
 
@@ -320,9 +320,9 @@ Icon system 提供：
 - `resolveIconifyIcon`
 - `iconifySvgUrl`
 
-组件使用 kebab-case icon names。完整 API、icon list、命名规则和 custom icon registration 见 [Icon system documentation](/docs/reference/icons)。
+组件使用 kebab-case icon names。API、icon list、命名规则和 custom icon registration 见 [Icon system documentation](/docs/reference/icons)。
 
-## 16. Non-goals
+## 16. 非目标
 
 SlexKit v0 不试图提供：
 
@@ -332,4 +332,4 @@ SlexKit v0 不试图提供：
 - 不通过启发式扫描代码块猜测是否渲染。
 - 不隐式将 display UI 包装为函数调用。
 
-SlexKit 的核心边界是：Markdown-friendly、explicit fence、small interactive fragments、host-chosen trust boundary。
+SlexKit 的核心范围是：Markdown-friendly、explicit fence、small interactive fragments、host-chosen trust boundary。

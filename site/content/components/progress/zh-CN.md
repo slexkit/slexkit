@@ -16,7 +16,7 @@ summary: "进度条。"
   "namespace": "doc_progress_typical",
   "layout": {
     "progress:build": {
-      "label": "Build progress",
+      "label": "构建进度",
       "icon": "gear-six",
       "value": 64
     }

@@ -2,6 +2,7 @@
 title: "Grid"
 category: Layout
 status: ready
+order: 40
 summary: "Responsive equal-width grid for sibling cards, metrics, and field groups."
 ---
 # Grid

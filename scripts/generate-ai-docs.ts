@@ -101,7 +101,7 @@ const referencePages = [
   ["runtime", "Runtime Model", "Mounting, ingestion, boot, namespace store, lifecycle, and runtime APIs."],
   ["integration", "Host Integration", "Markdown renderers, Svelte custom hosts, Streamdown, Tiptap, Obsidian, and artifact lifecycle."],
   ["security", "Security Runtime", "Threat model, sandbox iframe, postMessage bridge, policy, and fail-closed behavior."],
-  ["packages", "Package Boundaries", "Package relationships, installation matrix, and packaging strategy."],
+  ["packages", "Packages", "Package roles, installation matrix, and packaging strategy."],
   ["standard", "Slex Standard Artifacts", "JSON Schema, component catalog, logic profile, capabilities catalog, conformance fixtures, and manifest."],
   ["toolhost", "ToolHost", "Tool call rendering, built-in templates, custom templates, and submit boundaries."],
   ["icons", "Icon System", "Phosphor icons, custom icon registration, Iconify fallback, and API reference."],

@@ -98,7 +98,7 @@ type ComponentRegistrationOptions = {
 
 ### `configureComponentScope(options)`
 
-Configures a flush function for component scope -used by framework adapters to synchronize DOM after reactive updates.
+Configures a flush function for component scope. Framework adapters use it to synchronize DOM after reactive updates.
 
 ```ts
 function configureComponentScope(options: { flush?: () => void }): void;
@@ -164,9 +164,9 @@ Repeatedly named components share namespace-level state. `$for` items with the s
 The runtime calls convention-based hooks on the `g` object:
 
 ```
-g.onMount_<name>()      -after component is appended to DOM
-g.onUnmount_<name>()    -before component is removed from DOM
-g.onUpdate_<name>()     -after $for item index or item reference changes
+g.onMount_<name>()      // after component is appended to DOM
+g.onUnmount_<name>()    // before component is removed from DOM
+g.onUpdate_<name>()     // after $for item index or item reference changes
 ```
 
 These hooks fire for normal components, `$if` branches, and `$for` slots. Root cleanup and `disposeNamespace()` trigger `onUnmount`.

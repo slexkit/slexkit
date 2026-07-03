@@ -30,7 +30,7 @@ The source lives in [`examples/streamdown`](https://github.com/slexkit/slexkit/t
 
 [Open the integration guide](/docs/guides/integration) · [View runnable source](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)
 
-## Responsibilities
+## Scope
 
 | Item | Convention |
 | --- | --- |

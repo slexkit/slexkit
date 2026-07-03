@@ -14,7 +14,7 @@ slexkitRenderMode: component
 
 # 多输入协同：两个滑块联动
 
-真实场景中往往有多个输入变量，它们相互影响。这需要引入两样新东西：
+多个输入变量相互影响时，可以把计算逻辑放进 `g.method()`，再用 `$if` 控制显示。
 1. **`g.method()`** — 依赖其他状态的计算值（类似 Vue computed）
 2. **`$if`** — 条件渲染（根据状态决定显示或隐藏组件）
 
@@ -33,7 +33,7 @@ slexkitRenderMode: component
     "section:coordinated": {
       eyebrow: "入门教程 · 3/4",
       title: "多输入协同：矩形尺寸联动",
-      subtitle: "同时调整宽和高，面积和宽高比自动重新计算。这就是 g 方法的力量。",
+      subtitle: "同时调整宽和高，面积和宽高比会自动重新计算。",
       "grid:params": {
         columns: 1, mdColumns: 2,
         "column:w": {

@@ -3,13 +3,13 @@ title: Slex 用法参考
 category: Reference
 status: ready
 order: 20
-summary: "Slex source 结构、props、directives、events、theming、自定义组件与 ToolHost 边界参考。"
+summary: "Slex source 结构、props、directives、events、theming、自定义组件与 ToolHost 参考。"
 slexkitRenderMode: component
 ---
 
 # Slex 用法参考
 
-Slex source 怎么写？props、directives、events、theming、自定义组件，以及 ToolHost 边界都在这里。首次接入请先阅读 [开始使用](/docs/guides/quick-start)。精确协议兼容性以 [Slex Specification](/docs/reference/spec) 为准。
+Slex source 怎么写？props、directives、events、theming、自定义组件，以及 ToolHost 用法都在这里。首次接入请先阅读 [开始使用](/docs/guides/quick-start)。协议兼容性见 [Slex Specification](/docs/reference/spec)。
 
 ## 安装
 
@@ -36,7 +36,7 @@ import { mount, register } from "@slexkit/runtime";
 
 这个入口不会自动注册官方 Svelte components。需要官方组件时，使用根包 `slexkit`，或显式导入 `@slexkit/components-svelte`。
 
-包边界和宿主安装组合见 [Package Boundaries](/docs/reference/packages)。
+包和宿主安装组合见 [包与安装](/docs/reference/packages)。
 
 ## Slex source 结构
 
@@ -48,8 +48,8 @@ Slex source 是 JavaScript object literal：
   namespace: "demo",
   g: { count: 0 },
   layout: {
-    "button:add": { text: "Add", onclick: "g.count++" },
-    "text:value": { "$content": "'Count: ' + g.count" }
+    "button:add": { text: "添加", onclick: "g.count++" },
+    "text:value": { "$content": "'计数：' + g.count" }
   }
 }
 ```
@@ -68,7 +68,7 @@ Slex source 是 JavaScript object literal：
 静态值会原样传给组件：
 
 ```js
-"text:title": { text: "Hello World" }
+"text:title": { text: "你好，世界" }
 ```
 
 ### 动态读管道（`$`）
@@ -76,7 +76,7 @@ Slex source 是 JavaScript object literal：
 `$` 前缀 key 的字符串值会作为 JavaScript 表达式求值，传给组件时去掉 `$` 前缀：
 
 ```js
-"text:value": { "$content": "'Count: ' + g.count" }
+"text:value": { "$content": "'计数：' + g.count" }
 ```
 
 最终传给组件的是 `content`。表达式读取到的响应式依赖变化后会自动重新求值。
@@ -103,7 +103,7 @@ Slex source 是 JavaScript object literal：
 ```js
 "card:panel": {
   "$if": "g.visible",
-  "text:body": { text: "I am visible" }
+  "text:body": { text: "我会显示" }
 }
 ```
 
@@ -135,13 +135,13 @@ primitive 数组应显式写 `$key: "$value"`。
 
 ### `$for` 更新算法
 
-1. **Delete phase**：移除不再存在的 key，可触发 leave animation。
-2. **Add/update/reorder phase**：创建新项，更新保留项上下文，并按数组顺序重排 DOM。
-3. **Trim phase**：防御性移除多余子节点。
+1. **删除阶段**：移除不再存在的 key，可触发 leave animation。
+2. **新增 / 更新 / 重排阶段**：创建新项，更新保留项上下文，并按数组顺序重排 DOM。
+3. **裁剪阶段**：防御性移除多余子节点。
 
 当 item 的 index 或引用变化时，会调用 `onUpdate_<name>`。
 
-## Events
+## 事件
 
 事件处理器使用 `on*` 写管道。对可写组件（`value`、`checked` 或 `enabled` mode），组件原生 change/input 会先同步组件实例状态，再执行 handler。
 
@@ -178,16 +178,16 @@ mountSecureArtifact(script, container, {
 
 部署清单见 [安全运行时接入](/docs/guides/security-runtime)。完整 policy、sandbox、bridge 与 fail-closed 行为见 [Security Runtime Contract](/docs/reference/security)。
 
-## Theming
+## 主题
 
 主题模式由 `theme` option 决定：
 
-| Value | Behavior |
+| 值 | 行为 |
 |-------|----------|
 | `"auto"` | 从 container 检测已知 theme class，默认回退到 `"uno"` |
-| `"host-shadcn"` | shadcn/ui compatible |
-| `"uno"` | Uno/Flowbite compatible |
-| `"flowbite"` | Flowbite compatible |
+| `"host-shadcn"` | 兼容 shadcn/ui |
+| `"uno"` | 兼容 Uno/Flowbite |
+| `"flowbite"` | 兼容 Flowbite |
 
 `dir` 支持 `ltr`、`rtl`、`auto`，会从继承的 `dir` 属性或 document element 解析。
 
@@ -211,7 +211,7 @@ register("custom", (props, name, ctx) => {
 
 `RenderContext` 提供：
 
-| Property | Type | Description |
+| 属性 | 类型 | 说明 |
 |----------|------|-------------|
 | `g` | reactive proxy | 全局状态 |
 | `std` | `SlexKitStdlib` | 纯确定性 helper |
@@ -221,7 +221,7 @@ register("custom", (props, name, ctx) => {
 | `id` | `string \| null` | 组件 name |
 | `emit` | `(event, data?) => void` | 事件发射器 |
 | `children` | `Record<string, unknown>` | 嵌套组件树 |
-| `document` | `Document` | owner document |
+| `document` | `Document` | 所属 document |
 | `renderTree` | function | 递归渲染 helper |
 
 使用 `attachComponentDisposer(el, fn)` 将清理逻辑绑定到组件 DOM 生命周期。
@@ -237,4 +237,4 @@ ToolHost 处理需要向宿主返回结构化用户输入的 UI，例如确认�
 - `option-list`：可滚动选项列表
 - `fill-form`：带 submit 的结构化表单
 
-Templates 会编译成标准 Slex source。`submit` 组件是完成边界；它只用于 tool templates，不用于普通 display fences。
+Templates 会编译成标准 Slex source。`submit` 组件负责返回 ToolHost 结果；它只用于 tool templates，不用于普通 display fences。

@@ -2,6 +2,7 @@
 title: "Section"
 category: Layout
 status: ready
+order: 60
 summary: "Page section with title, subtitle, optional action, and content area."
 ---
 # Section

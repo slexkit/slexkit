@@ -13,7 +13,7 @@ SlexKit core runtime 的 entry points、namespace store、component state、life
 
 Slex source 语法见 [protocol specification](/docs/reference/spec)。Secure mode 隔离模型见 [security runtime contract](/docs/reference/security)。
 
-## Entry points
+## 入口函数
 
 ### `mount(input, container, options)`
 
@@ -77,7 +77,7 @@ function register(
 function configureComponentScope(options: { flush?: () => void }): void;
 ```
 
-## Validation and conformance
+## 校验与一致性
 
 ### `validateSlexSource(source, options)`
 
@@ -98,22 +98,22 @@ function validateSlexSource(
 function runSlexConformance(options?: { fixtureId?: string }): ConformanceReport;
 ```
 
-## Namespace store
+## Namespace 存储
 
 `namespace` 是状态域。多个 mount 使用同一 namespace 时共享 store：
 
 - 新 `g` 会 deep merge 到旧 `g`：函数覆盖，对象递归合并，数组替换，scalar 覆盖。
 - 新 `layout` 替换当前 layout，不做 deep merge。
-- Component instance state 在 namespace 内持久化。
+- 组件实例 state 在 namespace 内持久化。
 - Expression caches 按 namespace 管理。
 
 这允许文档、消息域或工具面板增量更新 UI，同时保留状态。
 
-## Component instance state
+## 组件实例 state
 
 命名组件可以暴露实例状态，具体可写 prop 由组件注册时的 state mode 决定：
 
-| Mode | Writable prop | Behavior |
+| 模式 | 可写 prop | 行为 |
 |------|---------------|----------|
 | `value` | `value` | 可读写 |
 | `checked` | `checked`, `value` | 两者同步，可读写 |
@@ -132,19 +132,19 @@ function runSlexConformance(options?: { fixtureId?: string }): ConformanceReport
 
 重复使用同名组件会共享 namespace-level state。`$for` 中同名组件也共享一个 state instance。
 
-## Lifecycle hooks
+## 生命周期 hooks
 
 Runtime 会按约定调用 `g` 上的 hooks：
 
 ```txt
-g.onMount_<name>()      -after component is appended to DOM
-g.onUnmount_<name>()    -before component is removed from DOM
-g.onUpdate_<name>()     -after $for item index or item reference changes
+g.onMount_<name>()      // after component is appended to DOM
+g.onUnmount_<name>()    // before component is removed from DOM
+g.onUpdate_<name>()     // after $for item index or item reference changes
 ```
 
 这些 hooks 适用于普通组件、`$if` branch 和 `$for` slot。root cleanup 与 `disposeNamespace()` 都会触发 `onUnmount`。
 
-## Component disposer
+## 组件 disposer
 
 Framework 组件、event listeners、subscriptions 和外部资源应把 cleanup 绑定到组件 DOM 元素：
 
@@ -161,18 +161,18 @@ register("custom", (props, name, ctx) => {
 
 元素卸载时 runtime 会调用 disposer。官方 Svelte adapter 用这个机制销毁 Svelte component instance。
 
-## Expression evaluation context
+## 表达式求值上下文
 
 `$` read-pipes 和 `on*` write-pipes 可访问：
 
-| Variable | Type | Availability |
+| 变量 | 类型 | 可用范围 |
 |----------|------|--------------|
-| `g` | reactive state proxy | always |
+| `g` | 响应式 state proxy | 始终可用 |
 | `api` | host-injected capabilities | `mount()` 传入 `api` 时 |
-| `$event` | event data | `on*` handlers |
-| `$item` | current array item | `$for` context |
-| `$index` | current array index | `$for` context |
-| `$key` | current item key | `$for` context |
-| named component state | e.g. `threshold.value` | named components |
+| `$event` | 事件数据 | `on*` handlers |
+| `$item` | 当前数组项 | `$for` context |
+| `$index` | 当前数组索引 | `$for` context |
+| `$key` | 当前项 key | `$for` context |
+| 命名组件 state | 如 `threshold.value` | 命名组件 |
 
 Trusted mode 使用 `new Function()` 进行表达式求值。求值错误会被捕获，并以包含 namespace 和 path 的 warning 输出；运行时使用上一次有效值作为 fallback。

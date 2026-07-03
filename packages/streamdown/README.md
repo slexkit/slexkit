@@ -8,7 +8,7 @@ Streamdown custom renderer for Slex fenced UI blocks.
 npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom
 ```
 
-Import both style sheets in your app:
+Import both style sheets in the app:
 
 ```ts
 import "@slexkit/theme-shadcn/style.css";
@@ -176,20 +176,20 @@ const renderer = createSlexKitRenderer({
 
 The secure renderer uses the main `slexkit.runtime.js` module as its iframe runner. You do not need to ship a second runner file.
 
-Copy the runtime file into your public static directory:
+Copy the runtime file into the public static directory:
 
 ```sh
 npx -y slexkit copy-runtime public/slexkit.runtime.js
 ```
 
-The file must be served by your app or CDN with these response headers:
+The file must be served by the app or CDN with these response headers:
 
 ```http
 Access-Control-Allow-Origin: *
 Content-Type: text/javascript
 ```
 
-This header is configured in your deployment layer, not inside `createSlexKitRenderer()`. Secure iframes intentionally run with an opaque origin, so the browser treats `runtimeUrl` as a cross-origin ES module import even when the URL is on your own site. Do not add `allow-same-origin` to the iframe sandbox to bypass this; that weakens isolation.
+This header is configured in the deployment layer, not inside `createSlexKitRenderer()`. Secure iframes intentionally run with an opaque origin, so the browser treats `runtimeUrl` as a cross-origin ES module import even when the URL is on the same site. Do not add `allow-same-origin` to the iframe sandbox to bypass this; that weakens isolation.
 
 If the iframe cannot load or mount the runtime, SlexKit renders a `role="alert"` diagnostic next to the iframe and logs the same message to `console.error`. Tune the diagnostic delay with `secureFrame.loadTimeoutMs`.
 
@@ -221,7 +221,7 @@ export default {
   Content-Type: text/javascript
 ```
 
-If your Markdown surface already owns a page-level SlexKit runtime, pass it into the renderer so block mount/unmount events are delegated to that host:
+When the Markdown surface already owns a page-level SlexKit runtime, pass it into the renderer so block mount/unmount events are delegated to that host:
 
 ```tsx
 import {

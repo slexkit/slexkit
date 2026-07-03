@@ -6,7 +6,7 @@ Tiptap extension for explicit `slex` fenced UI blocks.
 npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown
 ```
 
-Import the SlexKit theme once in your app entry:
+Import the SlexKit theme once in the app entry:
 
 ```ts
 import "@slexkit/theme-shadcn/style.css";

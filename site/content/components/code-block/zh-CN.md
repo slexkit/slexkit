@@ -16,7 +16,7 @@ summary: "代码或配置片段展示。"
   "namespace": "doc_code_block_typical",
   "layout": {
     "code-block:config": {
-      "title": "Config",
+      "title": "配置",
       "icon": "code",
       "language": "js",
       "code": "export const enabled = true;"

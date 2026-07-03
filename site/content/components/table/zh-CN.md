@@ -19,12 +19,12 @@ summary: "结构化表格，展示 columns / rows。"
       "columns": [
         {
           "key": "name",
-          "label": "Name",
+          "label": "姓名",
           "icon": "text-t"
         },
         {
           "key": "status",
-          "label": "Status",
+          "label": "状态",
           "icon": "check-circle"
         }
       ],

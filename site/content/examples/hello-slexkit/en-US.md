@@ -1,9 +1,9 @@
 ---
-title: "Your First SlexKit Card"
+title: "First SlexKit Card"
 category: "Getting Started"
 status: published
 order: 1
-summary: "A zero-interaction, display-only static card that demonstrates SlexKit's declarative DSL rendering."
+summary: "A static SlexKit card using section, grid, stat, table, and callout."
 tags: beginner, static, overview
 components: section, grid, stat, table, callout
 difficulty: Beginner
@@ -12,9 +12,9 @@ featured: true
 slexkitRenderMode: component
 ---
 
-# Your First SlexKit Card
+# First SlexKit Card
 
-The core idea of SlexKit: **describe UI with declarative JSON, not just Markdown**. Below is a purely static card — no `g` object, no interaction, all content written directly in the structure.
+Start with a static card: no `g` object, no interaction, and the whole structure declared in `layout`.
 
 ```slex
 {
@@ -23,7 +23,7 @@ The core idea of SlexKit: **describe UI with declarative JSON, not just Markdown
   layout: {
     "section:hello": {
       eyebrow: "Getting Started · 1/4",
-      title: "Your First SlexKit Card",
+      title: "First SlexKit Card",
       subtitle: "Everything is declarative — numbers, colors, layout, all from the DSL.",
       "grid:top-stats": {
         columns: 1, mdColumns: 3,
@@ -41,15 +41,15 @@ The core idea of SlexKit: **describe UI with declarative JSON, not just Markdown
       },
       "callout:tip": {
         tone: "info",
-        text: "Everything you see here — titles, numbers, tables, colors — comes from the DSL declaration above, with zero HTML. This is SlexKit's core idea: Markdown provides narrative, DSL provides interaction."
+        text: "Titles, numbers, tables, and colors all come from the DSL declaration above. Markdown carries the prose; the DSL carries the interactive structure."
       }
     }
   }
 }
 ```
 
-Just look and feel the structure and layout syntax. In the next section, we'll add the first piece of reactive data to the card.
+Start with the component keys and nesting structure. The next section adds reactive data to the same shape.
 
 ---
 
-Think about it: if `"12,847"` needs to be computed dynamically, hardcoding a string won't cut it. That's where the **`g` object** comes in — the star of the next section.
+If `"12,847"` needs to be computed, move that value into `g` and read it through an expression.

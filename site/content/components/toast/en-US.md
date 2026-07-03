@@ -2,6 +2,7 @@
 title: "Toast"
 category: Feedback
 status: ready
+order: 20
 summary: "Transient notification with semantic type."
 ---
 # Toast

@@ -3,11 +3,11 @@ title: "Card"
 category: Layout
 status: ready
 order: 50
-summary: "分组容器。用于把一组相关内容放在一个有边界的表面里。"
+summary: "分组容器。用于把一组相关内容放在一个带边框的表面里。"
 ---
 # Card 卡片
 
-带边界的容器，可选标题和语义色调。
+带边框的容器，可选标题和语义色调。
 
 <!-- slex:spec-example:start component="card" id="basic" sourceHash="74b8c7a0" -->
 ```slex
@@ -16,17 +16,17 @@ summary: "分组容器。用于把一组相关内容放在一个有边界的表�
   "namespace": "doc_card_typical",
   "layout": {
     "card:metrics": {
-      "title": "Metrics",
+      "title": "指标",
       "icon": "chart-bar",
       "grid:items": {
         "columns": 2,
         "stat:requests": {
-          "label": "Requests",
+          "label": "请求数",
           "value": "1.2k",
           "unit": "/min"
         },
         "stat:latency": {
-          "label": "Latency",
+          "label": "延迟",
           "value": "42",
           "unit": "ms"
         }
@@ -53,24 +53,24 @@ summary: "分组容器。用于把一组相关内容放在一个有边界的表�
   layout: {
     "row:tones": {
       "card:info": {
-        title: "Info",
+        title: "信息",
         tone: "info",
         "text:body": {
-          text: "Information card."
+          text: "信息卡片。"
         }
       },
       "card:success": {
-        title: "Success",
+        title: "成功",
         tone: "success",
         "text:body": {
-          text: "Success card."
+          text: "成功卡片。"
         }
       },
       "card:warning": {
-        title: "Warning",
+        title: "警告",
         tone: "warning",
         "text:body": {
-          text: "Warning card."
+          text: "警告卡片。"
         }
       }
     }

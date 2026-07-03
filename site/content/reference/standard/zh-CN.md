@@ -7,9 +7,9 @@ summary: "Slex envelope、组件目录、逻辑 profile、能力目录、一致�
 slexkitRenderMode: component
 ---
 
-# Slex Standard Artifacts
+# Slex 标准生成物
 
-SlexKit 发布面向 AI agent、host runtime、MCP server 和 npm 包消费者的机器可读标准产物。它描述的是 Markdown-native logic-bearing UI artifact，而不是纯 JSON 卡片目录。
+SlexKit 发布给 AI agent、host runtime、MCP server 和 npm 包消费者使用的机器可读标准产物。它描述的是 Markdown-native logic-bearing UI artifact，而不是纯 JSON 卡片目录。
 
 TypeScript runtime registry 仍然是唯一事实来源。JSON 文件由组件 specs、runtime 版本常量、表达式能力元数据和 conformance fixtures 生成。
 
@@ -32,7 +32,7 @@ TypeScript runtime registry 仍然是唯一事实来源。JSON 文件由组件 s
 4. 按 logic profile 扫描逻辑字符串和 source。
 5. 返回稳定的 diagnostic 与 warning codes。
 
-`validateSlexSource()` 保留旧的 structured output，并新增 `schemaVersion`、`protocolVersion`、`logicProfileVersion`。Secure mode 的诊断会引导作者使用 policy-gated `api.*`，而不是把所有逻辑都视为禁止。
+`validateSlexSource()` 保留旧的 structured output，并新增 `schemaVersion`、`protocolVersion`、`logicProfileVersion`。Secure mode 的诊断会引导作者使用由 policy 控制的 `api.*`，而不是把所有逻辑都视为禁止。
 
 解析成功后的 warnings 带有稳定 path。例如 `layout.text:value.$text` 里的未知 `std.*` 调用，与 `g.load` 里的原生 `fetch()` 调用，会返回不同 path，agent 可以精确修复对应表达式，而不是重写整个 artifact。
 
@@ -53,9 +53,9 @@ slex validate ./artifact.slex --mode secure
 slex validate ./artifact.slex --mode trusted --strict
 ```
 
-Conformance 校验 source 结构、logic profile diagnostics、能力边界和 warning 稳定性。它不是视觉渲染截图测试。
+Conformance 校验 source 结构、logic profile diagnostics、能力限制和 warning 稳定性。它不是视觉渲染截图测试。
 
-## Diagnostic Codes
+## 诊断代码
 
 客户端用 `code`、`path` 和 `value` 做程序判断。`message` 只用于展示。
 
@@ -74,7 +74,7 @@ Conformance 校验 source 结构、logic profile diagnostics、能力边界和 w
 
 Path 指向解析后的 source tree，例如 `g.load` 或 `layout.text:value.$text`。如果 parse 失败，validator 仍可能返回 source-level usage warnings，但不会返回解析树 path。
 
-## Conformance Fixture Contract
+## 一致性 fixture 契约
 
 `slex-conformance.json` 包含 `valid`、`warning`、`invalid` fixtures。每个 fixture 都有 `id`、`mode`、source text 和 `expected` 对象。
 
@@ -86,7 +86,7 @@ Path 指向解析后的 source tree，例如 `g.load` 或 `layout.text:value.$te
 
 Conformance suite 只检查 source validation semantics。它不检查组件截图、浏览器布局、CSS output 或 host adapter lifecycle behavior。
 
-## Versioning Policy
+## 版本策略
 
 SlexKit 暴露多个 version 字段：
 
@@ -101,6 +101,6 @@ SlexKit 暴露多个 version 字段：
 
 ## 定位
 
-A2UI 标准化跨平台声明式 UI 描述。SlexKit 标准化嵌入 Markdown 的、有状态、可执行 UI artifact，并由 host 选择 trusted 或 secure runtime 边界。
+A2UI 标准化跨平台声明式 UI 描述。SlexKit 标准化嵌入 Markdown 的、有状态、可执行 UI artifact，并由 host 选择 trusted 或 secure runtime mode。
 
 JSON Schema 负责描述 envelope 与 catalog。JavaScript expression profile 是标准的一部分，因为本地逻辑与状态本来就是 artifact 的组成部分。

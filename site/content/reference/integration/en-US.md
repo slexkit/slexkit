@@ -158,7 +158,7 @@ Omitted capability policies deny access by default. Add `network`, `timer`, `ani
 
 ### Artifact slot bridge
 
-When multiple secure blocks belong to the same artifact, they share one sandbox iframe. The first block (in document order) becomes the iframe anchor. Other blocks act as slots -their containers receive position and height updates from the sandbox via the postMessage bridge.
+When multiple secure blocks belong to the same artifact, they share one sandbox iframe. The first block (in document order) becomes the iframe anchor. Other blocks act as slots; their containers receive position and height updates from the sandbox via the postMessage bridge.
 
 ```html
 <!-- In Markdown, the first fence becomes the anchor -->
@@ -178,7 +178,7 @@ Access-Control-Allow-Origin: *
 Content-Type: text/javascript
 ```
 
-The build output includes `dist/runtime.js` for this purpose. The `slex copy-runtime` command copies that module to `public/slexkit.runtime.js` by default so existing secure-frame URLs can stay stable. Configure your CDN or static file server to serve it with the correct headers.
+The build output includes `dist/runtime.js` for this purpose. The `slex copy-runtime` command copies that module to `public/slexkit.runtime.js` by default so existing secure-frame URLs can stay stable. Configure the CDN or static file server to serve it with the correct headers.
 
 ## Svelte custom Markdown host
 

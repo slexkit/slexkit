@@ -2,6 +2,7 @@
 title: "Checkbox"
 category: Input
 status: ready
+order: 30
 summary: "Boolean checkbox for confirmations and multi-select."
 ---
 # Checkbox

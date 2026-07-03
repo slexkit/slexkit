@@ -16,13 +16,13 @@ SlexKit 的交互预览组件，可在页面内嵌入可编辑、可运行的 Sl
   "namespace": "doc_playground_typical",
   "layout": {
     "playground:demo": {
-      "title": "Stat Playground",
+      "title": "Stat 试验台",
       "previewMinHeight": "180px",
       "source": {
         "namespace": "inner_stat_demo",
         "layout": {
           "stat:value": {
-            "label": "Requests",
+            "label": "请求数",
             "value": "1.2k",
             "unit": "/min"
           }

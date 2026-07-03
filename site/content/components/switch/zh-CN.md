@@ -17,7 +17,7 @@ summary: "开关型布尔输入。"
   "layout": {
     "switch:feature": {
       "enabled": true,
-      "label": "Enable sync",
+      "label": "启用同步",
       "icon": "arrows-clockwise"
     }
   }
@@ -41,11 +41,11 @@ summary: "开关型布尔输入。"
   layout: {
     "row:diff": {
       "switch:enabled": {
-        label: "Enabled",
+        label: "已启用",
         enabled: true
       },
       "switch:disabled": {
-        label: "Disabled"
+        label: "已禁用"
       },
       "switch:enabled-not-available": {
         label: "Enabled (not available)",
