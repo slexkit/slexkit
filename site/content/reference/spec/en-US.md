@@ -232,6 +232,8 @@ Component disposal is triggered by normal unmount, `$if` toggle-off, `$for` item
 | `runSlexConformance`                | `(options?) => ConformanceReport`           | Run bundled standard conformance fixtures                            |
 | `formatSlexKitDiagnostic`           | `(diagnostic) => string`                    | Format diagnostic to readable string                                 |
 
+For full runtime behavior, see [Runtime Model](/docs/reference/runtime).
+
 ## 11. Error types
 
 ### SlexKitSyntaxError

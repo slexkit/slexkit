@@ -3,17 +3,17 @@ title: SlexKit Introduction
 category: Guides
 status: ready
 order: 10
-summary: "Markdown-friendly reactive UI runtime for explicit slex fences."
+summary: "Render explicit slex fences as small interactive UI."
 slexkitRenderMode: component
 ---
 
 # SlexKit Introduction
 
-SlexKit is a Markdown-friendly reactive UI runtime for explicit `slex` fences. Hosts can render small interactive fragments inside AI conversations, documents, agent panels, and dashboards without adding a build step to the generated content.
+SlexKit renders Markdown fences marked as `slex` into small interactive UI. Use it for local interaction inside chat messages, documents, agent panels, and dashboards without adding a build step for those fragments.
 
 SlexKit is currently v0/beta. The public surface is usable, but long-term compatibility is not yet guaranteed.
 
-## Use Cases
+## When To Use It
 
 When Markdown needs a small amount of interaction:
 
@@ -85,11 +85,11 @@ Plain JavaScript, JSON, or untagged code blocks must not be scanned or executed.
 
 Use secure mode when rendering third-party or unreviewed content. See [Secure Runtime Setup](security-runtime).
 
-## Boundary Separation
+## Display UI And Tool Calls
 
 **Display UI** renders via `slex` fences or `mount()`. These fragments show information and local interaction but are not function calls.
 
-**ToolHost** is a separate boundary. It renders confirmations, option pickers, and forms that must return structured input to the host. The `submit` component is the explicit completion boundary for tool templates.
+**ToolHost** is for confirmations, option pickers, and forms that must return structured input to the host. The `submit` component ends a tool template and submits the result.
 
 This separation prevents ordinary display UI from being mispackaged as tool invocations.
 
@@ -104,9 +104,9 @@ This separation prevents ordinary display UI from being mispackaged as tool invo
 | `mountSecureArtifact(input, container, options)` | Render source in the secure sandbox runtime |
 | `renderToolCall(call, container)` | Render a ToolHost template and collect a result |
 
-For exact types and beta compatibility notes, use the [Slex Specification](../../reference/spec/en-US.md) as the technical reference.
+Type details and beta compatibility notes are in the [Slex Specification](/docs/reference/spec).
 
-## Next Steps
+## Keep Reading
 
 - [Getting Started](quick-start): developer integration path
 - [Integration](integration): Streamdown and Obsidian host plugins

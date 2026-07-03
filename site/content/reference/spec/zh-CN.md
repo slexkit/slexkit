@@ -238,7 +238,7 @@ g.onUpdate_<name>()     -after $for item changes
 | `runSlexConformance` | `(options?) => ConformanceReport` | 运行内置标准 conformance fixtures |
 | `formatSlexKitDiagnostic` | `(diagnostic) => string` | 将 diagnostic 格式化为可读字符串 |
 
-完整 runtime 行为见 [Runtime Model](/docs/reference/runtime)。
+完整 runtime 行为见 [Runtime Model](/zh-CN/docs/reference/runtime)。
 
 ## 11. Error types
 
