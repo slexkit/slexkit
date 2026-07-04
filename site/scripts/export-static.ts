@@ -16,6 +16,7 @@ import { generateStandardArtifacts } from "../../scripts/generate-standard-artif
 import { createSeoIndex, injectSeoHead, prerenderedHomeHtml, renderRobotsTxt, renderSitemapXml } from "../data/seo.js";
 import { prerenderMarkdown } from "./prerender-markdown.js";
 import { loadExampleDocs } from "../data/examples.js";
+import { SLEXKIT_VERSION, SLEX_PROTOCOL_VERSION } from "../../src/version";
 
 const siteRoot = join(import.meta.dir, "..");
 const projectRoot = join(siteRoot, "..");
@@ -173,6 +174,12 @@ async function writeRouteHtml(routePath: string, html: string) {
   await writeFile(target, html, "utf-8");
 }
 
+async function writeJsonAsset(relativePath: string, value: unknown) {
+  const target = join(outDir, ...relativePath.split("/"));
+  await mkdir(dirname(target), { recursive: true });
+  await writeFile(target, `${JSON.stringify(value, null, 2)}\n`, "utf-8");
+}
+
 export async function exportStaticSite() {
   await buildSiteAssets();
   await rm(outDir, { recursive: true, force: true });
@@ -215,6 +222,18 @@ export async function exportStaticSite() {
   const allExampleMarkdown = (await Promise.all(
     supportedLocales.map((locale) => discoverExampleMarkdown({ siteRoot, locale })),
   )).flat();
+
+  const health = {
+    ok: true,
+    service: "slexkit-site",
+    version: SLEXKIT_VERSION,
+    protocolVersion: SLEX_PROTOCOL_VERSION,
+    timestamp: new Date().toISOString(),
+  };
+  await writeJsonAsset("healthz", health);
+  await writeJsonAsset("api/health", health);
+  await writeJsonAsset("api/wiki-docs", { markdown: allWikiMarkdown });
+  await writeJsonAsset("api/examples-docs", { markdown: allExampleMarkdown });
 
   const contentMap = new Map<string, string>();
   for (const locale of supportedLocales) {

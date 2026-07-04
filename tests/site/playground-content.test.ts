@@ -245,6 +245,10 @@ describe("site playground markdown renderer", () => {
     expect(runtimeLoader).toContain("import(runtimeUrl)");
     expect(staticExport).toContain('join(outDir, "dist", "slexkit.runtime.js")');
     expect(staticExport).toContain('export * from "../slexkit.js"');
+    expect(staticExport).toContain('writeJsonAsset("healthz", health)');
+    expect(staticExport).toContain('writeJsonAsset("api/health", health)');
+    expect(staticExport).toContain('writeJsonAsset("api/wiki-docs", { markdown: allWikiMarkdown })');
+    expect(staticExport).toContain('writeJsonAsset("api/examples-docs", { markdown: allExampleMarkdown })');
     expect(slexkitRenderer).not.toContain("import Playground");
     expect(renderer).not.toContain("React.createElement");
     expect(renderer).not.toContain("slex-doc-playground-frame");
