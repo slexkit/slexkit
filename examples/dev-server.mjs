@@ -90,6 +90,9 @@ const server = Bun.serve({
     if (url.pathname === "/" || url.pathname === `/${exampleName}`) {
       return Response.redirect(`${url.origin}/examples/${exampleName}/`, 302);
     }
+    if (url.pathname === `/examples/${exampleName}`) {
+      return Response.redirect(`${url.origin}/examples/${exampleName}/`, 308);
+    }
     if (url.pathname.startsWith(`/examples/${exampleName}/`)) {
       const rest = url.pathname.slice(`/examples/${exampleName}/`.length);
       return (await serveFile(exampleRoot, rest)) || response("Not found", 404);

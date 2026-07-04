@@ -1,9 +1,20 @@
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const baseUrl = (process.env.SLEXKIT_ACCEPTANCE_URL || process.env.BASE_URL || "http://localhost:4011").replace(/\/$/, "");
+const explicitBaseUrl = process.env.SLEXKIT_ACCEPTANCE_URL || process.env.BASE_URL || "";
+const acceptancePort = Number(process.env.SLEXKIT_ACCEPTANCE_PORT || 4011);
+const baseUrl = (explicitBaseUrl || `http://127.0.0.1:${acceptancePort}`).replace(/\/$/, "");
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const session = process.env.AGENT_BROWSER_SESSION || "slexkit-acceptance";
 const agentBrowserBin = process.env.AGENT_BROWSER_BIN || "agent-browser";
+const agentBrowserCommandTimeoutMs = Number(process.env.AGENT_BROWSER_COMMAND_TIMEOUT_MS || 45000);
+const serverStartupTimeoutMs = Number(process.env.SLEXKIT_ACCEPTANCE_SERVER_TIMEOUT_MS || 60000);
 const writeScreenshots = process.env.SLEXKIT_ACCEPTANCE_SCREENSHOTS === "1";
+const shouldStartServer = !explicitBaseUrl && process.env.SLEXKIT_ACCEPTANCE_START_SERVER !== "0";
+let serverProcess;
+let serverStartError;
+const serverLog = [];
 
 const siteRoutes = [
   "/",
@@ -64,6 +75,90 @@ function firstLine(value) {
   return String(value || "").split(/\r?\n/).map((line) => line.trim()).find(Boolean) || "";
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function rememberServerLog(chunk) {
+  serverLog.push(String(chunk));
+  while (serverLog.length > 60) serverLog.shift();
+}
+
+function formatServerLog() {
+  return serverLog.join("").split(/\r?\n/).slice(-30).join("\n");
+}
+
+async function fetchWithTimeout(url, timeoutMs = 2000) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { cache: "no-store", signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function isServerReady() {
+  try {
+    const response = await fetchWithTimeout(`${baseUrl}/healthz`);
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+function stopAcceptanceServer() {
+  if (!serverProcess || serverProcess.killed || serverProcess.exitCode !== null) return;
+  serverProcess.kill();
+}
+
+async function startAcceptanceServer() {
+  if (!shouldStartServer) return;
+  if (await isServerReady()) return;
+
+  serverProcess = spawn("bun", ["run", "site/server.ts"], {
+    cwd: projectRoot,
+    env: {
+      ...process.env,
+      HOST: "127.0.0.1",
+      PORT: String(acceptancePort),
+      SLEXKIT_LIVE_RELOAD: "0",
+    },
+    stdio: ["ignore", "pipe", "pipe"],
+    shell: false,
+  });
+
+  serverProcess.stdout.on("data", rememberServerLog);
+  serverProcess.stderr.on("data", rememberServerLog);
+  serverProcess.on("error", (error) => {
+    serverStartError = error;
+    rememberServerLog(`${error.message}\n`);
+  });
+  process.once("exit", stopAcceptanceServer);
+  process.once("SIGINT", () => {
+    stopAcceptanceServer();
+    process.exit(130);
+  });
+  process.once("SIGTERM", () => {
+    stopAcceptanceServer();
+    process.exit(143);
+  });
+
+  const started = Date.now();
+  while (Date.now() - started < serverStartupTimeoutMs) {
+    if (serverStartError) {
+      throw new Error(`acceptance server failed to start:\n${formatServerLog()}`);
+    }
+    if (serverProcess.exitCode !== null) {
+      throw new Error(`acceptance server exited with code ${serverProcess.exitCode}:\n${formatServerLog()}`);
+    }
+    if (await isServerReady()) return;
+    await sleep(250);
+  }
+
+  throw new Error(`Timed out waiting for acceptance server at ${baseUrl}:\n${formatServerLog()}`);
+}
+
 function resolveAgentBrowserCommand() {
   if (process.env.AGENT_BROWSER_BIN) {
     const bin = process.env.AGENT_BROWSER_BIN;
@@ -86,15 +181,25 @@ function resolveAgentBrowserCommand() {
 
 const agentBrowserCommand = resolveAgentBrowserCommand();
 
-function runAgentBrowser(args, { allowFailure = false } = {}) {
+function runAgentBrowser(args, { allowFailure = false, retriedOpen = false } = {}) {
   const result = spawnSync(agentBrowserCommand.command, [...agentBrowserCommand.prefix, "--session", session, ...args], {
     encoding: "utf8",
     shell: false,
     stdio: ["ignore", "pipe", "pipe"],
+    timeout: agentBrowserCommandTimeoutMs,
   });
 
-  const output = `${result.stdout || ""}${result.stderr || ""}`;
+  const output = `${result.stdout || ""}${result.stderr || ""}${result.error ? `\n${result.error.message}` : ""}`;
   if (!allowFailure && result.status !== 0) {
+    if (args[0] === "open" && !retriedOpen) {
+      spawnSync(agentBrowserCommand.command, [...agentBrowserCommand.prefix, "--session", session, "wait", "1000"], {
+        encoding: "utf8",
+        shell: false,
+        stdio: ["ignore", "pipe", "pipe"],
+        timeout: agentBrowserCommandTimeoutMs,
+      });
+      return runAgentBrowser(args, { allowFailure, retriedOpen: true });
+    }
     throw new Error(`agent-browser ${args.join(" ")} failed:\n${output}`);
   }
   return output.trim();
@@ -282,44 +387,54 @@ async function runAvailabilityProbe() {
   };
 }
 
-const desktopRows = await runBrowserMatrix({
-  name: "desktop-light",
-  width: 1440,
-  height: 1000,
-  media: "light",
-  theme: "light",
-  requireDark: false,
-});
-const mobileRows = await runBrowserMatrix({
-  name: "mobile-dark",
-  width: 390,
-  height: 844,
-  media: "dark",
-  theme: "dark",
-  requireDark: true,
-});
-const endpointRows = await runEndpointChecks();
-const availability = await runAvailabilityProbe();
+async function main() {
+  await startAcceptanceServer();
 
-const browserRows = [...desktopRows, ...mobileRows];
-const failedBrowser = browserRows.filter((row) => !row.ok);
-const failedEndpoints = endpointRows.filter((row) => !row.ok);
+  const desktopRows = await runBrowserMatrix({
+    name: "desktop-light",
+    width: 1440,
+    height: 1000,
+    media: "light",
+    theme: "light",
+    requireDark: false,
+  });
+  const mobileRows = await runBrowserMatrix({
+    name: "mobile-dark",
+    width: 390,
+    height: 844,
+    media: "dark",
+    theme: "dark",
+    requireDark: true,
+  });
+  const endpointRows = await runEndpointChecks();
+  const availability = await runAvailabilityProbe();
 
-console.log(`SlexKit browser acceptance: ${baseUrl}`);
-console.table(browserRows.map(({ matrix, route, title, textLength, overflowDelta, theme, darkOk, ok }) => ({
-  matrix,
-  route,
-  title,
-  textLength,
-  overflowDelta,
-  theme,
-  darkOk,
-  ok,
-})));
-console.table(endpointRows);
-console.log(JSON.stringify({ availability }, null, 2));
+  const browserRows = [...desktopRows, ...mobileRows];
+  const failedBrowser = browserRows.filter((row) => !row.ok);
+  const failedEndpoints = endpointRows.filter((row) => !row.ok);
 
-if (failedBrowser.length || failedEndpoints.length || !availability.ok) {
-  console.error(JSON.stringify({ failedBrowser, failedEndpoints, availability }, null, 2));
-  process.exit(1);
+  console.log(`SlexKit browser acceptance: ${baseUrl}`);
+  console.table(browserRows.map(({ matrix, route, title, textLength, overflowDelta, theme, darkOk, ok }) => ({
+    matrix,
+    route,
+    title,
+    textLength,
+    overflowDelta,
+    theme,
+    darkOk,
+    ok,
+  })));
+  console.table(endpointRows);
+  console.log(JSON.stringify({ availability }, null, 2));
+
+  if (failedBrowser.length || failedEndpoints.length || !availability.ok) {
+    console.error(JSON.stringify({ failedBrowser, failedEndpoints, availability }, null, 2));
+    process.exitCode = 1;
+  }
+}
+
+try {
+  await main();
+} finally {
+  stopAcceptanceServer();
 }

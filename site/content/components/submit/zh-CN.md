@@ -18,11 +18,11 @@ summary: "ToolHost 专用提交动作，把当前选择或表单值返回宿主�
     "column:tool": {
       "input:title": {
         "value": "Release note",
-        "placeholder": "Title"
+        "placeholder": "标题"
       },
       "submit:done": {
-        "submitLabel": "Submit",
-        "ignoreLabel": "Ignore",
+        "submitLabel": "提交",
+        "ignoreLabel": "忽略",
         "returnKeys": [
           "title"
         ]

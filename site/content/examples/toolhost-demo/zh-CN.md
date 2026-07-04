@@ -1,10 +1,10 @@
 ---
-title: "发布计划确认"
-category: "配置向导"
+title: "ToolHost 工具调用 UI"
+category: "工具调用渲染"
 status: published
 order: 13
-summary: "ToolHost 回放发布计划流程，并在关键节点收集发布参数。"
-tags: toolhost, dialog, demo, live
+summary: "把 function_call 渲染成对话内工具卡片，再把提交结果写回 function_call_output。"
+tags: toolhost, dialog, demo
 components: toolhost, card, radio-group, input, button
 difficulty: 进阶
 runtime: trusted
@@ -12,8 +12,6 @@ featured: true
 slexkitRenderMode: dialog
 ---
 
-# 发布计划确认
+# ToolHost 工具调用 UI
 
-该示例回放一次 Web 控制台发布计划。流程到达人工输入节点时，页面会暂停并渲染对应的 ToolHost 卡片：先确认发布策略，再补充窗口、负责人和回滚条件，最后确认是否采用计划。
-
-该示例是纯前端 fixture：不连接模型，不执行发布。协议细节收在底部事件区。
+当 Agent 发起 `function_call` 时，浏览器宿主可以把它渲染成对话里的 ToolHost 工具卡片；用户提交后，宿主按原 `call_id` 写回 `function_call_output`，并把结果记录留在轨迹里。本页只用发布窗口、负责人和回滚条件作为工具参数示例，不连接模型或后端。

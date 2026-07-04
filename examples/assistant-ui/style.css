@@ -143,6 +143,8 @@ body {
 }
 
 .assistant-ui-bubble {
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid var(--border);
   padding: 12px 14px;
   box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
@@ -166,8 +168,11 @@ body {
 }
 
 .assistant-ui-markdown {
+  min-width: 0;
+  max-width: 100%;
   color: var(--foreground);
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .assistant-ui-markdown > :first-child {
@@ -189,7 +194,12 @@ body {
 
 .assistant-ui-markdown .slex-streamdown-block,
 .assistant-ui-markdown iframe[data-slexkit-secure-frame="true"] {
+  max-width: 100%;
   margin: 12px 0;
+}
+
+.assistant-ui-markdown .slex-streamdown-block {
+  overflow-x: auto;
 }
 
 .assistant-ui-static-composer {

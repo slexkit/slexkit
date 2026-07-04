@@ -6,7 +6,7 @@
     createToolHostReplay,
     replayUntilPause,
     submitToolResult,
-    toolHostResponsesFixtures,
+    toolHostResponsesScenarios,
   } from "../../examples/toolhost-responses-replay.js";
 
   let { locale = "en-US" } = $props();
@@ -60,8 +60,8 @@
             $if: "g.activeStep === 'strategy'",
             index: 1,
             total: 2,
-            title: locale === "zh-CN" ? "发布策略" : "Release strategy",
-            description: locale === "zh-CN" ? "先确认发布方式，再继续补齐工程约束。" : "Choose the release strategy, then continue to engineering constraints.",
+            title: locale === "zh-CN" ? "选择策略" : "Choose strategy",
+            description: locale === "zh-CN" ? "选择这次工具结果里的策略参数。" : "Choose the strategy argument for this tool result.",
             "radio-group:strategy": {
               $value: "g.selected[0] || ''",
               variant: "list",
@@ -88,7 +88,7 @@
             $if: "g.activeStep === 'constraints'",
             index: 2,
             total: 2,
-            title: locale === "zh-CN" ? "工程约束" : "Engineering constraints",
+            title: locale === "zh-CN" ? "填写工具参数" : "Fill tool arguments",
             $description: locale === "zh-CN"
               ? "\"已选：\" + g.selectedLabel()"
               : "\"Selected: \" + g.selectedLabel()",
@@ -108,7 +108,7 @@
               onchange: "g.rollback = String($event || '')",
             },
             "button:back": {
-              label: locale === "zh-CN" ? "返回发布策略" : "Back to strategy",
+              label: locale === "zh-CN" ? "返回策略" : "Back to strategy",
               variant: "ghost",
               onclick: "g.activeStep = 'strategy'",
             },
@@ -125,7 +125,7 @@
     };
   });
 
-  const copyForLocale = (value) => toolHostResponsesFixtures[value] ?? toolHostResponsesFixtures["en-US"];
+  const copyForLocale = (value) => toolHostResponsesScenarios[value] ?? toolHostResponsesScenarios["en-US"];
   const formatJson = (value) => JSON.stringify(value ?? {}, null, 2);
   let copy = $derived(copyForLocale(locale));
   let reference = $derived(referenceForLocale(locale));
@@ -196,19 +196,39 @@ async function runToolHostFunctionCall(item, container) {
     return transcript.find((item) => item.kind === "tool-output" && item.callId === callId)?.output ?? null;
   }
 
-  function selectedDirection() {
-    const selected = outputFor("call_release_parameters")?.selected?.[0];
-    return copy.directions?.[selected] ?? copy.notSetLabel;
+  function latestToolCall() {
+    for (let index = transcript.length - 1; index >= 0; index -= 1) {
+      const item = transcript[index];
+      if (item.kind === "tool-call") return item;
+    }
+    return null;
   }
 
-  function constraintsSummary() {
-    const output = outputFor("call_release_parameters");
-    if (!output) return copy.notSetLabel;
-    return output.window ?? copy.notSetLabel;
+  function formatToolCall(call) {
+    if (!call) return copy.notSetLabel;
+    return call.name ?? copy.pendingCallLabel ?? "tool call";
   }
 
-  function approvalSummary() {
-    return outputFor("call_approval")?.confirmed ? copy.approvedLabel : copy.notSetLabel;
+  function currentPhaseSummary() {
+    if (replayState.status === "done") return copy.phaseDoneLabel;
+    if (pendingToolCall) return copy.phaseToolInputLabel;
+    return copy.phaseRunningLabel;
+  }
+
+  function functionCallSummary() {
+    return formatToolCall(pendingToolCall ?? latestToolCall());
+  }
+
+  function toolHostCardSummary() {
+    if (pendingToolCall) return pendingToolCall.name ?? copy.awaitingDecisionLabel;
+    if (replayState.status === "done") return copy.completedLabel;
+    return copy.notSetLabel;
+  }
+
+  function returnedOutputsSummary() {
+    const count = protocolItems.filter((item) => item.type === "function_call_output").length;
+    const expected = Number(copy.expectedToolOutputs ?? 2);
+    return `${count}/${expected} function_call_output`;
   }
 
   function resultSummary(item) {
@@ -234,9 +254,10 @@ async function runToolHostFunctionCall(item, container) {
   }
 
   let statusItems = $derived([
-    { label: copy.directionLabel, value: selectedDirection() },
-    { label: copy.constraintsLabel, value: constraintsSummary() },
-    { label: copy.approvalLabel, value: approvalSummary() },
+    { label: copy.currentPhaseLabel, value: currentPhaseSummary() },
+    { label: copy.functionCallReceivedLabel, value: functionCallSummary() },
+    { label: copy.toolHostCardLabel, value: toolHostCardSummary() },
+    { label: copy.outputReturnedLabel, value: returnedOutputsSummary() },
   ]);
 
   function mountToolNode(node) {
@@ -290,8 +311,8 @@ async function runToolHostFunctionCall(item, container) {
 
   async function restart() {
     disposeTool();
-    const fixture = copyForLocale(locale);
-    replayState = createToolHostReplay(fixture.events);
+    const scenario = copyForLocale(locale);
+    replayState = createToolHostReplay(scenario.events);
     replayUntilPause(replayState);
     syncState();
     await tick();

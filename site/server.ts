@@ -92,12 +92,18 @@ async function localStaticResponse(root: string, relative: string) {
   }
 }
 
-async function adapterDemoResponse(pathname: string) {
+async function adapterDemoResponse(url: URL) {
+  const pathname = url.pathname;
   const match = pathname.match(/^\/adapter-demos\/(assistant-ui|streamdown|tiptap)(?:\/(.*))?$/);
   if (!match) return null;
 
   const demo = match[1];
   const requested = match[2] ?? "";
+  if (!requested && !pathname.endsWith("/")) {
+    const redirectUrl = new URL(url);
+    redirectUrl.pathname = `${pathname}/`;
+    return Response.redirect(redirectUrl, 308);
+  }
   const relative = !requested || requested.endsWith("/") ? `${requested}index.html` : requested;
   return localStaticResponse(join(projectRoot, "examples", demo), relative);
 }
@@ -536,7 +542,7 @@ Bun.serve({
     if (url.pathname === "/slexkit.css" || url.pathname === "/dist/slexkit.css") {
       return runtimeResponse(url.pathname);
     }
-    const adapterDemo = await adapterDemoResponse(url.pathname);
+    const adapterDemo = await adapterDemoResponse(url);
     if (adapterDemo) return adapterDemo;
     const sharedExample = await exampleSharedResponse(url.pathname);
     if (sharedExample) return sharedExample;
