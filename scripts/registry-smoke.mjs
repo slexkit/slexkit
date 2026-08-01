@@ -94,6 +94,7 @@ writeFileSync(
     "const response = JSON.parse(line);",
     "if (response.result?.serverInfo?.name !== '@slexkit/mcp') throw new Error('@slexkit/mcp initialize failed');",
     "console.log('registry smoke ok');",
+    "process.exit(0);",
   ].join("\n"),
 );
 
