@@ -57,7 +57,12 @@ describe("HTML runtime and component entries", () => {
     for (const dir of ["runtime", "components-svelte", "theme-shadcn", "streamdown", "assistant-ui", "tiptap", "mcp"]) {
       const packageJson = await readFile(`packages/${dir}/package.json`, "utf8").then(JSON.parse);
       expect(packageJson.name).toBe(`@slexkit/${dir}`);
-      expect(packageJson.version).toBe(rootPackage.version);
+      // The published 0.5.0 assistant adapter needs a peer-dependency fix;
+      // npm versions are immutable, so that one package advances a patch.
+      const expectedVersion = dir === "assistant-ui" && rootPackage.version === "0.5.0"
+        ? "0.5.1"
+        : rootPackage.version;
+      expect(packageJson.version).toBe(expectedVersion);
       expect(packageJson.license).toBe("MIT");
       expect(packageJson.files).toContain("README.md");
       expect(existsSync(`packages/${dir}/LICENSE`)).toBe(true);
