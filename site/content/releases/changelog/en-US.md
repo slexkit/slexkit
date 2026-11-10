@@ -11,6 +11,11 @@ slexkitRenderMode: component
 
 All notable changes to SlexKit.
 
+## @slexkit/assistant-ui v0.5.1
+
+### Fixed
+- Constrain `@assistant-ui/react-streamdown` to versions compatible with `@assistant-ui/react` 0.14 so a fresh npm install resolves its peer dependencies.
+
 ## v0.5.0 - HTML-first interactive documents
 
 ### Breaking changes

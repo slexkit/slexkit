@@ -11,6 +11,11 @@ slexkitRenderMode: component
 
 SlexKit 的所有重要变更。
 
+## @slexkit/assistant-ui v0.5.1
+
+### 修复
+- 限制 `@assistant-ui/react-streamdown` 的版本范围，使其与 `@assistant-ui/react` 0.14 的 peer 依赖兼容，修复全新 npm 安装冲突。
+
 ## v0.5.0 - 以 HTML 为基础的交互文档
 
 ### 破坏性变更
