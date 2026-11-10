@@ -132,12 +132,6 @@ export function parseMarkdownComponentDoc(path, raw, options = {}) {
   const { data, body } = parseFrontmatter(raw);
   const spec = localizedComponentSpec(slug, contentLocale);
 
-  if (contentLocale === sourceLocale) {
-    assertComponentSpecBlocks(body, slug);
-  } else if (findSpecBlocks(body).length) {
-    assertComponentSpecBlocks(body, slug);
-  }
-
   const order = Number(data.order ?? 999);
   const title = componentTitleForLocale(slug, spec?.title || data.title || titleFromSlug(slug), locale, contentLocale);
   const isFallback = Boolean(options.isFallback ?? contentLocale !== locale);
@@ -166,7 +160,7 @@ export function parseMarkdownComponentDoc(path, raw, options = {}) {
     sourceType: "markdown",
     markdown: body,
     toc: extractMarkdownToc(body),
-    slexkitRenderMode: normalizeSlexKitRenderMode(data.slexkitRenderMode, "playground"),
+    slexkitRenderMode: normalizeSlexKitRenderMode(data.slexkitRenderMode, "component"),
   };
 }
 

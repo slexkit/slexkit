@@ -3,11 +3,13 @@ import { createEffect } from "./reactive";
 type Cleanup = () => void;
 type Subscriber<T> = (value: T) => void;
 type FlushDom = () => void;
+type ComponentUpdater = (props: Record<string, unknown>) => void;
 export type ReadableAccessor<T> = (() => T) & {
   subscribe(run: Subscriber<T>): Cleanup;
 };
 
 const componentDisposers = new WeakMap<HTMLElement, Cleanup>();
+const componentUpdaters = new WeakMap<HTMLElement, ComponentUpdater>();
 let flushDom: FlushDom | undefined;
 
 export function configureComponentScope(options: { flush?: FlushDom }): void {
@@ -54,8 +56,20 @@ export function attachComponentDisposer(el: HTMLElement, dispose: Cleanup): void
   componentDisposers.set(el, dispose);
 }
 
+export function attachComponentUpdater(el: HTMLElement, updater: ComponentUpdater): void {
+  componentUpdaters.set(el, updater);
+}
+
+export function updateComponent(el: HTMLElement, props: Record<string, unknown>): boolean {
+  const updater = componentUpdaters.get(el);
+  if (!updater) return false;
+  updater(props);
+  return true;
+}
+
 export function disposeComponent(el: HTMLElement): void {
   const dispose = componentDisposers.get(el);
+  componentUpdaters.delete(el);
   if (!dispose) return;
   componentDisposers.delete(el);
   dispose();

@@ -1,173 +1,105 @@
-<div align="center">
-  <p>
-    <img src="site/assets/logo.svg" alt="SlexKit" width="84" height="84" />
-  </p>
-  <h1>SlexKit</h1>
-  <p><strong>Streaming Live EXpressions Kit</strong></p>
-  <p>
-    “文档即工具，工具即文档”，把显式 Markdown fence 渲染成带状态的实时 UI 块。
-  </p>
-  <p>
-    <a href="site/content/guides/intro/zh-CN.md">简介</a> ·
-    <a href="site/content/components/accordion/zh-CN.md">组件</a> ·
-    <a href="site/content/reference/spec/zh-CN.md">规范</a> ·
-    <a href="site/content/guides/ai-agents/zh-CN.md">AI / Agents</a> ·
-    <a href="README.md">English</a>
-  </p>
-  <p>
-    <img alt="version" src="https://img.shields.io/badge/version-0.4.0-18181b">
-    <img alt="script" src="https://img.shields.io/badge/Slex-v0.1-18181b">
-    <img alt="TypeScript" src="https://img.shields.io/badge/runtime-TypeScript-3178c6">
-    <img alt="Svelte 5" src="https://img.shields.io/badge/components-Svelte_5-ff3e00">
-    <img alt="license" src="https://img.shields.io/badge/license-MIT-16a34a">
-  </p>
-  <p>
-    <img src="site/assets/readme/slexkit-markdown-live-ui.svg" alt="SlexKit 将显式 slex Markdown fence 渲染成实时交互 UI" width="920" />
-  </p>
-</div>
+# SlexKit
 
-## 把 Markdown 变成实时交互块
+Streaming Live EXpressions Kit 是面向交互式 Markdown 的 HTML-first 运行时。`slex` fence 直接包含标准 HTML 片段、可选 CSS、`slex-*` 自定义元素，以及可选的内联模块脚本。宿主默认在隔离 frame 中运行生成代码。
 
-**SlexKit** 会把显式 `slex` Markdown fence 变成带状态的实时 UI 块。Slex 源码只是一个 JavaScript 对象字面量：`g` 保存状态和逻辑，`layout` 描述组件树，浏览器运行时在原位置渲染结果。
+## 编写格式
 
-它适合聊天消息、文档、Agent 面板、工具结果和 AI 生成的仪表盘。它不是完整应用框架。
-
-## 安装
-
-> 只想在 Obsidian 里使用 SlexKit？打开 **Settings -> Community plugins**，搜索 **SlexKit**，安装并启用即可。下面的 npm 安装方式用于网页、Markdown renderer、Streamdown 或自定义宿主。
-
-```sh
-npm install slexkit
-```
-
-```ts
-import { mount } from "slexkit";
-import "slexkit/style.css";
-```
-
-## 使用
-
-```html
-<div id="app"></div>
-
+````markdown
+```slex
+<slex-card title="计数器">
+  <slex-stat id="count" label="数量" value="0"></slex-stat>
+  <slex-button id="add" label="增加"></slex-button>
+</slex-card>
 <script type="module">
-  import { mount } from "slexkit";
-  import "slexkit/style.css";
-
-  mount(
-    {
-      slex: "0.1",
-      namespace: "hello",
-      g: { name: "World", count: 0 },
-      layout: {
-        "card:greeting": {
-          title: "Greeting",
-          "text:message": {
-            "$text": "'Hello, ' + g.name + '! Count: ' + g.count"
-          },
-          "button:add": {
-            label: "+1",
-            onclick: "g.count++"
-          }
-        }
-      }
-    },
-    document.getElementById("app")
-  );
+  const count = slex.root.querySelector("#count");
+  const add = slex.root.querySelector("#add");
+  const increment = () => { count.value = Number(count.value) + 1; };
+  add.addEventListener("click", increment);
+  slex.onDispose(() => add.removeEventListener("click", increment));
 </script>
 ```
-
-## Markdown 原生输出
-
-支持 SlexKit 的宿主只处理显式 `slex` fence。普通 `js`、`json` 和未标记代码块都保持惰性，不会被猜测执行。
-
-````md
-```slex
-{
-  slex: "0.1",
-  namespace: "status",
-  g: { done: 3, total: 4 },
-  layout: {
-    "badge:state": { label: "Ready", tone: "success" },
-    "text:summary": { "$text": "g.done + '/' + g.total + ' complete'" }
-  }
-}
-```
-
-**状态：** Ready。3/4 complete.
 ````
 
-不支持 SlexKit 的 Markdown 平台会显示 fallback 文本；支持 SlexKit 的宿主会渲染交互 UI。
+新格式没有对象式 `g/layout` envelope、表达式字符串属性、绑定语法或旧格式回退。请使用原生 DOM 属性和事件。组件注册、允许的 API、运行时 URL 与样式由宿主负责，不应放进 AI payload。
 
-## 能力概览
+沙箱内提供精简的全局 SDK：
 
-- **零构建 Slex 源码**：生成结果是对象字面量，不需要 imports、脚手架或组件打包。
-- **响应式 `g` / `layout` 模型**：状态和逻辑集中在 `g`，UI 结构由组件树声明。
-- **表达式管道**：`$` 读表达式用于动态属性，`on*` 写表达式用于事件。
-- **指令系统**：`$if` 和 `$for` 支持条件渲染和带 key 的列表协调。
-- **官方 Svelte 组件**：30 个组件，覆盖 layout、input、content、display、disclosure、feedback 和 tooling。
-- **可扩展注册表**：支持自定义组件类型、Svelte renderer 和组件状态模式。
-- **可信与安全双运行时**：可信内容在宿主域渲染，不可信源码在 sandbox iframe 中隔离渲染。
-- **ToolHost**：为 AI tool-call 提供确认、选择、填表等结构化交互模板。
-- **AI 友好文档面**：提供 `llms.txt`、skills 和只读 `@slexkit/mcp` MCP 服务。
+- `slex.root`
+- `slex.signal`（模块作用域释放时中止的 `AbortSignal`）
+- `slex.onDispose(fn)`
+- `slex.onSnapshot(fn)` 与 `slex.onRestore(fn)`
+- 受策略控制的 `slex.api`
+- artifact 内共享的 `slex.shared.get/set/subscribe`
 
-## 包
+## 已支持的自定义元素
 
-| 包 | 安装 | 内容 |
-| --- | --- | --- |
-| `slexkit` | `npm install slexkit` | Runtime、Svelte 组件、ToolHost、样式 |
-| `@slexkit/runtime` | `npm install slexkit @slexkit/runtime` | 无组件运行时封装 |
-| `@slexkit/components-svelte` | `npm install slexkit @slexkit/runtime @slexkit/components-svelte` | Svelte 组件注册 |
-| `@slexkit/theme-shadcn` | `npm install @slexkit/theme-shadcn` | CSS 主题 token |
-| `@slexkit/streamdown` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown streamdown react react-dom` | React / Streamdown Markdown 渲染器 |
-| `@slexkit/assistant-ui` | `npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown @slexkit/assistant-ui @assistant-ui/react @assistant-ui/react-streamdown streamdown react react-dom` | assistant-ui 消息文本里的 `slex` fence 封装 |
-| `@slexkit/tiptap` | `npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown` | Tiptap code block NodeView，用于 `slex` fences |
-| `@slexkit/mcp` | `npx -y @slexkit/mcp` | 读取文档、示例并校验源码的 MCP 服务 |
+当前 `slexkit/web-components` 合约默认包含以下 28 个元素：
 
-更多说明见 [包与安装](site/content/reference/packages/zh-CN.md)。
+`slex-column`、`slex-card`、`slex-grid`、`slex-row`、`slex-input`、`slex-slider`、`slex-checkbox`、`slex-switch`、`slex-button`、`slex-stat`、`slex-text`、`slex-progress`、`slex-badge`、`slex-code-block`、`slex-divider`、`slex-link`、`slex-table`、`slex-select`、`slex-radio-group`、`slex-tabs`、`slex-accordion`、`slex-collapsible`、`slex-formula`、`slex-callout`、`slex-section`、`slex-step`、`slex-toast`、`slex-submit`。
 
-## 集成
+不支持的界面请使用普通 HTML。属性、property、事件和 slot 的准确合约见 [docs/web-components.md](docs/web-components.md) 与生成的 `dist/custom-elements.json`。
 
-| 宿主 | 路径 |
-| --- | --- |
-| 浏览器 DOM | `mount()`、`ingest()`、`boot()`、`disposeNamespace()` |
-| Markdown 渲染器 | `createSlexKitMarkdownRuntimeHost()` |
-| assistant-ui | `@slexkit/assistant-ui` |
-| React / Streamdown | `@slexkit/streamdown` |
-| Tiptap | `@slexkit/tiptap` |
-| Obsidian | 从 Community Plugins 安装 **SlexKit**；发布仓库：<https://github.com/slexkit/obsidian-slexkit> |
-| AI Agents | `@slexkit/mcp`、`llms.txt`、SlexKit skill 文档 |
-| 自定义组件 | `register()`、`registerSvelteComponent()`、`registerSubset()` |
+目录中的第 29 个元素 `slex-playground` 是可选创作工具，需要从 `slexkit/tooling` 显式调用 `defineSlexPlayground(window, hostOptions)` 注册，并配置宿主拥有的运行时/样式资源。根入口通过 `defineSlexElements` 提供独立组件，不导出原始 Svelte 组件源码。
 
-## 安全运行时
+## 宿主接入
 
-可信模式在宿主域内运行，适合应用自己生成或经过审核的源码。安全模式会把不可信 Slex 源码隔离到 sandbox iframe 中，并使用 opaque origin、基于 nonce 的 CSP、锁定全局变量、宿主代理网络访问和心跳 watchdog。
+```js
+import { createSlexKitMarkdownRuntimeHost } from "slexkit/runtime";
 
-渲染未审核的用户输入或模型输出前，请先阅读 [Security Runtime](site/content/reference/security/zh-CN.md)。
+const host = createSlexKitMarkdownRuntimeHost({
+  secureFrame: {
+    runtimeUrl: new URL("./slexkit.runtime.js", import.meta.url).href,
+    styleUrl: new URL("./slexkit.css", import.meta.url).href,
+  },
+});
 
-## 文档
-
-| 文档 | 主题 |
-| --- | --- |
-| [快速开始](site/content/guides/quick-start/zh-CN.md) | 安装并渲染第一个 Markdown 友好的 Slex 源码 |
-| [集成指南](site/content/guides/integration/zh-CN.md) | Streamdown、Tiptap、Obsidian 和自定义宿主路径 |
-| [运行时模型](site/content/reference/runtime/zh-CN.md) | 挂载、更新、命名空间存储、生命周期 |
-| [Slex 用法参考](site/content/reference/usage/zh-CN.md) | 源码结构、指令、表达式、事件、自定义组件 |
-| [安全运行时](site/content/reference/security/zh-CN.md) | 威胁模型、sandbox iframe、策略、postMessage 桥接 |
-| [Slex 规范](site/content/reference/spec/zh-CN.md) | 协议 v0.1、类型、合并规则、生命周期钩子 |
-| [ToolHost](site/content/reference/toolhost/zh-CN.md) | Tool-call 渲染和自定义模板 |
-| [图标系统](site/content/reference/icons/zh-CN.md) | Phosphor 图标、自定义注册、Iconify fallback |
-| [AI / Agents](site/content/guides/ai-agents/zh-CN.md) | `llms.txt`、MCP 服务、skills 和创作规则 |
-| [更新日志](CHANGELOG.md) | 发布说明和重要变更 |
-
-## 版本信息
-
-```ts
-import { SLEXKIT_VERSION, SLEX_PROTOCOL_VERSION, getSlexKitInfo } from "slexkit";
+await host.updateArtifact("message-42", [{
+  artifactId: "message-42",
+  blockId: "block-1",
+  source: '<slex-text text="就绪"></slex-text>',
+  container: document.querySelector("#preview"),
+}], { phase: "commit" });
 ```
 
-npm 包版本、组件实现版本和 Slex 协议版本会分别暴露。当前公开协议是 `v0.1`。
+Preview 更新只做静态检查，不执行生成脚本；commit 更新在隔离文档中运行。稳定的 block ID 与元素 `id`/`data-key` 能帮助运行时保留兼容的 DOM/组件实例及可见控件值。frame 运行时资源缺失时必须失败关闭。
 
-## 许可协议
+直接挂载 HTML 文档：
+
+```js
+import { mount } from "slexkit";
+
+const handle = mount("<p>你好</p>", document.querySelector("#app"), {
+  secureFrame: { runtimeUrl: "/assets/slexkit.runtime.js" },
+});
+await handle.ready;
+```
+
+## 静态检查
+
+`inspectSlexSource(source)`、`parseSlexSource(source)` 和 `validateSlexSource(source)` 会检查 HTML 与内联 JavaScript，但绝不执行脚本；对象输入会被拒绝。检查会拒绝外部脚本/import、内联事件属性、嵌入式浏览或插件内容、导航 metadata 与可执行 URL scheme。静态检查只是防护，不是安全边界。
+
+## 开发
+
+```sh
+bun install
+bun run build
+bun test
+bun run dev
+```
+
+主要入口：
+
+- `slexkit` 与 `slexkit/runtime`：HTML 文档运行时和宿主 API
+- `slexkit/web-components`：独立自定义元素
+- `slexkit/custom-elements.json`：编辑器/工具元数据
+- `@slexkit/mcp`：只读文档、示例、组件元数据与静态验证
+
+另见 [HTML 迁移合约](docs/html-migration-contract.md)、[主题合约](docs/theme-contract.md)、[示例](examples/README.md) 与 `site/content/` 中的双语文档。
+
+## 安全边界
+
+生成的 JavaScript 必须在隔离 frame 中运行，Shadow DOM 本身不是沙箱。受支持浏览器中的 frame 策略会拒绝 payload 发起的 fetch、图片、字体、外部脚本和外部 link 资源加载；获准请求通过宿主桥接。这并非通用网络出口防火墙：iframe 自身导航仍可能发出请求。运行时也不提供 CPU 抢占；敌意代码需要浏览器/进程外的网络控制与超时。
+
+## 许可证
 
 MIT

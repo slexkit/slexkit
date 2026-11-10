@@ -1,7 +1,7 @@
 import { defaultLocale, loadWikiDocs, siteUiLabelsForLocale, sortWikiDocs, supportedLocales } from "../data/component-docs.js";
 import { stripSiteBase, siteFetch, withSiteBase } from "../app/site-base.js";
 import { normalizeRoutePath } from "../app/site-routes.js";
-import { createPage } from "../pages/docs.slex.js";
+import { createDocsShellProps } from "../pages/docs.js";
 
 let wikiDocs = [];
 const wikiDocsByLocale = new Map();
@@ -90,7 +90,7 @@ export async function createDocsPage({ href = getDocsHref() } = {}) {
 
   const doc = findDoc(href);
   const activeHref = withSiteBase(doc?.href ?? href);
-  const dsl = createPage({
+  const view = createDocsShellProps({
     activeHref,
     currentDoc: toViewDoc(doc),
     docs: docs.map(toNavItem),
@@ -100,7 +100,7 @@ export async function createDocsPage({ href = getDocsHref() } = {}) {
   });
 
   return {
-    dsl,
+    view,
     doc,
     title: doc ? `${doc.title} - SlexKit` : "Docs - SlexKit",
   };

@@ -59,6 +59,15 @@
     value = nextValue;
     emit(ctx, "change", nextValue);
   }
+
+  function renderContent(node: HTMLElement, item: Record<string, unknown>) {
+    const render = (next: Record<string, unknown>) => {
+      node.replaceChildren();
+      if (!ctx.renderSlot?.(keyFor(next), node)) node.textContent = text(next.content);
+    };
+    render(item);
+    return { update: render, destroy() { node.replaceChildren(); } };
+  }
 </script>
 
 <div class="slex-accordion" data-scope="accordion">
@@ -90,9 +99,7 @@
           data-state={open ? "open" : "closed"}
           aria-hidden={!open}
         >
-          <div class="slex-accordion-content-inner">
-            {text(item.content)}
-          </div>
+          <div class="slex-accordion-content-inner" use:renderContent={item}></div>
         </div>
       </section>
     {/each}

@@ -5,106 +5,40 @@ status: ready
 order: 30
 summary: "Horizontal layout container for toolbars, status lines, and button groups."
 ---
+
 # Row
 
-Basic horizontal layout container.
+Automatically balances rows of metric tiles or cards. Mixed content uses a flex row with configurable gap, alignment, and justification.
 
-<!-- slex:spec-example:start component="row" id="basic" sourceHash="6d23c539" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_row_typical",
-  "layout": {
-    "row:toolbar": {
-      "justify": "space-between",
-      "text:title": {
-        "text": "Runtime status"
-      },
-      "button:refresh": {
-        "label": "Refresh"
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for button groups, toolbars, status indicator lines, and table header actions.
-- Not suitable for vertical form fields (use `column`) or equal-width card grids (use `grid`).
-- Related components: `column` for vertical layout, `grid` for two-dimensional equal-width layout.
-- Children arrange at natural width; use `justify` to control distribution.
-- Use `gap` to override the spacing between children; when omitted, the row keeps its theme CSS default.
-
-### Justify variants
+## HTML example
 
 ```slex
-{
-  namespace: "doc_row_justify_diff",
-  layout: {
-    "column:demo": {
-      "text:start": {
-        text: "justify: start"
-      },
-      "row:justify-start": {
-        justify: "start",
-        "badge:a": {
-          label: "A"
-        },
-        "badge:b": {
-          label: "B"
-        }
-      },
-      "text:center": {
-        text: "justify: center"
-      },
-      "row:justify-center": {
-        justify: "center",
-        "badge:a": {
-          label: "A"
-        },
-        "badge:b": {
-          label: "B"
-        }
-      },
-      "text:end": {
-        text: "justify: end"
-      },
-      "row:justify-end": {
-        justify: "end",
-        "badge:a": {
-          label: "A"
-        },
-        "badge:b": {
-          label: "B"
-        }
-      },
-      "text:space-between": {
-        text: "justify: space-between"
-      },
-      "row:justify-between": {
-        justify: "space-between",
-        "badge:a": {
-          label: "A"
-        },
-        "badge:b": {
-          label: "B"
-        }
-      }
-    }
-  }
-}
+<slex-row>
+  <slex-stat label="Supply voltage" value="12" unit="V"></slex-stat>
+  <slex-stat label="Measured current" value="2.5" unit="A"></slex-stat>
+  <slex-stat label="Calculated output power" value="30" unit="W"></slex-stat>
+</slex-row>
 ```
 
-## API Reference {#api}
+Two or more direct `slex-stat` children, or direct `slex-card` children, share responsive balanced columns. The last row fills the width; tiles in each row share a height. Metric values align at the bottom even when a label wraps. Children retain their DOM identity and values during resizing, reordering, insertion and removal. Set `align` or `justify` explicitly for normal flex layout. Use Grid when you want declared column counts.
 
-<!-- slex:spec-api:start component="row" sourceHash="a483a589" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `justify` | string: start, center, end, space-between, space-around | No | No | `"start"` | Main-axis distribution. |
-| `align` | string: start, center, end, baseline, stretch | No | No | `"center"` | Cross-axis alignment. |
-| `gap` | string | No | Yes |  | Spacing between children. |
-| `variant` | string: actions | No | No |  | Use actions for compact ToolHost action rows. |
-| child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
-<!-- slex:spec-api:end -->
+## API Reference
+
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `gap` | string | `1rem` | CSS length used between children; unitless token integers are not supported. |
+| `align` | string | `stretch` | CSS align-items value. When omitted, same-kind stat/card children balance automatically with equal row heights. Explicit align or justify selects normal flex layout. |
+| `justify` | string | `normal` | CSS justify-content value. |
+
+Slots: default slot accepting ordinary HTML or custom elements.
+
+## Contract summary
+
+- Attributes: `gap`, `align`, `justify`
+- Properties: `gap`, `align`, `justify`
+- Events: none
+- Slots: `default`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

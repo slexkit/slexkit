@@ -5,13 +5,26 @@ status: published
 order: 13
 summary: "Render a function_call as an inline tool card, then write the submitted result back as function_call_output."
 tags: toolhost, dialog, demo
-components: toolhost, card, radio-group, input, button
+components: toolhost-host
 difficulty: Intermediate
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: dialog
 ---
 
 # ToolHost Tool Call UI
 
-When an agent emits a `function_call`, the browser host can render it as an inline ToolHost card; after submission, the host writes `function_call_output` with the original `call_id`, and the trace keeps the receipt visible. Release window, owner, and rollback criteria are only tool arguments here; the page does not call a model or backend.
+ToolHost is a host-side tool-call renderer, not an authoring element inside a `slex` payload. The host selects a registered template from a trusted `function_call` name and passes only the call arguments to that template.
+
+```js
+const output = await renderToolCall(container, {
+  name: "fill-form",
+  callId: item.call_id,
+  arguments: JSON.parse(item.arguments),
+});
+responsesInput.push({ type: "function_call_output", call_id: item.call_id, output: JSON.stringify(output) });
+```
+
+## Tool-call boundary
+
+When an agent emits a `function_call`, the browser host can render it as an inline ToolHost card. `renderToolCall()` resolves only after submit or ignore, then the host writes a `function_call_output` using the original call ID. This workflow does not execute a deployment or other domain action by itself.

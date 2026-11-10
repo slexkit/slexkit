@@ -5,42 +5,35 @@ status: ready
 order: 20
 summary: "短文本输出，用于状态、说明、结果。"
 ---
-# Text 文本
 
-输出文本内容，适合状态提示、说明文字和结果展示。
+# Text
 
-<!-- slex:spec-example:start component="text" id="basic" sourceHash="bd63ce36" -->
+从 `text`、`content` 或 `label` 展示纯文本，并可设置 variant、color 与 size。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_text_typical",
-  "layout": {
-    "text:status": {
-      "text": "系统正常"
-    }
-  }
-}
+<slex-text></slex-text>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：状态文本、短说明、标签值、轻量输出。
-- 不适合：长文段落、结构化数据（应当用 table）。
-- 关联组件：stat 用于数值指标，badge 用于状态标签。
-- 文本长度建议简短，长文可使用多个 text 组合。
-- 通常放在 row、column 或 card 内使用。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `content` | string | `""` | 主要文本内容；优先于 text 与 label。 |
+| `text` | string | `""` | 备用文本字段。从 light DOM 推导的 content 即使为空也优先使用；建议使用 content 或元素文本。 |
+| `label` | string | `""` | 备用标签字段；从 light DOM 推导的 content 优先使用，建议使用 content 或元素文本。 |
+| `variant` | string | 未设置 | 添加对应的文本变体 class。 |
+| `color` | string | `inherited` | CSS 颜色值；未设置时继承。 |
+| `size` | string / number | `inherited` | CSS 字号；数值按像素解释。 |
 
-<!-- slex:spec-api:start component="text" sourceHash="745fea9a" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `text` | string | 否 | 是 |  | 显示文本。 |
-| `content` | string | 否 | 是 |  | text 的别名。 |
-| `label` | string | 否 | 是 |  | text 的别名。 |
-| `variant` | string: default, muted | 否 | 否 | `"default"` | 文本视觉变体。 |
-| `color` | string | 否 | 是 |  | 受控预览使用的可选 CSS 颜色。 |
-| `size` | string \| number | 否 | 是 |  | 可选字号。数字会按 px 处理。 |
-| `class` | string | 否 | 否 |  | 额外的宿主控制 CSS 类。 |
-<!-- slex:spec-api:end -->
+## 接口摘要
+
+- 属性: `content`, `text`, `label`, `variant`, `color`, `size`
+- Properties: `content`, `text`, `label`, `variant`, `color`, `size`
+- Events: 无
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

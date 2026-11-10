@@ -188,9 +188,11 @@ export async function exportStaticSite() {
   await cp(assetDir, join(outDir, "assets"), { recursive: true });
   await cp(join(projectRoot, "dist", "slexkit.js"), join(outDir, "slexkit.js"));
   await cp(join(projectRoot, "dist", "runtime.js"), join(outDir, "runtime.js"));
+  await cp(join(projectRoot, "dist", "fonts"), join(outDir, "fonts"), { recursive: true });
   await cp(join(projectRoot, "dist", "tooling.js"), join(outDir, "tooling.js"));
   await cp(join(projectRoot, "dist", "slexkit.css"), join(outDir, "slexkit.css"));
   await mkdir(join(outDir, "dist"), { recursive: true });
+  await cp(join(projectRoot, "dist", "fonts"), join(outDir, "dist", "fonts"), { recursive: true });
   await cp(join(projectRoot, "dist", "slexkit.js"), join(outDir, "dist", "slexkit.js"));
   await cp(join(projectRoot, "dist", "runtime.js"), join(outDir, "dist", "runtime.js"));
   await cp(join(projectRoot, "dist", "tooling.js"), join(outDir, "dist", "tooling.js"));

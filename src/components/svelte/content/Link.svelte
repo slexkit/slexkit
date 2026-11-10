@@ -1,6 +1,6 @@
 <script lang="ts">
   import { bindPropStore } from "../bindProps";
-  import { text } from "../helpers";
+  import { linkHref, text } from "../helpers";
   import InlineIcon from "../InlineIcon.svelte";
   import type { PropValues, SvelteComponentProps } from "../types";
 
@@ -12,7 +12,7 @@
 <a
   class="slex-link"
   data-variant={text(p.variant)}
-  href={text(p.href, "#")}
+  href={linkHref(p.href)}
   target={text(p.target) || undefined}
   rel={p.target === "_blank" ? "noreferrer" : undefined}
 >

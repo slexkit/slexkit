@@ -1,6 +1,6 @@
 {
   "name": "@slexkit/theme-shadcn",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Official shadcn-token theme CSS for SlexKit.",
   "author": "SlexKit contributors",
   "type": "module",

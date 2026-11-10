@@ -5,52 +5,43 @@ status: ready
 order: 60
 summary: "Numeric range input."
 ---
+
 # Slider
 
-Numeric range selection with min, max, step control and unit display.
+Provides a bounded numeric control with min/max/step and orientation, emitting continuous `input` and committed `change` events.
 
-<!-- slex:spec-example:start component="slider" id="basic" sourceHash="a0525d92" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_slider_typical",
-  "layout": {
-    "slider:volume": {
-      "label": "Volume",
-      "icon": "speaker-high",
-      "value": 42,
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "%"
-    }
-  }
-}
+<slex-slider></slex-slider>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for volume, brightness, threshold, and percentage adjustments.
-- Not suitable for precise text entry (use `input`).
-- Related components: `input` for text input.
-- Use `$value` and `onchange` for state binding.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | string | `""` | Visible control label. |
+| `unit` | string | `""` | Unit text shown with the value when the component supports it. |
+| `description` | string | `""` | Exposed for contract consistency, but this component does not currently render it. |
+| `disabled` | boolean | `false` | Disables user interaction. |
+| `name` | string | unset | Name used when the custom element participates in a native form. |
+| `value` | number | `0` | Current numeric value; the browser clamps and step-aligns assignments. |
+| `aria-label` | string | `auto` | Accessible name override; otherwise the visible label supplies the name when available. |
+| `min` | string / number | `0` | Minimum range value. |
+| `max` | string / number | `100` | Maximum range value. |
+| `step` | string / number | `1` | Range step size. |
+| `orientation` | string | `horizontal` | Sets the orientation data marker; the current native range and styling remain horizontal. |
+| `valueAsNumber` | number | `0` | Read-only JavaScript property exposing the current numeric value after browser clamping and step alignment. |
 
-<!-- slex:spec-api:start component="slider" sourceHash="0939dc16" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `label` | string | No | Yes |  | Slider label. |
-| `icon` | string | No | No |  | Icon name shown before the label. |
-| `value` | number | No | Yes | `0` | Current numeric value. |
-| `min` | number | No | Yes | `0` | Minimum value. |
-| `max` | number | No | Yes | `100` | Maximum value. |
-| `step` | number | No | Yes | `1` | Step interval. |
-| `unit` | string | No | Yes |  | Unit shown after the value. |
-| `disabled` | boolean | No | Yes | `false` | Disable the range input. |
-| `orientation` | string: horizontal, vertical | No | No | `"horizontal"` | Slider orientation metadata used for styling. |
-| `haptic` | boolean | No | No | `true` | Enable vibration feedback on supported devices. |
-| `haptics` | boolean | No | No | `true` | Alias for haptic. |
-| `onchange` | write-expression | No | No |  | Write expression invoked when the value changes. |
-<!-- slex:spec-api:end -->
+Events: `input`, `change`. Use native event listeners; read interactive values from component properties.
+
+## Contract summary
+
+- Attributes: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `min`, `max`, `step`, `orientation`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `min`, `max`, `step`, `orientation`
+- Events: `input`, `change`
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

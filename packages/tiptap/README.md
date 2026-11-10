@@ -1,88 +1,45 @@
 # @slexkit/tiptap
 
-Tiptap extension for explicit `slex` fenced UI blocks.
-
-```sh
-npm install slexkit @slexkit/theme-shadcn @slexkit/tiptap @tiptap/core @tiptap/pm @tiptap/starter-kit @tiptap/extension-code-block @tiptap/markdown
-```
-
-Import the SlexKit theme once in the app entry:
+Official Tiptap code-block node view for HTML-first `slex` fences.
 
 ```ts
-import "@slexkit/theme-shadcn/style.css";
-import "@slexkit/tiptap/style.css";
-```
-
-## Minimal setup
-
-```ts
-import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { createSlexKitTiptapExtension } from "@slexkit/tiptap";
+import { createSlexKitMarkdownRuntimeHost } from "slexkit";
 
-const editor = new Editor({
-  element: document.querySelector("#editor"),
-  extensions: [
-    StarterKit.configure({ codeBlock: false }),
-    createSlexKitTiptapExtension({
-      artifactId: "note-42",
-    }),
-  ],
-});
-```
-
-Only code blocks whose language is exactly `slex` are rendered by SlexKit. Other code blocks stay ordinary Tiptap code blocks.
-
-## Markdown roundtrip
-
-Add Tiptap's Markdown extension when loading or exporting Markdown:
-
-```ts
-import { Markdown } from "@tiptap/markdown";
-
-const editor = new Editor({
-  extensions: [
-    StarterKit.configure({ codeBlock: false }),
-    Markdown,
-    createSlexKitTiptapExtension({ artifactId: "doc" }),
-  ],
-  content: markdown,
-  contentType: "markdown",
+const runtimeHost = createSlexKitMarkdownRuntimeHost({
+  secureFrame: { runtimeUrl: "/assets/slexkit.runtime.js" },
 });
 
-const nextMarkdown = editor.getMarkdown();
+const extensions = [
+  StarterKit.configure({ codeBlock: false }),
+  createSlexKitTiptapExtension({ runtimeHost }),
+];
 ```
 
-The adapter uses normal fenced code blocks instead of a custom tokenizer, so ` ```slex ` blocks remain readable in plain Markdown hosts.
-
-## Shared state across fences
-
-All `slex` blocks in one editor share the same artifact runtime by default. A state-only fence can seed later renderable fences:
+The extension replaces only code blocks whose language is exactly `slex`.
+Ordinary code blocks retain normal Tiptap behavior and Markdown round-tripping.
 
 ````md
-```slex
-{
-  namespace: "calc",
-  g: { value: 21 }
-}
-```
-
-```slex
-{
-  namespace: "calc",
-  layout: {
-    "text:answer": { "$text": "'answer: ' + (g.value * 2)" }
-  }
-}
-```
+~~~slex
+<slex-input id="voltage" type="engineering" label="Voltage" value="12"></slex-input>
+<slex-stat id="power" label="Power" unit="W"></slex-stat>
+<script type="module">
+  const voltage = slex.root.querySelector("#voltage");
+  const power = slex.root.querySelector("#power");
+  const update = () => { power.value = voltage.valueAsNumber * 2; };
+  voltage.addEventListener("input", update);
+  update();
+</script>
+~~~
 ````
 
-## Runtime boundary
+Each editor owns a stable artifact; each node view owns a stable block ID.
+Updates use the runtime host's preview/commit protocol, so invalid source reports
+a diagnostic without destroying the last committed iframe. The adapter never
+interprets DSL objects, namespaces, state-only blocks, expression strings, or
+handler strings.
 
-This adapter defaults to trusted runtime mode, intended for application-authored content, repository-maintained snippets, reviewed examples, and local document workflows. Use SlexKit secure runtime APIs for untrusted user Markdown or direct agent output.
-
-## Documentation
-
-- [Official Tiptap editor example](https://slexkit.app.simgor.cn/examples/tiptap-host)
-- [Runnable example source](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)
-- [SlexKit Host integration](https://github.com/slexkit/slexkit/blob/main/site/content/reference/integration/en-US.md)
+Options include `artifactId`, `runtimeHost`, `theme`, `showSource`, labels,
+`className`, and `onError`. Custom legacy hosts remain supported for complete
+commits, though atomic preservation requires `updateArtifact`.

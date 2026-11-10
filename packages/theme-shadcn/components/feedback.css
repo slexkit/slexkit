@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-progress-header {
@@ -18,13 +18,13 @@
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .slex-progress-value {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
 }
@@ -34,13 +34,13 @@
   width: 100%;
   height: 8px;
   border-radius: 9999px;
-  background: var(--secondary);
+  background: var(--slex-secondary, var(--secondary));
 }
 
 .slex-progress-range {
   height: 100%;
   border-radius: inherit;
-  background: var(--primary);
+  background: var(--slex-primary, var(--primary));
   transition: width 180ms ease, transform 180ms ease;
 }
 
@@ -74,17 +74,17 @@
   width: 100%;
   min-height: 4rem;
   padding: 0.875rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--background);
-  color: var(--foreground);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
+  box-shadow: var(--slex-shadow-sm);
   transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 .slex-toast:hover {
-  border-color: color-mix(in oklab, var(--primary) 20%, var(--border));
-  box-shadow: var(--shadow-md);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 20%, var(--slex-border, var(--border)));
+  box-shadow: var(--slex-shadow-md);
   transform: translateY(-1px);
 }
 
@@ -92,7 +92,7 @@
   width: 0.25rem;
   min-height: 2.25rem;
   border-radius: 9999px;
-  background: var(--info);
+  background: var(--slex-info, var(--info));
 }
 
 .slex-toast-icon {
@@ -100,21 +100,21 @@
 }
 
 .slex-toast[data-tone="info"] .slex-toast-icon {
-  color: var(--info);
+  color: var(--slex-info, var(--info));
 }
 
 .slex-toast[data-tone="success"] .slex-toast-icon {
-  color: var(--success);
+  color: var(--slex-success, var(--success));
 }
 
 .slex-toast[data-tone="warning"] .slex-toast-icon {
-  color: var(--warning);
+  color: var(--slex-warning, var(--warning));
 }
 
 .slex-toast[data-tone="danger"] .slex-toast-icon,
 .slex-toast[data-tone="error"] .slex-toast-icon,
 .slex-toast[data-tone="destructive"] .slex-toast-icon {
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-toast-content {
@@ -123,50 +123,50 @@
 }
 
 .slex-toast[data-tone="info"] {
-  border-color: color-mix(in oklab, var(--info) 24%, var(--border));
-  background: color-mix(in oklab, var(--info) 5%, var(--background));
+  border-color: color-mix(in oklab, var(--slex-info, var(--info)) 24%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-info, var(--info)) 5%, var(--slex-background, var(--background)));
 }
 
 .slex-toast[data-tone="info"] .slex-toast-mark {
-  background: var(--info);
+  background: var(--slex-info, var(--info));
 }
 
 .slex-toast[data-tone="success"] {
-  border-color: color-mix(in oklab, var(--success) 24%, var(--border));
-  background: color-mix(in oklab, var(--success) 5%, var(--background));
+  border-color: color-mix(in oklab, var(--slex-success, var(--success)) 24%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-success, var(--success)) 5%, var(--slex-background, var(--background)));
 }
 
 .slex-toast[data-tone="success"] .slex-toast-mark {
-  background: var(--success);
+  background: var(--slex-success, var(--success));
 }
 
 .slex-toast[data-tone="warning"] {
-  border-color: color-mix(in oklab, var(--warning) 26%, var(--border));
-  background: color-mix(in oklab, var(--warning) 6%, var(--background));
+  border-color: color-mix(in oklab, var(--slex-warning, var(--warning)) 26%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-warning, var(--warning)) 6%, var(--slex-background, var(--background)));
 }
 
 .slex-toast[data-tone="warning"] .slex-toast-mark {
-  background: var(--warning);
+  background: var(--slex-warning, var(--warning));
 }
 
 .slex-toast[data-tone="danger"],
 .slex-toast[data-tone="error"],
 .slex-toast[data-tone="destructive"] {
-  border-color: color-mix(in oklab, var(--destructive) 28%, var(--border));
-  background: color-mix(in oklab, var(--destructive) 6%, var(--background));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 28%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 6%, var(--slex-background, var(--background)));
 }
 
 .slex-toast[data-tone="danger"] .slex-toast-mark,
 .slex-toast[data-tone="error"] .slex-toast-mark,
 .slex-toast[data-tone="destructive"] .slex-toast-mark {
-  background: var(--destructive);
+  background: var(--slex-destructive, var(--destructive));
 }
 
 .slex-toast-title {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.35;
@@ -174,7 +174,7 @@
 
 .slex-toast-description {
   margin-top: 0.125rem;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   line-height: 1.45;
 }
@@ -186,9 +186,9 @@
   width: 24px;
   height: 24px;
   border: 0;
-  border-radius: calc(var(--radius) - 4px);
+  border-radius: calc(var(--slex-radius) - 4px);
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
@@ -209,11 +209,11 @@
 }
 
 .slex-toast-close:hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-toast-close:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }

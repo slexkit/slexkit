@@ -1,134 +1,28 @@
 ---
-title: "Cross-Document State Lab"
+title: "Artifact Shared JSON Lab"
 category: "Platform Features"
 status: published
 order: 15
-summary: "Multiple `slex` blocks in one document share the same reactive `g` state when they use the same namespace."
-tags: cross-document, state-sharing, namespace, multi-fence
-components: section, card, slider, input, select, stat, badge, callout, grid, column, tabs
+summary: "Publish and subscribe to bounded JSON through artifact-local slex.shared without sharing DOM or module globals."
+tags: artifact, shared-json, subscription
+components: card, input, text
 difficulty: Beginner
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
 
-# Cross-Document State Lab
+# Artifact Shared JSON Lab
 
-Multiple `slex` code blocks in the same Markdown document can share `g` state when they use the same `namespace`.
-
-Below are three independent ` ```slex ` fences — one control panel and two observer panels. Try modifying the control panel values and watch the two panels below respond in real time.
-
-## Control Panel
+The input publishes a JSON string through `slex.shared`; a subscription reflects the artifact-local value without sharing DOM or module globals.
 
 ```slex
-{
-  slex: "0.1",
-  namespace: "example_cross_doc_lab",
-  g: {
-    color: "blue", size: 16, theme: "light",
-    style: function () {
-      return 'color: ' + this.color + '; font-size: ' + this.size + 'px;';
-    }
-  },
-  layout: {
-    "section:control": {
-      eyebrow: "Platform Features",
-      title: "Cross-Document State Lab · Control Panel",
-      subtitle: "Modify any parameter below — the two independent fence blocks will sync automatically.",
-      "grid:controls": {
-        columns: 1, mdColumns: 3,
-        "select:color": {
-          label: "Text color",
-          "$value": "g.color",
-          options: [
-            { label: "Blue", value: "blue" },
-            { label: "Green", value: "green" },
-            { label: "Orange", value: "orange" },
-            { label: "Purple", value: "purple" }
-          ],
-          onchange: "g.color = String($event)"
-        },
-        "slider:size": { label: "Font size", "$value": "g.size", min: 8, max: 48, step: 2, unit: "px", onchange: "g.size = Number($event)" },
-        "select:theme": {
-          label: "Card theme",
-          "$value": "g.theme",
-          options: [
-            { label: "Light", value: "light" },
-            { label: "Dark", value: "dark" },
-            { label: "Info", value: "info" }
-          ],
-          onchange: "g.theme = String($event)"
-        }
-      },
-      "badge:note": { "$label": "'Style: ' + g.color + ' ' + g.size + 'px'", tone: "info" }
-    }
-  }
-}
+<slex-card title="Artifact Shared JSON Lab"><slex-input id="name" label="Shared name" value="SlexKit"></slex-input><slex-text id="mirror"></slex-text></slex-card>
+<script type="module">
+  const input = slex.root.querySelector("#name"); const mirror = slex.root.querySelector("#mirror");
+  const publish = () => slex.shared.set("name", input.value); const unsubscribe = slex.shared.subscribe("name", (value) => { mirror.text = String(value ?? ""); });
+  input.addEventListener("input", publish); publish(); slex.onDispose(() => { input.removeEventListener("input", publish); unsubscribe(); });
+</script>
 ```
 
-## Observer Panel A (Same namespace, different fence block)
-
-```slex
-{
-  slex: "0.1",
-  namespace: "example_cross_doc_lab",
-  layout: {
-    "card:a": {
-      title: "Observer Panel A — Text Styling",
-      "column:stylePreview": {
-        "text:styleMeta": { "$text": "'Font size: ' + g.size + 'px'" },
-        "text:styledValue": { "$text": "g.color", "$color": "g.color", "$size": "g.size" }
-      },
-      "callout:preview": {
-        "$tone": "g.theme === 'dark' ? 'danger' : g.theme === 'info' ? 'info' : 'success'",
-        "$text": "g.theme === 'dark' ? 'Dark mode: color scheme for night reading.' : g.theme === 'info' ? 'Info mode: emphasizes technical details.' : 'Light mode: default document reading colors.'"
-      }
-    }
-  }
-}
-```
-
-## Observer Panel B
-
-```slex
-{
-  slex: "0.1",
-  namespace: "example_cross_doc_lab",
-  layout: {
-    "card:b": {
-      title: "Observer Panel B — Parameter Details",
-      "grid:params": {
-        columns: 1, mdColumns: 3,
-        "stat:col": { label: "Color", "$value": "g.color" },
-        "stat:sz": { label: "Size", "$value": "g.size", unit: "px" },
-        "stat:th": { label: "Theme", "$value": "g.theme" }
-      },
-      "badge:sync": { "$label": "'Synced: ' + g.color", "$tone": "g.color === 'blue' ? 'info' : g.color === 'green' ? 'success' : g.color === 'orange' ? 'warning' : 'info'" }
-    }
-  }
-}
-```
-
-**Three fence blocks**, one `namespace: "example_cross_doc_lab"`, all components share the `g` object. Change color and size in the control panel above, and the two observer panels update instantly.
-
----
-
-### What does this mean?
-
-Imagine a long Markdown document:
-
-```
-[Control panel — select industry/metrics/time range]
-... 30 paragraphs of Markdown narrative ...
-[Chart A — automatically reflects control panel options]
-... more analysis text ...
-[Chart B — different visualization of the same state]
-```
-
-Each ` ```slex ` block renders independently. When the namespace is the same, they share state. Common uses include:
-
-- **Technical white papers**: top selects parameters, middle analysis, bottom conclusions — all coordinated
-- **Project collaboration docs**: status tracking table at top, team task cards scattered through the body
-- **AI output enhancement**: multiple visualization nodes generated by a model sharing the same reasoning results
-
-These scenarios use the same mechanism: multiple fences share one state object instead of treating every UI block as isolated.
+The unsubscribe function and input listener are both released through `slex.onDispose` when this module scope is replaced.

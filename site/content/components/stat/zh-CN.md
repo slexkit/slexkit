@@ -5,91 +5,45 @@ status: ready
 order: 10
 summary: "指标小卡片，展示 label、value、unit。"
 ---
-# Stat 指标
 
-紧凑的指标展示组件，包含标签、数值和可选的单位。
+# Stat
 
-<!-- slex:spec-example:start component="stat" id="basic" sourceHash="9fa58aeb" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_stat_typical",
-  "layout": {
-    "grid:stats": {
-      "columns": 2,
-      "stat:requests": {
-        "label": "请求数",
-        "icon": "activity",
-        "value": "1.2k",
-        "unit": "/min"
-      },
-      "stat:success": {
-        "label": "成功",
-        "icon": "check-circle",
-        "value": "98.4",
-        "unit": "%",
-        "tone": "success"
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+展示带标签的指标值，并可配置单位、图标、tone 与首次动画。
 
-## 使用提示
-
-- 适合：数据看板、统计概览、关键指标展示。
-- 不适合：长文本（应当用 text）、交互式输入（应当用 input）。
-- 关联组件：text 用于文本输出，badge 用于标签状态。
-- 通常放在 grid 或 row 中组合使用。
-- tone 只表达语义状态，不作为任意样式选择器。
-
-### tone 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_stat_tone_diff",
-  layout: {
-    "row:tones": {
-      "stat:info": {
-        label: "信息",
-        value: "42",
-        tone: "info"
-      },
-      "stat:success": {
-        label: "成功",
-        value: "98%",
-        tone: "success"
-      },
-      "stat:warning": {
-        label: "警告",
-        value: "73",
-        tone: "warning"
-      },
-      "stat:danger": {
-        label: "危险",
-        value: "5",
-        tone: "danger"
-      },
-      "stat:muted": {
-        label: "弱化",
-        value: "0",
-        tone: "muted"
-      }
-    }
-  }
-}
+<slex-row>
+  <slex-stat id="calculated" label="计算值" unit="V"></slex-stat>
+  <slex-stat label="指定精度" value="1.000" unit="ms"></slex-stat>
+</slex-row>
+<script type="module">
+  slex.root.querySelector("#calculated").value = Math.PI;
+</script>
 ```
 
-## API 参考 {#api}
+数值显示最多保留六位有效数字，并按可用宽度调整，必要时使用科学计数法。格式化只影响显示，`.value` 仍保留原值。较短的格式化字符串（如 `"1.000"`）保留末尾零，过长的小数字符串也可自适应；整数字符串和编号按原文保留，空间不足时显示省略号。悬停提示和无障碍文本可读取包含单位的完整内容。
 
-<!-- slex:spec-api:start component="stat" sourceHash="389443e6" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `label` | string | 否 | 是 |  | 指标标签。 |
-| `icon` | string | 否 | 否 |  | 显示在标签前的图标名称。 |
-| `value` | string \| number | 否 | 是 |  | 指标值。 |
-| `unit` | string | 否 | 是 |  | 显示在值后的单位。 |
-| `tone` | string: info, success, warning, danger, muted | 否 | 否 |  | 可选语义色调。 |
-| `animateInitial` | boolean | 否 | 否 | `false` | 为初始渲染值播放动画。 |
-<!-- slex:spec-api:end -->
+RTL 页面中的数值仍按从左到右的顺序显示；文本值使用浏览器的自动方向和原生连写排版。
+
+## API 参考
+
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
+
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 控件的可见标签。 |
+| `value` | string / number | `""` | 数值显示最多六位有效数字，并按可用宽度调整；不改变 value 原值。保留较短的格式化字符串，完整值可通过悬停提示与无障碍文本读取。 |
+| `unit` | string | `""` | 显示在值之后的单位。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
+| `tone` | string | 未设置 | 供主题样式使用的色调数据值。 |
+| `animateInitial` / `animate-initial` | boolean | `false` | 首次渲染时让数字从零开始动画。 |
+
+## 接口摘要
+
+- 属性: `label`, `value`, `unit`, `icon`, `tone`, `animate-initial`
+- Properties: `label`, `value`, `unit`, `icon`, `tone`, `animateInitial`
+- Events: 无
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

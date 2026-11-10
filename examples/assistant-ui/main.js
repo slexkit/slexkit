@@ -17,28 +17,13 @@ const alpha = cutoffHz / (cutoffHz + sampleRateHz);
 \`\`\`
 
 \`\`\`slex
-{
-  slex: "0.1",
-  namespace: "assistant_ui_static_filter",
-  g: {
-    cutoffHz: 640,
-    sampleRateHz: 48000,
-    alpha: 0.0132
-  },
-  layout: {
-    "card:summary": {
-      title: "RC Low-Pass Filter",
-      description: "Rendered from a slex fence inside an assistant-ui text part.",
-      "badge:runtime": { label: "secure iframe", tone: "success" },
-      "grid:stats": {
-        columns: 1,
-        mdColumns: 2,
-        "stat:cutoff": { label: "Cutoff", "$value": "g.cutoffHz", unit: "Hz" },
-        "stat:alpha": { label: "Alpha", "$value": "g.alpha.toFixed(4)" }
-      }
-    }
-  }
-}
+<slex-card title="RC Low-Pass Filter">
+  <slex-badge text="isolated frame" tone="success"></slex-badge>
+  <slex-grid columns="2">
+    <slex-stat label="Cutoff" value="640" unit="Hz"></slex-stat>
+    <slex-stat label="Alpha" value="0.0132"></slex-stat>
+  </slex-grid>
+</slex-card>
 \`\`\`
 
 This demo does not render tool calls. Tool-call UI remains a separate integration layer.`;
@@ -95,7 +80,7 @@ function AssistantTextPart() {
     mode: "static",
     runtime: "secure",
     secureFrame: {
-      runtimeUrl: "/dist/slexkit.runtime.js",
+      runtimeUrl: "/slexkit.runtime.js",
     },
     controls: {
       code: { copy: false, download: false },

@@ -5,45 +5,31 @@ status: ready
 order: 35
 summary: "分割线，可带 label。"
 ---
-# Divider 分割线
 
-水平分割线，可选在中间显示文本标签。
+# Divider
 
-<!-- slex:spec-example:start component="divider" id="basic" sourceHash="888b7416" -->
+用分隔线区分相邻内容，并可附带 label 或图标。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_divider_typical",
-  "layout": {
-    "column:content": {
-      "text:top": {
-        "text": "上方"
-      },
-      "divider:line": {
-        "label": "分隔线",
-        "icon": "flag"
-      },
-      "text:bottom": {
-        "text": "下方"
-      }
-    }
-  }
-}
+<slex-divider></slex-divider>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：表单分区、设置分组、内容段落之间的视觉分隔。
-- 不适合：作为布局间距手段（应当用布局容器的 gap）。
-- 关联组件：section 是更结构化的区块分隔方案。
-- 放在 column 中分隔上下内容区。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 可选的居中分隔标签。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
 
-<!-- slex:spec-api:start component="divider" sourceHash="92dc5387" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `label` | string | 否 | 是 |  | 分割线中显示的文本。 |
-| `icon` | string | 否 | 否 |  | 显示在标签前的图标名称。 |
-<!-- slex:spec-api:end -->
+## 接口摘要
+
+- 属性: `label`, `icon`
+- Properties: `label`, `icon`
+- Events: 无
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

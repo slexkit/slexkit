@@ -5,72 +5,40 @@ status: ready
 order: 40
 summary: "Boolean toggle input for instant settings."
 ---
+
 # Switch
 
-Boolean toggle for instant-activation settings.
+Represents an on/off setting through `.enabled`/`.checked` and native `input`/`change` events.
 
-<!-- slex:spec-example:start component="switch" id="basic" sourceHash="9c7b3bda" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_switch_typical",
-  "layout": {
-    "switch:feature": {
-      "enabled": true,
-      "label": "Enable sync",
-      "icon": "arrows-clockwise"
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for feature toggles, preference enable/disable, and instant-effect settings.
-- Not suitable for confirmation-style toggles (use `checkbox`).
-- Related components: `checkbox` for confirmations or multi-select.
-- Typically placed inside a `row` or `column`.
-- Use `$enabled` and `onchange` for state binding.
-
-### Enabled / disabled variants
+## HTML example
 
 ```slex
-{
-  namespace: "doc_switch_state_diff",
-  layout: {
-    "row:diff": {
-      "switch:enabled": {
-        label: "Enabled",
-        enabled: true
-      },
-      "switch:disabled": {
-        label: "Disabled"
-      },
-      "switch:enabled-not-available": {
-        label: "Enabled (not available)",
-        enabled: true,
-        disabled: true
-      },
-      "switch:disabled-not-available": {
-        label: "Disabled (not available)",
-        disabled: true
-      }
-    }
-  }
-}
+<slex-switch></slex-switch>
 ```
 
-## API Reference {#api}
+## API Reference
 
-<!-- slex:spec-api:start component="switch" sourceHash="27367ad0" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `enabled` | boolean | No | Yes | `false` | Enabled state. |
-| `label` | string | No | Yes |  | Switch label. |
-| `icon` | string | No | No |  | Icon name shown before the visible label. |
-| `disabled` | boolean | No | Yes | `false` | Disable the switch. |
-| `haptic` | boolean | No | No | `true` | Enable vibration feedback on supported devices. |
-| `haptics` | boolean | No | No | `true` | Alias for haptic. |
-| `onchange` | write-expression | No | No |  | Write expression invoked when enabled state changes. |
-<!-- slex:spec-api:end -->
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | string | `""` | Visible control label. |
+| `unit` | string | `""` | Exposed for contract consistency, but this component does not currently render it. |
+| `description` | string | `""` | Exposed for contract consistency, but this component does not currently render it. |
+| `disabled` | boolean | `false` | Disables user interaction. |
+| `name` | string | unset | Name used when the custom element participates in a native form. |
+| `value` | string / number | `"on"` | Value submitted when enabled; defaults to on when no value was assigned. Use enabled or checked to control the state. |
+| `aria-label` | string | `auto` | Accessible name override; otherwise the visible label supplies the name when available. |
+| `checked` | boolean | `false` | Alias of enabled; the wrapper keeps both states synchronized. |
+| `enabled` | boolean | `false` | Current on/off state; synchronized with checked. |
+
+Events: `input`, `change`. Use native event listeners; read interactive values from component properties.
+
+## Contract summary
+
+- Attributes: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `checked`, `enabled`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `checked`, `enabled`
+- Events: `input`, `change`
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

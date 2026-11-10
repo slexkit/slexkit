@@ -5,55 +5,37 @@ status: ready
 order: 21
 summary: "ToolHost-only step page for collecting multiple human inputs inside one function call."
 ---
+
 # ToolHost Step
 
-`step` is an internal ToolHost template page. It lets one function call collect multiple input sections one page at a time. Like `submit`, it is not a public display component and should not be used in ordinary display fences or component examples.
+Displays one workflow step with title, description, index/total, state, progress, and optional slotted details.
 
-A typical flow is: the agent emits one human-input function call, ToolHost renders one Slex card, the card switches the current `step` from release strategy to engineering constraints, and `submit:actions` returns the structured result once.
+## HTML example
 
-<!-- slex:spec-example:start component="step" id="basic" sourceHash="86ba4567" -->
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_step_toolhost",
-  "layout": {
-    "step:strategy": {
-      "title": "Release strategy",
-      "index": 1,
-      "radio-group:choice": {
-        "options": [
-          {
-            "label": "Canary",
-            "value": "canary"
-          },
-          {
-            "label": "Full",
-            "value": "full"
-          }
-        ]
-      }
-    }
-  }
-}
+<slex-step></slex-step>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for ToolHost step-by-step questions, approval parameter panels, and multi-part human input.
-- Do not use for regular page navigation, public component demos, or display-only content.
-- Pair with `submit`; `step` only owns the current page structure, while `submit:actions` sends the final result.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | string | `""` | Step heading. |
+| `description` | string | `""` | Supporting text below the heading. |
+| `index` | string / number | unset | Current step index; shown alone unless total is set. |
+| `total` | string / number | unset | Total step count, rendered with index as index/total. |
+| `state` | string | unset | State data value used by theme styles. |
+| `progress` | string / number | `""` | Explicit progress label; takes precedence over index and total when non-empty. |
 
-<!-- slex:spec-api:start component="step" sourceHash="73e9bde2" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `title` | string | No | No |  | Step title. |
-| `description` | string | No | No |  | Short helper text for the step. |
-| `index` | string \| number | No | No |  | Visible step number. |
-| `total` | string \| number | No | No |  | Total step count shown with index. |
-| `progress` | string | No | No |  | Explicit progress label, such as 1/2. |
-| `state` | string | No | No |  | Optional visual state such as current or completed. |
-| child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
-<!-- slex:spec-api:end -->
+Slots: default slot accepting ordinary HTML or custom elements.
+
+## Contract summary
+
+- Attributes: `title`, `description`, `index`, `total`, `state`, `progress`
+- Properties: `title`, `description`, `index`, `total`, `state`, `progress`
+- Events: none
+- Slots: `default`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

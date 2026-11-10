@@ -1,0 +1,30 @@
+<slex-card title="Voltage divider">
+  <slex-text text="中文标签：输入电压" variant="muted"></slex-text>
+  <slex-grid columns="3">
+    <slex-input id="vin" label="Input voltage" type="engineering" value="12V"></slex-input>
+    <slex-input id="r1" label="R1" type="engineering" value="10kΩ"></slex-input>
+    <slex-input id="r2" label="R2" type="engineering" value="4.7kΩ"></slex-input>
+  </slex-grid>
+  <slex-grid columns="2">
+    <slex-stat id="vout" label="Output voltage" unit="V"></slex-stat>
+    <slex-stat id="ratio" label="Divider ratio" unit="%"></slex-stat>
+  </slex-grid>
+  <slex-button id="reset" label="Reset"></slex-button>
+</slex-card>
+<script type="module">
+  const ids = ["vin", "r1", "r2"];
+  const controls = ids.map((id) => slex.root.querySelector(`#${id}`));
+  const initial = controls.map((control) => control.value);
+  const update = () => {
+    const [vin, r1, r2] = controls.map((control) => control.valueAsNumber);
+    const valid = [vin, r1, r2].every(Number.isFinite) && vin >= 0 && r1 > 0 && r2 > 0;
+    const ratio = valid ? r2 / (r1 + r2) : NaN;
+    slex.root.querySelector("#vout").value = valid ? (vin * ratio).toFixed(3) : "Invalid";
+    slex.root.querySelector("#ratio").value = valid ? (ratio * 100).toFixed(2) : "Invalid";
+  };
+  const reset = slex.root.querySelector("#reset");
+  const onReset = () => { controls.forEach((control, index) => { control.value = initial[index]; }); update(); };
+  controls.forEach((control) => control.addEventListener("input", update));
+  reset.addEventListener("click", onReset); update();
+  slex.onDispose(() => { controls.forEach((control) => control.removeEventListener("input", update)); reset.removeEventListener("click", onReset); });
+</script>

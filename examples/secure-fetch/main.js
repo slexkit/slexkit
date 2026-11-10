@@ -1,113 +1,28 @@
-import { mountSecureArtifact } from "/dist/slexkit.js";
+import { mount } from "/dist/slexkit.js";
 
 const log = document.getElementById("network-log");
 const events = [];
+const writeLog = (entry) => { events.unshift(entry); log.textContent = events.slice(0, 8).map((item) => JSON.stringify(item, null, 2)).join("\n\n"); };
 
-function writeLog(entry) {
-  events.unshift(entry);
-  log.textContent = events.slice(0, 8).map((item) => JSON.stringify(item, null, 2)).join("\n\n");
-}
+const source = `<slex-card title="Policy-gated request">
+  <slex-row><slex-button id="allowed" label="Allowed request"></slex-button><slex-button id="denied" label="Denied request"></slex-button></slex-row>
+  <slex-text id="status" text="No request yet"></slex-text>
+</slex-card>
+<script type="module">
+  const status = slex.root.querySelector("#status");
+  const allowed = slex.root.querySelector("#allowed"); const denied = slex.root.querySelector("#denied");
+  const request = async (url) => { try { const result = await slex.api.fetch(url, { method: "GET" }); status.text = result.status + " " + result.statusText; } catch (error) { status.text = error instanceof Error ? error.message : String(error); } };
+  const loadAllowed = () => request("https://api.example.test/status"); const loadDenied = () => request("https://denied.example.test/status");
+  allowed.addEventListener("click", loadAllowed); denied.addEventListener("click", loadDenied);
+  slex.onDispose(() => { allowed.removeEventListener("click", loadAllowed); denied.removeEventListener("click", loadDenied); });
+</script>`;
 
-const policy = {
-  network: {
-    enabled: true,
-    methods: ["GET"],
-    allowOrigins: ["https://api.example.test"],
-    allowHeaders: ["content-type"],
-    allowContentTypes: ["application/json", "text/plain"],
-    credentials: "omit",
-    timeoutMs: 3000,
-    maxBodyBytes: 0,
-    maxResponseBytes: 4096,
-  },
-  timer: { enabled: true, maxTimers: 4, minIntervalMs: 50 },
-  animation: { enabled: true },
-};
-
-const hostAdapter = {
-  async fetch(request) {
-    writeLog({ phase: "host-fetch", url: request.url, method: request.method });
-    return {
-      ok: true,
-      status: 200,
-      statusText: "OK",
-      url: request.url,
-      headers: { "content-type": "application/json" },
-      data: { service: "example", status: "online" },
-      text: JSON.stringify({ service: "example", status: "online" }),
-      elapsedMs: 12,
-    };
-  },
-  onNetworkLog(event) {
-    writeLog({
-      phase: event.phase,
-      url: event.request.url,
-      status: event.result?.status,
-      error: event.error?.message,
-    });
-  },
-};
-
-const source = `({
-  namespace: "example_secure_fetch",
-  g: {
-    allowedStatus: "not requested",
-    deniedStatus: "not requested",
-    async loadAllowed(api) {
-      this.allowedStatus = "loading";
-      const result = await api.get("https://api.example.test/status");
-      this.allowedStatus = result.status + " " + (result.data?.status || result.statusText);
-    },
-    async loadDenied(api) {
-      this.deniedStatus = "loading";
-      try {
-        await api.get("https://blocked.example.test/status");
-        this.deniedStatus = "unexpected success";
-      } catch (error) {
-        this.deniedStatus = api.errorMessage(error);
-      }
-    }
-  },
-  layout: {
-    "card:secure": {
-      title: "Secure fetch controls",
-      "text:summary": {
-        text: "Both buttons execute inside the sandbox. The host receives only policy-checked api.fetch requests."
-      },
-      "row:actions": {
-        "button:allowed": {
-          label: "Allowed request",
-          onclick: "g.loadAllowed(api)"
-        },
-        "button:denied": {
-          label: "Denied request",
-          variant: "secondary",
-          onclick: "g.loadDenied(api)"
-        }
-      },
-      "grid:results": {
-        columns: 1,
-        mdColumns: 2,
-        "stat:allowed": {
-          label: "Allowed status",
-          "$value": "g.allowedStatus"
-        },
-        "stat:denied": {
-          label: "Denied status",
-          "$value": "g.deniedStatus",
-          tone: "warning"
-        }
-      }
-    }
-  }
-})`;
-
-mountSecureArtifact(source, document.getElementById("app"), {
-  policy,
-  hostAdapter,
-  theme: "host-shadcn",
-  frame: {
-    runtimeUrl: "/dist/slexkit.runtime.js",
-    title: "SlexKit secure fetch sandbox",
+const handle = mount(source, document.getElementById("app"), {
+  secureFrame: { runtimeUrl: "/slexkit.runtime.js", styleUrl: "/dist/slexkit.css" },
+  policy: { network: { enabled: true, methods: ["GET"], allowOrigins: ["https://api.example.test"], credentials: "omit", timeoutMs: 3000, maxResponseBytes: 4096 } },
+  hostAdapter: {
+    async fetch(request) { writeLog({ phase: "host-fetch", url: request.url }); return { ok: true, status: 200, statusText: "OK", url: request.url, headers: { "content-type": "application/json" }, data: { status: "online" }, text: '{"status":"online"}', elapsedMs: 12 }; },
+    onNetworkLog(event) { writeLog({ phase: event.phase, url: event.request.url, status: event.result?.status, error: event.error?.message }); },
   },
 });
+await handle.ready;

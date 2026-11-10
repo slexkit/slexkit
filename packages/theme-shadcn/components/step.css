@@ -26,10 +26,10 @@
   min-width: 2.25rem;
   min-height: 1.35rem;
   place-items: center;
-  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 70%, transparent);
   border-radius: 999px;
-  background: color-mix(in oklab, var(--muted) 18%, var(--card));
-  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 18%, var(--slex-card, var(--card)));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 650;
   line-height: 1;
@@ -37,7 +37,7 @@
 
 .slex-step-header h3 {
   margin: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.9375rem;
   letter-spacing: 0;
   line-height: 1.35;
@@ -45,7 +45,7 @@
 
 .slex-step-header p {
   margin: 0;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   line-height: 1.45;
 }

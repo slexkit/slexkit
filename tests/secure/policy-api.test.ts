@@ -1,16 +1,8 @@
 import { describe, expect, it, mock } from "bun:test";
 import {
   createSecureRuntime,
-  createSlexKitMarkdownRuntimeHost,
-  getSlexKitRuntimeUrl,
-  getSlexKitMarkdownRuntimeHost,
-  installSlexKitMarkdownRuntimeHost,
-  mount,
-  mountSecureArtifact,
-  setSlexKitRuntimeUrl,
   type HostRuntimePolicy,
 } from "../../src/index";
-import { hardenSchedulingGlobals } from "../../src/engine/sandbox-runner";
 
 const closedPolicy: HostRuntimePolicy = {};
 
@@ -441,65 +433,11 @@ describe("secure runtime policy api", () => {
     });
 
 
-    it("injects api into secure expressions and event handlers", async () => {
-      const container = setup();
-      let fetched = 0;
-
-      mountSecureArtifact({
-        namespace: `secure_api_${Date.now()}`,
-        g: {
-          value: "",
-          async load(api: { get: (url: string) => Promise<{ status: number }> }) {
-            const res = await api.get("https://example.com/ping");
-            this.value = String(res.status);
-          },
-        },
-        layout: {
-          "button:load": {
-            label: "Load",
-            onclick: "g.load(api)",
-          },
-          "text:value": {
-            $text: "api.now() >= 0 ? 'status:' + g.value : ''",
-          },
-        },
-      }, container, {
-        policy,
-        unsafeInlineExecution: true,
-        hostAdapter: {
-          fetch: async () => {
-            fetched += 1;
-            return {
-              ok: true,
-              status: 204,
-              statusText: "No Content",
-              url: "https://example.com/ping",
-              headers: {},
-              elapsedMs: 1,
-            };
-          },
-        },
-      });
-
-      expect(container.dataset.slexkitSecureRuntime).toBe("true");
-      (container.querySelector("button") as HTMLButtonElement).click();
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(fetched).toBe(1);
-      expect(container.textContent).toContain("204");
-    });
-
-
-    it("keeps legacy mount working without api", () => {
-      const container = setup();
-      mount({
-        namespace: `legacy_${Date.now()}`,
-        g: { value: 7 },
-        layout: {
-          "text:value": {
-            $text: "'value:' + g.value",
-          },
-        },
-      }, container);
-      expect(container.textContent).toContain("value:7");
+    it("keeps policy APIs explicit instead of injecting them into a parent-page evaluator", () => {
+      const runtime = createSecureRuntime(policy);
+      expect(typeof runtime.api.fetch).toBe("function");
+      expect(typeof runtime.api.setTimeout).toBe("function");
+      expect(document.body.dataset.slexkitSecureRuntime).toBeUndefined();
+      runtime.dispose();
     });
 });

@@ -5,59 +5,43 @@ status: ready
 order: 20
 summary: "Single-select dropdown."
 ---
+
 # Select
 
-Single-select dropdown with options defined as an array and the current value controlled via value.
+Provides a select control whose `.options` array defines choices and whose `.value` tracks the selection.
 
-<!-- slex:spec-example:start component="select" id="basic" sourceHash="b5675bcc" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_select_typical",
-  "layout": {
-    "select:env": {
-      "label": "Environment",
-      "icon": "server",
-      "value": "prod",
-      "options": [
-        {
-          "label": "Development",
-          "value": "dev",
-          "icon": "code"
-        },
-        {
-          "label": "Production",
-          "value": "prod",
-          "icon": "rocket-launch"
-        }
-      ]
-    }
-  }
-}
+<slex-select label="Environment"><option value="dev">Development</option><option value="prod">Production</option></slex-select>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for enum selection, config items, and environment choice.
-- Not suitable for small mutually exclusive groups (use `radio-group`).
-- Related components: `radio-group` for smaller option sets.
-- Combine with `column` to compose forms.
-- Use `$value` and `onchange` for state binding.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | string | `""` | Visible control label. |
+| `unit` | string | `""` | Exposed for contract consistency, but this component does not currently render it. |
+| `description` | string | `""` | Exposed for contract consistency, but this component does not currently render it. |
+| `disabled` | boolean | `false` | Disables user interaction. |
+| `name` | string | unset | Name used when the custom element participates in a native form. |
+| `value` | string / number | `""` | Selected option value. Light-DOM option children derive the first enabled value; property-supplied options do not auto-select. |
+| `aria-label` | string | `auto` | Accessible name when no visible label is provided. |
+| `options` | array | `[]` | Property-only { label, value, disabled, icon } option objects; light-DOM option children are also derived. |
+| `placeholder` | string | `"Select..."` | Text shown when no option is selected. |
+| `icon` | string | `""` | Registered icon name. No icon is rendered when empty. |
+| `variant` | string | `default` | Visual variant; toolbar enables the compact toolbar treatment. |
+| `required` | boolean | `false` | Requires a value for native form validity. |
 
-<!-- slex:spec-api:start component="select" sourceHash="44dbc082" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `label` | string | No | Yes |  | Select label. |
-| `icon` | string | No | No |  | Icon name shown before the top label. |
-| `value` | string | No | Yes |  | Current selected value. |
-| `options` | array | No | No |  | Options with label, value, and optional icon. |
-| `options[].icon` | string | No | No |  | Icon name shown before an option label. |
-| `placeholder` | string | No | No |  | Placeholder shown when no value is selected. |
-| `disabled` | boolean | No | Yes | `false` | Disable the select trigger and native select. |
-| `required` | boolean | No | Yes | `false` | Require a non-placeholder value in the native select. |
-| `variant` | string: default, toolbar | No | No | `"default"` | Select surface variant. |
-| `onchange` | write-expression | No | No |  | Write expression invoked when selection changes. |
-<!-- slex:spec-api:end -->
+Events: `input`, `change`. Use native event listeners; read interactive values from component properties.
+
+## Contract summary
+
+- Attributes: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `placeholder`, `icon`, `variant`, `required`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `options`, `placeholder`, `icon`, `variant`, `required`
+- Events: `input`, `change`
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

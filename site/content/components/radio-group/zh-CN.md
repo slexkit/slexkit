@@ -5,62 +5,43 @@ status: ready
 order: 70
 summary: "互斥单选组。"
 ---
-# Radio Group 单选组
 
-互斥选项选择，适合少量选项的单选场景。
+# Radio Group
 
-<!-- slex:spec-example:start component="radio-group" id="basic" sourceHash="4ad4aa38" -->
+从 `.options` 数组中提供单项选择，通过 `.value` 暴露结果并触发原生值事件。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_radio_group_typical",
-  "layout": {
-    "radio-group:mode": {
-      "label": "模式",
-      "icon": "sliders-horizontal",
-      "value": "auto",
-      "options": [
-        {
-          "label": "自动",
-          "value": "auto",
-          "icon": "sparkle"
-        },
-        {
-          "label": "手动",
-          "value": "manual",
-          "icon": "wrench"
-        }
-      ]
-    }
-  }
-}
+<slex-radio-group></slex-radio-group>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：模式选择、少量枚举、互斥配置项。
-- 不适合：大量选项（应当用 select）。
-- 关联组件：select 用于下拉单选，适合选项较多的场景。
-- 选项数量建议控制在 2-5 个。
-- 使用 $value 和 onchange 实现状态绑定。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 控件的可见标签。 |
+| `unit` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `description` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `disabled` | boolean | `false` | 禁用用户交互。 |
+| `name` | string | 未设置 | 自定义元素参与原生表单时使用的字段名。 |
+| `value` | string / number | `""` | 已选选项值。通过 property 提供或从 light DOM 推导的选项都不会自动选择值。 |
+| `aria-label` | string | `auto` | 未提供可见标签时使用的无障碍名称。 |
+| `options` | array | `[]` | 仅 property；{ label, value, description, disabled, icon } 选项对象数组；也会从 light DOM option 子元素推导。 |
+| `orientation` | string | `vertical` | 布局方向；horizontal 会将选项放入可换行横排。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
+| `variant` | string | 未设置 | 视觉变体；list 会将选项渲染为卡片式列表。 |
+| `required` | boolean | `false` | 要求提供值以通过原生表单校验。 |
 
-<!-- slex:spec-api:start component="radio-group" sourceHash="f6028c59" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `value` | string | 否 | 是 |  | 当前选中值。 |
-| `label` | string | 否 | 是 |  | 分组标签。 |
-| `icon` | string | 否 | 否 |  | 显示在分组标签前的图标名称。 |
-| `options` | array | 否 | 否 |  | 选项列表，包含 label、value 和可选 icon。 |
-| `options[].icon` | string | 否 | 否 |  | 显示在单个选项标签前的图标名称。 |
-| `options[].description` | string | 否 | 否 |  | Secondary text shown below the option label. |
-| `disabled` | boolean | 否 | 是 | `false` | 禁用组内所有单选项。 |
-| `orientation` | string: vertical, horizontal | 否 | 否 | `"vertical"` | 单选项布局方向。 |
-| `variant` | string: list | 否 | 否 |  | Use list for full-row option surfaces in ToolHost decision cards. |
-| `haptic` | boolean | 否 | 否 | `true` | 在支持的设备上启用振动反馈。 |
-| `haptics` | boolean | 否 | 否 | `true` | haptic 的别名。 |
-| `name` | string | 否 | 否 |  | 选项共享的原生 radio group name。 |
-| `onchange` | write-expression | 否 | 否 |  | 选择变化时执行的写表达式。 |
-<!-- slex:spec-api:end -->
+事件：`input`、`change`。使用原生事件监听器；交互值从组件 property 读取。
+
+## 接口摘要
+
+- 属性: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `orientation`, `icon`, `variant`, `required`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `options`, `orientation`, `icon`, `variant`, `required`
+- Events: `input`, `change`
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

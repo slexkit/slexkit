@@ -12,7 +12,9 @@
   align-items: center;
   gap: 0.25rem;
   width: fit-content;
-  color: var(--foreground);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.25;
@@ -20,7 +22,7 @@
 
 .slex-input-field[data-required="true"] .slex-input-label::after {
   content: "*";
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
   font-weight: 700;
 }
 
@@ -30,7 +32,7 @@
   align-items: stretch;
   width: 100%;
   min-width: 0;
-  border-radius: var(--radius);
+  border-radius: var(--slex-radius);
   transition: box-shadow 150ms ease;
 }
 
@@ -42,11 +44,11 @@
   min-width: 0;
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
-  background: var(--background);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
   background-clip: padding-box;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -62,16 +64,16 @@
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
-  min-height: 2.5625rem;
+  min-height: var(--slex-control-height, 2.5625rem);
   height: auto;
   margin: 0;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
   box-shadow: none;
-  background: var(--background);
+  background: var(--slex-background, var(--background));
   background-clip: padding-box;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -95,13 +97,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.5625rem;
+  min-height: var(--slex-control-height, 2.5625rem);
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
+  border: 1px solid var(--slex-input, var(--input));
   border-left: 0;
-  border-radius: 0 var(--radius) var(--radius) 0;
-  background: var(--muted);
-  color: var(--muted-foreground);
+  border-radius: 0 var(--slex-radius) var(--slex-radius) 0;
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.5;
@@ -110,12 +112,12 @@
 }
 
 .slex-input::placeholder {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-input:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 18%, transparent);
+  border-color: var(--slex-ring, var(--ring));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 18%, transparent);
 }
 
 .slex-input-control[data-has-unit="true"] .slex-input:focus {
@@ -133,17 +135,17 @@
 }
 
 .slex-input[readonly] {
-  background: color-mix(in oklab, var(--muted) 42%, var(--background));
-  color: color-mix(in oklab, var(--foreground) 82%, var(--muted-foreground));
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 42%, var(--slex-background, var(--background)));
+  color: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 82%, var(--slex-muted-foreground, var(--muted-foreground)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input {
-  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 72%, var(--slex-input, var(--input)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input:focus {
-  border-color: var(--destructive);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+  border-color: var(--slex-destructive, var(--destructive));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-destructive, var(--destructive)) 18%, transparent);
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control[data-has-unit="true"] .slex-input:focus {
@@ -151,7 +153,7 @@
 }
 
 .slex-input-control:focus-within {
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 16%, transparent);
 }
 
 .slex-input-control:not([data-has-unit]):focus-within {
@@ -160,16 +162,16 @@
 
 .slex-input-control:focus-within .slex-input,
 .slex-input-control:focus-within .slex-input-unit {
-  border-color: var(--ring);
+  border-color: var(--slex-ring, var(--ring));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-unit {
-  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
-  color: color-mix(in oklab, var(--destructive) 84%, var(--muted-foreground));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 72%, var(--slex-input, var(--input)));
+  color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 84%, var(--slex-muted-foreground, var(--muted-foreground)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within {
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-destructive, var(--destructive)) 18%, transparent);
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control:not([data-has-unit]):focus-within {
@@ -178,7 +180,7 @@
 
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input,
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-unit {
-  border-color: var(--destructive);
+  border-color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-input[disabled] {
@@ -192,13 +194,13 @@
 }
 
 .slex-input-description {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   line-height: 1.35;
 }
 
 .slex-input-error {
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.35;

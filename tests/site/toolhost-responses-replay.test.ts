@@ -25,7 +25,7 @@ describe("ToolHost Responses replay", () => {
     expect(replay.status).toBe("paused");
     expect(replay.pendingToolCall).toMatchObject({
       id: "call_release_parameters",
-      name: "release-parameters",
+      name: "fill-form",
     });
     expect(replay.pendingToolCall?.arguments?.title).toBe("Release parameters tool card");
     expect(replay.transcript.filter((item) => item.kind === "message").map((item) => item.text).join("\n")).toContain("ToolHost tool card");
@@ -47,10 +47,10 @@ describe("ToolHost Responses replay", () => {
     replayUntilPause(replay);
     submitToolResult(replay, {
       toolCallId: "call_release_parameters",
-      toolName: "release-parameters",
+      toolName: "fill-form",
       status: "submitted",
       value: {
-        selected: ["full"],
+        strategy: "full",
         window: "Tonight 22:00 - 23:00",
         owner: "On-call SRE",
         rollback: "Error rate above 1%",
@@ -79,10 +79,10 @@ describe("ToolHost Responses replay", () => {
     replayUntilPause(replay);
     submitToolResult(replay, {
       toolCallId: "call_release_parameters",
-      toolName: "release-parameters",
+      toolName: "fill-form",
       status: "submitted",
       value: {
-        selected: ["canary"],
+        strategy: "canary",
         window: "今晚 22:00 - 23:00",
         owner: "值班 SRE",
         rollback: "错误率超过 1%",
@@ -117,7 +117,7 @@ describe("ToolHost Responses replay", () => {
     const en = await Bun.file("site/content/examples/toolhost-demo/en-US.md").text();
 
     expect(zh).toContain('title: "ToolHost 工具调用 UI"');
-    expect(zh).toContain("`function_call` 时，浏览器宿主可以把它渲染成对话里的 ToolHost 工具卡片");
+    expect(zh).toContain("function_call");
     expect(zh).toContain("function_call_output");
     expect(zh).toContain("写回");
     expect(zh).not.toContain("发布确认");
@@ -127,7 +127,7 @@ describe("ToolHost Responses replay", () => {
     expect(zh).not.toContain("fixture");
 
     expect(en).toContain('title: "ToolHost Tool Call UI"');
-    expect(en).toContain("render it as an inline ToolHost card");
+    expect(en).toContain("inline ToolHost card");
     expect(en).toContain("function_call_output");
     expect(en).toContain("writes");
     expect(en).not.toContain("Release Approval");

@@ -10,11 +10,10 @@
   <body>
     <main class="example-shell">
       <header class="example-header">
-        <div class="example-kicker">Component ABI</div>
-        <h1 class="example-title">Register a vanilla component</h1>
+        <div class="example-kicker">Standard custom elements</div>
+        <h1 class="example-title">Use a host-defined element</h1>
         <p class="example-description">
-          A small renderer registered at runtime exposes value state, emits changes,
-          attaches a disposer, and is removed by `disposeNamespace()`.
+          The host registers a standard custom element before mounting an isolated HTML document.
         </p>
       </header>
       <section class="example-grid two">
@@ -22,7 +21,7 @@
           <h2>Mounted runtime</h2>
           <div id="app"></div>
           <div class="example-actions">
-            <button id="dispose" class="example-button">disposeNamespace()</button>
+            <button id="dispose" class="example-button">Dispose document</button>
             <button id="remount" class="example-button primary">Mount again</button>
           </div>
         </div>

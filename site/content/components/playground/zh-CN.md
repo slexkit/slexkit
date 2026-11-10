@@ -3,68 +3,40 @@ title: "Playground"
 category: Tooling
 status: ready
 order: 10
-summary: "SlexKit / Markdown 的交互预览和编辑器。"
+summary: "从 slexkit/tooling 显式注册的可选 HTML 编辑器与隔离预览。"
 ---
-# Playground 操场
 
-SlexKit 的交互预览组件，可在页面内嵌入可编辑、可运行的 SlexKit 或 Markdown 源码预览。
+# Playground
 
-<!-- slex:spec-example:start component="playground" id="basic" sourceHash="bccf9e4b" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_playground_typical",
-  "layout": {
-    "playground:demo": {
-      "title": "Stat 试验台",
-      "previewMinHeight": "180px",
-      "source": {
-        "namespace": "inner_stat_demo",
-        "layout": {
-          "stat:value": {
-            "label": "请求数",
-            "value": "1.2k",
-            "unit": "/min"
-          }
-        }
-      }
-    }
-  }
-}
+`slex-playground` 是目录中可选的第 29 个元素，不会随 `defineSlexElements()` 一起注册，也不应由生成的 payload 代码注册。可信宿主需要显式启用它，并提供隔离运行时资源：
+
+```js
+import { defineSlexPlayground } from "slexkit/tooling";
+
+defineSlexPlayground(window, {
+  secureFrame: {
+    runtimeUrl: "/assets/slexkit.runtime.js",
+    styleUrl: "/assets/slexkit.css",
+  },
+});
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+`source` 字符串/property 用于设置编辑器内容。布尔 attribute `autorun` 会在初次连接时 commit 内容；未设置时，初始内容与输入变化只做 preview，直到用户点击 Run。预览与运行都复用其他集成所用的隔离 HTML 文档宿主。
 
-- 适合：文档中的可运行示例、交互式演示、源码教学。
-- 不适合：普通组件渲染（应当直接使用 layout 中的组件）。
-- 关联组件：code-block 用于只读代码展示。
-- 嵌套的 source 会被隔离渲染，不会与父级 namespace 冲突。
-- Playground 用于文档和教学场景，不用于产品 UI。
-- 公开字段覆盖源码解析、预览位置、主题切换控件、按钮文案以及打开/复制 URL。
-- `domain`、`pluginVersion`、`version` 是宿主集成元数据，不是公开组件字段。
+## API 参考
 
-## API 参考 {#api}
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-<!-- slex:spec-api:start component="playground" sourceHash="beb5402a" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `source` | object \| string | 否 | 否 |  | 要预览的 SlexKit 或 Markdown 源码。 |
-| `sourceType` | string: slex, markdown, auto-markdown | 否 | 否 | `"slex"` | 源码解析模式。 |
-| `title` | string | 否 | 否 |  | Playground 标题。 |
-| `previewAlign` | string: center, start | 否 | 否 | `"center"` | 渲染模式下预览区域的垂直对齐。 |
-| `alignPreview` | string: center, start | 否 | 否 |  | previewAlign 的别名。 |
-| `previewPlacement` | string: center, start | 否 | 否 |  | previewAlign 的别名。 |
-| `previewMinHeight` | string | 否 | 否 |  | 预览区域最小高度。 |
-| `previewMaxWidth` | string | 否 | 否 |  | 预览内容最大宽度。 |
-| `themeToggle` | boolean | 否 | 否 | `false` | 显示主题切换操作。 |
-| `showThemeToggle` | boolean | 否 | 否 | `false` | themeToggle 的别名。 |
-| `enableThemeToggle` | boolean | 否 | 否 | `false` | themeToggle 的别名。 |
-| `themeLabel` | string | 否 | 否 |  | 主题切换操作的无障碍标签。 |
-| `themeToggleLabel` | string | 否 | 否 |  | themeLabel 的别名。 |
-| `sourceTypeLabel` | string | 否 | 否 |  | 源码类型选择器的无障碍标签。 |
-| `copyLabel` | string | 否 | 否 |  | 复制源码操作的无障碍标签。 |
-| `openWebLabel` | string | 否 | 否 |  | 在独立 Playground 中打开源码操作的无障碍标签。 |
-| `webUrl` | string | 否 | 否 |  | 打开操作使用的独立 Playground URL。 |
-| `playgroundUrl` | string | 否 | 否 |  | webUrl 的别名。 |
-<!-- slex:spec-api:end -->
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `source` | string | `""` | 可编辑 HTML 源码。赋值会更新编辑器并执行 preview 阶段渲染。 |
+| `autorun` | boolean | `false` | 首次连接时以 commit 阶段运行源码；后续 source 变化仍使用 preview 阶段。 |
+
+## 接口摘要
+
+- 属性: `source`, `autorun`
+- Properties: `source`, `autorun`
+- Events: 无
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

@@ -5,61 +5,33 @@ status: published
 order: 19
 summary: "Tiptap CodeBlock 适配器：只把显式 slex 代码块渲染为预览，普通代码块和 Markdown 导入/导出保持 Tiptap 行为。"
 tags: tiptap, editor, markdown, adapter
-components: section, table, callout, code-block
+components: card, grid, input, slider, stat
 difficulty: 中级
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
 
 # Tiptap 编辑器接入
 
-需要在编辑器中预览 SlexKit 组件时，使用 `@slexkit/tiptap`。该示例复用官网的 RC 低通滤波器内容，演示 SlexKit 组件在 Tiptap 编辑器中的预览方式。
+Tiptap 扩展保留代码块编辑与 Markdown 往返转换，同时把明确的 `slex` 预览执行交给隔离宿主。
 
-本地运行：
-
-```sh
-bun run build:core
-bun run --filter @slexkit/tiptap build
-bun examples/dev-server.mjs tiptap
+```slex
+<slex-card title="Tiptap 编辑器接入"><slex-grid columns="2"><slex-input id="left" label="数值 A" value="10"></slex-input><slex-slider id="right" label="数值 B" min="0" max="100" value="20"></slex-slider></slex-grid><slex-stat id="result" label="结果"></slex-stat></slex-card>
+<script type="module">
+  const left = slex.root.querySelector("#left"); const right = slex.root.querySelector("#right"); const result = slex.root.querySelector("#result"); const update = () => { result.value = Number(left.value) + right.valueAsNumber; };
+  left.addEventListener("input", update); right.addEventListener("input", update); update(); slex.onDispose(() => { left.removeEventListener("input", update); right.removeEventListener("input", update); });
+</script>
 ```
 
-源码位于 [`examples/tiptap`](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)。Tiptap 与 Streamdown 示例使用同一份 RC 低通滤波器内容，便于对照编辑器宿主和只读渲染宿主的接入方式。
+## 宿主边界
 
-<iframe class="slex-example-live-frame" src="/adapter-demos/tiptap/?embed=1" title="Tiptap 可运行示例"></iframe>
+适配器识别显式 `slex` fence，并把原始 HTML 字符串交给同一个隔离文档 host。宿主提供稳定 artifact/block ID、runtime URL、style URL 与策略；payload 不包含这些设置。
 
-[打开集成指南](/zh-CN/docs/guides/integration) · [查看可运行源码](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)
+编辑中的不完整源码只做静态检查，同时 node view 会让上一次 commit 的预览继续可交互。
 
-## 接入方式
+`@slexkit/tiptap` 保留 Markdown round-trip，同时由 node view 把 HTML 执行委托给隔离文档 host。
 
-| 项目 | 约定 |
-| --- | --- |
-| Block type | `codeBlock` |
-| Fence language | `slex` |
-| Runtime | `trusted` |
+<iframe class="slex-example-live-frame" src="/adapter-demos/tiptap/?embed=1" title="Tiptap HTML fence demo"></iframe>
 
-Tiptap 负责文档编辑和 Markdown 导入/导出。只写状态的 `slex` fence 与后续预览块共享 artifact runtime；非 `slex` code block 保持 Tiptap 原生行为。
-
-最小配置：
-
-```ts
-import { Editor } from "@tiptap/core";
-import StarterKit from "@tiptap/starter-kit";
-import { Markdown } from "@tiptap/markdown";
-import { createSlexKitTiptapExtension } from "@slexkit/tiptap";
-import "@slexkit/theme-shadcn/style.css";
-import "@slexkit/tiptap/style.css";
-
-const editor = new Editor({
-  element: document.querySelector("#editor"),
-  extensions: [
-    StarterKit.configure({ codeBlock: false }),
-    Markdown,
-    createSlexKitTiptapExtension({ artifactId: "doc-1" })
-  ],
-  content: markdown,
-  contentType: "markdown"
-});
-```
-
-需要编辑器内预览时使用 `@slexkit/tiptap`。只读 Markdown 输出通常使用 Streamdown 或自定义 Markdown host API。
+源码：`examples/tiptap`。

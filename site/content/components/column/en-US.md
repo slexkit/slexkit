@@ -5,44 +5,30 @@ status: ready
 order: 20
 summary: "Vertical layout container for forms, text, and control groups."
 ---
+
 # Column
 
-Basic vertical layout container.
+Stacks slotted children vertically using the component layout styles.
 
-<!-- slex:spec-example:start component="column" id="basic" sourceHash="b28bf5e9" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_column_typical",
-  "layout": {
-    "column:form": {
-      "input:name": {
-        "placeholder": "Name"
-      },
-      "input:email": {
-        "placeholder": "Email"
-      },
-      "button:save": {
-        "label": "Save"
-      }
-    }
-  }
-}
+<slex-column></slex-column>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for form field groups, settings panels, description text, and sequences of actions.
-- Not suitable for horizontal layouts (use `row`) or equal-width card grids (use `grid`).
-- Related components: `row` for horizontal layout, `grid` for two-dimensional equal-width layout.
-- Place child components as fields, stacked top-to-bottom.
-- Default width fills the parent container; height is content-driven.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `default` (slot) | Node[] | empty | Place ordinary HTML or custom elements in the default slot for vertical layout; there are no component-specific properties. |
 
-<!-- slex:spec-api:start component="column" sourceHash="5a83045d" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
-<!-- slex:spec-api:end -->
+## Contract summary
+
+- Attributes: none
+- Properties: none
+- Events: none
+- Slots: `default`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

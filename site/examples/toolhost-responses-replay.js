@@ -90,7 +90,7 @@ const strategyLabels = {
 };
 
 function selectedStrategy(state, locale) {
-  const selected = outputFor(state, "call_release_parameters")?.selected?.[0];
+  const selected = outputFor(state, "call_release_parameters")?.strategy;
   return strategyLabels[locale]?.[selected] ?? strategyLabels[locale]?.canary ?? "";
 }
 
@@ -199,22 +199,18 @@ const zhCNScenario = {
     ...functionCallEvents({
       itemId: "fc_release_parameters",
       callId: "call_release_parameters",
-      name: "release-parameters",
+      name: "fill-form",
       arguments: {
         title: "发布参数工具卡片",
         description: "这些字段会作为工具结果写回给宿主，并保留在对话轨迹里。",
         submitLabel: "提交工具结果",
         ignoreLabel: "忽略请求",
-        options: [
-          { id: "canary", label: "10% 灰度发布", description: "先开放少量流量，观察核心指标后再扩大范围" },
-          { id: "full", label: "全量发布", description: "一次性切换全部流量，适合低风险补丁" },
-          { id: "hold", label: "暂缓发布", description: "保留计划但不进入发布窗口" },
+        fields: [
+          { name: "strategy", label: "发布策略", type: "select", value: "canary", options: [{ label: "10% 灰度发布", value: "canary" }, { label: "全量发布", value: "full" }, { label: "暂缓发布", value: "hold" }] },
+          { name: "window", label: "发布窗口", value: "今晚 22:00 - 23:00", required: true },
+          { name: "owner", label: "负责人", value: "值班 SRE / Web 平台负责人", required: true },
+          { name: "rollback", label: "回滚条件", value: "错误率超过 1% 或 P95 延迟连续 5 分钟高于 800ms", required: true },
         ],
-        values: {
-          window: "今晚 22:00 - 23:00",
-          owner: "值班 SRE / Web 平台负责人",
-          rollback: "错误率超过 1% 或 P95 延迟连续 5 分钟高于 800ms",
-        },
       },
     }),
     dynamicTextEvent("assistant", "plan_followup", "zh-CN"),
@@ -299,22 +295,18 @@ const enUSScenario = {
     ...functionCallEvents({
       itemId: "fc_release_parameters",
       callId: "call_release_parameters",
-      name: "release-parameters",
+      name: "fill-form",
       arguments: {
         title: "Release parameters tool card",
         description: "These fields write back as a tool result and remain visible in the conversation trace.",
         submitLabel: "Submit tool result",
         ignoreLabel: "Ignore request",
-        options: [
-          { id: "canary", label: "10% canary release", description: "Open a small amount of traffic first, then expand after checks pass" },
-          { id: "full", label: "Full release", description: "Switch all traffic at once, suitable for low-risk patches" },
-          { id: "hold", label: "Hold release", description: "Keep the plan but do not enter a release window" },
+        fields: [
+          { name: "strategy", label: "Release strategy", type: "select", value: "canary", options: [{ label: "10% canary release", value: "canary" }, { label: "Full release", value: "full" }, { label: "Hold release", value: "hold" }] },
+          { name: "window", label: "Release window", value: "Tonight 22:00 - 23:00", required: true },
+          { name: "owner", label: "Owner", value: "On-call SRE / Web platform lead", required: true },
+          { name: "rollback", label: "Rollback criteria", value: "Error rate above 1% or P95 latency above 800ms for 5 minutes", required: true },
         ],
-        values: {
-          window: "Tonight 22:00 - 23:00",
-          owner: "On-call SRE / Web platform lead",
-          rollback: "Error rate above 1% or P95 latency above 800ms for 5 minutes",
-        },
       },
     }),
     dynamicTextEvent("assistant", "plan_followup", "en-US"),

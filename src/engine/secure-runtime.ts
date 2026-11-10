@@ -155,6 +155,36 @@ export type SecureArtifactSlot = {
   container: HTMLElement;
 };
 
+export type SecureArtifactSourceBlock = {
+  blockId: string;
+  slotId: string;
+  source: string | Record<string, unknown>;
+  stateOnly?: boolean;
+  theme?: MountOptions["theme"];
+  dir?: MountOptions["dir"];
+  labels?: MountOptions["labels"];
+  executionMode?: MountOptions["executionMode"];
+};
+
+export type SecureArtifactEnvelope = {
+  kind: "slexkit-artifact";
+  version: 1;
+  artifactId: string;
+  blocks: SecureArtifactSourceBlock[];
+};
+
+export type SecureArtifactFrameHandle = {
+  iframe: HTMLIFrameElement;
+  ready: Promise<void>;
+  update(
+    envelope: SecureArtifactEnvelope,
+    slots: SecureArtifactSlot[],
+    reset?: boolean,
+  ): Promise<void>;
+  reset(): Promise<void>;
+  dispose(): void;
+};
+
 export type SandboxMountMessage = {
   channel: "slexkit-secure";
   type: "mount";
@@ -164,8 +194,37 @@ export type SandboxMountMessage = {
   policy: HostRuntimePolicy;
   theme?: MountOptions["theme"];
   colorMode?: "light" | "dark";
+  themeTokens?: Record<string, string>;
   dir?: MountOptions["dir"];
   labels?: MountOptions["labels"];
+};
+
+export type SandboxArtifactUpdateMessage = {
+  channel: "slexkit-secure";
+  type: "artifact-update";
+  id: string;
+  token: string;
+  revision: number;
+  reset?: boolean;
+  envelope: SecureArtifactEnvelope;
+};
+
+export type SandboxArtifactResetMessage = {
+  channel: "slexkit-secure";
+  type: "artifact-reset";
+  id: string;
+  token: string;
+  revision: number;
+};
+
+export type SandboxArtifactResultMessage = {
+  channel: "slexkit-secure";
+  type: "artifact-result";
+  id: string;
+  token: string;
+  revision: number;
+  ok: boolean;
+  error?: SerializedRuntimeError;
 };
 
 export type SandboxDisposeMessage = {
@@ -228,18 +287,25 @@ export type SandboxFrameSizeMessage = {
 export type SandboxStatusMessage = {
   channel: "slexkit-secure";
   type: "ready" | "mounted" | "heartbeat" | "disposed" | "error";
+  runtimeVersion?: string;
+  protocolVersion?: string;
+  artifactVersion?: number;
   id?: string;
   token?: string;
   error?: SerializedRuntimeError;
 };
 
 export type SandboxHostMessage =
+  | (Omit<SandboxMountMessage, "type" | "input" | "policy"> & { type: "theme" })
   | SandboxMountMessage
+  | SandboxArtifactUpdateMessage
+  | SandboxArtifactResetMessage
   | SandboxDisposeMessage
   | SandboxFetchResponseMessage
   | SandboxSlotsMessage;
 
 export type SandboxRunnerMessage =
+  | SandboxArtifactResultMessage
   | SandboxFetchRequestMessage
   | SandboxFrameSizeMessage
   | SandboxSlotSizeMessage

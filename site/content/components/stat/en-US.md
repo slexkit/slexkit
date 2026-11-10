@@ -5,91 +5,45 @@ status: ready
 order: 10
 summary: "Metric display with label, value, unit, and semantic tone."
 ---
+
 # Stat
 
-Present a labeled metric value with optional unit and semantic tone.
+Presents a labeled value with optional unit, icon, tone, and initial animation.
 
-<!-- slex:spec-example:start component="stat" id="basic" sourceHash="9fa58aeb" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_stat_typical",
-  "layout": {
-    "grid:stats": {
-      "columns": 2,
-      "stat:requests": {
-        "label": "Requests",
-        "icon": "activity",
-        "value": "1.2k",
-        "unit": "/min"
-      },
-      "stat:success": {
-        "label": "Success",
-        "icon": "check-circle",
-        "value": "98.4",
-        "unit": "%",
-        "tone": "success"
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for data dashboards, metric overviews, and key indicator displays.
-- Not suitable for long text (use `text`) or interactive input (use `input`).
-- Related components: `text` for text output, `badge` for label status.
-- Stats are typically used inside a `grid` or `row`.
-- Use `tone` only for semantic state, not as an arbitrary style picker.
-
-### Tone variants
+## HTML example
 
 ```slex
-{
-  namespace: "doc_stat_tone_diff",
-  layout: {
-    "row:tones": {
-      "stat:info": {
-        label: "Info",
-        value: "42",
-        tone: "info"
-      },
-      "stat:success": {
-        label: "Success",
-        value: "98%",
-        tone: "success"
-      },
-      "stat:warning": {
-        label: "Warning",
-        value: "73",
-        tone: "warning"
-      },
-      "stat:danger": {
-        label: "Danger",
-        value: "5",
-        tone: "danger"
-      },
-      "stat:muted": {
-        label: "Muted",
-        value: "0",
-        tone: "muted"
-      }
-    }
-  }
-}
+<slex-row>
+  <slex-stat id="calculated" label="Calculated" unit="V"></slex-stat>
+  <slex-stat label="Authored precision" value="1.000" unit="ms"></slex-stat>
+</slex-row>
+<script type="module">
+  slex.root.querySelector("#calculated").value = Math.PI;
+</script>
 ```
 
-## API Reference {#api}
+Numbers use at most six significant digits and adapt to the available width, using scientific notation when needed. Formatting only affects display: `.value` keeps the original value. A short formatted string such as `"1.000"` keeps its trailing zeros. Oversized decimal strings can also adapt; integer strings and identifiers remain literal and use an ellipsis when necessary. Hover over the value or use assistive reading to access its full text, including the unit.
 
-<!-- slex:spec-api:start component="stat" sourceHash="389443e6" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `label` | string | No | Yes |  | Metric label. |
-| `icon` | string | No | No |  | Icon name shown before the label. |
-| `value` | string \| number | No | Yes |  | Metric value. |
-| `unit` | string | No | Yes |  | Unit shown after the value. |
-| `tone` | string: info, success, warning, danger, muted | No | No |  | Optional semantic tone. |
-| `animateInitial` | boolean | No | No | `false` | Animate the initial rendered value. |
-<!-- slex:spec-api:end -->
+Numeric values keep their left-to-right digit order in RTL pages. Text values use the browser's automatic direction and text shaping.
+
+## API Reference
+
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | string | `""` | Visible control label. |
+| `value` | string / number | `""` | Numeric display uses up to six significant digits and fits the available width; the live value is unchanged. Short formatted strings are retained. Full values are available in the tooltip and accessible text. |
+| `unit` | string | `""` | Unit shown after the value. |
+| `icon` | string | `""` | Registered icon name. No icon is rendered when empty. |
+| `tone` | string | unset | Tone data value used by theme styles. |
+| `animateInitial` / `animate-initial` | boolean | `false` | Animates digits from zero on the first render. |
+
+## Contract summary
+
+- Attributes: `label`, `value`, `unit`, `icon`, `tone`, `animate-initial`
+- Properties: `label`, `value`, `unit`, `icon`, `tone`, `animateInitial`
+- Events: none
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

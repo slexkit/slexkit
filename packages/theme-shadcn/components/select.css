@@ -4,7 +4,7 @@
   width: 100%;
   min-width: 0;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
 }
 
 .slex-select-label {
@@ -12,7 +12,7 @@
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1;
@@ -31,18 +31,18 @@
   gap: 0.75rem;
   width: 100%;
   min-width: 0;
-  min-height: 2.5rem;
+  min-height: var(--slex-control-height, 2.5rem);
   margin: 0;
   padding: 0.5rem 1rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
-  background: var(--background);
-  color: var(--foreground);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
   font: inherit;
   font-size: 0.875rem;
   line-height: 1.25rem;
   outline: none;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 8%, transparent);
   cursor: pointer;
   transition:
     border-color 150ms ease,
@@ -54,12 +54,12 @@
 }
 
 .slex-select .slex-select-trigger:hover:not(:disabled) {
-  background: color-mix(in oklab, var(--accent) 34%, var(--background));
+  background: color-mix(in oklab, var(--slex-accent, var(--accent)) 34%, var(--slex-background, var(--background)));
 }
 
 .slex-select .slex-select-trigger:focus-visible {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 20%, transparent);
+  border-color: var(--slex-ring, var(--ring));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 20%, transparent);
 }
 
 .slex-select .slex-select-trigger:disabled {
@@ -78,7 +78,7 @@
 }
 
 .slex-select-value[data-placeholder] {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-select-icon {
@@ -124,10 +124,10 @@
   margin: 0;
   padding: 0.25rem;
   overflow-y: auto;
-  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
-  border-radius: var(--radius);
-  background: var(--popover, var(--background));
-  color: var(--popover-foreground, var(--foreground));
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 82%, transparent);
+  border-radius: var(--slex-radius);
+  background: var(--slex-popover, var(--popover, var(--slex-background, var(--background))));
+  color: var(--slex-popover-foreground, var(--popover-foreground, var(--slex-foreground, var(--foreground))));
   box-shadow: var(
     --shadow-md,
     0 6px 16px rgb(0 0 0 / 0.12),
@@ -154,8 +154,8 @@
   gap: 0.75rem;
   min-height: 2rem;
   padding: 0.5rem 0.75rem;
-  border-radius: calc(var(--radius) - 2px);
-  color: var(--popover-foreground, var(--foreground));
+  border-radius: calc(var(--slex-radius) - 2px);
+  color: var(--slex-popover-foreground, var(--popover-foreground, var(--slex-foreground, var(--foreground))));
   font-size: 0.875rem;
   line-height: 1.25rem;
   cursor: pointer;
@@ -164,8 +164,8 @@
 
 .slex-select-option:hover:not([data-disabled]),
 .slex-select-option--active:not([data-disabled]) {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-select-option--selected {
@@ -173,7 +173,7 @@
 }
 
 .slex-select-option[data-disabled] {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   cursor: not-allowed;
   opacity: 0.52;
 }
@@ -217,7 +217,7 @@
   height: var(--slex-control-height, 2.25rem);
   min-height: 0;
   border-width: 0 1px 0 0;
-  border-color: color-mix(in oklab, var(--border) 58%, transparent);
+  border-color: color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
   border-radius: 0;
   background: transparent;
   padding: 0 0.75rem 0 0.875rem;
@@ -227,7 +227,7 @@
 }
 
 .slex-select[data-variant="toolbar"] .slex-select-trigger:hover:not(:disabled) {
-  background: color-mix(in oklab, var(--muted) 36%, var(--background));
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 36%, var(--slex-background, var(--background)));
 }
 
 .slex-select[data-variant="toolbar"] .slex-select-menu {
@@ -236,8 +236,8 @@
   right: auto;
   width: 100%;
   min-width: 100%;
-  border-color: color-mix(in oklab, var(--border) 76%, transparent);
-  border-radius: calc(var(--radius) - 2px);
+  border-color: color-mix(in oklab, var(--slex-border, var(--border)) 76%, transparent);
+  border-radius: calc(var(--slex-radius) - 2px);
   padding: 0.25rem;
   box-shadow: var(
     --shadow-sm,
@@ -248,7 +248,7 @@
 
 .slex-select[data-variant="toolbar"] .slex-select-option {
   height: 1.875rem;
-  border-radius: calc(var(--radius) - 4px);
+  border-radius: calc(var(--slex-radius) - 4px);
   font-size: 0.8125rem;
   padding-inline: 0.75rem;
 }

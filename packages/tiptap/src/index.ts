@@ -4,15 +4,16 @@ import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { NodeView } from "@tiptap/pm/view";
 import {
   createSlexKitMarkdownRuntimeHost,
-  parseSlexSource,
+  inspectSlexSource,
+  type SlexKitMarkdownBlock,
   type SlexKitMarkdownRuntimeHost,
-  type ThemeMode,
+  type HtmlTheme,
 } from "slexkit";
 
 export type SlexKitTiptapOptions = {
   artifactId?: string | ((ctx: { editor: Editor }) => string);
   runtimeHost?: SlexKitMarkdownRuntimeHost;
-  theme?: ThemeMode;
+  theme?: HtmlTheme;
   showSource?: boolean;
   sourceLabel?: string;
   previewLabel?: string;
@@ -77,23 +78,26 @@ type TiptapArtifactRuntime = {
   runtimeHost: SlexKitMarkdownRuntimeHost;
   views: Set<SlexKitCodeBlockNodeView>;
   scheduled: boolean;
+  pending: Promise<void>;
+  nextBlockId: number;
+  disposed?: boolean;
 };
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === "object" && !Array.isArray(value);
-}
+type IncrementalRuntimeHost = SlexKitMarkdownRuntimeHost & {
+  updateArtifact(
+    artifactId: string,
+    blocks: readonly SlexKitMarkdownBlock[],
+    options: { phase: "preview" | "commit"; reset?: boolean },
+  ): Promise<void>;
+  resetArtifact(artifactId: string): Promise<void>;
+};
 
-function isRenderableSource(value: unknown): boolean {
-  if (!isRecord(value)) return false;
-  if ("layout" in value) return isRecord(value.layout) && Object.keys(value.layout).length > 0;
-  if ("namespace" in value || "g" in value) return false;
-  return Object.keys(value).some((key) => key.includes(":"));
-}
-
-function isStateOnlySource(value: unknown): boolean {
-  return isRecord(value)
-    && !isRenderableSource(value)
-    && ("slex" in value || "namespace" in value || "g" in value);
+function isIncrementalRuntimeHost(
+  host: SlexKitMarkdownRuntimeHost,
+): host is IncrementalRuntimeHost {
+  const candidate = host as Partial<IncrementalRuntimeHost>;
+  return typeof candidate.updateArtifact === "function"
+    && typeof candidate.resetArtifact === "function";
 }
 
 function resolveArtifactId(editor: Editor, option: SlexKitTiptapOptions["artifactId"]): string {
@@ -142,6 +146,8 @@ function resolveArtifactRuntime(
       runtimeHost: runtimeHost ?? createSlexKitMarkdownRuntimeHost(),
       views: new Set(),
       scheduled: false,
+      pending: Promise.resolve(),
+      nextBlockId: 0,
     };
     runtimes.set(artifactId, runtime);
   }
@@ -153,8 +159,39 @@ function scheduleArtifactRender(runtime: TiptapArtifactRuntime): void {
   runtime.scheduled = true;
   queueMicrotask(() => {
     runtime.scheduled = false;
-    runtime.runtimeHost.disposeArtifact(runtime.artifactId);
-    for (const view of Array.from(runtime.views).sort(compareNodeViewOrder)) {
+    const views = Array.from(runtime.views).sort(compareNodeViewOrder);
+    if (isIncrementalRuntimeHost(runtime.runtimeHost)) {
+      const prepared = views.map((view) => view.prepareIncrementalRender());
+      const phase = prepared.every((entry) => entry.valid)
+        ? "commit"
+        : "preview";
+      const host = runtime.runtimeHost;
+      const update = async () => {
+        if (runtime.disposed) return;
+        try {
+          await host.updateArtifact(
+            runtime.artifactId,
+            prepared.map((entry) => entry.block),
+            { phase },
+          );
+          if (phase === "commit") {
+            for (const entry of prepared) {
+              entry.view.finishIncrementalRender();
+            }
+          }
+        } catch (error) {
+          if (phase === "commit") {
+            for (const entry of prepared) {
+              entry.view.reportIncrementalError(error);
+            }
+          }
+        }
+      };
+      runtime.pending = runtime.pending.then(update, update);
+      return;
+    }
+
+    for (const view of views) {
       view.renderWithRuntime(runtime.runtimeHost);
     }
   });
@@ -167,6 +204,7 @@ function unregisterArtifactRuntime(editor: Editor, runtime: TiptapArtifactRuntim
     return;
   }
 
+  runtime.disposed = true;
   runtime.runtimeHost.disposeArtifact(runtime.artifactId);
   editorArtifactRuntimes.get(editor)?.delete(runtime.artifactId);
 }
@@ -211,19 +249,33 @@ function markPreviewInteractive(preview: HTMLElement, force = false): void {
 
   preview.querySelectorAll(PREVIEW_INTERACTIVE_SELECTOR).forEach((element) => {
     if (element instanceof HTMLElement && (force || element.getAttribute("contenteditable") !== "true")) {
-      if (force) element.removeAttribute("contenteditable");
+      if (force && !element.contains(preview.ownerDocument.activeElement)) element.removeAttribute("contenteditable");
       element.setAttribute("contenteditable", "true");
     }
   });
 }
 
+const previewMarks = new WeakMap<HTMLElement, { cancelled: boolean; timer?: number; frame?: number }>();
+
+function cancelPreviewInteractiveMark(preview: HTMLElement): void {
+  const pending = previewMarks.get(preview);
+  if (!pending) return;
+  pending.cancelled = true;
+  if (pending.timer !== undefined) preview.ownerDocument.defaultView?.clearTimeout(pending.timer);
+  if (pending.frame !== undefined) preview.ownerDocument.defaultView?.cancelAnimationFrame(pending.frame);
+  previewMarks.delete(preview);
+}
+
 function schedulePreviewInteractiveMark(preview: HTMLElement): void {
   markPreviewInteractive(preview);
-  queueMicrotask(() => markPreviewInteractive(preview, true));
-
+  if (previewMarks.has(preview)) return;
+  const pending: {cancelled:boolean;timer?:number;frame?:number} = {cancelled:false};
+  previewMarks.set(preview, pending);
+  const mark = () => { if (!pending.cancelled) markPreviewInteractive(preview, true); };
+  queueMicrotask(mark);
   const win = preview.ownerDocument.defaultView;
-  win?.setTimeout(() => markPreviewInteractive(preview, true), 0);
-  win?.requestAnimationFrame(() => markPreviewInteractive(preview, true));
+  pending.timer = win?.setTimeout(() => {pending.timer=undefined;mark();if(pending.frame===undefined)previewMarks.delete(preview);}, 0);
+  pending.frame = win?.requestAnimationFrame(() => {pending.frame=undefined;mark();if(pending.timer===undefined)previewMarks.delete(preview);});
 }
 
 function renderError(error: unknown, source: string, container: HTMLElement): void {
@@ -273,18 +325,36 @@ class SlexKitCodeBlockNodeView implements NodeView {
   private readonly editor: Editor;
   private readonly options: SlexKitTiptapNodeViewOptions;
   private readonly preview: HTMLElement;
+  private readonly diagnostic: HTMLElement;
   private readonly runtime: TiptapArtifactRuntime;
+  private readonly blockId: string;
   private readonly interactiveObserver: MutationObserver | undefined;
   private pendingFocusRestore:
     | { target: HTMLElement; restoreEditor: boolean; pointerId: number | null }
     | undefined;
-  private pointerFocusContext: { restoreEditor: boolean; expiresAt: number } | undefined;
+  private pointerFocusContext: { restoreEditor: boolean; expiresAt: number; scope?: Element } | undefined;
+  private focusTimers = new Set<number>();
+  private focusFrames = new Set<number>();
+  private readonly clearKeyboardPointerIntent = (): void => {
+    this.pointerFocusContext = undefined;
+    this.pendingFocusRestore = undefined;
+    this.removeFocusRestoreListeners();
+    this.cancelFocusWork();
+  };
+
+  private cancelFocusWork(): void {
+    const win = this.preview.ownerDocument.defaultView;
+    for (const timer of this.focusTimers) win?.clearTimeout(timer);
+    for (const frame of this.focusFrames) win?.cancelAnimationFrame(frame);
+    this.focusTimers.clear(); this.focusFrames.clear();
+  }
   private renderToken = 0;
 
   private readonly focusPreviewPointerTarget = (event: PointerEvent): void => {
     const restoreEditor = this.editor.isFocused;
-    this.pointerFocusContext = { restoreEditor, expiresAt: Date.now() + 500 };
     const interactive = focusPreviewInteractiveTarget(event);
+    this.pointerFocusContext = { restoreEditor, expiresAt: Date.now() + 500,
+      scope: interactive?.closest(".slex-select,.slex-checkbox,.slex-switch,.slex-tabs") ?? interactive ?? undefined };
     if (!interactive || !shouldRestorePreviewFocusAfterPointer(interactive)) return;
 
     this.pendingFocusRestore = {
@@ -303,6 +373,7 @@ class SlexKitCodeBlockNodeView implements NodeView {
     const targetElement = target instanceof Element ? target : target instanceof Node ? target.parentElement : null;
     const interactive = targetElement?.closest(TRANSIENT_POINTER_INTERACTIVE_SELECTOR);
     if (!(interactive instanceof HTMLElement)) return;
+    if (context.scope && !context.scope.contains(interactive)) return;
     if (this.pendingFocusRestore?.target === interactive) return;
 
     this.queuePreviewFocusCleanup({
@@ -345,9 +416,13 @@ class SlexKitCodeBlockNodeView implements NodeView {
         this.editor.commands.focus(undefined, { scrollIntoView: false });
       }
     };
-    win?.setTimeout(cleanupFocus, 0);
-    win?.requestAnimationFrame(cleanupFocus);
-    win?.setTimeout(cleanupFocus, 50);
+    if (!win) return;
+    for (const ms of [0, 50]) {
+      const timer = win.setTimeout(() => { this.focusTimers.delete(timer); cleanupFocus(); }, ms);
+      this.focusTimers.add(timer);
+    }
+    const frame = win.requestAnimationFrame(() => { this.focusFrames.delete(frame); cleanupFocus(); });
+    this.focusFrames.add(frame);
   }
 
   private readonly cancelPreviewPointerFocus = (event?: Event): void => {
@@ -359,6 +434,7 @@ class SlexKitCodeBlockNodeView implements NodeView {
     this.editor = props.editor;
     this.artifactId = resolveArtifactId(props.editor, options.artifactId);
     this.runtime = resolveArtifactRuntime(props.editor, this.artifactId, options.runtimeHost);
+    this.blockId = `tiptap-block-${++this.runtime.nextBlockId}`;
     this.runtime.views.add(this);
 
     const doc = props.view.dom.ownerDocument || document;
@@ -370,7 +446,9 @@ class SlexKitCodeBlockNodeView implements NodeView {
     if (label) label.textContent = options.previewLabel;
 
     this.preview = createElement(doc, "div", "slex-tiptap-preview");
+    this.diagnostic = createElement(doc, "div", "slex-tiptap-diagnostic");
     this.preview.setAttribute("contenteditable", "false");
+    doc.addEventListener("keydown", this.clearKeyboardPointerIntent, { capture: true });
     this.preview.addEventListener("pointerdown", this.focusPreviewPointerTarget, { capture: true });
     this.preview.addEventListener("focusin", this.clearPointerFocusedPreviewTarget, { capture: true });
     this.preview.addEventListener("mousedown", focusPreviewInteractiveTarget, { capture: true });
@@ -423,12 +501,12 @@ class SlexKitCodeBlockNodeView implements NodeView {
       sourceToggle.addEventListener("click", stopSourceClick, { capture: true });
       setSourceOpen(sourceOpen);
       sourceShell.append(sourceToggle, pre);
-      this.dom.append(...[label, this.preview, sourceShell].filter((element): element is HTMLElement => !!element));
+      this.dom.append(...[label, this.diagnostic, this.preview, sourceShell].filter((element): element is HTMLElement => !!element));
     } else {
       const sourceShell = createElement(doc, "div", "slex-tiptap-source slex-tiptap-source-hidden");
       sourceShell.hidden = true;
       sourceShell.append(pre);
-      this.dom.append(...[label, this.preview, sourceShell].filter((element): element is HTMLElement => !!element));
+      this.dom.append(...[label, this.diagnostic, this.preview, sourceShell].filter((element): element is HTMLElement => !!element));
     }
 
     scheduleArtifactRender(this.runtime);
@@ -442,8 +520,15 @@ class SlexKitCodeBlockNodeView implements NodeView {
   }
 
   destroy(): void {
+    this.renderToken += 1;
+    this.cancelFocusWork();
+    this.preview.ownerDocument.removeEventListener("keydown", this.clearKeyboardPointerIntent, { capture: true });
+    cancelPreviewInteractiveMark(this.preview);
     this.interactiveObserver?.disconnect();
     this.removeFocusRestoreListeners();
+    this.preview.removeEventListener("pointerdown", this.focusPreviewPointerTarget, { capture: true });
+    this.preview.removeEventListener("mousedown", focusPreviewInteractiveTarget, { capture: true });
+    this.preview.removeEventListener("click", focusPreviewInteractiveTarget, { capture: true });
     this.preview.removeEventListener("focusin", this.clearPointerFocusedPreviewTarget, { capture: true });
     this.preview.replaceChildren();
     unregisterArtifactRuntime(this.editor, this.runtime, this);
@@ -466,6 +551,7 @@ class SlexKitCodeBlockNodeView implements NodeView {
   ignoreMutation(mutation: NodeViewMutationRecord): boolean {
     const target = mutation.target;
     if (this.preview.contains(target)) return true;
+    if (this.diagnostic.contains(target)) return true;
     if (target === this.contentDOM || this.contentDOM.contains(target)) return false;
 
     const targetElement = target instanceof Element ? target : target.parentElement;
@@ -504,39 +590,71 @@ class SlexKitCodeBlockNodeView implements NodeView {
     const source = this.source();
     this.dom.hidden = false;
     this.preview.hidden = false;
-    this.preview.replaceChildren();
-
-    const parsed = parseSlexSource(source);
-    if (!parsed.ok) {
-      renderError(parsed.error, source, this.preview);
-      this.options.onError?.(parsed.error, source);
+    const inspected = inspectSlexSource(source);
+    if (!inspected.ok) {
+      renderError(inspected.error, source, this.diagnostic);
+      this.options.onError?.(inspected.error, source);
       return;
     }
 
     try {
+      runtimeHost.disposeBlock(this.preview);
       runtimeHost.mountBlock({
         artifactId: this.artifactId,
+        blockId: this.blockId,
         source,
         container: this.preview,
         theme: this.options.theme,
       });
+      this.diagnostic.replaceChildren();
       schedulePreviewInteractiveMark(this.preview);
     } catch (error) {
-      renderError(error, source, this.preview);
+      renderError(error, source, this.diagnostic);
       this.options.onError?.(error, source);
       return;
     }
 
-    if (isStateOnlySource(parsed.value) && !this.preview.querySelector(".slexkit-root")) {
-      if (!this.options.showSource) {
-        this.dom.hidden = true;
-        this.preview.hidden = true;
-        return;
-      }
-      const placeholder = createElement(this.preview.ownerDocument || document, "div", "slex-tiptap-state");
-      placeholder.textContent = "State block";
-      this.preview.append(placeholder);
+  }
+
+  prepareIncrementalRender(): {
+    view: SlexKitCodeBlockNodeView;
+    block: SlexKitMarkdownBlock;
+    valid: boolean;
+  } {
+    const source = this.source();
+    const inspected = inspectSlexSource(source);
+
+    if (inspected.ok) {
+      this.diagnostic.replaceChildren();
+    } else {
+      renderError(inspected.error, source, this.diagnostic);
+      this.options.onError?.(inspected.error, source);
     }
+
+    return {
+      view: this,
+      block: {
+        artifactId: this.artifactId,
+        blockId: this.blockId,
+        source,
+        container: this.preview,
+        theme: this.options.theme,
+      },
+      valid: inspected.ok,
+    };
+  }
+
+  finishIncrementalRender(): void {
+    this.dom.hidden = false;
+    this.preview.hidden = false;
+    this.diagnostic.replaceChildren();
+    schedulePreviewInteractiveMark(this.preview);
+  }
+
+  reportIncrementalError(error: unknown): void {
+    const source = this.source();
+    renderError(error, source, this.diagnostic);
+    this.options.onError?.(error, source);
   }
 }
 

@@ -5,45 +5,31 @@ status: ready
 order: 11
 summary: "响应式 KaTeX 公式显示。"
 ---
+
 # Formula 公式
 
-把 SlexKit 状态和计算结果交给 KaTeX 渲染。适合 Markdown 负责解释推导，交互块负责修改变量，并让公式本身同步更新的场景。
+根据 `tex` 渲染公式；`display-mode` 用于选择块级而非行内展示。
 
-<!-- slex:spec-example:start component="formula" id="basic" sourceHash="1578d25d" -->
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_formula_typical",
-  "g": {
-    "r": 10000,
-    "c": 100,
-    "fc": 159.15
-  },
-  "layout": {
-    "formula:cutoff": {
-      "$tex": "'f_c = \\\\frac{1}{2\\\\pi RC} = ' + g.fc + '\\\\text{ Hz}'"
-    }
-  }
-}
+<slex-formula></slex-formula>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：公式变量来自 SlexKit 状态，且公式需要随交互更新。
-- 不适合：纯静态公式，直接写 Markdown KaTeX 更简单。
-- Markdown 负责推导说明，`formula` 负责实时公式表达。
-- `displayMode: false` 可用于行内公式片段。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `tex` | string | `""` | TeX 源码；为空时渲染无害的间距公式。 |
+| `displayMode` / `display-mode` | boolean | `true` | 默认使用 KaTeX 展示模式。将 displayMode property 赋为 false 可切换到行内模式；省略属性则恢复展示模式。 |
 
-<!-- slex:spec-api:start component="formula" sourceHash="144588e3" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `tex` | string | 否 | 是 |  | 要渲染的 KaTeX 源码。 |
-| `formula` | string | 否 | 是 |  | tex 的别名。 |
-| `value` | string | 否 | 是 |  | tex 的别名。 |
-| `displayMode` | boolean | 否 | 否 | `true` | 为 true 时渲染为块级公式；为 false 时渲染为行内公式。 |
-| `display` | boolean | 否 | 否 | `true` | displayMode 的别名。 |
-| `block` | boolean | 否 | 否 | `true` | displayMode 的别名。 |
-<!-- slex:spec-api:end -->
+## 接口摘要
+
+- 属性: `tex`, `display-mode`
+- Properties: `tex`, `displayMode`
+- Events: 无
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

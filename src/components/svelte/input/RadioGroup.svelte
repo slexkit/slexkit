@@ -4,7 +4,7 @@
   import InlineIcon from "../InlineIcon.svelte";
   import type { PropValues, SvelteComponentProps } from "../types";
 
-  let { props, ctx }: SvelteComponentProps = $props();
+  let { instanceId, props, ctx }: SvelteComponentProps = $props();
   let p = $state<PropValues>({});
   let value = $state<unknown>(undefined);
   const lastHapticAt = new Map<string, number>();
@@ -36,7 +36,7 @@
   }
 
   function groupName(): string {
-    return text(p.name ?? ctx.id, ctx.id);
+    return text(p.name) || `slex-radio-${instanceId}`;
   }
 </script>
 

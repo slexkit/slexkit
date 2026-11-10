@@ -5,59 +5,35 @@ status: ready
 order: 10
 summary: "Structured table with columns and rows."
 ---
+
 # Table
 
-Structured row-column data display with column headers and data rows.
+Renders text-only tabular data from live `.columns` and `.rows`/`.items` arrays; these arrays are properties, not JSON attributes.
 
-<!-- slex:spec-example:start component="table" id="basic" sourceHash="8491bf94" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_table_typical",
-  "layout": {
-    "table:routes": {
-      "columns": [
-        {
-          "key": "name",
-          "label": "Name",
-          "icon": "text-t"
-        },
-        {
-          "key": "status",
-          "label": "Status",
-          "icon": "check-circle"
-        }
-      ],
-      "rows": [
-        {
-          "name": "Parse",
-          "status": "ready"
-        },
-        {
-          "name": "Publish",
-          "status": "pending"
-        }
-      ]
-    }
-  }
-}
+<slex-table id="items"></slex-table>
+<script type="module">
+  const table = slex.root.querySelector("#items"); table.columns = [{ key: "name", label: "Name" }]; table.rows = [{ name: "Ada" }];
+</script>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for data lists, configuration tables, and structured information display.
-- Not suitable for card-style layouts (use `grid`).
-- Related components: `grid` for equal-width card layouts.
-- Column `key` values correspond to field names in each row.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `columns` | array | `[]` | Property-only column keys or { key, label, icon } objects. |
+| `rows` | array | `[]` | Property-only row data; takes precedence over items, including an empty array. |
+| `items` | array | `[]` | Property-only fallback row data used when rows is unset. |
 
-<!-- slex:spec-api:start component="table" sourceHash="9a408c2a" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `columns` | array | No | No |  | Column definitions with key, label, and optional icon. |
-| `columns[].icon` | string | No | No |  | Icon name shown before a column label. |
-| `rows` | array | No | No |  | Row data objects keyed by column key. |
-| `items` | array | No | No |  | Alias for rows. |
-<!-- slex:spec-api:end -->
+## Contract summary
+
+- Attributes: none
+- Properties: `columns`, `rows`, `items`
+- Events: none
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

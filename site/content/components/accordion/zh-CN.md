@@ -5,62 +5,36 @@ status: ready
 order: 10
 summary: "多项折叠面板，适合 FAQ 或分组详情。"
 ---
-# Accordion 折叠面板
 
-管理多个折叠项，同一时间可展开一项或多项。
+# Accordion
 
-<!-- slex:spec-example:start component="accordion" id="basic" sourceHash="0a070e32" -->
+把命名 panel 组织成可展开的折叠列表；数据驱动时设置 `.items`/`.value`，需要同时展开多项时使用 `multiple`。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_accordion_typical",
-  "layout": {
-    "accordion:faq": {
-      "multiple": true,
-      "value": [
-        "install"
-      ],
-      "items": [
-        {
-          "value": "install",
-          "label": "安装",
-          "icon": "download-simple",
-          "content": "准备依赖。"
-        },
-        {
-          "value": "review",
-          "label": "复核",
-          "icon": "check-circle",
-          "content": "检查结果。"
-        },
-        {
-          "value": "ship",
-          "label": "发布",
-          "icon": "rocket-launch",
-          "content": "发布变更。"
-        }
-      ]
-    }
-  }
-}
+<slex-accordion></slex-accordion>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：FAQ、分组详情、可折叠的设置项列表。
-- 不适合：单个可展开区域（应当用 collapsible）。
-- 关联组件：collapsible 用于单个展开区域。
-- 使用 $value 和 onchange 实现受控展开。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `value` | scalar / array | 未设置 | 展开项的值；multiple 为 true 时使用值数组。 |
+| `items` | array | `[]` | 仅 property；项目对象数组。具名 light DOM 面板会推导 items，并覆盖对应项目的文本内容。 |
+| `multiple` | boolean | `false` | 允许多个项目同时保持展开。 |
 
-<!-- slex:spec-api:start component="accordion" sourceHash="e838d3e9" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `value` | string \| string[] | 否 | 是 |  | 当前展开项的值；multiple 为 true 时使用数组。 |
-| `multiple` | boolean | 否 | 否 | `false` | 允许同时展开多个项目。 |
-| `items` | array | 否 | 否 |  | 面板定义，包含 value、label、content 和可选 icon。 |
-| `items[].icon` | string | 否 | 否 |  | 显示在项目触发标签前的图标名称。 |
-| `onchange` | write-expression | 否 | 否 |  | 展开项变化时执行的写表达式。 |
-<!-- slex:spec-api:end -->
+事件：`input`、`change`。使用原生事件监听器；交互值从组件 property 读取。
+
+插槽：具名面板（与条目名称对应）。
+
+## 接口摘要
+
+- 属性: `value`, `multiple`
+- Properties: `value`, `items`, `multiple`
+- Events: `input`, `change`
+- Slots: `(named panels)`
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

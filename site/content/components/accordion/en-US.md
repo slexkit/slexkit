@@ -5,62 +5,36 @@ status: ready
 order: 10
 summary: "Multi-panel collapse for FAQs or grouped details."
 ---
+
 # Accordion
 
-Manages multiple collapsible panels, with one or more open at a time.
+Groups named panels into an expandable disclosure list; set `.items`/`.value` for data-driven state and use `multiple` when more than one panel may stay open.
 
-<!-- slex:spec-example:start component="accordion" id="basic" sourceHash="0a070e32" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_accordion_typical",
-  "layout": {
-    "accordion:faq": {
-      "multiple": true,
-      "value": [
-        "install"
-      ],
-      "items": [
-        {
-          "value": "install",
-          "label": "Install",
-          "icon": "download-simple",
-          "content": "Prepare dependencies."
-        },
-        {
-          "value": "review",
-          "label": "Review",
-          "icon": "check-circle",
-          "content": "Check the result."
-        },
-        {
-          "value": "ship",
-          "label": "Ship",
-          "icon": "rocket-launch",
-          "content": "Publish the change."
-        }
-      ]
-    }
-  }
-}
+<slex-accordion></slex-accordion>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for FAQs, grouped details, and collapsible setting lists.
-- Not suitable for a single expandable area (use `collapsible`).
-- Related components: `collapsible` for single expandable regions.
-- Use `$value` and `onchange` for controlled expansion.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | scalar / array | unset | Open item value, or an array of values when multiple is true. |
+| `items` | array | `[]` | Property-only item objects. Named light-DOM panels derive items and override each item's text content. |
+| `multiple` | boolean | `false` | Allows more than one item to remain open. |
 
-<!-- slex:spec-api:start component="accordion" sourceHash="e838d3e9" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `value` | string \| string[] | No | Yes |  | Current expanded item value; use an array when multiple is true. |
-| `multiple` | boolean | No | No | `false` | Allow multiple items to be expanded at the same time. |
-| `items` | array | No | No |  | Panel definitions with value, label, content, and optional icon. |
-| `items[].icon` | string | No | No |  | Icon name shown before an item trigger label. |
-| `onchange` | write-expression | No | No |  | Write expression invoked when expanded items change. |
-<!-- slex:spec-api:end -->
+Events: `input`, `change`. Use native event listeners; read interactive values from component properties.
+
+Slots: named panels matched to item names.
+
+## Contract summary
+
+- Attributes: `value`, `multiple`
+- Properties: `value`, `items`, `multiple`
+- Events: `input`, `change`
+- Slots: `(named panels)`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

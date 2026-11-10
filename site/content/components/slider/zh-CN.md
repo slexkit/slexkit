@@ -5,52 +5,43 @@ status: ready
 order: 60
 summary: "数值范围输入。"
 ---
-# Slider 滑块
 
-数值范围选择，支持 min、max、step 控制和单位展示。
+# Slider
 
-<!-- slex:spec-example:start component="slider" id="basic" sourceHash="a0525d92" -->
+提供带 min/max/step 与方向设置的有界数值控件，持续变化触发 `input`，确认变化触发 `change`。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_slider_typical",
-  "layout": {
-    "slider:volume": {
-      "label": "音量",
-      "icon": "speaker-high",
-      "value": 42,
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "%"
-    }
-  }
-}
+<slex-slider></slex-slider>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：音量、亮度、阈值、百分比等数值调节。
-- 不适合：精确文本输入（应当用 input）。
-- 关联组件：input 用于文本输入。
-- 使用 $value 和 onchange 实现状态绑定。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 控件的可见标签。 |
+| `unit` | string | `""` | 组件支持时随值显示的单位文本。 |
+| `description` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `disabled` | boolean | `false` | 禁用用户交互。 |
+| `name` | string | 未设置 | 自定义元素参与原生表单时使用的字段名。 |
+| `value` | number | `0` | 当前数值；浏览器会按范围与步长约束赋值。 |
+| `aria-label` | string | `auto` | 无障碍名称覆盖；省略时会在可用时使用可见标签。 |
+| `min` | string / number | `0` | 范围最小值。 |
+| `max` | string / number | `100` | 范围最大值。 |
+| `step` | string / number | `1` | 范围步长。 |
+| `orientation` | string | `horizontal` | 设置方向数据标记；当前原生 range 与样式仍保持水平。 |
+| `valueAsNumber` | number | `0` | 只读 JavaScript property，返回经浏览器范围限制与步长对齐后的当前数值。 |
 
-<!-- slex:spec-api:start component="slider" sourceHash="0939dc16" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `label` | string | 否 | 是 |  | 滑块标签。 |
-| `icon` | string | 否 | 否 |  | 显示在标签前的图标名称。 |
-| `value` | number | 否 | 是 | `0` | 当前数值。 |
-| `min` | number | 否 | 是 | `0` | 最小值。 |
-| `max` | number | 否 | 是 | `100` | 最大值。 |
-| `step` | number | 否 | 是 | `1` | 步进间隔。 |
-| `unit` | string | 否 | 是 |  | 显示在值后的单位。 |
-| `disabled` | boolean | 否 | 是 | `false` | 禁用范围输入。 |
-| `orientation` | string: horizontal, vertical | 否 | 否 | `"horizontal"` | 用于样式的滑块方向元数据。 |
-| `haptic` | boolean | 否 | 否 | `true` | 在支持的设备上启用振动反馈。 |
-| `haptics` | boolean | 否 | 否 | `true` | haptic 的别名。 |
-| `onchange` | write-expression | 否 | 否 |  | 数值变化时执行的写表达式。 |
-<!-- slex:spec-api:end -->
+事件：`input`、`change`。使用原生事件监听器；交互值从组件 property 读取。
+
+## 接口摘要
+
+- 属性: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `min`, `max`, `step`, `orientation`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `min`, `max`, `step`, `orientation`
+- Events: `input`, `change`
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

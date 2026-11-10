@@ -5,45 +5,31 @@ status: ready
 order: 35
 summary: "Separator line, optionally with label."
 ---
+
 # Divider
 
-Horizontal separator, optionally with a centered text label.
+Separates adjacent content with an optional label or icon.
 
-<!-- slex:spec-example:start component="divider" id="basic" sourceHash="888b7416" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_divider_typical",
-  "layout": {
-    "column:content": {
-      "text:top": {
-        "text": "Above"
-      },
-      "divider:line": {
-        "label": "Divider",
-        "icon": "flag"
-      },
-      "text:bottom": {
-        "text": "Below"
-      }
-    }
-  }
-}
+<slex-divider></slex-divider>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for form sections, settings groups, and visual separation between content paragraphs.
-- Not suitable as a spacing mechanism (use layout container `gap`).
-- Related components: `section` for more structured block separation.
-- Place inside a `column` to separate upper and lower content areas.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | string | `""` | Optional centered divider label. |
+| `icon` | string | `""` | Registered icon name. No icon is rendered when empty. |
 
-<!-- slex:spec-api:start component="divider" sourceHash="92dc5387" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `label` | string | No | Yes |  | Text shown in the divider. |
-| `icon` | string | No | No |  | Icon name shown before the label. |
-<!-- slex:spec-api:end -->
+## Contract summary
+
+- Attributes: `label`, `icon`
+- Properties: `label`, `icon`
+- Events: none
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

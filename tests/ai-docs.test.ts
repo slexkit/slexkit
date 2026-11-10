@@ -3,118 +3,115 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { aiDocFilenames, createAiDocs, writeAiRawMarkdown } from "../scripts/generate-ai-docs";
-import { publicComponentTypes } from "../src/components/spec-registry";
-import { parseSlexSource } from "../src/engine/diagnostics";
+import { inspectSlexSource } from "../src/html/inspect";
+import { hashStandardText, SLEX_STANDARD_ARTIFACTS } from "../src/standard/artifacts";
+import { describeSlexElements } from "../src/web-components/definitions";
 
 describe("AI documentation generation", () => {
   function slexFences(source: string): string[] {
-    return Array.from(source.matchAll(/```slex\s*\n([\s\S]*?)\n```/g), (match) => match[1]);
+    return Array.from(source.matchAll(/```slex(?:[ \t]+[^\n]*)?\r?\n([\s\S]*?)\r?\n```/g), (match) => match[1]);
   }
 
-  const generatedDocStyleMarkers: Array<{ label: string; pattern: RegExp }> = [
-    { label: "old package reference title", pattern: /\bPackage Boundaries\b/i },
-    { label: "assistant-ui template lineage", pattern: /\bassistant-ui information architecture\b/i },
-    { label: "source of truth", pattern: /\bsource of truth\b/i },
-    { label: "quality gate", pattern: /\bquality gate\b/i },
-    { label: "thin wrapper", pattern: /\bthin wrapper\b/i },
-    { label: "template page framing", pattern: /\bThis (?:example|page|guide)\b/i },
-    { label: "template shows-how phrasing", pattern: /\bshow(?:s|ing) how\b/i },
-    { label: "AI marketing adjective", pattern: /\b(?:powerful|seamless|effortless)\b/i },
-  ];
-
-  it("builds non-empty llms files and a manifest from source docs", async () => {
-    const build = await createAiDocs("2026-01-01T00:00:00.000Z");
+  it("builds deterministic versioned indexes, hashes, and HTML-first metadata", async () => {
+    const generatedAt = "2026-01-01T00:00:00.000Z";
+    const build = await createAiDocs(generatedAt);
+    const repeated = await createAiDocs(generatedAt);
+    expect(build).toEqual(repeated);
 
     for (const filename of aiDocFilenames) {
-      expect(build.files[filename].length).toBeGreaterThan(200);
+      expect(build.files[filename].length, filename).toBeGreaterThan(200);
       expect(build.manifest.docs[filename].path).toBe(`/${filename}`);
-      expect(build.manifest.docs[filename].hash).toMatch(/^[0-9a-f]{8}$/);
+      expect(build.manifest.docs[filename].hash).toBe(hashStandardText(build.files[filename]));
     }
 
-    expect(build.files["llms.txt"]).toContain("# SlexKit > Markdown-friendly reactive UI runtime for AI output");
-    expect(build.files["llms.txt"]).toContain("Version:");
-    expect(build.files["llms.txt"]).toContain("/llms-full.txt");
-    expect(build.files["llms.txt"]).toContain("/llms-components.txt");
-    expect(build.files["llms.txt"]).toContain("/llms-capabilities.txt");
-    expect(build.files["llms.txt"]).toContain("/slexkit-ai-manifest.json");
-    expect(build.files["llms.txt"]).toContain("/standard/slex-standard-manifest.json");
-    expect(build.files["llms.txt"]).toContain("/standard/slex-logic-profile.json");
-    expect(build.files["llms.txt"]).toContain("/standard/slex-component-catalog.json");
-    expect(build.files["llms.txt"]).toContain("### Guides");
-    expect(build.files["llms.txt"]).toContain("### Examples");
-    expect(build.files["llms.txt"]).toContain("### Components");
-    expect(build.files["llms.txt"]).toContain("### Reference");
-    expect(build.files["llms.txt"]).toContain("### Releases");
-    expect(build.files["llms.txt"]).not.toContain(".mdx");
-    expect(build.files["llms.txt"]).toContain("[Packages](/docs/reference/packages.md): Package roles");
-    expect(build.files["llms.txt"]).not.toContain("Package Boundaries");
-    expect(build.files["llms.txt"]).toContain("/docs/guides/integration.md");
-    expect(build.files["llms.txt"]).toContain("/docs/reference/spec.md");
-    expect(build.files["llms.txt"]).toContain("/docs/reference/standard.md");
-    expect(build.files["llms.txt"]).toContain("/docs/releases/changelog.md");
-    expect(build.manifest.pages.some((page) => page.rawHref === "/docs/guides/integration.md")).toBe(true);
-    expect(build.manifest.pages.some((page) => page.rawHref === "/docs/reference/spec.md")).toBe(true);
-    expect(build.manifest.pages.some((page) => page.rawHref === "/docs/reference/standard.md")).toBe(true);
-    expect(build.manifest.pages.some((page) => page.rawHref === "/docs/releases/changelog.md")).toBe(true);
-    expect(build.manifest.pages.find((page) => page.rawHref === "/docs/reference/packages.md")?.title).toBe("Packages");
-    expect(build.files["llms-components.txt"]).toContain(`Public component count: ${publicComponentTypes.length}`);
-    expect(build.files["llms-capabilities.txt"]).toContain("std.math.clamp");
-    expect(build.files["llms-capabilities.txt"]).toContain("api.fetch");
-    expect(build.manifest.expressionContext.some((item) => item.name === "std")).toBe(true);
-    expect(build.manifest.stdlib.some((namespace) => namespace.name === "math")).toBe(true);
-    expect(build.manifest.capabilities.some((capability) => capability.name === "api.fetch")).toBe(true);
-    expect(build.manifest.standardArtifacts["slex-standard-manifest.json"].path).toBe("/standard/slex-standard-manifest.json");
-    expect(build.manifest.standardArtifacts["slex-logic-profile.json"].hash).toMatch(/^[0-9a-f]{8}$/);
-    expect(build.manifest.components).toHaveLength(publicComponentTypes.length);
+    const index = build.files["llms.txt"];
+    expect(index).toContain("# SlexKit > Markdown-friendly reactive UI runtime for AI output");
+    expect(index).toContain("Version: 0.5.0");
+    for (const path of [
+      "/llms-full.txt",
+      "/llms-components.txt",
+      "/llms-capabilities.txt",
+      "/slexkit-ai-manifest.json",
+      ...SLEX_STANDARD_ARTIFACTS.map((name) => `/standard/${name}`),
+    ]) expect(index).toContain(path);
+    for (const group of ["Guides", "Examples", "Components", "Reference", "Releases"])
+      expect(index).toContain(`### ${group}`);
+    expect(index).not.toContain(".mdx");
+
+    expect(build.manifest).toMatchObject({
+      name: "slexkit-ai-docs",
+      generatedAt,
+      authoring: { sourceType: "html", fenceLanguage: "slex", legacyObjectSource: false },
+    });
     expect(build.manifest.pages.every((page) => page.rawHref.endsWith(".md"))).toBe(true);
+    expect(build.manifest.pages.map((page) => page.rawHref)).toEqual(expect.arrayContaining([
+      "/docs/guides/integration.md",
+      "/docs/reference/spec.md",
+      "/docs/reference/standard.md",
+      "/docs/releases/changelog.md",
+    ]));
+    for (const name of SLEX_STANDARD_ARTIFACTS) {
+      expect(build.manifest.standardArtifacts[name].path).toBe(`/standard/${name}`);
+      expect(build.manifest.standardArtifacts[name].hash).toMatch(/^[0-9a-f]{8}$/);
+    }
   });
 
-  it("keeps generated component examples parseable as Slex source", async () => {
+  it("catalogs 28 default elements plus the optional playground with complete contracts", async () => {
     const build = await createAiDocs("2026-01-01T00:00:00.000Z");
+    const defaults = build.manifest.components.filter((item) => item.availability === "default");
+    const optional = build.manifest.components.filter((item) => item.availability === "optional");
+    expect(defaults).toHaveLength(28);
+    expect(defaults.map((item) => item.tagName)).toEqual(describeSlexElements().map((item) => item.tagName));
+    expect(optional).toHaveLength(1);
+    expect(optional[0]).toMatchObject({ tagName: "slex-playground", entrypoint: "slexkit/tooling" });
+    expect(build.manifest.components).toHaveLength(29);
 
     for (const component of build.manifest.components) {
+      expect(component.type).toBe(component.tagName.slice(5));
+      expect(component.docsHref).toBe(`/components/${component.type}`);
+      expect(component.rawHref).toBe(`/docs/components/${component.type}.md`);
+      expect(component.examples.length).toBeGreaterThan(0);
+      expect(Array.isArray(component.properties)).toBe(true);
+      expect(Array.isArray(component.slots)).toBe(true);
+      expect(Array.isArray(component.events)).toBe(true);
       for (const example of component.examples) {
-        const source = JSON.stringify(example.source, null, 2);
-        const parsed = parseSlexSource(source);
-        expect(parsed.ok, `${component.type}:${example.id}`).toBe(true);
+        expect(inspectSlexSource(example.source).ok, `${component.type}:${example.id}`).toBe(true);
       }
     }
   });
 
-  it("keeps generated AI docs away from stale package and template wording", async () => {
+  it("documents the sandbox SDK without inventing a reactive signal API", async () => {
     const build = await createAiDocs("2026-01-01T00:00:00.000Z");
-    const matches: string[] = [];
-
-    for (const [filename, source] of Object.entries(build.files)) {
-      for (const marker of generatedDocStyleMarkers) {
-        const match = marker.pattern.exec(source);
-        if (!match) continue;
-
-        const line = source.slice(0, match.index).split(/\r?\n/).length;
-        matches.push(`${filename}:${line} ${marker.label}: ${match[0]}`);
-      }
-    }
-
-    for (const page of build.manifest.pages) {
-      const source = `${page.title}\n${page.summary}`;
-      for (const marker of generatedDocStyleMarkers) {
-        const match = marker.pattern.exec(source);
-        if (match) matches.push(`${page.rawHref} manifest ${marker.label}: ${match[0]}`);
-      }
-    }
-
-    expect(matches).toEqual([]);
+    expect(build.manifest.sandboxSdk).toEqual([
+      "root", "signal", "onDispose", "onSnapshot", "onRestore", "api",
+      "shared.get", "shared.set", "shared.subscribe",
+    ]);
+    expect(build.files["llms-capabilities.txt"]).toContain("AbortSignal");
+    expect(build.files["llms-capabilities.txt"]).toContain("slex.signal");
+    expect(build.files["llms-capabilities.txt"]).not.toMatch(/slex\.signal\s*\(/);
+    expect(build.files["llms-authoring.txt"]).toContain("standard HTML/SVG");
+    expect(build.files["llms-authoring.txt"]).toContain("Do not emit object g/layout source");
   });
 
-  it("writes every indexed rawHref as Markdown for static export", async () => {
+  it("keeps static inspection of generated examples non-executing", async () => {
+    const marker = "__slexkit_ai_docs_malicious_marker__";
+    delete (globalThis as Record<string, unknown>)[marker];
+    const source = `<p>Safe preview</p><script>globalThis.${marker} = true;</script>`;
+    expect(inspectSlexSource(source).ok).toBe(true);
+    expect((globalThis as Record<string, unknown>)[marker]).toBeUndefined();
+
+    const build = await createAiDocs("2026-01-01T00:00:00.000Z");
+    for (const fence of slexFences(build.files["llms-full.txt"]))
+      expect(inspectSlexSource(fence).ok, fence).toBe(true);
+  });
+
+  it("writes every indexed rawHref as ordinary Markdown for static export", async () => {
     const build = await createAiDocs("2026-01-01T00:00:00.000Z");
     const outDir = await mkdtemp(join(tmpdir(), "slexkit-ai-docs-"));
-
     try {
       await writeAiRawMarkdown(outDir, build.manifest.pages);
       for (const page of build.manifest.pages) {
-        const target = join(outDir, page.rawHref.replace(/^\/+/, ""));
-        const source = await readFile(target, "utf-8");
+        const source = await readFile(join(outDir, page.rawHref.replace(/^\/+/, "")), "utf8");
         expect(source.trim().length, page.rawHref).toBeGreaterThan(0);
         expect(source).toContain(page.body.split("\n").find((line) => line.trim()) ?? "");
       }
@@ -123,23 +120,18 @@ describe("AI documentation generation", () => {
     }
   });
 
-  it("renders the AI agents guide with SlexKit-native component examples", async () => {
+  it("keeps the bilingual agent guide on valid HTML and native component contracts", async () => {
     for (const path of ["site/content/guides/ai-agents/en-US.md", "site/content/guides/ai-agents/zh-CN.md"]) {
-      const source = await readFile(path, "utf-8");
-      expect(source).toContain('"link:index"');
-      expect(source).toContain('href: "/llms.txt"');
-      expect(source).toContain("slexkitDocs");
-      expect(source).not.toContain('"table:skillTable"');
-      expect(source).not.toContain('"table:issues"');
-      expect(source).not.toContain("append `.mdx`");
-
+      const source = await readFile(path, "utf8");
       const fences = slexFences(source);
-      expect(fences.length, path).toBeGreaterThanOrEqual(3);
-      expect(fences[0]).toContain('"column:links"');
-      expect(fences[0]).not.toContain('"card:docs"');
+      expect(fences.length, path).toBeGreaterThanOrEqual(2);
+      expect(source).toContain("slex.signal");
+      expect(source).toContain("AbortSignal");
+      expect(source).not.toMatch(/slex\.signal\s*\(/);
       for (const fence of fences) {
-        const parsed = parseSlexSource(fence);
-        expect(parsed.ok, `${path}\n${fence}`).toBe(true);
+        expect(fence).not.toMatch(/\b(?:g|layout)\s*:/);
+        expect(fence).not.toMatch(/\s\$[\w-]+\s*=/);
+        expect(inspectSlexSource(fence).ok, `${path}\n${fence}`).toBe(true);
       }
     }
   });

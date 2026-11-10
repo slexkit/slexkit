@@ -5,72 +5,40 @@ status: ready
 order: 40
 summary: "开关型布尔输入。"
 ---
-# Switch 开关
 
-开关型布尔输入，适合即时启用的设置项。
+# Switch
 
-<!-- slex:spec-example:start component="switch" id="basic" sourceHash="9c7b3bda" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_switch_typical",
-  "layout": {
-    "switch:feature": {
-      "enabled": true,
-      "label": "启用同步",
-      "icon": "arrows-clockwise"
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+通过 `.enabled`/`.checked` 表示开关设置，并触发原生 `input`/`change` 事件。
 
-## 使用提示
-
-- 适合：功能开关、偏好启用/禁用、即时生效的设置。
-- 不适合：确认型勾选（应当用 checkbox）。
-- 关联组件：checkbox 用于确认项或多选。
-- 通常放在 row 或 column 中使用。
-- 使用 $enabled 和 onchange 实现状态绑定。
-
-### enabled / not available 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_switch_state_diff",
-  layout: {
-    "row:diff": {
-      "switch:enabled": {
-        label: "已启用",
-        enabled: true
-      },
-      "switch:disabled": {
-        label: "已禁用"
-      },
-      "switch:enabled-not-available": {
-        label: "Enabled (not available)",
-        enabled: true,
-        disabled: true
-      },
-      "switch:disabled-not-available": {
-        label: "Disabled (not available)",
-        disabled: true
-      }
-    }
-  }
-}
+<slex-switch></slex-switch>
 ```
 
-## API 参考 {#api}
+## API 参考
 
-<!-- slex:spec-api:start component="switch" sourceHash="27367ad0" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `enabled` | boolean | 否 | 是 | `false` | 启用状态。 |
-| `label` | string | 否 | 是 |  | 开关标签。 |
-| `icon` | string | 否 | 否 |  | 显示在可见标签前的图标名称。 |
-| `disabled` | boolean | 否 | 是 | `false` | 禁用开关。 |
-| `haptic` | boolean | 否 | 否 | `true` | 在支持的设备上启用振动反馈。 |
-| `haptics` | boolean | 否 | 否 | `true` | haptic 的别名。 |
-| `onchange` | write-expression | 否 | 否 |  | 启用状态变化时执行的写表达式。 |
-<!-- slex:spec-api:end -->
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
+
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 控件的可见标签。 |
+| `unit` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `description` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `disabled` | boolean | `false` | 禁用用户交互。 |
+| `name` | string | 未设置 | 自定义元素参与原生表单时使用的字段名。 |
+| `value` | string / number | `"on"` | 启用时提交的值；未赋入 value 时提交 on。通过 enabled 或 checked 控制状态。 |
+| `aria-label` | string | `auto` | 无障碍名称覆盖；省略时会在可用时使用可见标签。 |
+| `checked` | boolean | `false` | enabled 的别名；包装层会同步两者状态。 |
+| `enabled` | boolean | `false` | 当前开关状态；与 checked 同步。 |
+
+事件：`input`、`change`。使用原生事件监听器；交互值从组件 property 读取。
+
+## 接口摘要
+
+- 属性: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `checked`, `enabled`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `checked`, `enabled`
+- Events: `input`, `change`
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

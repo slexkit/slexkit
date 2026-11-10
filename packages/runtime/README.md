@@ -26,7 +26,7 @@ All core engine APIs without component registrations:
 - **Component registry**: `register`, `getRenderer`, `attachComponentDisposer`
 - **Secure runtime**: `mountSecureArtifact`, `createSecureRuntime`, `setSlexKitRuntimeUrl`, `getSlexKitRuntimeUrl`
 - **Markdown hosting**: `createSlexKitMarkdownRuntimeHost`, `getSlexKitMarkdownRuntimeHost`, `installSlexKitMarkdownRuntimeHost`
-- **Diagnostics**: `parseSlexSource`, `diagnoseSlexKitSource`, `formatSlexKitDiagnostic`
+- **Diagnostics**: non-executing `inspectSlexSource`, `diagnoseSlexKitSource`, `formatSlexKitDiagnostic`; `parseSlexSource` executes trusted source.
 - **Error types**: `SlexKitSyntaxError`, `SlexKitRuntimeError`
 
 Note: the runtime entry does **not** auto-register any components. Register custom renderers or import `@slexkit/components-svelte` for the official Svelte component set.

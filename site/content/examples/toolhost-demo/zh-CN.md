@@ -5,13 +5,26 @@ status: published
 order: 13
 summary: "把 function_call 渲染成对话内工具卡片，再把提交结果写回 function_call_output。"
 tags: toolhost, dialog, demo
-components: toolhost, card, radio-group, input, button
+components: toolhost-host
 difficulty: 进阶
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: dialog
 ---
 
 # ToolHost 工具调用 UI
 
-当 Agent 发起 `function_call` 时，浏览器宿主可以把它渲染成对话里的 ToolHost 工具卡片；用户提交后，宿主按原 `call_id` 写回 `function_call_output`，并把结果记录留在轨迹里。本页只用发布窗口、负责人和回滚条件作为工具参数示例，不连接模型或后端。
+ToolHost 是宿主侧的工具调用渲染器，不是 `slex` payload 内的创作元素。宿主根据可信的 `function_call` 名称选择已注册模板，只把调用参数传入模板。
+
+```js
+const output = await renderToolCall(container, {
+  name: "fill-form",
+  callId: item.call_id,
+  arguments: JSON.parse(item.arguments),
+});
+responsesInput.push({ type: "function_call_output", call_id: item.call_id, output: JSON.stringify(output) });
+```
+
+## Tool-call 边界
+
+Agent 产生 `function_call` 时，浏览器宿主可以把它渲染成对话内的 ToolHost 工具卡片。`renderToolCall()` 只会在提交或忽略后返回，随后宿主使用原始 call ID 写回 `function_call_output`。该流程本身不会执行发布或其他领域操作。

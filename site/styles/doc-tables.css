@@ -1,0 +1,122 @@
+.slex-doc-table-scroll {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0;
+  overflow-x: auto;
+  border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+  border-radius: var(--radius);
+  background: var(--background);
+  scrollbar-gutter: auto;
+}
+
+.slex-doc-table-scroll--overflowing {
+  overscroll-behavior-inline: contain;
+}
+
+.slex-doc-table-scroll--overflowing:focus-visible {
+  outline: 2px solid var(--ring, var(--primary));
+  outline-offset: 2px;
+}
+
+.slex-doc-table-scroll > table.slex-doc-table {
+  display: table;
+  width: 100%;
+  min-width: 100%;
+  max-width: none;
+  margin: 0;
+  overflow: visible;
+  border: 0;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  line-height: 1.55;
+}
+
+.slex-doc-table-scroll[data-reference-table="true"][data-columns="4"] > table.slex-doc-table {
+  min-width: max(100%, 36rem);
+}
+
+.slex-doc-table-scroll[data-reference-table="true"][data-columns="6"] > table.slex-doc-table {
+  min-width: max(100%, 48rem);
+}
+
+.slex-doc-table-scroll[data-reference-table="true"][data-fitted-columns="true"] > table.slex-doc-table {
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.slex-doc-table-scroll[data-fitted-columns="true"] > table.slex-doc-table :is(.slex-doc-table__identifier, .slex-doc-table__description) {
+  min-width: 0;
+}
+
+.slex-doc-streamdown .slex-doc-table-scroll > table.slex-doc-table :where(th, td) {
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  padding: 0.75rem 0.875rem;
+  text-align: start;
+  vertical-align: top;
+}
+
+.slex-doc-streamdown .slex-doc-table-scroll > table.slex-doc-table :where(th) {
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--muted) 58%, var(--background));
+  color: var(--muted-foreground);
+  font-weight: 650;
+}
+
+.slex-doc-streamdown .slex-doc-table-scroll > table.slex-doc-table tbody tr:last-child > :where(th, td) {
+  border-bottom: 0;
+}
+
+.slex-doc-table-scroll > table.slex-doc-table :where(code) {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.slex-doc-table-scroll[data-reference-table="true"] > table.slex-doc-table .slex-doc-table__identifier {
+  min-width: 6.75rem;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.slex-doc-table-scroll[data-reference-table="true"] > table.slex-doc-table .slex-doc-table__description {
+  min-width: 12.25rem;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.slex-doc-table-scroll[data-reference-table="true"] > table.slex-doc-table tr > :not(.slex-doc-table__identifier, .slex-doc-table__description) {
+  white-space: nowrap;
+}
+
+/* A long default must not force a four-column reference off the article.
+   Union alternatives can wrap at spaces; individual types and API identifiers
+   remain whole. Defaults stay on one line and descriptions retain their width. */
+.slex-doc-table-scroll[data-reference-table="true"][data-columns="4"] > table.slex-doc-table tr > :nth-child(2):not(.slex-doc-table__identifier, .slex-doc-table__description) {
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.slex-doc-table-scroll--overflowing[data-reference-table="true"][data-sticky-field="true"] .slex-doc-table__identifier {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  background: var(--background);
+  box-shadow: 1px 0 color-mix(in srgb, var(--border) 72%, transparent);
+}
+
+.slex-doc-table-scroll--overflowing[data-reference-table="true"][data-sticky-field="true"] thead .slex-doc-table__identifier {
+  background: color-mix(in srgb, var(--muted) 58%, var(--background));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .slex-doc-streamdown .slex-doc-table-scroll > table.slex-doc-table tbody tr:hover > :where(th, td) {
+    background: color-mix(in srgb, var(--muted) 42%, var(--background));
+  }
+}

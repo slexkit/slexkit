@@ -1,51 +1,3 @@
-export type SlexExpression = {
-  slex?: string;
-  namespace?: string;
-  g?: Record<string, unknown>;
-  layout?: LayoutNode;
-  [key: string]: unknown;
-};
-
-/** @deprecated Use SlexExpression instead. */
-export type DSL = SlexExpression;
-
-export type LayoutNode = Record<string, unknown>;
-export type ComponentState = Record<string, unknown>;
-export type ComponentStateMap = Record<string, ComponentState>;
-export type ComponentTypeMap = Record<string, string>;
-export type ComponentStateMode = "value" | "checked" | "enabled" | "readable" | "none";
-
-export type ComponentRegistrationOptions = {
-  state?: ComponentStateMode;
-};
-
-export type ForContext = {
-  $item?: unknown;
-  $index?: number | (() => number);
-  $key?: unknown;
-  [identifier: string]: unknown;
-};
-
-export type ForSlot = {
-    key: unknown;
-    el: HTMLElement | null;
-  forCtx: ForContext;
-  index: number;
-  item: unknown;
-  props: Record<string, unknown>;
-  children: Record<string, unknown>;
-  indexSignal?: [() => number, (v: number) => void];
-  revision?: number;
-  revisionSignal?: [() => number, (v: number) => void];
-  dispose?: () => void;
-};
-
-export type ComponentRenderer = (
-  props: Record<string, unknown>,
-  name: string,
-  ctx: RenderContext,
-) => HTMLElement | void;
-
 export type ThemeMode = "auto" | "host-shadcn" | "uno" | "flowbite";
 export type DirectionMode = "ltr" | "rtl" | "auto";
 export type RuntimeLabels = Partial<Record<string, string>>;
@@ -59,15 +11,19 @@ export type MountOptions = {
 };
 
 export type RenderContext = {
-  g: Record<string, unknown>;
   std: import("./stdlib").SlexKitStdlib;
   api?: Record<string, unknown>;
   dir: Exclude<DirectionMode, "auto">;
   labels: RuntimeLabels;
   document: Document;
-  forCtx?: ForContext;
-  children: Record<string, unknown>;
-  renderTree: (layout: LayoutNode, container: HTMLElement, forCtx?: ForContext) => void;
+  /**
+   * Internal hook used by built-in child hosts to register their stable target
+   * even when the current children layout is empty.
+   */
+  registerChildTarget?: (container: HTMLElement) => void;
+  releaseChildTarget?: (container: HTMLElement) => void;
+  /** Native HTML slot projection used by the Web Components facade. */
+  renderSlot?: (name: string, container: HTMLElement) => boolean;
   emit: (eventName: string, data?: unknown) => void;
   id: string | null;
 };

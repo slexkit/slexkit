@@ -1,14 +1,6 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { componentSpecs, publicComponentSpecs, publicComponentTypes } from "../src/components/spec-registry";
-import { parseSlexSource } from "../src/engine/diagnostics";
-import {
-  slexkitExpressionContext,
-  slexkitRuntimeCapabilities,
-  slexkitStdlibDocs,
-} from "../src/engine/capabilities";
-import { discoverExampleMarkdown } from "../site/data/content-discovery.js";
-import { loadExampleDocs } from "../site/data/examples.js";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { dirname, join, relative, sep } from "node:path";
+import { describeSlexElements } from "../src/web-components/definitions";
 import {
   createStandardArtifacts,
   hashStandardText,
@@ -17,15 +9,9 @@ import {
 } from "../src/standard/artifacts";
 
 export const aiDocFilenames = [
-  "llms.txt",
-  "llms-full.txt",
-  "llms-components.txt",
-  "llms-runtime.txt",
-  "llms-capabilities.txt",
-  "llms-toolhost.txt",
-  "llms-authoring.txt",
+  "llms.txt", "llms-full.txt", "llms-components.txt", "llms-runtime.txt",
+  "llms-capabilities.txt", "llms-toolhost.txt", "llms-authoring.txt",
 ] as const;
-
 export type AiDocFilename = (typeof aiDocFilenames)[number];
 
 export type DocPage = {
@@ -39,636 +25,194 @@ export type DocPage = {
   body: string;
   hash: string;
 };
-
 export type AiDocPage = DocPage;
 
+type ElementDescriptor = ReturnType<typeof describeSlexElements>[number];
+type CatalogElementDescriptor = ElementDescriptor & {
+  availability: "default" | "optional";
+  entrypoint: "slexkit/web-components" | "slexkit/tooling";
+};
 export type SlexKitAiManifest = {
   name: "slexkit-ai-docs";
   packageName: "slexkit";
   version: string;
   generatedAt: string;
+  authoring: { sourceType: "html"; fenceLanguage: "slex"; legacyObjectSource: false };
   docs: Record<AiDocFilename, { path: string; title: string; summary: string; hash: string }>;
   pages: DocPage[];
-  expressionContext: typeof slexkitExpressionContext;
-  stdlib: typeof slexkitStdlibDocs;
-  capabilities: typeof slexkitRuntimeCapabilities;
+  sandboxSdk: string[];
+  staticPolicy: string[];
   standardArtifacts: Record<SlexStandardArtifactFilename, { path: string; hash: string }>;
-  components: Array<{
-    type: string;
-    title: string;
-    category: string;
-    status: string;
-    state: string;
-    since: string;
-    summary: string;
-    docsHref: string;
-    rawHref: string;
-    propCount: number;
-    exampleCount: number;
-    props: Record<string, unknown>;
-    children: unknown;
-    examples: Array<{ id: string; title: string; description?: string; source: unknown }>;
-    hash: string;
-  }>;
+  components: Array<CatalogElementDescriptor & { type: string; title: string; docsHref: string; rawHref: string; examples: Array<{ id: string; title: string; source: string }> }>;
   sourceHashes: Record<string, string>;
 };
 
-type AiDocBuild = {
-  files: Record<AiDocFilename, string>;
-  manifest: SlexKitAiManifest;
-};
-
-type SourcePage = Omit<DocPage, "hash"> & { body: string; order: number };
-
+type AiDocBuild = { files: Record<AiDocFilename, string>; manifest: SlexKitAiManifest };
 const root = join(import.meta.dir, "..");
 
-const guidePages = [
-  ["intro", "SlexKit Introduction", "What SlexKit is and where it fits."],
-  ["quick-start", "Quick Start", "Install SlexKit and render a first Markdown-friendly Slex source."],
-  ["integration", "Integration", "Streamdown, Tiptap, Obsidian, and custom Markdown hosts for explicit Slex fences."],
-  ["design", "Design Guidelines", "Design and authoring guidelines for SlexKit components and docs."],
-  ["security-runtime", "Secure Runtime Setup", "Decision and setup guide for rendering untrusted or agent-generated Slex source."],
-  ["ai-agents", "AI / Agents", "LLM docs, MCP server, skills, and authoring rules for SlexKit agents."],
-] as const;
+function hashText(source: string) {
+  return hashStandardText(source);
+}
 
-const rootPages = [
-  ["README.md", "Guides", "README", "Root package overview and installation matrix.", "/", "/README.md"],
-] as const;
-
-const referencePages = [
-  ["spec", "Slex Specification", "Public Slex expression envelope, component keys, props, directives, and lifecycle."],
-  ["usage", "Slex Usage Reference", "Slex source structure, props, directives, events, theming, custom components, and ToolHost boundaries."],
-  ["runtime", "Runtime Model", "Mounting, ingestion, boot, namespace store, lifecycle, and runtime APIs."],
-  ["integration", "Host Integration", "Markdown renderers, Svelte custom hosts, Streamdown, Tiptap, Obsidian, and artifact lifecycle."],
-  ["security", "Security Runtime", "Threat model, sandbox iframe, postMessage bridge, policy, and fail-closed behavior."],
-  ["packages", "Packages", "Package roles, installation matrix, and packaging strategy."],
-  ["standard", "Slex Standard Artifacts", "JSON Schema, component catalog, logic profile, capabilities catalog, conformance fixtures, and manifest."],
-  ["toolhost", "ToolHost", "Tool call rendering, built-in templates, custom templates, and submit boundaries."],
-  ["icons", "Icon System", "Phosphor icons, custom icon registration, Iconify fallback, and API reference."],
-  ["rationale", "Design Rationale", "Why SlexKit uses object literals, expressions, explicit fences, and secure/trusted modes."],
-] as const;
-
-const releasePages = [
-  ["changelog", "Changelog", "Release notes and notable changes for SlexKit."],
-] as const;
-
-const groupOrder: DocPage["group"][] = ["Guides", "Examples", "Components", "Reference", "Releases"];
-const groupRank = new Map(groupOrder.map((group, index) => [group, index]));
-
-function hashText(source: string): string {
-  let hash = 2166136261;
-  for (let index = 0; index < source.length; index += 1) {
-    hash ^= source.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
+function parseFrontmatter(source: string) {
+  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+  const fields: Record<string, string> = {};
+  if (match) for (const line of match[1].split(/\r?\n/)) {
+    const entry = line.match(/^([\w-]+):\s*["']?(.*?)["']?\s*$/);
+    if (entry) fields[entry[1]] = entry[2];
   }
-  return (hash >>> 0).toString(16).padStart(8, "0");
+  return { fields, body: match ? source.slice(match[0].length) : source };
 }
 
-async function readProjectFile(path: string): Promise<string> {
-  return readFile(join(root, path), "utf-8");
-}
-
-function fencedBlock(language: string, source: string): string {
-  return `\`\`\`${language}\n${source.trim()}\n\`\`\``;
-}
-
-function normalizeMarkdownBody(source: string): string {
-  return source.replace(/^\uFEFF/, "").trim();
-}
-
-function pageWithHash(page: SourcePage): AiDocPage {
-  return {
-    id: page.id,
-    group: page.group,
-    title: page.title,
-    summary: page.summary,
-    href: page.href,
-    rawHref: page.rawHref,
-    sourcePath: page.sourcePath,
-    body: page.body,
-    hash: hashText(page.body),
-  };
-}
-
-function sortDocPages<T extends SourcePage>(pages: T[]): T[] {
-  return [...pages].sort((a, b) => (groupRank.get(a.group) ?? 99) - (groupRank.get(b.group) ?? 99) || a.order - b.order);
-}
-
-function componentApiMarkdown(spec: (typeof componentSpecs)[number]): string {
-  const props = Object.entries(spec.props)
-    .map(([name, prop]) => {
-      const flags = [
-        prop.required ? "required" : "optional",
-        prop.dynamic ? "dynamic" : "static",
-        prop.default !== undefined ? `default: ${JSON.stringify(prop.default)}` : "",
-        prop.values?.length ? `values: ${prop.values.join(", ")}` : "",
-      ].filter(Boolean).join("; ");
-      return `- \`${name}\` (${prop.type}; ${flags}): ${prop.description}`;
-    })
-    .join("\n");
-
-  const children = spec.children.allowed
-    ? spec.children.description ?? "Nested component fields are rendered as child content in field order."
-    : "No child components.";
-
-  return [
-    `## ${spec.title} API (\`${spec.type}\`)`,
-    "",
-    `Category: ${spec.category}`,
-    `Status: ${spec.status}`,
-    `State mode: ${spec.state}`,
-    `Since: ${spec.since}`,
-    "",
-    "### Props",
-    props || "- No props.",
-    "",
-    "### Children",
-    children,
-  ].join("\n");
-}
-
-function componentExamplesMarkdown(spec: (typeof componentSpecs)[number]): string {
-  return spec.examples
-    .map((example) => {
-      const source = JSON.stringify(example.source, null, 2);
-      const parsed = parseSlexSource(source);
-      return [
-        `## ${spec.title}: ${example.title}`,
-        "",
-        example.description ? `${example.description}\n` : "",
-        `Component: \`${spec.type}\``,
-        `Validation: ${parsed.ok ? "valid" : `invalid: ${parsed.diagnostic.message}`}`,
-        "",
-        fencedBlock("slex", source),
-      ].filter(Boolean).join("\n");
-    })
-    .join("\n\n---\n\n");
-}
-
-function componentsText(): string {
-  const byCategory = new Map<string, string[]>();
-  for (const spec of publicComponentSpecs) {
-    const entries = byCategory.get(spec.category) ?? [];
-    entries.push(`- [${spec.title}](/docs/components/${spec.type}.md): \`${spec.type}\` - ${spec.summary}`);
-    byCategory.set(spec.category, entries);
+async function markdownFiles(dir: string): Promise<string[]> {
+  const result: string[] = [];
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) result.push(...await markdownFiles(path));
+    else if (entry.name === "en-US.md") result.push(path);
   }
-
-  const index = [...byCategory.entries()]
-    .map(([category, entries]) => [`## ${category}`, "", entries.join("\n")].join("\n"))
-    .join("\n\n");
-
-  return [
-    "# SlexKit Components for LLMs",
-    "",
-    "Use these components inside Markdown `slex` fences. Raw component docs are ordinary `.md` pages that preserve `slex` examples.",
-    "",
-    `Public component count: ${publicComponentTypes.length}`,
-    "",
-    index,
-    "",
-    "---",
-    "",
-    "# Generated Component API Reference",
-    "",
-    publicComponentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
-  ].join("\n");
+  return result;
 }
 
-function capabilitiesText(): string {
-  const stdCalculator = `{
-  slex: "0.1",
-  namespace: "std_calculator",
-  g: { done: 7, total: 12, samples: [120, 95, 143, 110], bytes: 1536000 },
-  layout: {
-    "card:summary": {
-      title: "Stdlib calculator",
-      "stat:progress": { label: "Progress", "$value": "std.format.percent(std.math.safeDivide(g.done, g.total), 1)" },
-      "stat:average": { label: "Average", "$value": "std.format.fixed(std.stats.mean(g.samples), 1)", unit: "ms" },
-      "stat:payload": { label: "Payload", "$value": "std.units.bytes(g.bytes)" }
-    }
+async function collectPages(): Promise<DocPage[]> {
+  const contentRoot = join(root, "site", "content");
+  const files = await markdownFiles(contentRoot);
+  const pages: DocPage[] = [];
+  for (const file of files) {
+    const source = await readFile(file, "utf8");
+    const { fields, body } = parseFrontmatter(source);
+    const parts = relative(contentRoot, file).split(sep);
+    const section = parts[0];
+    const slug = parts[1];
+    const group = ({ guides: "Guides", examples: "Examples", components: "Components", reference: "Reference", releases: "Releases" } as const)[section];
+    if (!group) continue;
+    const id = `${section}/${slug}`;
+    const href = section === "components" ? `/components/${slug}` : section === "guides" ? `/docs/guides/${slug}` : section === "examples" ? `/examples/${slug}` : `/docs/${section}/${slug}`;
+    const rawHref = `/docs/${section}/${slug}.md`;
+    pages.push({ id, group, title: fields.title || slug, summary: fields.summary || "", href, rawHref, sourcePath: relative(root, file).replaceAll(sep, "/"), body, hash: hashText(source) });
   }
-}`;
-
-  const networkCard = `{
-  slex: "0.1",
-  namespace: "secure_network_card",
-  g: {
-    status: "idle",
-    async load() {
-      this.status = "loading";
-      try {
-        var result = await api.get("https://api.example.com/status", { credentials: "omit" });
-        this.status = "HTTP " + result.status;
-      } catch (error) {
-        this.status = api.isPolicyError(error) ? "blocked by policy" : api.errorMessage(error);
-      }
-    }
-  },
-  layout: {
-    "card:network": {
-      title: "Secure network card",
-      "button:load": { label: "Load", onclick: "g.load()" },
-      "text:status": { "$text": "g.status" }
-    }
-  }
-}`;
-
-  const context = slexkitExpressionContext
-    .map((item) => `- \`${item.name}\` (${item.scope}): ${item.summary}`)
-    .join("\n");
-  const stdlib = slexkitStdlibDocs
-    .map((namespace) => [
-      `## std.${namespace.name}`,
-      "",
-      namespace.summary,
-      "",
-      ...namespace.functions.map((fn) => `- \`${fn.name}${fn.signature.slice(fn.signature.indexOf("("))}\`: ${fn.summary} Example: \`${fn.example}\``),
-    ].join("\n"))
-    .join("\n\n");
-  const capabilities = slexkitRuntimeCapabilities
-    .map((capability) => `- \`${capability.name}${capability.signature.slice(capability.signature.indexOf("("))}\` (${capability.policy}, secure default: ${capability.secureDefault}): ${capability.summary}`)
-    .join("\n");
-
-  return [
-    "# SlexKit Capabilities for LLMs",
-    "",
-    "Use `std.*` for pure deterministic calculations and formatting. Use `api.*` only for host-injected or secure-runtime capabilities that may require policy.",
-    "",
-    "## Expression Context",
-    "",
-    context,
-    "",
-    stdlib,
-    "",
-    "## Policy-Gated Runtime API",
-    "",
-    capabilities,
-    "",
-    "Secure mode blocks native `fetch`, `XMLHttpRequest`, `WebSocket`, `setTimeout`, `setInterval`, and `requestAnimationFrame`. Use `api.get`, `api.post`, `api.fetch`, `api.setTimeout`, `api.setInterval`, and `api.raf` when host policy enables them.",
-    "",
-    "## Recipe: Std Calculator",
-    "",
-    fencedBlock("slex", stdCalculator),
-    "",
-    "## Recipe: Secure Network Card",
-    "",
-    fencedBlock("slex", networkCard),
-    "",
-    "## Recipe: Timer and Animation Policy",
-    "",
-    "- Timers are disabled in secure mode unless `policy.timer.enabled` is true.",
-    "- Use `api.setTimeout` and `api.setInterval`; do not use native scheduling globals.",
-    "- Animation is disabled unless `policy.animation.enabled` is true; use `api.raf`.",
-  ].join("\n");
+  return pages.sort((a, b) => a.group.localeCompare(b.group) || a.title.localeCompare(b.title));
 }
 
-function authoringText(): string {
-  const statusExample = `{
-  slex: "0.1",
-  namespace: "release_status",
-  g: { done: 3, total: 4 },
-  layout: {
-    "card:summary": {
-      title: "Release status",
-      "text:count": { "$text": "g.done + '/' + g.total + ' complete'" },
-      "progress:bar": { "$value": "g.done / g.total * 100" }
-    }
-  }
-}`;
-
-  return [
-    "# SlexKit Authoring Rules for LLMs",
-    "",
-    "SlexKit's agent-readable source is Markdown with explicit `slex` fences. Do not use `.mdx`; `slex` fences are the interactive layer.",
-    "",
-    "## Always Do",
-    "",
-    "- Emit explicit `slex` fenced code blocks for display-oriented interactive UI.",
-    "- Use a Slex expression envelope: `slex`, `namespace`, `g`, and `layout`.",
-    "- Put mutable state and helper functions in `g`; put component structure in `layout`.",
-    "- Use `std.*` for common calculations, formatting, units, and small statistics.",
-    "- Use component keys in `type:identifier` form, such as `card:summary`.",
-    "- Use `$` read-pipes for dynamic props and `on*` write-pipes for event handlers.",
-    "- Include readable Markdown fallback text after the fence.",
-    "- Use secure runtime integration for untrusted or agent-generated source.",
-    "",
-    "## Do Not",
-    "",
-    "- Do not emit imports, JSX, Svelte, Vue, or project scaffolding inside `slex` fences.",
-    "- Do not ask hosts to scan plain JavaScript, JSON, or untagged code blocks.",
-    "- Do not wrap ordinary status cards or summaries in ToolHost.",
-    "- Do not bypass the sandbox for untrusted source.",
-    "- Do not use native `fetch`, `XMLHttpRequest`, `WebSocket`, `setTimeout`, or `requestAnimationFrame` in secure mode; use policy-gated `api.*` instead.",
-    "- Do not invent `.mdx` routes for SlexKit docs.",
-    "",
-    "## Display UI Example",
-    "",
-    fencedBlock("slex", statusExample),
-    "",
-    "**Fallback:** Release status: 3/4 complete.",
-    "",
-    "## ToolHost Boundary",
-    "",
-    "Use ToolHost only when the UI must return structured user input to the host, such as confirmations, option lists, or forms. Display-only dashboards, metrics, and status blocks should stay as `slex` fences.",
-  ].join("\n");
+function componentExample(element: ElementDescriptor) {
+  const type = element.tagName.slice(5);
+  if (type === "table") return `<slex-table id="items"></slex-table>\n<script type="module">\n  const table = slex.root.querySelector("#items");\n  table.columns = [{ key: "name", label: "Name" }];\n  table.rows = [{ name: "Ada" }];\n</script>`;
+  if (type === "button") return '<slex-button id="action" label="Run"></slex-button>';
+  if (type === "input") return '<slex-input id="value" label="Project" value="SlexKit" placeholder="Enter name" description="Visible labels keep form fields scannable."></slex-input>';
+  if (type === "card") return '<slex-card title="Metrics" icon="chart-bar">\n  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">\n    <slex-stat label="Requests" value="1.2k" unit="/min"></slex-stat>\n    <slex-stat label="Latency" value="42" unit="ms"></slex-stat>\n  </div>\n</slex-card>';
+  return `<${element.tagName}></${element.tagName}>`;
 }
 
-async function collectPages(): Promise<{ pages: DocPage[]; sourcePages: SourcePage[]; sourceHashes: Record<string, string> }> {
-  const sourcePages: SourcePage[] = [];
-  const sourceHashes: Record<string, string> = {};
-  let order = 0;
-
-  for (const [path, group, title, summary, href, rawHref] of rootPages) {
-    const body = normalizeMarkdownBody(await readProjectFile(path));
-    sourcePages.push({ id: rawHref.replace(/^\//, "").replace(/\.md$/, ""), group, title, summary, href, rawHref, sourcePath: path, body, order: order++ });
-    sourceHashes[path] = hashText(body);
-  }
-
-  for (const [slug, title, summary] of guidePages) {
-    const sourcePath = `site/content/guides/${slug}/en-US.md`;
-    const body = normalizeMarkdownBody(await readProjectFile(sourcePath));
-    sourcePages.push({
-      id: `guides/${slug}`,
-      group: "Guides",
-      title,
-      summary,
-      href: `/docs/guides/${slug}`,
-      rawHref: `/docs/guides/${slug}.md`,
-      sourcePath,
-      body,
-      order: order++,
-    });
-    sourceHashes[sourcePath] = hashText(body);
-  }
-
-  const exampleMarkdown = await discoverExampleMarkdown({ siteRoot: join(root, "site"), locale: "zh-CN" });
-  for (const example of loadExampleDocs({ markdownItems: exampleMarkdown, locale: "zh-CN" })) {
-    sourcePages.push({
-      id: `examples/${example.slug}`,
-      group: "Examples",
-      title: example.title,
-      summary: example.summary,
-      href: example.href,
-      rawHref: example.markdownHref,
-      sourcePath: example.sourcePath,
-      body: example.markdown,
-      order: order++,
-    });
-    sourceHashes[example.sourcePath] = hashText(example.markdown);
-  }
-
-  for (const [slug, title, summary] of referencePages) {
-    const sourcePath = `site/content/reference/${slug}/en-US.md`;
-    const body = normalizeMarkdownBody(await readProjectFile(sourcePath));
-    sourcePages.push({
-      id: `reference/${slug}`,
-      group: "Reference",
-      title,
-      summary,
-      href: `/docs/reference/${slug}`,
-      rawHref: `/docs/reference/${slug}.md`,
-      sourcePath,
-      body,
-      order: order++,
-    });
-    sourceHashes[sourcePath] = hashText(body);
-  }
-
-  for (const [slug, title, summary] of releasePages) {
-    const sourcePath = `site/content/releases/${slug}/en-US.md`;
-    const body = normalizeMarkdownBody(await readProjectFile(sourcePath));
-    sourcePages.push({
-      id: `releases/${slug}`,
-      group: "Releases",
-      title,
-      summary,
-      href: `/docs/releases/${slug}`,
-      rawHref: `/docs/releases/${slug}.md`,
-      sourcePath,
-      body,
-      order: order++,
-    });
-    sourceHashes[sourcePath] = hashText(body);
-  }
-
-  for (const spec of publicComponentSpecs) {
-    const sourcePath = `site/content/components/${spec.type}/en-US.md`;
-    const body = normalizeMarkdownBody(await readProjectFile(sourcePath));
-    sourcePages.push({
-      id: `components/${spec.type}`,
-      group: "Components",
-      title: spec.title,
-      summary: spec.summary,
-      href: spec.docs.href,
-      rawHref: `/docs/components/${spec.type}.md`,
-      sourcePath,
-      body,
-      order: order++,
-    });
-    sourceHashes[sourcePath] = hashText(body);
-  }
-
-  const sortedSourcePages = sortDocPages(sourcePages);
-  const pages = sortedSourcePages.map(pageWithHash);
-  return { pages, sourcePages: sortedSourcePages, sourceHashes };
+function componentsForManifest() {
+  const elements: CatalogElementDescriptor[] = [
+    ...describeSlexElements().map((element) => ({
+      ...element,
+      availability: "default" as const,
+      entrypoint: "slexkit/web-components" as const,
+    })),
+    {
+      tagName: "slex-playground",
+      properties: [
+        { name: "source", attribute: "source", type: "string | number" },
+        { name: "autorun", attribute: "autorun", type: "boolean" },
+      ],
+      slots: [],
+      events: [],
+      availability: "optional",
+      entrypoint: "slexkit/tooling",
+    },
+  ];
+  return elements.map((element) => {
+    const type = element.tagName.slice(5);
+    return { ...element, type, title: element.tagName, docsHref: `/components/${type}`, rawHref: `/docs/components/${type}.md`, examples: [{ id: "basic", title: "HTML example", source: componentExample(element) }] };
+  });
 }
 
-function indexText(version: string, pages: AiDocPage[]): string {
-  const grouped = groupOrder
-    .map((group) => {
-      const entries = pages.filter((page) => page.group === group);
-      if (entries.length === 0) return "";
-      return [
-        `### ${group}`,
-        ...entries.map((page) => `- [${page.title}](${page.rawHref}): ${page.summary}`),
-      ].join("\n");
-    })
-    .filter(Boolean)
-    .join("\n\n");
-
-  return [
-    "# SlexKit > Markdown-friendly reactive UI runtime for AI output",
-    "",
-    "## LLM Documentation Files",
-    "",
-    "- [Full documentation](/llms-full.txt): all canonical English docs pages in one text file.",
-    "- [Component reference](/llms-components.txt): component docs index plus generated props/state reference.",
-    "- [Runtime docs](/llms-runtime.txt): runtime, host integration, and secure rendering docs.",
-    "- [Capabilities](/llms-capabilities.txt): expression context, `std.*` standard library, and policy-gated `api.*`.",
-    "- [ToolHost docs](/llms-toolhost.txt): structured user-input UI docs.",
-    "- [Authoring rules](/llms-authoring.txt): concise rules for Markdown `slex` fences.",
-    "- [AI manifest](/slexkit-ai-manifest.json): structured page, component, and hash metadata.",
-    "- [Standard manifest](/standard/slex-standard-manifest.json): schema, component catalog, logic profile, capabilities, and conformance metadata.",
-    "- [Logic profile](/standard/slex-logic-profile.json): `$` read-pipes, `on*` write-pipes, directives, context, and secure-mode guidance.",
-    "- [Component catalog](/standard/slex-component-catalog.json): public component props, state modes, children, examples, docs, and hashes.",
-    "",
-    "SlexKit raw docs are Markdown (`.md`) with explicit `slex` fences. The interactive layer is the fenced `slex` source inside each Markdown page.",
-    "",
-    `Version: ${version}`,
-    "",
-    "## Table of Contents",
-    "",
-    grouped,
-  ].join("\n");
+function authoringText() {
+  return `# SlexKit HTML authoring\n\nUse the \`html-1\` profile. A \`slex\` fence contains standard HTML/SVG, optional CSS, documented \`slex-*\` elements, and optional inline module scripts. Do not emit object g/layout source, expression attributes, runtime imports, or component registration. Use native events and \`slex.root\`; \`slex.signal\` is an \`AbortSignal\`; release side effects with \`slex.onDispose\`. The host owns runtime/style URLs, component registration, and approved capabilities. Each fence is a separate isolated document; \`slex.shared\` transfers artifact-local JSON only.`;
 }
 
-function fullText(version: string, sourcePages: SourcePage[]): string {
-  const pages = sourcePages.map((page) => [
-    `# ${page.title}`,
-    "",
-    `URL: ${page.href}`,
-    `Raw Markdown: ${page.rawHref}`,
-    `Source: ${page.sourcePath}`,
-    "",
-    page.body,
-  ].join("\n"));
-
-  return [
-    "# SlexKit Full LLM Documentation",
-    "",
-    `Version: ${version}`,
-    "",
-    "This file concatenates SlexKit's canonical English Markdown docs. `slex` fences are preserved exactly.",
-    "",
-    pages.join("\n\n---\n\n"),
-    "",
-    "---",
-    "",
-    "# Generated Component API Supplement",
-    "",
-    publicComponentSpecs.map(componentApiMarkdown).join("\n\n---\n\n"),
-  ].join("\n");
-}
-
-function docsFileMetadata(files: Record<AiDocFilename, string>): SlexKitAiManifest["docs"] {
-  return Object.fromEntries(
-    aiDocFilenames.map((filename) => [
-      filename,
-      {
-        path: `/${filename}`,
-        title: filename,
-        summary: files[filename].split("\n").find((line) => line && !line.startsWith("#")) ?? "",
-        hash: hashText(files[filename]),
-      },
-    ]),
-  ) as SlexKitAiManifest["docs"];
+function docsMetadata(files: Record<AiDocFilename, string>) {
+  return Object.fromEntries(aiDocFilenames.map((name) => [name, { path: `/${name}`, title: name, summary: files[name].split("\n").find((line) => line && !line.startsWith("#")) || "", hash: hashText(files[name]) }])) as SlexKitAiManifest["docs"];
 }
 
 export async function createAiDocs(generatedAt = new Date().toISOString()): Promise<AiDocBuild> {
-  const packageJson = JSON.parse(await readProjectFile("package.json")) as { version?: string };
-  const version = packageJson.version ?? "0.0.0";
-  const { pages, sourcePages, sourceHashes } = await collectPages();
+  const { version = "0.0.0" } = JSON.parse(await readFile(join(root, "package.json"), "utf8"));
+  const pages = await collectPages();
+  const components = componentsForManifest();
   const standard = createStandardArtifacts(version, generatedAt);
-  const runtimePages = sourcePages.filter(
-    (page) => page.group === "Reference" && ["spec", "usage", "runtime", "integration", "security", "packages", "standard"].some((slug) => page.id === `reference/${slug}`),
-  );
-  const toolhostPages = sourcePages.filter((page) => page.id === "reference/toolhost");
-
+  const groups = ["Guides", "Examples", "Components", "Reference", "Releases"] as const;
+  const index = [
+    "# SlexKit > Markdown-friendly reactive UI runtime for AI output",
+    "",
+    `Version: ${version}`,
+    "",
+    "## Machine-readable documentation",
+    "",
+    "- [Complete documentation](/llms-full.txt)",
+    "- [Custom-element catalog and examples](/llms-components.txt)",
+    "- [Runtime reference](/llms-runtime.txt)",
+    "- [Sandbox SDK and capabilities](/llms-capabilities.txt)",
+    "- [ToolHost reference](/llms-toolhost.txt)",
+    "- [HTML authoring rules](/llms-authoring.txt)",
+    "- [AI documentation manifest](/slexkit-ai-manifest.json)",
+    "- [Standard manifest](/standard/slex-standard-manifest.json)",
+    "- [HTML profile](/standard/slex-html-profile.json)",
+    "- [Custom-element catalog](/standard/slex-custom-elements.catalog.json)",
+    "- [Sandbox SDK](/standard/slex-sandbox-sdk.json)",
+    "- [Static policy](/standard/slex-static-policy.json)",
+    "- [HTML conformance fixtures](/standard/slex-html-conformance.json)",
+    "",
+    ...groups.flatMap((group) => [
+      `### ${group}`,
+      "",
+      ...pages.filter((page) => page.group === group).map((page) => `- [${page.title}](${page.rawHref}): ${page.summary}`),
+      "",
+    ]),
+  ].join("\n").trimEnd();
+  const full = pages.map((page) => `# ${page.title}\n\nSource: ${page.sourcePath}\n\n${page.body.trim()}`).join("\n\n---\n\n");
+  const componentText = ["# SlexKit custom elements", "", ...components.map((item) => `## \`${item.tagName}\`\n\nProperties: ${item.properties.map((prop) => `\`${prop.name}\``).join(", ") || "none"}\n\n\`\`\`slex\n${item.examples[0].source}\n\`\`\``)].join("\n\n");
+  const runtimePages = pages.filter((page) => page.group === "Reference").map((page) => page.body).join("\n\n---\n\n");
   const files: Record<AiDocFilename, string> = {
-    "llms.txt": indexText(version, pages),
-    "llms-full.txt": fullText(version, sourcePages),
-    "llms-components.txt": componentsText(),
-    "llms-runtime.txt": [
-      "# SlexKit Runtime for LLMs",
-      "",
-      ...runtimePages.flatMap((page) => [`## ${page.title}`, "", `Raw Markdown: ${page.rawHref}`, "", page.body, "", "---", ""]),
-    ].join("\n").trim(),
-    "llms-capabilities.txt": capabilitiesText(),
-    "llms-toolhost.txt": [
-      "# SlexKit ToolHost for LLMs",
-      "",
-      "ToolHost is the structured-input path for confirmations, choices, and forms. Do not use it for ordinary display-only UI.",
-      "",
-      ...toolhostPages.flatMap((page) => [`## ${page.title}`, "", `Raw Markdown: ${page.rawHref}`, "", page.body, "", "---", ""]),
-    ].join("\n").trim(),
+    "llms.txt": index,
+    "llms-full.txt": full,
+    "llms-components.txt": `${componentText}\n\nDefault component count: ${components.filter((item) => item.availability === "default").length}\n\nCatalog component count: ${components.length}`,
+    "llms-runtime.txt": `# SlexKit HTML runtime\n\n${runtimePages}`,
+    "llms-capabilities.txt": "# Sandbox SDK\n\n`slex.root`, the scope `AbortSignal` at `slex.signal`, `slex.onDispose`, `slex.onSnapshot`, `slex.onRestore`, policy-gated `slex.api`, and artifact-local JSON `slex.shared.get/set/subscribe`. Each fence is a separate isolated document. The frame policy denies direct payload resource loads in supported browsers, while approved operations use the host bridge. This is not a universal egress firewall: iframe self-navigation can issue a request. SlexKit does not provide CPU preemption.",
+    "llms-toolhost.txt": pages.find((page) => page.id === "reference/toolhost")?.body ?? "# ToolHost\n",
     "llms-authoring.txt": authoringText(),
   };
-
-  const components = publicComponentSpecs.map((spec) => ({
-    type: spec.type,
-    title: spec.title,
-    category: spec.category,
-    status: spec.status,
-    state: spec.state,
-    since: spec.since,
-    summary: spec.summary,
-    docsHref: spec.docs.href,
-    rawHref: `/docs/components/${spec.type}.md`,
-    propCount: Object.keys(spec.props).length,
-    exampleCount: spec.examples.length,
-    props: spec.props,
-    children: spec.children,
-    examples: spec.examples.map((example) => ({
-      id: example.id,
-      title: example.title,
-      description: example.description,
-      source: example.source,
-    })),
-    hash: hashText(JSON.stringify(spec)),
-  }));
-
-  return {
-    files,
-    manifest: {
-      name: "slexkit-ai-docs",
-      packageName: "slexkit",
-      version,
-      generatedAt,
-      docs: docsFileMetadata(files),
-      pages,
-      expressionContext: slexkitExpressionContext,
-      stdlib: slexkitStdlibDocs,
-      capabilities: slexkitRuntimeCapabilities,
-      standardArtifacts: Object.fromEntries(
-        SLEX_STANDARD_ARTIFACTS.map((filename) => [
-          filename,
-          {
-            path: `/standard/${filename}`,
-            hash: hashStandardText(standard.files[filename]),
-          },
-        ]),
-      ) as SlexKitAiManifest["standardArtifacts"],
-      components,
-      sourceHashes: {
-        ...sourceHashes,
-        ...Object.fromEntries(publicComponentSpecs.map((spec) => [`component:${spec.type}`, hashText(JSON.stringify(spec))])),
-      },
-    },
-  };
+  return { files, manifest: {
+    name: "slexkit-ai-docs", packageName: "slexkit", version, generatedAt,
+    authoring: { sourceType: "html", fenceLanguage: "slex", legacyObjectSource: false },
+    docs: docsMetadata(files), pages,
+    sandboxSdk: ["root", "signal", "onDispose", "onSnapshot", "onRestore", "api", "shared.get", "shared.set", "shared.subscribe"],
+    staticPolicy: ["no external scripts/imports", "no event-handler attributes", "no embedded frames/plugins", "no executable URL schemes"],
+    standardArtifacts: Object.fromEntries(SLEX_STANDARD_ARTIFACTS.map((name) => [name, { path: `/standard/${name}`, hash: hashStandardText(standard.files[name]) }])) as SlexKitAiManifest["standardArtifacts"],
+    components,
+    sourceHashes: Object.fromEntries(pages.map((page) => [page.sourcePath, page.hash])),
+  } };
 }
 
-export async function generateAiDocs(options: { outputDirs?: string[]; generatedAt?: string } = {}): Promise<AiDocBuild> {
+export async function generateAiDocs(options: { outputDirs?: string[]; generatedAt?: string } = {}) {
   const build = await createAiDocs(options.generatedAt);
-  const outputDirs = options.outputDirs ?? [join(root, "dist", "ai"), join(root, "site-static")];
-
-  for (const dir of outputDirs) {
+  for (const dir of options.outputDirs ?? [join(root, "dist", "ai"), join(root, "site-static")]) {
     await mkdir(dir, { recursive: true });
-    await Promise.all([
-      ...aiDocFilenames.map((filename) => writeFile(join(dir, filename), `${build.files[filename].trim()}\n`, "utf-8")),
-      writeFile(join(dir, "slexkit-ai-manifest.json"), `${JSON.stringify(build.manifest, null, 2)}\n`, "utf-8"),
-    ]);
+    await Promise.all([...aiDocFilenames.map((name) => writeFile(join(dir, name), `${build.files[name].trim()}\n`, "utf8")), writeFile(join(dir, "slexkit-ai-manifest.json"), `${JSON.stringify(build.manifest, null, 2)}\n`, "utf8")]);
   }
-
   return build;
 }
 
-export async function writeAiRawMarkdown(outputDir: string, pages: readonly DocPage[]): Promise<void> {
+export async function writeAiRawMarkdown(outputDir: string, pages: readonly DocPage[]) {
   for (const page of pages) {
-    if (!page.rawHref.endsWith(".md") || page.rawHref.includes("..") || page.rawHref.includes("\\")) {
-      throw new Error(`Invalid raw Markdown href: ${page.rawHref}`);
-    }
-
     const target = join(outputDir, page.rawHref.replace(/^\/+/, ""));
     await mkdir(dirname(target), { recursive: true });
-    await writeFile(target, `${page.body.trim()}\n`, "utf-8");
+    await writeFile(target, `${page.body.trim()}\n`, "utf8");
   }
 }
 
-export function getComponentExamplesMarkdown(type?: string): string {
-  const specs = type ? componentSpecs.filter((spec) => spec.type === type) : publicComponentSpecs;
-  return specs.map(componentExamplesMarkdown).filter(Boolean).join("\n\n---\n\n");
+export function getComponentExamplesMarkdown(type?: string) {
+  return componentsForManifest().filter((item) => !type || item.type === type).map((item) => `## ${item.tagName}\n\n\`\`\`slex\n${item.examples[0].source}\n\`\`\``).join("\n\n");
 }
 
-if (import.meta.main) {
-  await generateAiDocs();
-}
+if (import.meta.main) await generateAiDocs();

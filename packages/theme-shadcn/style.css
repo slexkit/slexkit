@@ -17,15 +17,6 @@
 @property --un-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000;}
 @property --un-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000;}
 @property --un-shadow-color{syntax:"*";inherits:false;}
-@property --un-blur{syntax:"*";inherits:false;}
-@property --un-brightness{syntax:"*";inherits:false;}
-@property --un-contrast{syntax:"*";inherits:false;}
-@property --un-drop-shadow{syntax:"*";inherits:false;}
-@property --un-grayscale{syntax:"*";inherits:false;}
-@property --un-hue-rotate{syntax:"*";inherits:false;}
-@property --un-invert{syntax:"*";inherits:false;}
-@property --un-saturate{syntax:"*";inherits:false;}
-@property --un-sepia{syntax:"*";inherits:false;}
 @property --un-space-y-reverse{syntax:"*";inherits:false;initial-value:0;}
 @property --un-space-x-reverse{syntax:"*";inherits:false;initial-value:0;}
 /* layer: theme */
@@ -586,6 +577,7 @@ color-scheme: dark;
 .w-5{width:calc(var(--spacing) * 5);}
 .w-8{width:calc(var(--spacing) * 8);}
 .w-full{width:100%;}
+.block-1{block-size:calc(var(--spacing) * 1);}
 .inline{display:inline;}
 .block{display:block;}
 .inline-block{display:inline-block;}
@@ -624,7 +616,8 @@ color-scheme: dark;
 .focus\:ring-violet-400:focus{--un-ring-color:color-mix(in srgb, var(--colors-violet-400) var(--un-ring-opacity), transparent) /* oklch(70.2% 0.183 293.541) */;}
 .focus\:ring-yellow-400:focus{--un-ring-color:color-mix(in srgb, var(--colors-yellow-400) var(--un-ring-opacity), transparent) /* oklch(85.2% 0.199 91.936) */;}
 .shadow,
-.shadow-sm{--un-shadow:0 1px 3px 0 var(--un-shadow-color, rgb(0 0 0 / 0.1)),0 1px 2px -1px var(--un-shadow-color, rgb(0 0 0 / 0.1));box-shadow:var(--un-inset-shadow), var(--un-inset-ring-shadow), var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}
+.shadow-sm,
+.shadow\){--un-shadow:0 1px 3px 0 var(--un-shadow-color, rgb(0 0 0 / 0.1)),0 1px 2px -1px var(--un-shadow-color, rgb(0 0 0 / 0.1));box-shadow:var(--un-inset-shadow), var(--un-inset-ring-shadow), var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}
 .-rotate-135{rotate:-135deg;}
 .-rotate-45{rotate:-45deg;}
 .rotate-135{rotate:135deg;}
@@ -644,12 +637,10 @@ color-scheme: dark;
 .justify-between{justify-content:space-between;}
 .absolute{position:absolute;}
 .fixed{position:fixed;}
-.relative{position:relative;}
 .static{position:static;}
 .z-50{z-index:50;}
 .focus-within\:z-10:focus-within{z-index:10;}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0;}
-.blur{--un-blur:blur(8px);filter:var(--un-blur,) var(--un-brightness,) var(--un-contrast,) var(--un-grayscale,) var(--un-hue-rotate,) var(--un-invert,) var(--un-saturate,) var(--un-sepia,) var(--un-drop-shadow,);}
 .table{display:table;}
 .rtl\:space-x-reverse{
 [dir="rtl"] :where(&>:not(:last-child)){--un-space-x-reverse:1;}
@@ -869,29 +860,14 @@ color-scheme: dark;
 .focus\:ring-yellow-400:focus{--un-ring-color:color-mix(in oklab, var(--colors-yellow-400) var(--un-ring-opacity), transparent) /* oklch(85.2% 0.199 91.936) */;}
 }
 
+@font-face{font-display:block;font-family:KaTeX_AMS;font-style:normal;font-weight:400;src:url(fonts/KaTeX_AMS-Regular.woff2) format("woff2"),url(fonts/KaTeX_AMS-Regular.woff) format("woff"),url(fonts/KaTeX_AMS-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Caligraphic;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Caligraphic-Bold.woff2) format("woff2"),url(fonts/KaTeX_Caligraphic-Bold.woff) format("woff"),url(fonts/KaTeX_Caligraphic-Bold.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Caligraphic;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Caligraphic-Regular.woff2) format("woff2"),url(fonts/KaTeX_Caligraphic-Regular.woff) format("woff"),url(fonts/KaTeX_Caligraphic-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Fraktur;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Fraktur-Bold.woff2) format("woff2"),url(fonts/KaTeX_Fraktur-Bold.woff) format("woff"),url(fonts/KaTeX_Fraktur-Bold.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Fraktur;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Fraktur-Regular.woff2) format("woff2"),url(fonts/KaTeX_Fraktur-Regular.woff) format("woff"),url(fonts/KaTeX_Fraktur-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Main-Bold.woff2) format("woff2"),url(fonts/KaTeX_Main-Bold.woff) format("woff"),url(fonts/KaTeX_Main-Bold.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:italic;font-weight:700;src:url(fonts/KaTeX_Main-BoldItalic.woff2) format("woff2"),url(fonts/KaTeX_Main-BoldItalic.woff) format("woff"),url(fonts/KaTeX_Main-BoldItalic.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:italic;font-weight:400;src:url(fonts/KaTeX_Main-Italic.woff2) format("woff2"),url(fonts/KaTeX_Main-Italic.woff) format("woff"),url(fonts/KaTeX_Main-Italic.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Main-Regular.woff2) format("woff2"),url(fonts/KaTeX_Main-Regular.woff) format("woff"),url(fonts/KaTeX_Main-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Math;font-style:italic;font-weight:700;src:url(fonts/KaTeX_Math-BoldItalic.woff2) format("woff2"),url(fonts/KaTeX_Math-BoldItalic.woff) format("woff"),url(fonts/KaTeX_Math-BoldItalic.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Math;font-style:italic;font-weight:400;src:url(fonts/KaTeX_Math-Italic.woff2) format("woff2"),url(fonts/KaTeX_Math-Italic.woff) format("woff"),url(fonts/KaTeX_Math-Italic.ttf) format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:normal;font-weight:700;src:url(fonts/KaTeX_SansSerif-Bold.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Bold.woff) format("woff"),url(fonts/KaTeX_SansSerif-Bold.ttf) format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:italic;font-weight:400;src:url(fonts/KaTeX_SansSerif-Italic.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Italic.woff) format("woff"),url(fonts/KaTeX_SansSerif-Italic.ttf) format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:normal;font-weight:400;src:url(fonts/KaTeX_SansSerif-Regular.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Regular.woff) format("woff"),url(fonts/KaTeX_SansSerif-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Script;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Script-Regular.woff2) format("woff2"),url(fonts/KaTeX_Script-Regular.woff) format("woff"),url(fonts/KaTeX_Script-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size1;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size1-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size1-Regular.woff) format("woff"),url(fonts/KaTeX_Size1-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size2;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size2-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size2-Regular.woff) format("woff"),url(fonts/KaTeX_Size2-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size3;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size3-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size3-Regular.woff) format("woff"),url(fonts/KaTeX_Size3-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size4;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size4-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size4-Regular.woff) format("woff"),url(fonts/KaTeX_Size4-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Typewriter;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Typewriter-Regular.woff2) format("woff2"),url(fonts/KaTeX_Typewriter-Regular.woff) format("woff"),url(fonts/KaTeX_Typewriter-Regular.ttf) format("truetype")}.katex{font:normal 1.21em KaTeX_Main,Times New Roman,serif;line-height:1.2;position:relative;text-indent:0;text-rendering:auto}.katex *{-ms-high-contrast-adjust:none!important;border-color:currentColor}.katex .katex-version:after{content:"0.17.0"}.katex .katex-mathml{border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);height:1px;overflow:hidden;padding:0;position:absolute;width:1px}.katex .katex-html>.newline{display:block}.katex .base{position:relative;white-space:nowrap;width:-webkit-min-content;width:-moz-min-content;width:min-content}.katex .base,.katex .strut{display:inline-block}.katex .textbf{font-weight:700}.katex .textit{font-style:italic}.katex .textrm{font-family:KaTeX_Main}.katex .textsf{font-family:KaTeX_SansSerif}.katex .texttt{font-family:KaTeX_Typewriter}.katex .mathnormal{font-family:KaTeX_Math;font-style:italic}.katex .mathit{font-family:KaTeX_Main;font-style:italic}.katex .mathrm{font-style:normal}.katex .mathbf{font-family:KaTeX_Main;font-weight:700}.katex .boldsymbol{font-family:KaTeX_Math;font-style:italic;font-weight:700}.katex .amsrm,.katex .mathbb,.katex .textbb{font-family:KaTeX_AMS}.katex .mathcal{font-family:KaTeX_Caligraphic}.katex .mathfrak,.katex .textfrak{font-family:KaTeX_Fraktur}.katex .mathboldfrak,.katex .textboldfrak{font-family:KaTeX_Fraktur;font-weight:700}.katex .mathtt{font-family:KaTeX_Typewriter}.katex .mathscr,.katex .textscr{font-family:KaTeX_Script}.katex .mathsf,.katex .textsf{font-family:KaTeX_SansSerif}.katex .mathboldsf,.katex .textboldsf{font-family:KaTeX_SansSerif;font-weight:700}.katex .mathitsf,.katex .mathsfit,.katex .textitsf{font-family:KaTeX_SansSerif;font-style:italic}.katex .mainrm{font-family:KaTeX_Main;font-style:normal}.katex .vlist-t{border-collapse:collapse;display:inline-table;table-layout:fixed}.katex .vlist-r{display:table-row}.katex .vlist{display:table-cell;position:relative;vertical-align:bottom}.katex .vlist>span{display:block;height:0;position:relative}.katex .vlist>span>span{display:inline-block}.katex .vlist>span>.pstrut{overflow:hidden;width:0}.katex .vlist-t2{margin-right:-2px}.katex .vlist-s{display:table-cell;font-size:1px;min-width:2px;vertical-align:bottom;width:2px}.katex .vbox{align-items:baseline;display:inline-flex;flex-direction:column}.katex .hbox{width:100%}.katex .hbox,.katex .thinbox{display:inline-flex;flex-direction:row}.katex .thinbox{max-width:0;width:0}.katex .msupsub{text-align:left}.katex .mfrac>span>span{text-align:center}.katex .mfrac .frac-line{border-bottom-style:solid;display:inline-block;width:100%}.katex .hdashline,.katex .hline,.katex .mfrac .frac-line,.katex .overline .overline-line,.katex .rule,.katex .underline .underline-line{min-height:1px}.katex .mspace{display:inline-block}.katex .smash{display:inline;line-height:0}.katex .clap,.katex .llap,.katex .rlap{position:relative;width:0}.katex .clap>.inner,.katex .llap>.inner,.katex .rlap>.inner{position:absolute}.katex .clap>.fix,.katex .llap>.fix,.katex .rlap>.fix{display:inline-block}.katex .llap>.inner{right:0}.katex .clap>.inner,.katex .rlap>.inner{left:0}.katex .clap>.inner>span{margin-left:-50%;margin-right:50%}.katex .rule{border:0 solid;display:inline-block;position:relative}.katex .hline,.katex .overline .overline-line,.katex .underline .underline-line{border-bottom-style:solid;display:inline-block;width:100%}.katex .hdashline{border-bottom-style:dashed;display:inline-block;width:100%}.katex .sqrt>.root{margin-left:.2777777778em;margin-right:-.5555555556em}.katex .fontsize-ensurer.reset-size1.size1,.katex .sizing.reset-size1.size1{font-size:1em}.katex .fontsize-ensurer.reset-size1.size2,.katex .sizing.reset-size1.size2{font-size:1.2em}.katex .fontsize-ensurer.reset-size1.size3,.katex .sizing.reset-size1.size3{font-size:1.4em}.katex .fontsize-ensurer.reset-size1.size4,.katex .sizing.reset-size1.size4{font-size:1.6em}.katex .fontsize-ensurer.reset-size1.size5,.katex .sizing.reset-size1.size5{font-size:1.8em}.katex .fontsize-ensurer.reset-size1.size6,.katex .sizing.reset-size1.size6{font-size:2em}.katex .fontsize-ensurer.reset-size1.size7,.katex .sizing.reset-size1.size7{font-size:2.4em}.katex .fontsize-ensurer.reset-size1.size8,.katex .sizing.reset-size1.size8{font-size:2.88em}.katex .fontsize-ensurer.reset-size1.size9,.katex .sizing.reset-size1.size9{font-size:3.456em}.katex .fontsize-ensurer.reset-size1.size10,.katex .sizing.reset-size1.size10{font-size:4.148em}.katex .fontsize-ensurer.reset-size1.size11,.katex .sizing.reset-size1.size11{font-size:4.976em}.katex .fontsize-ensurer.reset-size2.size1,.katex .sizing.reset-size2.size1{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size2.size2,.katex .sizing.reset-size2.size2{font-size:1em}.katex .fontsize-ensurer.reset-size2.size3,.katex .sizing.reset-size2.size3{font-size:1.1666666667em}.katex .fontsize-ensurer.reset-size2.size4,.katex .sizing.reset-size2.size4{font-size:1.3333333333em}.katex .fontsize-ensurer.reset-size2.size5,.katex .sizing.reset-size2.size5{font-size:1.5em}.katex .fontsize-ensurer.reset-size2.size6,.katex .sizing.reset-size2.size6{font-size:1.6666666667em}.katex .fontsize-ensurer.reset-size2.size7,.katex .sizing.reset-size2.size7{font-size:2em}.katex .fontsize-ensurer.reset-size2.size8,.katex .sizing.reset-size2.size8{font-size:2.4em}.katex .fontsize-ensurer.reset-size2.size9,.katex .sizing.reset-size2.size9{font-size:2.88em}.katex .fontsize-ensurer.reset-size2.size10,.katex .sizing.reset-size2.size10{font-size:3.4566666667em}.katex .fontsize-ensurer.reset-size2.size11,.katex .sizing.reset-size2.size11{font-size:4.1466666667em}.katex .fontsize-ensurer.reset-size3.size1,.katex .sizing.reset-size3.size1{font-size:.7142857143em}.katex .fontsize-ensurer.reset-size3.size2,.katex .sizing.reset-size3.size2{font-size:.8571428571em}.katex .fontsize-ensurer.reset-size3.size3,.katex .sizing.reset-size3.size3{font-size:1em}.katex .fontsize-ensurer.reset-size3.size4,.katex .sizing.reset-size3.size4{font-size:1.1428571429em}.katex .fontsize-ensurer.reset-size3.size5,.katex .sizing.reset-size3.size5{font-size:1.2857142857em}.katex .fontsize-ensurer.reset-size3.size6,.katex .sizing.reset-size3.size6{font-size:1.4285714286em}.katex .fontsize-ensurer.reset-size3.size7,.katex .sizing.reset-size3.size7{font-size:1.7142857143em}.katex .fontsize-ensurer.reset-size3.size8,.katex .sizing.reset-size3.size8{font-size:2.0571428571em}.katex .fontsize-ensurer.reset-size3.size9,.katex .sizing.reset-size3.size9{font-size:2.4685714286em}.katex .fontsize-ensurer.reset-size3.size10,.katex .sizing.reset-size3.size10{font-size:2.9628571429em}.katex .fontsize-ensurer.reset-size3.size11,.katex .sizing.reset-size3.size11{font-size:3.5542857143em}.katex .fontsize-ensurer.reset-size4.size1,.katex .sizing.reset-size4.size1{font-size:.625em}.katex .fontsize-ensurer.reset-size4.size2,.katex .sizing.reset-size4.size2{font-size:.75em}.katex .fontsize-ensurer.reset-size4.size3,.katex .sizing.reset-size4.size3{font-size:.875em}.katex .fontsize-ensurer.reset-size4.size4,.katex .sizing.reset-size4.size4{font-size:1em}.katex .fontsize-ensurer.reset-size4.size5,.katex .sizing.reset-size4.size5{font-size:1.125em}.katex .fontsize-ensurer.reset-size4.size6,.katex .sizing.reset-size4.size6{font-size:1.25em}.katex .fontsize-ensurer.reset-size4.size7,.katex .sizing.reset-size4.size7{font-size:1.5em}.katex .fontsize-ensurer.reset-size4.size8,.katex .sizing.reset-size4.size8{font-size:1.8em}.katex .fontsize-ensurer.reset-size4.size9,.katex .sizing.reset-size4.size9{font-size:2.16em}.katex .fontsize-ensurer.reset-size4.size10,.katex .sizing.reset-size4.size10{font-size:2.5925em}.katex .fontsize-ensurer.reset-size4.size11,.katex .sizing.reset-size4.size11{font-size:3.11em}.katex .fontsize-ensurer.reset-size5.size1,.katex .sizing.reset-size5.size1{font-size:.5555555556em}.katex .fontsize-ensurer.reset-size5.size2,.katex .sizing.reset-size5.size2{font-size:.6666666667em}.katex .fontsize-ensurer.reset-size5.size3,.katex .sizing.reset-size5.size3{font-size:.7777777778em}.katex .fontsize-ensurer.reset-size5.size4,.katex .sizing.reset-size5.size4{font-size:.8888888889em}.katex .fontsize-ensurer.reset-size5.size5,.katex .sizing.reset-size5.size5{font-size:1em}.katex .fontsize-ensurer.reset-size5.size6,.katex .sizing.reset-size5.size6{font-size:1.1111111111em}.katex .fontsize-ensurer.reset-size5.size7,.katex .sizing.reset-size5.size7{font-size:1.3333333333em}.katex .fontsize-ensurer.reset-size5.size8,.katex .sizing.reset-size5.size8{font-size:1.6em}.katex .fontsize-ensurer.reset-size5.size9,.katex .sizing.reset-size5.size9{font-size:1.92em}.katex .fontsize-ensurer.reset-size5.size10,.katex .sizing.reset-size5.size10{font-size:2.3044444444em}.katex .fontsize-ensurer.reset-size5.size11,.katex .sizing.reset-size5.size11{font-size:2.7644444444em}.katex .fontsize-ensurer.reset-size6.size1,.katex .sizing.reset-size6.size1{font-size:.5em}.katex .fontsize-ensurer.reset-size6.size2,.katex .sizing.reset-size6.size2{font-size:.6em}.katex .fontsize-ensurer.reset-size6.size3,.katex .sizing.reset-size6.size3{font-size:.7em}.katex .fontsize-ensurer.reset-size6.size4,.katex .sizing.reset-size6.size4{font-size:.8em}.katex .fontsize-ensurer.reset-size6.size5,.katex .sizing.reset-size6.size5{font-size:.9em}.katex .fontsize-ensurer.reset-size6.size6,.katex .sizing.reset-size6.size6{font-size:1em}.katex .fontsize-ensurer.reset-size6.size7,.katex .sizing.reset-size6.size7{font-size:1.2em}.katex .fontsize-ensurer.reset-size6.size8,.katex .sizing.reset-size6.size8{font-size:1.44em}.katex .fontsize-ensurer.reset-size6.size9,.katex .sizing.reset-size6.size9{font-size:1.728em}.katex .fontsize-ensurer.reset-size6.size10,.katex .sizing.reset-size6.size10{font-size:2.074em}.katex .fontsize-ensurer.reset-size6.size11,.katex .sizing.reset-size6.size11{font-size:2.488em}.katex .fontsize-ensurer.reset-size7.size1,.katex .sizing.reset-size7.size1{font-size:.4166666667em}.katex .fontsize-ensurer.reset-size7.size2,.katex .sizing.reset-size7.size2{font-size:.5em}.katex .fontsize-ensurer.reset-size7.size3,.katex .sizing.reset-size7.size3{font-size:.5833333333em}.katex .fontsize-ensurer.reset-size7.size4,.katex .sizing.reset-size7.size4{font-size:.6666666667em}.katex .fontsize-ensurer.reset-size7.size5,.katex .sizing.reset-size7.size5{font-size:.75em}.katex .fontsize-ensurer.reset-size7.size6,.katex .sizing.reset-size7.size6{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size7.size7,.katex .sizing.reset-size7.size7{font-size:1em}.katex .fontsize-ensurer.reset-size7.size8,.katex .sizing.reset-size7.size8{font-size:1.2em}.katex .fontsize-ensurer.reset-size7.size9,.katex .sizing.reset-size7.size9{font-size:1.44em}.katex .fontsize-ensurer.reset-size7.size10,.katex .sizing.reset-size7.size10{font-size:1.7283333333em}.katex .fontsize-ensurer.reset-size7.size11,.katex .sizing.reset-size7.size11{font-size:2.0733333333em}.katex .fontsize-ensurer.reset-size8.size1,.katex .sizing.reset-size8.size1{font-size:.3472222222em}.katex .fontsize-ensurer.reset-size8.size2,.katex .sizing.reset-size8.size2{font-size:.4166666667em}.katex .fontsize-ensurer.reset-size8.size3,.katex .sizing.reset-size8.size3{font-size:.4861111111em}.katex .fontsize-ensurer.reset-size8.size4,.katex .sizing.reset-size8.size4{font-size:.5555555556em}.katex .fontsize-ensurer.reset-size8.size5,.katex .sizing.reset-size8.size5{font-size:.625em}.katex .fontsize-ensurer.reset-size8.size6,.katex .sizing.reset-size8.size6{font-size:.6944444444em}.katex .fontsize-ensurer.reset-size8.size7,.katex .sizing.reset-size8.size7{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size8.size8,.katex .sizing.reset-size8.size8{font-size:1em}.katex .fontsize-ensurer.reset-size8.size9,.katex .sizing.reset-size8.size9{font-size:1.2em}.katex .fontsize-ensurer.reset-size8.size10,.katex .sizing.reset-size8.size10{font-size:1.4402777778em}.katex .fontsize-ensurer.reset-size8.size11,.katex .sizing.reset-size8.size11{font-size:1.7277777778em}.katex .fontsize-ensurer.reset-size9.size1,.katex .sizing.reset-size9.size1{font-size:.2893518519em}.katex .fontsize-ensurer.reset-size9.size2,.katex .sizing.reset-size9.size2{font-size:.3472222222em}.katex .fontsize-ensurer.reset-size9.size3,.katex .sizing.reset-size9.size3{font-size:.4050925926em}.katex .fontsize-ensurer.reset-size9.size4,.katex .sizing.reset-size9.size4{font-size:.462962963em}.katex .fontsize-ensurer.reset-size9.size5,.katex .sizing.reset-size9.size5{font-size:.5208333333em}.katex .fontsize-ensurer.reset-size9.size6,.katex .sizing.reset-size9.size6{font-size:.5787037037em}.katex .fontsize-ensurer.reset-size9.size7,.katex .sizing.reset-size9.size7{font-size:.6944444444em}.katex .fontsize-ensurer.reset-size9.size8,.katex .sizing.reset-size9.size8{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size9.size9,.katex .sizing.reset-size9.size9{font-size:1em}.katex .fontsize-ensurer.reset-size9.size10,.katex .sizing.reset-size9.size10{font-size:1.2002314815em}.katex .fontsize-ensurer.reset-size9.size11,.katex .sizing.reset-size9.size11{font-size:1.4398148148em}.katex .fontsize-ensurer.reset-size10.size1,.katex .sizing.reset-size10.size1{font-size:.2410800386em}.katex .fontsize-ensurer.reset-size10.size2,.katex .sizing.reset-size10.size2{font-size:.2892960463em}.katex .fontsize-ensurer.reset-size10.size3,.katex .sizing.reset-size10.size3{font-size:.337512054em}.katex .fontsize-ensurer.reset-size10.size4,.katex .sizing.reset-size10.size4{font-size:.3857280617em}.katex .fontsize-ensurer.reset-size10.size5,.katex .sizing.reset-size10.size5{font-size:.4339440694em}.katex .fontsize-ensurer.reset-size10.size6,.katex .sizing.reset-size10.size6{font-size:.4821600771em}.katex .fontsize-ensurer.reset-size10.size7,.katex .sizing.reset-size10.size7{font-size:.5785920926em}.katex .fontsize-ensurer.reset-size10.size8,.katex .sizing.reset-size10.size8{font-size:.6943105111em}.katex .fontsize-ensurer.reset-size10.size9,.katex .sizing.reset-size10.size9{font-size:.8331726133em}.katex .fontsize-ensurer.reset-size10.size10,.katex .sizing.reset-size10.size10{font-size:1em}.katex .fontsize-ensurer.reset-size10.size11,.katex .sizing.reset-size10.size11{font-size:1.1996142719em}.katex .fontsize-ensurer.reset-size11.size1,.katex .sizing.reset-size11.size1{font-size:.2009646302em}.katex .fontsize-ensurer.reset-size11.size2,.katex .sizing.reset-size11.size2{font-size:.2411575563em}.katex .fontsize-ensurer.reset-size11.size3,.katex .sizing.reset-size11.size3{font-size:.2813504823em}.katex .fontsize-ensurer.reset-size11.size4,.katex .sizing.reset-size11.size4{font-size:.3215434084em}.katex .fontsize-ensurer.reset-size11.size5,.katex .sizing.reset-size11.size5{font-size:.3617363344em}.katex .fontsize-ensurer.reset-size11.size6,.katex .sizing.reset-size11.size6{font-size:.4019292605em}.katex .fontsize-ensurer.reset-size11.size7,.katex .sizing.reset-size11.size7{font-size:.4823151125em}.katex .fontsize-ensurer.reset-size11.size8,.katex .sizing.reset-size11.size8{font-size:.578778135em}.katex .fontsize-ensurer.reset-size11.size9,.katex .sizing.reset-size11.size9{font-size:.6945337621em}.katex .fontsize-ensurer.reset-size11.size10,.katex .sizing.reset-size11.size10{font-size:.8336012862em}.katex .fontsize-ensurer.reset-size11.size11,.katex .sizing.reset-size11.size11{font-size:1em}.katex .delimsizing.size1{font-family:KaTeX_Size1}.katex .delimsizing.size2{font-family:KaTeX_Size2}.katex .delimsizing.size3{font-family:KaTeX_Size3}.katex .delimsizing.size4{font-family:KaTeX_Size4}.katex .delimsizing.mult .delim-size1>span{font-family:KaTeX_Size1}.katex .delimsizing.mult .delim-size4>span{font-family:KaTeX_Size4}.katex .nulldelimiter{display:inline-block;width:.12em}.katex .delimcenter,.katex .op-symbol{position:relative}.katex .op-symbol.small-op{font-family:KaTeX_Size1}.katex .op-symbol.large-op{font-family:KaTeX_Size2}.katex .accent>.vlist-t,.katex .op-limits>.vlist-t{text-align:center}.katex .accent .accent-body{position:relative}.katex .accent .accent-body:not(.accent-full){width:0}.katex .overlay{display:block}.katex .mtable .vertical-separator{display:inline-block;min-width:1px}.katex .mtable .arraycolsep{display:inline-block}.katex .mtable .col-align-c>.vlist-t{text-align:center}.katex .mtable .col-align-l>.vlist-t{text-align:left}.katex .mtable .col-align-r>.vlist-t{text-align:right}.katex .svg-align{text-align:left}.katex svg{fill:currentColor;stroke:currentColor;display:block;height:inherit;position:absolute;width:100%}.katex svg path{stroke:none}.katex svg{fill-rule:nonzero;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1}.katex img{border-style:none;max-height:none;max-width:none;min-height:0;min-width:0}.katex .stretchy{display:block;overflow:hidden;position:relative;width:100%}.katex .stretchy:after,.katex .stretchy:before{content:""}.katex .hide-tail{overflow:hidden;position:relative;width:100%}.katex .halfarrow-left{left:0;overflow:hidden;position:absolute;width:50.2%}.katex .halfarrow-right{overflow:hidden;position:absolute;right:0;width:50.2%}.katex .brace-left{left:0;overflow:hidden;position:absolute;width:25.1%}.katex .brace-center{left:25%;overflow:hidden;position:absolute;width:50%}.katex .brace-right{overflow:hidden;position:absolute;right:0;width:25.1%}.katex .x-arrow-pad{padding:0 .5em}.katex .cd-arrow-pad{padding:0 .55556em 0 .27778em}.katex .mover,.katex .munder,.katex .x-arrow{text-align:center}.katex .boxpad{padding:0 .3em}.katex .fbox,.katex .fcolorbox{border:.04em solid;box-sizing:border-box}.katex .cancel-pad{padding:0 .2em}.katex .cancel-lap{margin-left:-.2em;margin-right:-.2em}.katex .sout{border-bottom-style:solid;border-bottom-width:.08em}.katex .angl{border-right:.049em solid;border-top:.049em solid;box-sizing:border-box;margin-right:.03889em}.katex .anglpad{padding:0 .03889em}.katex .eqn-num:before{content:"(" counter(katexEqnNo) ")";counter-increment:katexEqnNo}.katex .mml-eqn-num:before{content:"(" counter(mmlEqnNo) ")";counter-increment:mmlEqnNo}.katex .mtr-glue{width:50%}.katex .cd-vert-arrow{display:inline-block;position:relative}.katex .cd-label-left{display:inline-block;position:absolute;right:calc(50% + .3em);text-align:left}.katex .cd-label-right{display:inline-block;left:calc(50% + .3em);position:absolute;text-align:right}.katex-display{display:block;margin:1em 0;text-align:center}.katex-display>.katex{display:block;text-align:center;white-space:nowrap}.katex-display>.katex>.katex-html{display:block;position:relative}.katex-display>.katex>.katex-html>.tag{position:absolute;right:0}.katex-display.leqno>.katex>.katex-html>.tag{left:0;right:auto}.katex-display.fleqn>.katex{padding-left:2em;text-align:left}body{counter-reset:katexEqnNo mmlEqnNo}
+
+
 /* layout.css */
 
 .slexkit-root {
-  --font-sans:
-    "Geist", "Geist Sans", "Noto Sans SC", "Noto Sans", ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono:
-    "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code",
-    Consolas, monospace;
-  font-family: var(
-    --font-sans,
-    "Geist",
-    "Geist Sans",
-    "Noto Sans SC",
-    "Noto Sans",
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif
-  );
-  color: var(--foreground);
+  font-family: var(--slex-font-sans);
+  color: var(--slex-foreground, var(--foreground));
   background: transparent;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -919,10 +895,10 @@ color-scheme: dark;
   justify-content: center;
   min-height: 28px;
   padding: 0 0.625rem;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--secondary);
-  color: var(--secondary-foreground);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-secondary, var(--secondary));
+  color: var(--slex-secondary-foreground, var(--secondary-foreground));
   font-family: inherit;
   font-size: 0.75rem;
   font-weight: 500;
@@ -934,13 +910,13 @@ color-scheme: dark;
 }
 
 .slexkit-source-button:hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
-  border-color: var(--border);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
+  border-color: var(--slex-border, var(--border));
 }
 
 .slexkit-source-button:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 
@@ -961,11 +937,11 @@ color-scheme: dark;
 }
 
 .slex-layout .slex-text {
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-layout .slex-text--muted {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-card {
@@ -974,43 +950,44 @@ color-scheme: dark;
   width: 100%;
   max-width: none;
   min-width: 0;
-  background: var(--card);
-  color: var(--card-foreground);
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 4px);
+  background: var(--slex-card, var(--card));
+  color: var(--slex-card-foreground, var(--card-foreground));
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: calc(var(--slex-radius) + 4px);
   padding: 1.25rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--slex-shadow-sm);
   transition:
     box-shadow 150ms ease,
     border-color 150ms ease;
 }
 
 .slex-card:hover {
-  border-color: var(--border);
-  box-shadow: var(--shadow-md);
+  border-color: var(--slex-border, var(--border));
+  box-shadow: var(--slex-shadow-md);
 }
 
 .slex-card[data-variant="tool"] {
-  border-color: color-mix(in oklab, var(--border) 60%, transparent);
-  border-radius: calc(var(--radius) + 1px);
-  background: var(--card);
+  border-color: color-mix(in oklab, var(--slex-border, var(--border)) 60%, transparent);
+  border-radius: calc(var(--slex-radius) + 1px);
+  background: var(--slex-card, var(--card));
   padding: 0.875rem;
   box-shadow: none;
 }
 
 .slex-card[data-variant="tool"]:hover {
-  border-color: color-mix(in oklab, var(--border) 60%, transparent);
+  border-color: color-mix(in oklab, var(--slex-border, var(--border)) 60%, transparent);
   box-shadow: none;
 }
 
 .slex-card-title {
+  overflow-wrap: anywhere;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   margin: 0 0 1rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
-  color: var(--card-foreground);
+  border-bottom: 1px solid var(--slex-border, var(--border));
+  color: var(--slex-card-foreground, var(--card-foreground));
   font-size: 1.125rem;
   font-weight: 600;
   line-height: 1.25;
@@ -1041,7 +1018,7 @@ color-scheme: dark;
 
 .slex-card[data-variant="tool"] .slex-submit-bar {
   margin-top: 0.625rem;
-  border-top-color: color-mix(in oklab, var(--border) 58%, transparent);
+  border-top-color: color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
   padding-top: 0.75rem;
 }
 
@@ -1077,7 +1054,7 @@ color-scheme: dark;
   gap: 0.625rem;
   margin-top: 0.625rem;
   padding-top: 0.75rem;
-  border-top: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  border-top: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
 }
 
 .slex-row--balanced-tiles {
@@ -1244,9 +1221,24 @@ color-scheme: dark;
 /* theme.css */
 
 .slexkit-root {
-  color: var(--foreground, #111827);
-  background: transparent;
-  font-family: var(
+  /* Shadow trees cannot see :root declarations from their own stylesheet.
+   * Resolve optional design tokens once on the mount while preserving values
+   * inherited from a host document. */
+  --slex-radius: var(--radius, 0.5rem);
+  --slex-shadow-sm: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+  --slex-shadow-md: var(
+    --shadow-md,
+    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)
+  );
+  --slex-shadow-lg: var(
+    --shadow-lg,
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)
+  );
+  --slex-shadow-xl: var(
+    --shadow-xl,
+    0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)
+  );
+  --slex-font-sans: var(
     --font-sans,
     "Geist",
     "Geist Sans",
@@ -1259,20 +1251,124 @@ color-scheme: dark;
     "Segoe UI",
     sans-serif
   );
+  --slex-font-mono: var(
+    --font-mono,
+    "Geist Mono",
+    "Noto Sans Mono",
+    "Noto Sans Mono CJK SC",
+    "SFMono-Regular",
+    "Cascadia Code",
+    Consolas,
+    monospace
+  );
+  color: var(--slex-foreground, var(--foreground, #111827));
+  background: transparent;
+  font-family: var(--slex-font-sans);
 }
 
 .slexkit-theme-host-shadcn {
-  --slex-primary-50: color-mix(in srgb, var(--primary, #4A90E2) 8%, white);
-  --slex-primary-100: color-mix(in srgb, var(--primary, #4A90E2) 14%, white);
-  --slex-primary-200: color-mix(in srgb, var(--primary, #4A90E2) 25%, white);
-  --slex-primary-300: color-mix(in srgb, var(--primary, #4A90E2) 38%, white);
-  --slex-primary-400: color-mix(in srgb, var(--primary, #4A90E2) 62%, white);
-  --slex-primary-500: var(--primary, #4A90E2);
-  --slex-primary-600: color-mix(in srgb, var(--primary, #4A90E2) 82%, black);
-  --slex-primary-700: color-mix(in srgb, var(--primary, #4A90E2) 74%, black);
-  --slex-primary-800: color-mix(in srgb, var(--primary, #4A90E2) 65%, black);
-  --slex-primary-900: color-mix(in srgb, var(--primary, #4A90E2) 56%, black);
-  --slex-primary-950: color-mix(in srgb, var(--primary, #4A90E2) 44%, black);
+  /*
+   * Resolve host values into private aliases instead of declaring shadcn
+   * variables on the root. This preserves inherited host tokens while giving
+   * an explicitly selected partial host theme a complete readable palette.
+   */
+  --slex-background: var(--background, #fff);
+  --slex-foreground: var(--foreground, oklch(14.1% 0.005 285.823));
+  --slex-card: var(--card, var(--slex-background));
+  --slex-card-foreground: var(--card-foreground, var(--slex-foreground));
+  --slex-popover: var(--popover, var(--slex-card));
+  --slex-popover-foreground: var(--popover-foreground, var(--slex-card-foreground));
+  --slex-primary: var(--primary, oklch(21% 0.006 285.885));
+  --slex-primary-foreground: var(--primary-foreground, oklch(98.5% 0 0));
+  --slex-secondary: var(--secondary, oklch(96.7% 0.001 286.375));
+  --slex-secondary-foreground: var(--secondary-foreground, oklch(21% 0.006 285.885));
+  --slex-muted: var(--muted, oklch(96.7% 0.001 286.375));
+  --slex-muted-foreground: var(--muted-foreground, oklch(55.2% 0.016 285.938));
+  --slex-accent: var(--accent, oklch(96.7% 0.001 286.375));
+  --slex-accent-foreground: var(--accent-foreground, oklch(21% 0.006 285.885));
+  --slex-info: var(--info, oklch(48.8% 0.243 264.376));
+  --slex-info-foreground: var(--info-foreground, #fff);
+  --slex-success: var(--success, oklch(59.6% 0.145 163.225));
+  --slex-success-foreground: var(--success-foreground, #fff);
+  --slex-warning: var(--warning, oklch(66.6% 0.179 58.318));
+  --slex-warning-foreground: var(--warning-foreground, oklch(14.1% 0.005 285.823));
+  --slex-destructive: var(--destructive, oklch(57.7% 0.245 27.325));
+  --slex-destructive-foreground: var(--destructive-foreground, oklch(98.5% 0 0));
+  --slex-border: var(--border, oklch(92% 0.004 286.32));
+  --slex-input: var(--input, oklch(92% 0.004 286.32));
+  --slex-ring: var(--ring, oklch(14.1% 0.005 285.823));
+  --slex-primary-50: oklch(98.5% 0 0);
+  --slex-primary-100: oklch(96.7% 0.001 286.375);
+  --slex-primary-200: oklch(92% 0.004 286.32);
+  --slex-primary-300: oklch(87.1% 0.006 286.286);
+  --slex-primary-400: oklch(70.5% 0.015 286.067);
+  --slex-primary-500: oklch(55.2% 0.016 285.938);
+  --slex-primary-600: oklch(44.2% 0.017 285.786);
+  --slex-primary-700: oklch(37% 0.013 285.805);
+  --slex-primary-800: oklch(27.4% 0.006 286.033);
+  --slex-primary-900: oklch(21% 0.006 285.885);
+  --slex-primary-950: oklch(14.1% 0.005 285.823);
+}
+
+.dark .slexkit-theme-host-shadcn,
+[data-theme="dark"] .slexkit-theme-host-shadcn,
+.slexkit-theme-host-shadcn.dark {
+  --slex-background: var(--background, oklch(14.1% 0.005 285.823));
+  --slex-foreground: var(--foreground, oklch(98.5% 0 0));
+  --slex-card: var(--card, oklch(21% 0.006 285.885));
+  --slex-card-foreground: var(--card-foreground, oklch(98.5% 0 0));
+  --slex-popover: var(--popover, oklch(21% 0.006 285.885));
+  --slex-popover-foreground: var(--popover-foreground, oklch(98.5% 0 0));
+  --slex-primary: var(--primary, oklch(98.5% 0 0));
+  --slex-primary-foreground: var(--primary-foreground, oklch(14.1% 0.005 285.823));
+  --slex-secondary: var(--secondary, oklch(27.4% 0.006 286.033));
+  --slex-secondary-foreground: var(--secondary-foreground, oklch(98.5% 0 0));
+  --slex-muted: var(--muted, oklch(27.4% 0.006 286.033));
+  --slex-muted-foreground: var(--muted-foreground, oklch(70.5% 0.015 286.067));
+  --slex-accent: var(--accent, oklch(27.4% 0.006 286.033));
+  --slex-accent-foreground: var(--accent-foreground, oklch(98.5% 0 0));
+  --slex-info: var(--info, oklch(62.3% 0.214 259.815));
+  --slex-info-foreground: var(--info-foreground, oklch(14.1% 0.005 285.823));
+  --slex-success: var(--success, oklch(76.5% 0.177 163.223));
+  --slex-success-foreground: var(--success-foreground, oklch(14.1% 0.005 285.823));
+  --slex-warning: var(--warning, oklch(82.8% 0.189 84.429));
+  --slex-warning-foreground: var(--warning-foreground, oklch(14.1% 0.005 285.823));
+  --slex-destructive: var(--destructive, oklch(70.4% 0.191 22.216));
+  --slex-destructive-foreground: var(--destructive-foreground, oklch(14.1% 0.005 285.823));
+  --slex-border: var(--border, oklch(27.4% 0.006 286.033));
+  --slex-input: var(--input, oklch(37% 0.013 285.805));
+  --slex-ring: var(--ring, oklch(87.1% 0.006 286.286));
+}
+
+/* Incomplete color pairs use one coherent fallback palette. Mixing a host
+ * background with an unrelated foreground can make controls unreadable. */
+.slexkit-theme-host-shadcn[data-slex-incomplete-palette] {
+  --slex-background: #fff; --slex-foreground: oklch(14.1% 0.005 285.823);
+  --slex-card: #fff; --slex-card-foreground: oklch(14.1% 0.005 285.823);
+  --slex-popover: #fff; --slex-popover-foreground: oklch(14.1% 0.005 285.823);
+  --slex-primary: oklch(21% 0.006 285.885); --slex-primary-foreground: oklch(98.5% 0 0);
+  --slex-secondary: oklch(96.7% 0.001 286.375); --slex-secondary-foreground: oklch(21% 0.006 285.885);
+  --slex-muted: oklch(96.7% 0.001 286.375); --slex-muted-foreground: oklch(55.2% 0.016 285.938);
+  --slex-accent: oklch(96.7% 0.001 286.375); --slex-accent-foreground: oklch(21% 0.006 285.885);
+  --slex-info: oklch(48.8% 0.243 264.376); --slex-info-foreground: #fff;
+  --slex-success: oklch(59.6% 0.145 163.225); --slex-success-foreground: #fff;
+  --slex-warning: oklch(66.6% 0.179 58.318); --slex-warning-foreground: oklch(14.1% 0.005 285.823);
+  --slex-destructive: oklch(57.7% 0.245 27.325); --slex-destructive-foreground: oklch(98.5% 0 0);
+}
+.dark .slexkit-theme-host-shadcn[data-slex-incomplete-palette],
+[data-theme="dark"] .slexkit-theme-host-shadcn[data-slex-incomplete-palette],
+.slexkit-theme-host-shadcn.dark[data-slex-incomplete-palette] {
+  --slex-background: oklch(14.1% 0.005 285.823); --slex-foreground: oklch(98.5% 0 0);
+  --slex-card: oklch(21% 0.006 285.885); --slex-card-foreground: oklch(98.5% 0 0);
+  --slex-popover: oklch(21% 0.006 285.885); --slex-popover-foreground: oklch(98.5% 0 0);
+  --slex-primary: oklch(98.5% 0 0); --slex-primary-foreground: oklch(14.1% 0.005 285.823);
+  --slex-secondary: oklch(27.4% 0.006 286.033); --slex-secondary-foreground: oklch(98.5% 0 0);
+  --slex-muted: oklch(27.4% 0.006 286.033); --slex-muted-foreground: oklch(70.5% 0.015 286.067);
+  --slex-accent: oklch(27.4% 0.006 286.033); --slex-accent-foreground: oklch(98.5% 0 0);
+  --slex-info: oklch(62.3% 0.214 259.815); --slex-info-foreground: oklch(14.1% 0.005 285.823);
+  --slex-success: oklch(76.5% 0.177 163.223); --slex-success-foreground: oklch(14.1% 0.005 285.823);
+  --slex-warning: oklch(82.8% 0.189 84.429); --slex-warning-foreground: oklch(14.1% 0.005 285.823);
+  --slex-destructive: oklch(70.4% 0.191 22.216); --slex-destructive-foreground: oklch(14.1% 0.005 285.823);
 }
 
 /* tooling.css */
@@ -1281,10 +1377,10 @@ color-scheme: dark;
   --slex-playground-toolbar-height: var(--slex-control-height, 2.25rem);
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in oklab, var(--border) 64%, transparent);
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 64%, transparent);
   border-radius: 1rem;
-  background: var(--background);
-  color: var(--card-foreground);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-card-foreground, var(--card-foreground));
   box-shadow: none;
 }
 
@@ -1306,7 +1402,7 @@ color-scheme: dark;
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.25rem;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   line-height: 1.25rem;
 }
@@ -1316,9 +1412,9 @@ color-scheme: dark;
   align-items: center;
   min-height: 1.25rem;
   padding: 0 0.375rem;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--muted);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-muted, var(--muted));
   font-size: 0.75rem;
   font-weight: 500;
 }
@@ -1336,8 +1432,8 @@ color-scheme: dark;
   height: var(--slex-playground-toolbar-height);
   min-height: var(--slex-playground-toolbar-height);
   padding: 0;
-  border-bottom: 1px solid color-mix(in oklab, var(--border) 46%, transparent);
-  background: color-mix(in oklab, var(--muted) 22%, var(--background));
+  border-bottom: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 46%, transparent);
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 22%, var(--slex-background, var(--background)));
   pointer-events: none;
   backdrop-filter: blur(12px);
   overflow: visible;
@@ -1394,13 +1490,13 @@ color-scheme: dark;
   min-height: var(--slex-playground-toolbar-height);
   height: var(--slex-playground-toolbar-height);
   padding: 0;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-playground-tabs .slex-tabs-trigger:hover:not([data-disabled]),
 .slex-playground-tabs .slex-tabs-trigger.slex-tabs-trigger--selected {
-  background: color-mix(in oklab, var(--muted) 32%, transparent);
-  color: var(--foreground);
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 32%, transparent);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-playground-tabs .slex-tabs-trigger-icon {
@@ -1409,7 +1505,7 @@ color-scheme: dark;
 }
 
 .slex-playground-editor:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 
@@ -1419,19 +1515,19 @@ color-scheme: dark;
   border: 0;
   border-radius: 0;
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   box-shadow: none;
 }
 
 .slex-playground-actions .slex-button:hover {
-  background: color-mix(in oklab, var(--muted) 44%, var(--background));
-  color: var(--foreground);
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 44%, var(--slex-background, var(--background)));
+  color: var(--slex-foreground, var(--foreground));
   transform: none;
   box-shadow: none;
 }
 
 .slex-playground-actions {
-  border-left: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  border-left: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
 }
 
 .slex-playground--workbench {
@@ -1479,8 +1575,8 @@ color-scheme: dark;
   scrollbar-gutter: stable both-edges;
   min-height: var(--slex-playground-min-height, 16rem);
   padding: calc(var(--slex-playground-toolbar-height) + 1.25rem) 2.25rem 2.25rem;
-  background-color: var(--background);
-  background-image: radial-gradient(color-mix(in oklab, var(--border) 58%, transparent) 1px, transparent 1px);
+  background-color: var(--slex-background, var(--background));
+  background-image: radial-gradient(color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent) 1px, transparent 1px);
   background-position: 0 0;
   background-size: 18px 18px;
 }
@@ -1540,7 +1636,7 @@ color-scheme: dark;
   min-width: 0;
   min-height: var(--slex-playground-min-height, 16rem);
   overflow: hidden;
-  background: var(--background);
+  background: var(--slex-background, var(--background));
 }
 
 .slex-playground-code {
@@ -1555,9 +1651,9 @@ color-scheme: dark;
   box-sizing: border-box;
   width: 100%;
   overflow: auto;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
+  font-family: var(--slex-font-mono);
   font-size: 0.8125rem;
   line-height: 1.55;
 }
@@ -1571,14 +1667,14 @@ color-scheme: dark;
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   min-height: var(--slex-playground-min-height, 16rem);
-  background: var(--background);
+  background: var(--slex-background, var(--background));
 }
 
 .slex-playground-live-code {
   min-width: 0;
   min-height: var(--slex-playground-min-height, 16rem);
   overflow: hidden;
-  border-right: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  border-right: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
 }
 
 .slex-playground-live-preview {
@@ -1588,8 +1684,8 @@ color-scheme: dark;
   min-height: var(--slex-playground-min-height, 16rem);
   overflow: auto;
   padding: calc(var(--slex-playground-toolbar-height) + 1.25rem) 1.5rem 1.5rem;
-  background-color: var(--background);
-  background-image: radial-gradient(color-mix(in oklab, var(--border) 52%, transparent) 1px, transparent 1px);
+  background-color: var(--slex-background, var(--background));
+  background-image: radial-gradient(color-mix(in oklab, var(--slex-border, var(--border)) 52%, transparent) 1px, transparent 1px);
   background-position: 0 0;
   background-size: 18px 18px;
 }
@@ -1600,24 +1696,24 @@ color-scheme: dark;
 
 .slex-playground-live-pane.vertical .slex-playground-live-code {
   border-right: 0;
-  border-bottom: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
 }
 
 .slex-playground-splitter {
   position: relative;
-  background: color-mix(in oklab, var(--border) 76%, transparent);
+  background: color-mix(in oklab, var(--slex-border, var(--border)) 76%, transparent);
   touch-action: none;
   transition: background-color 120ms ease;
 }
 
 .slex-playground-splitter:focus-visible {
-  background: color-mix(in oklab, var(--ring) 28%, var(--border));
-  outline: 2px solid var(--ring);
+  background: color-mix(in oklab, var(--slex-ring, var(--ring)) 28%, var(--slex-border, var(--border)));
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: -2px;
 }
 
 .slex-playground-splitter.dragging {
-  background: var(--ring);
+  background: var(--slex-ring, var(--ring));
   outline: none;
 }
 
@@ -1639,9 +1735,9 @@ color-scheme: dark;
 
 .slex-playground-code-line-number {
   user-select: none;
-  border-right: 1px solid var(--border);
-  background: var(--muted);
-  color: var(--muted-foreground);
+  border-right: 1px solid var(--slex-border, var(--border));
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   padding: 0 0.75rem;
   text-align: right;
   font-variant-numeric: tabular-nums;
@@ -1661,7 +1757,7 @@ color-scheme: dark;
 
 .slex-playground-code-scroll .hljs {
   background: transparent;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-playground-code-scroll pre,
@@ -1674,40 +1770,40 @@ color-scheme: dark;
 }
 
 .slex-playground-editor {
-  --slex-code-keyword: color-mix(in oklab, var(--info) 82%, var(--foreground));
-  --slex-code-name: color-mix(in oklab, var(--foreground) 84%, var(--muted-foreground));
-  --slex-code-string: color-mix(in oklab, var(--success) 82%, var(--foreground));
-  --slex-code-literal: color-mix(in oklab, var(--warning) 82%, var(--foreground));
-  --slex-code-function: color-mix(in oklab, var(--info) 64%, var(--foreground));
-  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
-  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 76%, transparent);
-  --slex-code-heading: color-mix(in oklab, var(--foreground) 92%, var(--info));
-  --slex-code-link: color-mix(in oklab, var(--info) 86%, var(--foreground));
+  --slex-code-keyword: color-mix(in oklab, var(--slex-info, var(--info)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-name: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 84%, var(--slex-muted-foreground, var(--muted-foreground)));
+  --slex-code-string: color-mix(in oklab, var(--slex-success, var(--success)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-literal: color-mix(in oklab, var(--slex-warning, var(--warning)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-function: color-mix(in oklab, var(--slex-info, var(--info)) 64%, var(--slex-foreground, var(--foreground)));
+  --slex-code-punctuation: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-comment: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 76%, transparent);
+  --slex-code-heading: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 92%, var(--slex-info, var(--info)));
+  --slex-code-link: color-mix(in oklab, var(--slex-info, var(--info)) 86%, var(--slex-foreground, var(--foreground)));
   display: block;
   box-sizing: border-box;
   width: 100%;
   min-height: var(--slex-playground-min-height, 16rem);
   resize: none;
   border: 0;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
   padding: 0;
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-family: var(--slex-font-mono);
   font-size: 0.75rem;
   line-height: 1.5;
   outline: none;
 }
 
 .dark .slex-playground-editor {
-  --slex-code-keyword: color-mix(in oklab, var(--info) 72%, var(--foreground));
-  --slex-code-name: color-mix(in oklab, var(--foreground) 88%, var(--info));
-  --slex-code-string: color-mix(in oklab, var(--success) 76%, var(--foreground));
-  --slex-code-literal: color-mix(in oklab, var(--warning) 72%, var(--foreground));
-  --slex-code-function: color-mix(in oklab, var(--info) 82%, var(--foreground));
-  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 88%, var(--foreground));
-  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 82%, transparent);
-  --slex-code-heading: color-mix(in oklab, var(--foreground) 94%, var(--info));
-  --slex-code-link: color-mix(in oklab, var(--info) 76%, var(--foreground));
+  --slex-code-keyword: color-mix(in oklab, var(--slex-info, var(--info)) 72%, var(--slex-foreground, var(--foreground)));
+  --slex-code-name: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 88%, var(--slex-info, var(--info)));
+  --slex-code-string: color-mix(in oklab, var(--slex-success, var(--success)) 76%, var(--slex-foreground, var(--foreground)));
+  --slex-code-literal: color-mix(in oklab, var(--slex-warning, var(--warning)) 72%, var(--slex-foreground, var(--foreground)));
+  --slex-code-function: color-mix(in oklab, var(--slex-info, var(--info)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-punctuation: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 88%, var(--slex-foreground, var(--foreground)));
+  --slex-code-comment: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 82%, transparent);
+  --slex-code-heading: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 94%, var(--slex-info, var(--info)));
+  --slex-code-link: color-mix(in oklab, var(--slex-info, var(--info)) 76%, var(--slex-foreground, var(--foreground)));
 }
 
 .dark :where(.slex-playground-editor, .slex-standalone-playground-editor) .cm-content :where([class~="ͼ5"]) {
@@ -1742,18 +1838,18 @@ color-scheme: dark;
   height: auto;
   min-height: var(--slex-playground-min-height, 16rem);
   overflow: hidden;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-playground-editor .cm-editor.cm-focused .cm-cursor {
-  border-left-color: var(--foreground);
+  border-left-color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-playground-editor .cm-editor.cm-focused .cm-selectionBackground,
 .slex-playground-editor .cm-editor .cm-selectionBackground,
 .slex-playground-editor .cm-editor.cm-focused .cm-content ::selection {
-  background: color-mix(in oklab, var(--foreground) 18%, transparent) !important;
+  background: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 18%, transparent) !important;
 }
 
 .slex-playground-editor .cm-focused {
@@ -1770,7 +1866,7 @@ color-scheme: dark;
   height: auto;
   overflow: auto;
   padding-top: var(--slex-playground-toolbar-height);
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-family: var(--slex-font-mono);
   font-size: 0.8125rem;
   line-height: 1.55;
 }
@@ -1780,7 +1876,7 @@ color-scheme: dark;
 .slex-playground-editor .cm-scroller,
 .slex-standalone-playground-preview,
 .slex-standalone-playground-editor .cm-scroller {
-  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 42%, transparent) transparent;
+  scrollbar-color: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 42%, transparent) transparent;
   scrollbar-width: thin;
 }
 
@@ -1818,7 +1914,7 @@ color-scheme: dark;
 .slex-standalone-playground-editor .cm-scroller::-webkit-scrollbar-thumb:active {
   border: 0.1875rem solid transparent;
   border-radius: 999px;
-  background: color-mix(in oklab, var(--muted-foreground) 42%, transparent);
+  background: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 42%, transparent);
   background-clip: content-box;
 }
 
@@ -1828,14 +1924,14 @@ color-scheme: dark;
 
 .slex-playground-editor .cm-gutters {
   height: calc(var(--slex-playground-min-height, 16rem) - var(--slex-playground-toolbar-height));
-  border-right: 1px solid var(--border);
-  background: var(--muted);
-  color: var(--muted-foreground);
+  border-right: 1px solid var(--slex-border, var(--border));
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-playground-editor .cm-activeLine,
 .slex-playground-editor .cm-activeLineGutter {
-  background: color-mix(in oklab, var(--accent) 42%, transparent);
+  background: color-mix(in oklab, var(--slex-accent, var(--accent)) 42%, transparent);
 }
 
 .slex-playground-editor .cm-content {
@@ -1854,11 +1950,11 @@ color-scheme: dark;
 }
 
 .slex-playground-error {
-  border-top: 1px solid var(--destructive);
-  background: color-mix(in oklab, var(--destructive) 10%, transparent);
-  color: var(--destructive);
+  border-top: 1px solid var(--slex-destructive, var(--destructive));
+  background: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 10%, transparent);
+  color: var(--slex-destructive, var(--destructive));
   padding: 0.75rem 1rem;
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-family: var(--slex-font-mono);
   font-size: 0.75rem;
 }
 
@@ -1871,9 +1967,9 @@ color-scheme: dark;
 }
 
 .slex-streamdown-error {
-  border: 1px dashed var(--destructive);
-  border-radius: calc(var(--radius) - 2px);
-  color: var(--destructive);
+  border: 1px dashed var(--slex-destructive, var(--destructive));
+  border-radius: calc(var(--slex-radius) - 2px);
+  color: var(--slex-destructive, var(--destructive));
   padding: 1rem;
   text-align: left;
 }
@@ -1884,8 +1980,8 @@ color-scheme: dark;
 
 .slex-streamdown-error-message {
   margin-top: 0.5rem;
-  color: var(--foreground);
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  color: var(--slex-foreground, var(--foreground));
+  font-family: var(--slex-font-mono);
   font-size: 0.8125rem;
   line-height: 1.5;
 }
@@ -1893,18 +1989,18 @@ color-scheme: dark;
 .slex-streamdown-error-location,
 .slex-streamdown-error-detail {
   margin-top: 0.5rem;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
 }
 
 .slex-streamdown-error-excerpt {
   overflow: auto;
   margin: 0.75rem 0 0;
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--background);
-  color: var(--foreground);
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
   padding: 0.75rem;
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-family: var(--slex-font-mono);
   font-size: 0.8125rem;
   line-height: 1.55;
   white-space: pre;
@@ -1933,9 +2029,9 @@ color-scheme: dark;
   height: calc(100svh - 2rem);
   min-height: calc(100svh - 2rem);
   overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--background);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
 }
 
 .slex-standalone-playground-toolbar {
@@ -1946,10 +2042,10 @@ color-scheme: dark;
   display: inline-flex;
   gap: 0.25rem;
   padding: 0.25rem;
-  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
-  border-radius: var(--radius);
-  background: color-mix(in oklab, var(--muted) 86%, transparent);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 70%, transparent);
+  border-radius: var(--slex-radius);
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 86%, transparent);
+  box-shadow: var(--slex-shadow-sm);
 }
 
 .slex-standalone-playground-button {
@@ -1959,9 +2055,9 @@ color-scheme: dark;
   place-items: center;
   padding: 0;
   border: 0;
-  border-radius: calc(var(--radius) - 2px);
+  border-radius: calc(var(--slex-radius) - 2px);
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -1982,40 +2078,40 @@ color-scheme: dark;
 }
 
 .slex-standalone-playground-button:hover {
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-standalone-playground-button:focus-visible,
 .slex-standalone-playground-editor .cm-focused {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 
 .slex-standalone-playground-button--active {
-  background: var(--background);
-  color: var(--foreground);
-  box-shadow: var(--shadow-sm);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
+  box-shadow: var(--slex-shadow-sm);
 }
 
 .slex-standalone-playground-error {
-  border: 1px solid var(--destructive);
-  border-radius: var(--radius);
-  background: color-mix(in oklab, var(--destructive) 6%, var(--background));
-  color: var(--destructive);
+  border: 1px solid var(--slex-destructive, var(--destructive));
+  border-radius: var(--slex-radius);
+  background: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 6%, var(--slex-background, var(--background)));
+  color: var(--slex-destructive, var(--destructive));
   padding: 1rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--slex-shadow-sm);
 }
 
 .slex-standalone-playground-error-title {
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
   font-size: 1rem;
   font-weight: 700;
 }
 
 .slex-standalone-playground-error-message {
   margin-top: 0.5rem;
-  color: var(--foreground);
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  color: var(--slex-foreground, var(--foreground));
+  font-family: var(--slex-font-mono);
   font-size: 0.8125rem;
   line-height: 1.5;
 }
@@ -2023,18 +2119,18 @@ color-scheme: dark;
 .slex-standalone-playground-error-location,
 .slex-standalone-playground-error-detail {
   margin-top: 0.5rem;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
 }
 
 .slex-standalone-playground-error-excerpt {
   overflow: auto;
   margin: 0.75rem 0 0;
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--background);
-  color: var(--foreground);
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
   padding: 0.75rem;
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-family: var(--slex-font-mono);
   font-size: 0.8125rem;
   line-height: 1.55;
 }
@@ -2067,19 +2163,19 @@ color-scheme: dark;
 
 .slex-standalone-playground-splitter {
   position: relative;
-  background: var(--border);
+  background: var(--slex-border, var(--border));
   touch-action: none;
   transition: background-color 120ms ease;
 }
 
 .slex-standalone-playground-splitter:focus-visible {
-  background: color-mix(in oklab, var(--ring) 28%, var(--border));
-  outline: 2px solid var(--ring);
+  background: color-mix(in oklab, var(--slex-ring, var(--ring)) 28%, var(--slex-border, var(--border)));
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: -2px;
 }
 
 .slex-standalone-playground-splitter.dragging {
-  background: var(--ring);
+  background: var(--slex-ring, var(--ring));
   outline: none;
 }
 
@@ -2102,7 +2198,7 @@ color-scheme: dark;
 }
 
 .slex-standalone-playground-code {
-  background: var(--background);
+  background: var(--slex-background, var(--background));
 }
 
 .slex-standalone-playground-code .codemirror {
@@ -2112,73 +2208,73 @@ color-scheme: dark;
 }
 
 .slex-standalone-playground-editor {
-  --slex-code-keyword: color-mix(in oklab, var(--info) 82%, var(--foreground));
-  --slex-code-name: color-mix(in oklab, var(--foreground) 84%, var(--muted-foreground));
-  --slex-code-string: color-mix(in oklab, var(--success) 82%, var(--foreground));
-  --slex-code-literal: color-mix(in oklab, var(--warning) 82%, var(--foreground));
-  --slex-code-function: color-mix(in oklab, var(--info) 64%, var(--foreground));
-  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
-  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 76%, transparent);
-  --slex-code-heading: color-mix(in oklab, var(--foreground) 92%, var(--info));
-  --slex-code-link: color-mix(in oklab, var(--info) 86%, var(--foreground));
+  --slex-code-keyword: color-mix(in oklab, var(--slex-info, var(--info)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-name: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 84%, var(--slex-muted-foreground, var(--muted-foreground)));
+  --slex-code-string: color-mix(in oklab, var(--slex-success, var(--success)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-literal: color-mix(in oklab, var(--slex-warning, var(--warning)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-function: color-mix(in oklab, var(--slex-info, var(--info)) 64%, var(--slex-foreground, var(--foreground)));
+  --slex-code-punctuation: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-comment: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 76%, transparent);
+  --slex-code-heading: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 92%, var(--slex-info, var(--info)));
+  --slex-code-link: color-mix(in oklab, var(--slex-info, var(--info)) 86%, var(--slex-foreground, var(--foreground)));
   display: block;
   box-sizing: border-box;
   width: 100%;
   height: 100%;
   min-height: 100%;
   border: 0;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
+  font-family: var(--slex-font-mono);
   font-size: 0.8125rem;
   line-height: 1.55;
   outline: none;
 }
 
 .dark .slex-standalone-playground-editor {
-  --slex-code-keyword: color-mix(in oklab, var(--info) 72%, var(--foreground));
-  --slex-code-name: color-mix(in oklab, var(--foreground) 88%, var(--info));
-  --slex-code-string: color-mix(in oklab, var(--success) 76%, var(--foreground));
-  --slex-code-literal: color-mix(in oklab, var(--warning) 72%, var(--foreground));
-  --slex-code-function: color-mix(in oklab, var(--info) 82%, var(--foreground));
-  --slex-code-punctuation: color-mix(in oklab, var(--muted-foreground) 88%, var(--foreground));
-  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 82%, transparent);
-  --slex-code-heading: color-mix(in oklab, var(--foreground) 94%, var(--info));
-  --slex-code-link: color-mix(in oklab, var(--info) 76%, var(--foreground));
+  --slex-code-keyword: color-mix(in oklab, var(--slex-info, var(--info)) 72%, var(--slex-foreground, var(--foreground)));
+  --slex-code-name: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 88%, var(--slex-info, var(--info)));
+  --slex-code-string: color-mix(in oklab, var(--slex-success, var(--success)) 76%, var(--slex-foreground, var(--foreground)));
+  --slex-code-literal: color-mix(in oklab, var(--slex-warning, var(--warning)) 72%, var(--slex-foreground, var(--foreground)));
+  --slex-code-function: color-mix(in oklab, var(--slex-info, var(--info)) 82%, var(--slex-foreground, var(--foreground)));
+  --slex-code-punctuation: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 88%, var(--slex-foreground, var(--foreground)));
+  --slex-code-comment: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 82%, transparent);
+  --slex-code-heading: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 94%, var(--slex-info, var(--info)));
+  --slex-code-link: color-mix(in oklab, var(--slex-info, var(--info)) 76%, var(--slex-foreground, var(--foreground)));
 }
 
 .slex-standalone-playground-editor .cm-editor {
   height: 100%;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.8125rem;
 }
 
 .slex-standalone-playground-editor .cm-editor.cm-focused .cm-cursor {
-  border-left-color: var(--foreground);
+  border-left-color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-standalone-playground-editor .cm-editor.cm-focused .cm-selectionBackground,
 .slex-standalone-playground-editor .cm-editor .cm-selectionBackground,
 .slex-standalone-playground-editor .cm-editor.cm-focused .cm-content ::selection {
-  background: color-mix(in oklab, var(--foreground) 18%, transparent) !important;
+  background: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 18%, transparent) !important;
 }
 
 .slex-standalone-playground-editor .cm-scroller {
   padding-top: 0.75rem;
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-family: var(--slex-font-mono);
   line-height: 1.55;
 }
 
 .slex-standalone-playground-editor .cm-gutters {
-  border-right: 1px solid var(--border);
-  background: var(--muted);
-  color: var(--muted-foreground);
+  border-right: 1px solid var(--slex-border, var(--border));
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-standalone-playground-editor .cm-activeLine,
 .slex-standalone-playground-editor .cm-activeLineGutter {
-  background: color-mix(in oklab, var(--muted) 58%, transparent);
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 58%, transparent);
 }
 
 .slex-standalone-playground-editor .cm-content {
@@ -2189,8 +2285,8 @@ color-scheme: dark;
   overflow: auto;
   scrollbar-gutter: stable both-edges;
   padding: 4rem 1.25rem 1.25rem;
-  background-color: var(--background);
-  background-image: radial-gradient(color-mix(in oklab, var(--border) 78%, transparent) 1px, transparent 1px);
+  background-color: var(--slex-background, var(--background));
+  background-image: radial-gradient(color-mix(in oklab, var(--slex-border, var(--border)) 78%, transparent) 1px, transparent 1px);
   background-position: 0 0;
   background-size: 18px 18px;
 }
@@ -2233,7 +2329,7 @@ color-scheme: dark;
 
   .slex-playground-live-code {
     border-right: 0;
-    border-bottom: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+    border-bottom: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
   }
 
   .slex-playground-live-preview {
@@ -2291,19 +2387,20 @@ color-scheme: dark;
 .slex-stat {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   gap: 0.25rem;
   padding: 1rem;
-  background: var(--muted);
-  color: var(--foreground);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-foreground, var(--foreground));
+  border-radius: var(--slex-radius);
+  border: 1px solid var(--slex-border, var(--border));
   transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
 }
 
 .slex-stat:hover {
-  background: var(--accent);
-  border-color: var(--border);
-  box-shadow: var(--shadow-sm);
+  background: var(--slex-accent, var(--accent));
+  border-color: var(--slex-border, var(--border));
+  box-shadow: var(--slex-shadow-sm);
 }
 
 .slex-stat-label {
@@ -2311,7 +2408,8 @@ color-scheme: dark;
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -2321,22 +2419,11 @@ color-scheme: dark;
 .slex-stat-value {
   display: flex;
   align-items: baseline;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-width: 0;
   gap: 0.25rem;
-  color: var(--foreground);
-  font-family: var(
-    --font-sans,
-    "Geist",
-    "Geist Sans",
-    "Noto Sans SC",
-    "Noto Sans",
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif
-  );
+  color: var(--slex-foreground, var(--foreground));
+  font-family: var(--slex-font-sans);
   font-variant-numeric: tabular-nums;
   font-size: 1.5rem;
   font-weight: 700;
@@ -2344,12 +2431,25 @@ color-scheme: dark;
 }
 
 .slex-stat-number {
-  display: inline-flex;
-  align-items: baseline;
-  flex-wrap: wrap;
+  display: block;
+  flex: 0 1 auto;
   min-width: 0;
   max-width: 100%;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+  overflow-wrap: normal;
+}
+
+.slex-stat-accessible-value {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 .slex-stat-character {
@@ -2411,7 +2511,12 @@ color-scheme: dark;
 }
 
 .slex-stat-unit {
-  color: var(--muted-foreground);
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.15;
@@ -2420,28 +2525,28 @@ color-scheme: dark;
 
 .slex-stat[data-tone="normal"] .slex-stat-value,
 .slex-stat[data-tone="primary"] .slex-stat-value {
-  color: var(--primary);
+  color: var(--slex-primary, var(--primary));
 }
 
 .slex-stat[data-tone="danger"] .slex-stat-value,
 .slex-stat[data-tone="destructive"] .slex-stat-value {
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-stat[data-tone="warning"] .slex-stat-value {
-  color: var(--warning);
+  color: var(--slex-warning, var(--warning));
 }
 
 .slex-stat[data-tone="info"] .slex-stat-value {
-  color: var(--info);
+  color: var(--slex-info, var(--info));
 }
 
 .slex-stat[data-tone="success"] .slex-stat-value {
-  color: var(--success);
+  color: var(--slex-success, var(--success));
 }
 
 .slex-stat[data-tone="muted"] .slex-stat-value {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 @keyframes slex-stat-digit-old-up {
@@ -2524,13 +2629,13 @@ color-scheme: dark;
 }
 
 .slex-text {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   line-height: 1.625;
 }
 
 .slex-text--eyebrow {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.2;
@@ -2538,11 +2643,11 @@ color-scheme: dark;
 }
 
 .slex-text--muted {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-text--dashboard-title {
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 1.375rem;
   font-weight: 750;
   line-height: 1.2;
@@ -2558,7 +2663,7 @@ color-scheme: dark;
 }
 
 .slex-section-eyebrow {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.25;
@@ -2571,7 +2676,7 @@ color-scheme: dark;
   align-items: center;
   gap: 0.5rem;
   margin: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: 0;
@@ -2581,7 +2686,7 @@ color-scheme: dark;
 
 .slex-section-subtitle {
   margin: 0;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.9375rem;
   line-height: 1.7;
   overflow-wrap: anywhere;
@@ -2592,7 +2697,7 @@ color-scheme: dark;
   width: fit-content;
   align-items: center;
   gap: 0.375rem;
-  color: var(--primary);
+  color: var(--slex-primary, var(--primary));
   font-size: 0.875rem;
   font-weight: 500;
   text-decoration: none;
@@ -2600,32 +2705,32 @@ color-scheme: dark;
 }
 
 .slex-link:hover {
-  color: color-mix(in oklab, var(--primary) 82%, var(--muted-foreground));
+  color: color-mix(in oklab, var(--slex-primary, var(--primary)) 82%, var(--slex-muted-foreground, var(--muted-foreground)));
 }
 
 .slex-link:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 24%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--slex-ring, var(--ring)) 24%, transparent);
 }
 
 .slex-link[data-variant="muted"] {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-link[data-variant="button"] {
   min-height: 2.25rem;
   justify-content: center;
-  border: 1px solid var(--input);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--background);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-background, var(--background));
   padding: 0 0.75rem;
-  color: var(--foreground);
-  box-shadow: var(--shadow-sm);
+  color: var(--slex-foreground, var(--foreground));
+  box-shadow: var(--slex-shadow-sm);
 }
 
 .slex-link[data-variant="button"]:hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-badge {
@@ -2635,10 +2740,10 @@ color-scheme: dark;
   align-items: center;
   align-self: start;
   gap: 0.25rem;
-  border: 1px solid color-mix(in oklab, var(--border) 88%, transparent);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--secondary);
-  color: var(--secondary-foreground);
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 88%, transparent);
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-secondary, var(--secondary));
+  color: var(--slex-secondary-foreground, var(--secondary-foreground));
   padding: 0.125rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 600;
@@ -2653,48 +2758,48 @@ color-scheme: dark;
 
 .slex-badge[data-tone="neutral"],
 .slex-badge[data-tone="muted"] {
-  border-color: color-mix(in oklab, var(--muted-foreground) 18%, var(--border));
-  background: color-mix(in oklab, var(--muted-foreground) 8%, var(--background));
-  color: var(--muted-foreground);
+  border-color: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 18%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 8%, var(--slex-background, var(--background)));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-badge[data-tone="primary"] {
-  border-color: color-mix(in oklab, var(--primary) 22%, var(--border));
-  background: color-mix(in oklab, var(--primary) 8%, var(--background));
-  color: color-mix(in oklab, var(--primary) 88%, var(--foreground));
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 22%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-primary, var(--primary)) 8%, var(--slex-background, var(--background)));
+  color: color-mix(in oklab, var(--slex-primary, var(--primary)) 88%, var(--slex-foreground, var(--foreground)));
 }
 
 .slex-badge[data-tone="info"] {
-  border-color: color-mix(in oklab, var(--info) 24%, var(--border));
-  background: color-mix(in oklab, var(--info) 10%, var(--background));
-  color: color-mix(in oklab, var(--info) 86%, var(--foreground));
+  border-color: color-mix(in oklab, var(--slex-info, var(--info)) 24%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-info, var(--info)) 10%, var(--slex-background, var(--background)));
+  color: color-mix(in oklab, var(--slex-info, var(--info)) 86%, var(--slex-foreground, var(--foreground)));
 }
 
 .slex-badge[data-tone="success"] {
-  border-color: color-mix(in oklab, var(--success) 24%, var(--border));
-  background: color-mix(in oklab, var(--success) 10%, var(--background));
-  color: color-mix(in oklab, var(--success) 86%, var(--foreground));
+  border-color: color-mix(in oklab, var(--slex-success, var(--success)) 24%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-success, var(--success)) 10%, var(--slex-background, var(--background)));
+  color: color-mix(in oklab, var(--slex-success, var(--success)) 86%, var(--slex-foreground, var(--foreground)));
 }
 
 .slex-badge[data-tone="warning"] {
-  border-color: color-mix(in oklab, var(--warning) 26%, var(--border));
-  background: color-mix(in oklab, var(--warning) 12%, var(--background));
-  color: color-mix(in oklab, var(--warning) 82%, var(--foreground));
+  border-color: color-mix(in oklab, var(--slex-warning, var(--warning)) 26%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-warning, var(--warning)) 12%, var(--slex-background, var(--background)));
+  color: color-mix(in oklab, var(--slex-warning, var(--warning)) 82%, var(--slex-foreground, var(--foreground)));
 }
 
 .slex-badge[data-tone="danger"],
 .slex-badge[data-tone="error"],
 .slex-badge[data-tone="destructive"] {
-  border-color: color-mix(in oklab, var(--destructive) 24%, var(--border));
-  background: color-mix(in oklab, var(--destructive) 10%, var(--background));
-  color: color-mix(in oklab, var(--destructive) 86%, var(--foreground));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 24%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 10%, var(--slex-background, var(--background)));
+  color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 86%, var(--slex-foreground, var(--foreground)));
 }
 
 .slex-divider {
   width: 100%;
   height: 0;
   border: 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--slex-border, var(--border));
   margin: 1rem 0;
 }
 
@@ -2710,7 +2815,7 @@ color-scheme: dark;
 .slex-divider--labeled::after {
   content: "";
   flex: 1 1 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--slex-border, var(--border));
 }
 
 .slex-divider-label {
@@ -2718,7 +2823,7 @@ color-scheme: dark;
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 500;
 }
@@ -2728,7 +2833,7 @@ color-scheme: dark;
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-formula[data-display="block"] {
@@ -2752,18 +2857,18 @@ color-scheme: dark;
   width: 100%;
   max-width: none;
   min-height: 4rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
   background: transparent;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   padding: 0.875rem 1rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--slex-shadow-sm);
   transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 .slex-callout:hover {
-  border-color: color-mix(in oklab, var(--primary) 20%, var(--border));
-  box-shadow: var(--shadow-md);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 20%, var(--slex-border, var(--border)));
+  box-shadow: var(--slex-shadow-md);
   transform: translateY(-1px);
 }
 
@@ -2772,7 +2877,7 @@ color-scheme: dark;
   width: 0.25rem;
   min-height: 100%;
   border-radius: 9999px;
-  background: var(--info);
+  background: var(--slex-info, var(--info));
 }
 
 .slex-callout-icon {
@@ -2780,39 +2885,39 @@ color-scheme: dark;
 }
 
 .slex-callout[data-tone="info"] .slex-callout-icon {
-  color: var(--info);
+  color: var(--slex-info, var(--info));
 }
 
 .slex-callout[data-tone="info"] .slex-callout-mark {
-  background: var(--info);
+  background: var(--slex-info, var(--info));
 }
 
 .slex-callout[data-tone="success"] .slex-callout-icon {
-  color: var(--success);
+  color: var(--slex-success, var(--success));
 }
 
 .slex-callout[data-tone="success"] .slex-callout-mark {
-  background: var(--success);
+  background: var(--slex-success, var(--success));
 }
 
 .slex-callout[data-tone="warning"] .slex-callout-icon {
-  color: var(--warning);
+  color: var(--slex-warning, var(--warning));
 }
 
 .slex-callout[data-tone="warning"] .slex-callout-mark {
-  background: var(--warning);
+  background: var(--slex-warning, var(--warning));
 }
 
 .slex-callout[data-tone="danger"] .slex-callout-icon,
 .slex-callout[data-tone="error"] .slex-callout-icon,
 .slex-callout[data-tone="destructive"] .slex-callout-icon {
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-callout[data-tone="danger"] .slex-callout-mark,
 .slex-callout[data-tone="error"] .slex-callout-mark,
 .slex-callout[data-tone="destructive"] .slex-callout-mark {
-  background: var(--destructive);
+  background: var(--slex-destructive, var(--destructive));
 }
 
 .slex-callout-content {
@@ -2825,7 +2930,7 @@ color-scheme: dark;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.35;
@@ -2833,7 +2938,7 @@ color-scheme: dark;
 
 .slex-callout-body {
   margin-top: 0.125rem;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   line-height: 1.45;
 }
@@ -2843,16 +2948,16 @@ color-scheme: dark;
 }
 
 .slex-code-block {
-  --slex-code-keyword: color-mix(in oklab, var(--info) 78%, var(--foreground));
-  --slex-code-string: color-mix(in oklab, var(--success) 78%, var(--foreground));
-  --slex-code-literal: color-mix(in oklab, var(--warning) 78%, var(--foreground));
-  --slex-code-comment: color-mix(in oklab, var(--muted-foreground) 74%, transparent);
+  --slex-code-keyword: color-mix(in oklab, var(--slex-info, var(--info)) 78%, var(--slex-foreground, var(--foreground)));
+  --slex-code-string: color-mix(in oklab, var(--slex-success, var(--success)) 78%, var(--slex-foreground, var(--foreground)));
+  --slex-code-literal: color-mix(in oklab, var(--slex-warning, var(--warning)) 78%, var(--slex-foreground, var(--foreground)));
+  --slex-code-comment: color-mix(in oklab, var(--slex-muted-foreground, var(--muted-foreground)) 74%, transparent);
   overflow: hidden;
   margin: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--muted);
-  color: var(--foreground);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-code-block-header {
@@ -2860,9 +2965,9 @@ color-scheme: dark;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--slex-border, var(--border));
   padding: 0.5rem 0.75rem;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -2875,8 +2980,8 @@ color-scheme: dark;
 }
 
 .slex-code-block-language {
-  color: var(--muted-foreground);
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
+  font-family: var(--slex-font-mono);
 }
 
 .slex-code-block .slex-code-block-pre {
@@ -2887,7 +2992,7 @@ color-scheme: dark;
   background: transparent;
   padding: 0.875rem;
   box-shadow: none;
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  font-family: var(--slex-font-mono);
   font-size: 0.8125rem;
   line-height: 1.65;
 }
@@ -2912,8 +3017,8 @@ color-scheme: dark;
 .slex-code-block .slex-code-line::before {
   content: counter(slex-code-line);
   user-select: none;
-  border-right: 1px solid var(--border);
-  color: var(--muted-foreground);
+  border-right: 1px solid var(--slex-border, var(--border));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   padding-right: 0.75rem;
   margin-right: 0.75rem;
   text-align: right;
@@ -2933,7 +3038,7 @@ color-scheme: dark;
 
 .slex-code-block .slex-code-highlight {
   background: transparent;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-code-block .slex-code-token--keyword {
@@ -2956,30 +3061,30 @@ color-scheme: dark;
 .slex-table-wrap {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--card);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
+  background: var(--slex-card, var(--card));
 }
 
 .slex-table {
   width: 100%;
   min-width: 100%;
   border-collapse: collapse;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
 }
 
 .slex-table th,
 .slex-table td {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--slex-border, var(--border));
   padding: 0.625rem 0.75rem;
   text-align: left;
   vertical-align: top;
 }
 
 .slex-table th {
-  background: var(--muted);
-  color: var(--muted-foreground);
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 650;
 }
@@ -3014,35 +3119,35 @@ color-scheme: dark;
   min-height: 2.25rem;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--input);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--background);
-  color: var(--foreground);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
   padding: 0 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--slex-shadow-sm);
   transition: background 150ms ease, color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
 
 .slex-section-action:hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-section-action:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 
 .slexkit-secure-error {
   margin-top: 0.75rem;
   white-space: pre-wrap;
-  border: 1px solid color-mix(in srgb, var(--destructive, #dc2626) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--slex-destructive, var(--destructive, #dc2626)) 35%, transparent);
   border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--destructive, #dc2626) 8%, transparent);
-  color: var(--destructive, #b91c1c);
+  background: color-mix(in srgb, var(--slex-destructive, var(--destructive, #dc2626)) 8%, transparent);
+  color: var(--slex-destructive, var(--destructive, #b91c1c));
   font-size: 0.875rem;
   line-height: 1.5;
   padding: 0.75rem;
@@ -3054,12 +3159,12 @@ color-scheme: dark;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
   max-width: 100%;
   min-width: 0;
   padding: 0.5rem 1rem;
   border: 1px solid transparent;
-  border-radius: var(--radius);
+  border-radius: var(--slex-radius);
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
@@ -3070,59 +3175,59 @@ color-scheme: dark;
   cursor: pointer;
   user-select: none;
   transition:
-    background 150ms ease,
-    border-color 150ms ease,
-    color 150ms ease,
-    box-shadow 150ms ease,
-    transform 150ms ease;
+    background var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    border-color var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    color var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    box-shadow var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    transform var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease);
 }
 
 .slex-button--primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border-color: var(--primary);
+  background: var(--slex-primary, var(--primary));
+  color: var(--slex-primary-foreground, var(--primary-foreground));
+  border-color: var(--slex-primary, var(--primary));
 }
 
 .slex-button--primary:hover:not(:disabled):not(.slex-button--disabled) {
-  background: color-mix(in oklab, var(--primary) 90%, transparent);
-  border-color: color-mix(in oklab, var(--primary) 90%, transparent);
-  color: var(--primary-foreground);
+  background: color-mix(in oklab, var(--slex-primary, var(--primary)) 90%, transparent);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 90%, transparent);
+  color: var(--slex-primary-foreground, var(--primary-foreground));
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--slex-shadow-md);
 }
 
 .slex-button--secondary {
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-  border-color: var(--border);
+  background: var(--slex-secondary, var(--secondary));
+  color: var(--slex-secondary-foreground, var(--secondary-foreground));
+  border-color: var(--slex-border, var(--border));
 }
 
 .slex-button--secondary:hover:not(:disabled):not(.slex-button--disabled) {
-  background: var(--accent);
-  color: var(--accent-foreground);
-  border-color: var(--border);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
+  border-color: var(--slex-border, var(--border));
 }
 
 .slex-button--danger {
-  background: var(--destructive);
-  color: var(--destructive-foreground);
-  border-color: var(--destructive);
+  background: var(--slex-destructive, var(--destructive));
+  color: var(--slex-destructive-foreground, var(--destructive-foreground));
+  border-color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-button--danger:hover:not(:disabled):not(.slex-button--disabled) {
-  background: color-mix(in oklab, var(--destructive) 90%, transparent);
-  border-color: color-mix(in oklab, var(--destructive) 90%, transparent);
+  background: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 90%, transparent);
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 90%, transparent);
 }
 
 .slex-button--ghost {
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   border-color: transparent;
 }
 
 .slex-button--ghost:hover:not(:disabled):not(.slex-button--disabled) {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-button:disabled,
@@ -3137,11 +3242,11 @@ color-scheme: dark;
 
 .slex-button:active:not(:disabled):not(.slex-button--disabled) {
   transform: translateY(0);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--slex-shadow-sm);
 }
 
 .slex-button:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: var(--slex-focus-ring-width, 2px) solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 
@@ -3174,7 +3279,7 @@ color-scheme: dark;
   gap: 0.75rem;
   flex-wrap: wrap;
   padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--slex-border, var(--border));
 }
 
 /* components/slider.css */
@@ -3183,7 +3288,7 @@ color-scheme: dark;
 .slex-slider-field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
   width: 100%;
 }
 
@@ -3195,18 +3300,18 @@ color-scheme: dark;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .slex-slider-value {
   padding: 0.125rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-secondary, var(--secondary));
+  color: var(--slex-secondary-foreground, var(--secondary-foreground));
+  font-family: var(--slex-font-mono);
   font-size: 0.875rem;
   font-weight: 600;
 }
@@ -3226,10 +3331,10 @@ color-scheme: dark;
   border-radius: 999px;
   background: linear-gradient(
     to right,
-    var(--primary) 0%,
-    var(--primary) var(--slex-slider-progress, 0%),
-    var(--secondary) var(--slex-slider-progress, 0%),
-    var(--secondary) 100%
+    var(--slex-primary, var(--primary)) 0%,
+    var(--slex-primary, var(--primary)) var(--slex-slider-progress, 0%),
+    var(--slex-secondary, var(--secondary)) var(--slex-slider-progress, 0%),
+    var(--slex-secondary, var(--secondary)) 100%
   );
   pointer-events: none;
   transform: translateY(-50%);
@@ -3250,7 +3355,7 @@ color-scheme: dark;
   appearance: none;
   background: transparent;
   color: transparent;
-  accent-color: var(--primary);
+  accent-color: var(--slex-primary, var(--primary));
   cursor: pointer;
   overflow: visible;
   transition: box-shadow 150ms ease, filter 150ms ease;
@@ -3285,11 +3390,11 @@ color-scheme: dark;
   width: 1rem;
   height: 1rem;
   margin-top: 0;
-  border: 2px solid var(--primary);
+  border: 2px solid var(--slex-primary, var(--primary));
   border-radius: 999px;
-  background-color: var(--background);
+  background-color: var(--slex-background, var(--background));
   background-clip: padding-box;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 14%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 14%, transparent);
   -webkit-appearance: none;
   appearance: none;
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 120ms ease;
@@ -3308,43 +3413,43 @@ color-scheme: dark;
   box-sizing: border-box;
   width: 1rem;
   height: 1rem;
-  border: 2px solid var(--primary);
+  border: 2px solid var(--slex-primary, var(--primary));
   border-radius: 999px;
-  background-color: var(--background);
+  background-color: var(--slex-background, var(--background));
   background-clip: padding-box;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 14%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 14%, transparent);
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 120ms ease;
 }
 
 .slex-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 12%, transparent);
   transform: scale(1.06);
 }
 
 .slex-slider:hover::-moz-range-thumb {
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 12%, transparent);
   transform: scale(1.06);
 }
 
 .slex-slider:focus-visible::-webkit-slider-thumb {
   box-shadow:
-    0 0 0 4px var(--background),
-    0 0 0 6px var(--ring);
+    0 0 0 4px var(--slex-background, var(--background)),
+    0 0 0 6px var(--slex-ring, var(--ring));
 }
 
 .slex-slider:focus-visible::-moz-range-thumb {
   box-shadow:
-    0 0 0 4px var(--background),
-    0 0 0 6px var(--ring);
+    0 0 0 4px var(--slex-background, var(--background)),
+    0 0 0 6px var(--slex-ring, var(--ring));
 }
 
 .slex-slider:active::-webkit-slider-thumb {
-  box-shadow: 0 0 0 6px color-mix(in oklab, var(--primary) 16%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--slex-primary, var(--primary)) 16%, transparent);
   transform: scale(1.12);
 }
 
 .slex-slider:active::-moz-range-thumb {
-  box-shadow: 0 0 0 6px color-mix(in oklab, var(--primary) 16%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--slex-primary, var(--primary)) 16%, transparent);
   transform: scale(1.12);
 }
 
@@ -3373,7 +3478,7 @@ color-scheme: dark;
 .slex-switch {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
   cursor: pointer;
 }
 
@@ -3390,7 +3495,7 @@ color-scheme: dark;
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.8125rem;
   font-weight: 500;
 }
@@ -3419,7 +3524,7 @@ color-scheme: dark;
   padding: 0;
   border: 2px solid transparent;
   border-radius: 9999px;
-  background: var(--input);
+  background: var(--slex-input, var(--input));
   transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
 
@@ -3430,37 +3535,37 @@ color-scheme: dark;
   height: 1.25rem;
   border: 0;
   border-radius: 9999px;
-  background: var(--background);
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 12%, transparent);
+  background: var(--slex-background, var(--background));
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 12%, transparent);
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
   transform: translateX(0);
   will-change: transform;
 }
 
 .slex-switch:hover .slex-switch-control {
-  border-color: color-mix(in oklab, var(--primary) 42%, var(--input));
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 42%, var(--slex-input, var(--input)));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--slex-primary, var(--primary)) 8%, transparent);
 }
 
 .slex-switch:hover .slex-switch-control::after {
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 10%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--slex-primary, var(--primary)) 10%, transparent);
 }
 
 .slex-switch:active .slex-switch-control::after {
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 16%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 16%, transparent);
 }
 
 .slex-switch-input:checked + .slex-switch-control {
-  border-color: var(--primary);
-  background: var(--primary);
+  border-color: var(--slex-primary, var(--primary));
+  background: var(--slex-primary, var(--primary));
 }
 
 .slex-switch:hover .slex-switch-input:checked + .slex-switch-control {
-  background: color-mix(in oklab, var(--primary) 88%, var(--background));
+  background: color-mix(in oklab, var(--slex-primary, var(--primary)) 88%, var(--slex-background, var(--background)));
 }
 
 .slex-switch-input:checked + .slex-switch-control::after {
-  background: var(--background);
+  background: var(--slex-background, var(--background));
   transform: translateX(1.25rem);
 }
 
@@ -3469,7 +3574,7 @@ color-scheme: dark;
 }
 
 .slex-switch-input:focus-visible + .slex-switch-control {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 18%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--slex-ring, var(--ring)) 18%, transparent);
 }
 
 .slex-switch-input:disabled + .slex-switch-control {
@@ -3501,7 +3606,9 @@ color-scheme: dark;
   align-items: center;
   gap: 0.25rem;
   width: fit-content;
-  color: var(--foreground);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.25;
@@ -3509,7 +3616,7 @@ color-scheme: dark;
 
 .slex-input-field[data-required="true"] .slex-input-label::after {
   content: "*";
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
   font-weight: 700;
 }
 
@@ -3519,7 +3626,7 @@ color-scheme: dark;
   align-items: stretch;
   width: 100%;
   min-width: 0;
-  border-radius: var(--radius);
+  border-radius: var(--slex-radius);
   transition: box-shadow 150ms ease;
 }
 
@@ -3531,11 +3638,11 @@ color-scheme: dark;
   min-width: 0;
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
-  background: var(--background);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
   background-clip: padding-box;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -3551,16 +3658,16 @@ color-scheme: dark;
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
-  min-height: 2.5625rem;
+  min-height: var(--slex-control-height, 2.5625rem);
   height: auto;
   margin: 0;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
   box-shadow: none;
-  background: var(--background);
+  background: var(--slex-background, var(--background));
   background-clip: padding-box;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -3584,13 +3691,13 @@ color-scheme: dark;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.5625rem;
+  min-height: var(--slex-control-height, 2.5625rem);
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
+  border: 1px solid var(--slex-input, var(--input));
   border-left: 0;
-  border-radius: 0 var(--radius) var(--radius) 0;
-  background: var(--muted);
-  color: var(--muted-foreground);
+  border-radius: 0 var(--slex-radius) var(--slex-radius) 0;
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.5;
@@ -3599,12 +3706,12 @@ color-scheme: dark;
 }
 
 .slex-input::placeholder {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-input:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 18%, transparent);
+  border-color: var(--slex-ring, var(--ring));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 18%, transparent);
 }
 
 .slex-input-control[data-has-unit="true"] .slex-input:focus {
@@ -3622,17 +3729,17 @@ color-scheme: dark;
 }
 
 .slex-input[readonly] {
-  background: color-mix(in oklab, var(--muted) 42%, var(--background));
-  color: color-mix(in oklab, var(--foreground) 82%, var(--muted-foreground));
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 42%, var(--slex-background, var(--background)));
+  color: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 82%, var(--slex-muted-foreground, var(--muted-foreground)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input {
-  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 72%, var(--slex-input, var(--input)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input:focus {
-  border-color: var(--destructive);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+  border-color: var(--slex-destructive, var(--destructive));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-destructive, var(--destructive)) 18%, transparent);
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control[data-has-unit="true"] .slex-input:focus {
@@ -3640,7 +3747,7 @@ color-scheme: dark;
 }
 
 .slex-input-control:focus-within {
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 16%, transparent);
 }
 
 .slex-input-control:not([data-has-unit]):focus-within {
@@ -3649,16 +3756,16 @@ color-scheme: dark;
 
 .slex-input-control:focus-within .slex-input,
 .slex-input-control:focus-within .slex-input-unit {
-  border-color: var(--ring);
+  border-color: var(--slex-ring, var(--ring));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-unit {
-  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
-  color: color-mix(in oklab, var(--destructive) 84%, var(--muted-foreground));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 72%, var(--slex-input, var(--input)));
+  color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 84%, var(--slex-muted-foreground, var(--muted-foreground)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within {
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-destructive, var(--destructive)) 18%, transparent);
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control:not([data-has-unit]):focus-within {
@@ -3667,7 +3774,7 @@ color-scheme: dark;
 
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input,
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-unit {
-  border-color: var(--destructive);
+  border-color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-input[disabled] {
@@ -3681,13 +3788,13 @@ color-scheme: dark;
 }
 
 .slex-input-description {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   line-height: 1.35;
 }
 
 .slex-input-error {
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.35;
@@ -3701,7 +3808,7 @@ color-scheme: dark;
   width: 100%;
   min-width: 0;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
 }
 
 .slex-select-label {
@@ -3709,7 +3816,7 @@ color-scheme: dark;
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1;
@@ -3728,18 +3835,18 @@ color-scheme: dark;
   gap: 0.75rem;
   width: 100%;
   min-width: 0;
-  min-height: 2.5rem;
+  min-height: var(--slex-control-height, 2.5rem);
   margin: 0;
   padding: 0.5rem 1rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
-  background: var(--background);
-  color: var(--foreground);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
   font: inherit;
   font-size: 0.875rem;
   line-height: 1.25rem;
   outline: none;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 8%, transparent);
   cursor: pointer;
   transition:
     border-color 150ms ease,
@@ -3751,12 +3858,12 @@ color-scheme: dark;
 }
 
 .slex-select .slex-select-trigger:hover:not(:disabled) {
-  background: color-mix(in oklab, var(--accent) 34%, var(--background));
+  background: color-mix(in oklab, var(--slex-accent, var(--accent)) 34%, var(--slex-background, var(--background)));
 }
 
 .slex-select .slex-select-trigger:focus-visible {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 20%, transparent);
+  border-color: var(--slex-ring, var(--ring));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 20%, transparent);
 }
 
 .slex-select .slex-select-trigger:disabled {
@@ -3775,7 +3882,7 @@ color-scheme: dark;
 }
 
 .slex-select-value[data-placeholder] {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-select-icon {
@@ -3821,10 +3928,10 @@ color-scheme: dark;
   margin: 0;
   padding: 0.25rem;
   overflow-y: auto;
-  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
-  border-radius: var(--radius);
-  background: var(--popover, var(--background));
-  color: var(--popover-foreground, var(--foreground));
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 82%, transparent);
+  border-radius: var(--slex-radius);
+  background: var(--slex-popover, var(--popover, var(--slex-background, var(--background))));
+  color: var(--slex-popover-foreground, var(--popover-foreground, var(--slex-foreground, var(--foreground))));
   box-shadow: var(
     --shadow-md,
     0 6px 16px rgb(0 0 0 / 0.12),
@@ -3851,8 +3958,8 @@ color-scheme: dark;
   gap: 0.75rem;
   min-height: 2rem;
   padding: 0.5rem 0.75rem;
-  border-radius: calc(var(--radius) - 2px);
-  color: var(--popover-foreground, var(--foreground));
+  border-radius: calc(var(--slex-radius) - 2px);
+  color: var(--slex-popover-foreground, var(--popover-foreground, var(--slex-foreground, var(--foreground))));
   font-size: 0.875rem;
   line-height: 1.25rem;
   cursor: pointer;
@@ -3861,8 +3968,8 @@ color-scheme: dark;
 
 .slex-select-option:hover:not([data-disabled]),
 .slex-select-option--active:not([data-disabled]) {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-select-option--selected {
@@ -3870,7 +3977,7 @@ color-scheme: dark;
 }
 
 .slex-select-option[data-disabled] {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   cursor: not-allowed;
   opacity: 0.52;
 }
@@ -3914,7 +4021,7 @@ color-scheme: dark;
   height: var(--slex-control-height, 2.25rem);
   min-height: 0;
   border-width: 0 1px 0 0;
-  border-color: color-mix(in oklab, var(--border) 58%, transparent);
+  border-color: color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
   border-radius: 0;
   background: transparent;
   padding: 0 0.75rem 0 0.875rem;
@@ -3924,7 +4031,7 @@ color-scheme: dark;
 }
 
 .slex-select[data-variant="toolbar"] .slex-select-trigger:hover:not(:disabled) {
-  background: color-mix(in oklab, var(--muted) 36%, var(--background));
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 36%, var(--slex-background, var(--background)));
 }
 
 .slex-select[data-variant="toolbar"] .slex-select-menu {
@@ -3933,8 +4040,8 @@ color-scheme: dark;
   right: auto;
   width: 100%;
   min-width: 100%;
-  border-color: color-mix(in oklab, var(--border) 76%, transparent);
-  border-radius: calc(var(--radius) - 2px);
+  border-color: color-mix(in oklab, var(--slex-border, var(--border)) 76%, transparent);
+  border-radius: calc(var(--slex-radius) - 2px);
   padding: 0.25rem;
   box-shadow: var(
     --shadow-sm,
@@ -3945,7 +4052,7 @@ color-scheme: dark;
 
 .slex-select[data-variant="toolbar"] .slex-select-option {
   height: 1.875rem;
-  border-radius: calc(var(--radius) - 4px);
+  border-radius: calc(var(--slex-radius) - 4px);
   font-size: 0.8125rem;
   padding-inline: 0.75rem;
 }
@@ -3972,7 +4079,7 @@ color-scheme: dark;
   padding: 0;
   list-style: none;
   overflow: hidden;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--slex-border, var(--border));
 }
 
 .slexkit-root .slex-tabs-list {
@@ -3991,7 +4098,7 @@ color-scheme: dark;
   width: var(--slex-tabs-indicator-width, 0);
   height: var(--slex-tabs-indicator-height, 0.125rem);
   border-radius: 999px;
-  background: var(--primary);
+  background: var(--slex-primary, var(--primary));
   opacity: var(--slex-tabs-indicator-opacity, 0);
   pointer-events: none;
   transform: translate3d(var(--slex-tabs-indicator-x, 0), var(--slex-tabs-indicator-y, 0), 0);
@@ -3999,15 +4106,15 @@ color-scheme: dark;
 
 .slex-tabs-list[data-indicator-ready="true"] .slex-tabs-selected-indicator {
   transition:
-    transform var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
-    width var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
-    height var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
-    opacity var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1));
+    transform var(--slex-tabs-indicator-duration, var(--slex-motion-duration, 140ms)) var(--slex-motion-easing, var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1))),
+    width var(--slex-tabs-indicator-duration, var(--slex-motion-duration, 140ms)) var(--slex-motion-easing, var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1))),
+    height var(--slex-tabs-indicator-duration, var(--slex-motion-duration, 140ms)) var(--slex-motion-easing, var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1))),
+    opacity var(--slex-tabs-indicator-duration, var(--slex-motion-duration, 140ms)) var(--slex-motion-easing, var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)));
 }
 
 .slex-tabs[data-orientation="vertical"] .slex-tabs-list {
   flex-direction: column;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--slex-border, var(--border));
   border-bottom: none;
 }
 
@@ -4017,7 +4124,7 @@ color-scheme: dark;
   border: none;
   border-radius: 0;
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
@@ -4038,7 +4145,7 @@ color-scheme: dark;
 .slex-tabs-trigger--with-icon {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
 }
 
 .slex-tabs-trigger-icon {
@@ -4058,15 +4165,15 @@ color-scheme: dark;
 
 .slex-tabs-trigger:hover:not([data-disabled]) {
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-tabs-trigger.slex-tabs-trigger--selected {
-  color: var(--primary);
+  color: var(--slex-primary, var(--primary));
 }
 
 .slex-tabs-trigger.slex-tabs-trigger--selected:hover:not([data-disabled]) {
-  color: var(--primary);
+  color: var(--slex-primary, var(--primary));
 }
 
 .slex-tabs-trigger[data-disabled] {
@@ -4075,7 +4182,7 @@ color-scheme: dark;
 }
 
 .slex-tabs-trigger:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: var(--slex-focus-ring-width, 2px) solid var(--slex-ring, var(--ring));
   outline-offset: -2px;
 }
 
@@ -4084,7 +4191,7 @@ color-scheme: dark;
   border-radius: 0 !important;
   background: transparent !important;
   padding: 0 !important;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   line-height: 1.625;
   animation: slex-tabs-content-in 200ms ease-out;
@@ -4131,7 +4238,7 @@ color-scheme: dark;
   .slex-tabs[data-orientation="vertical"] .slex-tabs-list {
     flex-direction: row;
     border-right: 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--slex-border, var(--border));
   }
 
 }
@@ -4142,8 +4249,8 @@ color-scheme: dark;
 .slex-radio-field {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--foreground);
+  gap: var(--slex-control-gap, 0.5rem);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   cursor: pointer;
   user-select: none;
@@ -4156,7 +4263,7 @@ color-scheme: dark;
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   line-height: 1.35;
   transition: color 150ms ease;
 }
@@ -4168,7 +4275,7 @@ color-scheme: dark;
 }
 
 .slex-radio-label-text small {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 400;
   line-height: 1.4;
@@ -4184,10 +4291,10 @@ color-scheme: dark;
   width: 1rem;
   height: 1rem;
   margin: 0;
-  border: 1.5px solid var(--input);
-  color: var(--primary);
-  accent-color: var(--primary);
-  background: var(--background);
+  border: 1.5px solid var(--slex-input, var(--input));
+  color: var(--slex-primary, var(--primary));
+  accent-color: var(--slex-primary, var(--primary));
+  background: var(--slex-background, var(--background));
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
@@ -4199,7 +4306,7 @@ color-scheme: dark;
 }
 
 .slex-checkbox {
-  border-radius: calc(var(--radius) - 4px);
+  border-radius: calc(var(--slex-radius) - 4px);
 }
 
 .slex-radio {
@@ -4218,7 +4325,7 @@ color-scheme: dark;
 .slex-checkbox::after {
   width: 0.55rem;
   height: 0.34rem;
-  border: solid var(--primary-foreground);
+  border: solid var(--slex-primary-foreground, var(--primary-foreground));
   border-width: 0 0 2px 2px;
   transform: translateY(-0.08rem) rotate(-45deg) scale(0.5);
 }
@@ -4227,25 +4334,25 @@ color-scheme: dark;
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 999px;
-  background: var(--primary-foreground);
+  background: var(--slex-primary-foreground, var(--primary-foreground));
 }
 
 .slex-checkbox-field:hover .slex-checkbox:not(:disabled),
 .slex-radio-field:hover .slex-radio:not(:disabled) {
-  border-color: color-mix(in oklab, var(--primary) 48%, var(--input));
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 48%, var(--slex-input, var(--input)));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--slex-primary, var(--primary)) 8%, transparent);
 }
 
 .slex-checkbox-field:active .slex-checkbox:not(:disabled),
 .slex-radio-field:active .slex-radio:not(:disabled) {
   transform: scale(0.92);
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 12%, transparent);
 }
 
 .slex-checkbox:checked,
 .slex-radio:checked {
-  border-color: var(--primary);
-  background: var(--primary);
+  border-color: var(--slex-primary, var(--primary));
+  background: var(--slex-primary, var(--primary));
 }
 
 .slex-checkbox:checked::after,
@@ -4263,12 +4370,12 @@ color-scheme: dark;
 
 .slex-checkbox-field:hover .slex-checkbox-label,
 .slex-radio-field:hover .slex-radio-label {
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-checkbox:focus-visible,
 .slex-radio:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: var(--slex-focus-ring-width, 2px) solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 
@@ -4283,7 +4390,7 @@ color-scheme: dark;
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -4291,7 +4398,7 @@ color-scheme: dark;
 .slex-radio-group-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
 }
 
 .slex-radio-group[data-orientation="horizontal"] .slex-radio-group-list {
@@ -4308,10 +4415,10 @@ color-scheme: dark;
   display: flex;
   width: 100%;
   align-items: flex-start;
-  border: 1px solid color-mix(in oklab, var(--border) 68%, transparent);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--card);
-  padding: 0.6rem 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 68%, transparent);
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-card, var(--card));
+  padding: var(--slex-surface-padding, 0.6rem 0.75rem);
   transition:
     background-color 150ms ease,
     border-color 150ms ease,
@@ -4319,8 +4426,8 @@ color-scheme: dark;
 }
 
 .slex-radio-group[data-variant="list"] .slex-radio-field[data-state="checked"] {
-  border-color: color-mix(in oklab, var(--foreground) 28%, var(--border));
-  background: color-mix(in oklab, var(--muted) 28%, var(--card));
+  border-color: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 28%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 28%, var(--slex-card, var(--card)));
 }
 
 .slex-radio-group[data-variant="list"] .slex-radio-field:hover .slex-radio:not(:disabled) {
@@ -4379,10 +4486,10 @@ color-scheme: dark;
   min-width: 2.25rem;
   min-height: 1.35rem;
   place-items: center;
-  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 70%, transparent);
   border-radius: 999px;
-  background: color-mix(in oklab, var(--muted) 18%, var(--card));
-  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 18%, var(--slex-card, var(--card)));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 650;
   line-height: 1;
@@ -4390,7 +4497,7 @@ color-scheme: dark;
 
 .slex-step-header h3 {
   margin: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.9375rem;
   letter-spacing: 0;
   line-height: 1.35;
@@ -4398,7 +4505,7 @@ color-scheme: dark;
 
 .slex-step-header p {
   margin: 0;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   line-height: 1.45;
 }
@@ -4414,14 +4521,14 @@ color-scheme: dark;
 .slex-accordion,
 .slex-collapsible {
   width: 100%;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-accordion {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
   overflow: hidden;
-  background: var(--card);
+  background: var(--slex-card, var(--card));
 }
 
 .slex-accordion-inner {
@@ -4429,7 +4536,7 @@ color-scheme: dark;
 }
 
 .slex-accordion-item + .slex-accordion-item {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--slex-border, var(--border));
 }
 
 .slex-accordion .slex-accordion-heading {
@@ -4448,7 +4555,7 @@ color-scheme: dark;
   padding: 0.5rem 0.75rem;
   border: 0;
   background: transparent;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
@@ -4476,13 +4583,13 @@ color-scheme: dark;
 
 .slex-accordion-trigger:hover:not([data-disabled]),
 .slex-collapsible-trigger:hover:not([data-disabled]) {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-accordion-trigger:focus-visible,
 .slex-collapsible-trigger:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: -2px;
 }
 
@@ -4505,7 +4612,7 @@ color-scheme: dark;
 
 .slex-accordion-content,
 .slex-collapsible-content {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   line-height: 1.45;
 }
@@ -4548,9 +4655,9 @@ color-scheme: dark;
 }
 
 .slex-collapsible {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--card);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
+  background: var(--slex-card, var(--card));
   overflow: hidden;
 }
 
@@ -4581,7 +4688,7 @@ color-scheme: dark;
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-progress-header {
@@ -4596,13 +4703,13 @@ color-scheme: dark;
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .slex-progress-value {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
 }
@@ -4612,13 +4719,13 @@ color-scheme: dark;
   width: 100%;
   height: 8px;
   border-radius: 9999px;
-  background: var(--secondary);
+  background: var(--slex-secondary, var(--secondary));
 }
 
 .slex-progress-range {
   height: 100%;
   border-radius: inherit;
-  background: var(--primary);
+  background: var(--slex-primary, var(--primary));
   transition: width 180ms ease, transform 180ms ease;
 }
 
@@ -4652,17 +4759,17 @@ color-scheme: dark;
   width: 100%;
   min-height: 4rem;
   padding: 0.875rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--background);
-  color: var(--foreground);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
+  box-shadow: var(--slex-shadow-sm);
   transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 .slex-toast:hover {
-  border-color: color-mix(in oklab, var(--primary) 20%, var(--border));
-  box-shadow: var(--shadow-md);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 20%, var(--slex-border, var(--border)));
+  box-shadow: var(--slex-shadow-md);
   transform: translateY(-1px);
 }
 
@@ -4670,7 +4777,7 @@ color-scheme: dark;
   width: 0.25rem;
   min-height: 2.25rem;
   border-radius: 9999px;
-  background: var(--info);
+  background: var(--slex-info, var(--info));
 }
 
 .slex-toast-icon {
@@ -4678,21 +4785,21 @@ color-scheme: dark;
 }
 
 .slex-toast[data-tone="info"] .slex-toast-icon {
-  color: var(--info);
+  color: var(--slex-info, var(--info));
 }
 
 .slex-toast[data-tone="success"] .slex-toast-icon {
-  color: var(--success);
+  color: var(--slex-success, var(--success));
 }
 
 .slex-toast[data-tone="warning"] .slex-toast-icon {
-  color: var(--warning);
+  color: var(--slex-warning, var(--warning));
 }
 
 .slex-toast[data-tone="danger"] .slex-toast-icon,
 .slex-toast[data-tone="error"] .slex-toast-icon,
 .slex-toast[data-tone="destructive"] .slex-toast-icon {
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-toast-content {
@@ -4701,50 +4808,50 @@ color-scheme: dark;
 }
 
 .slex-toast[data-tone="info"] {
-  border-color: color-mix(in oklab, var(--info) 24%, var(--border));
-  background: color-mix(in oklab, var(--info) 5%, var(--background));
+  border-color: color-mix(in oklab, var(--slex-info, var(--info)) 24%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-info, var(--info)) 5%, var(--slex-background, var(--background)));
 }
 
 .slex-toast[data-tone="info"] .slex-toast-mark {
-  background: var(--info);
+  background: var(--slex-info, var(--info));
 }
 
 .slex-toast[data-tone="success"] {
-  border-color: color-mix(in oklab, var(--success) 24%, var(--border));
-  background: color-mix(in oklab, var(--success) 5%, var(--background));
+  border-color: color-mix(in oklab, var(--slex-success, var(--success)) 24%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-success, var(--success)) 5%, var(--slex-background, var(--background)));
 }
 
 .slex-toast[data-tone="success"] .slex-toast-mark {
-  background: var(--success);
+  background: var(--slex-success, var(--success));
 }
 
 .slex-toast[data-tone="warning"] {
-  border-color: color-mix(in oklab, var(--warning) 26%, var(--border));
-  background: color-mix(in oklab, var(--warning) 6%, var(--background));
+  border-color: color-mix(in oklab, var(--slex-warning, var(--warning)) 26%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-warning, var(--warning)) 6%, var(--slex-background, var(--background)));
 }
 
 .slex-toast[data-tone="warning"] .slex-toast-mark {
-  background: var(--warning);
+  background: var(--slex-warning, var(--warning));
 }
 
 .slex-toast[data-tone="danger"],
 .slex-toast[data-tone="error"],
 .slex-toast[data-tone="destructive"] {
-  border-color: color-mix(in oklab, var(--destructive) 28%, var(--border));
-  background: color-mix(in oklab, var(--destructive) 6%, var(--background));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 28%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 6%, var(--slex-background, var(--background)));
 }
 
 .slex-toast[data-tone="danger"] .slex-toast-mark,
 .slex-toast[data-tone="error"] .slex-toast-mark,
 .slex-toast[data-tone="destructive"] .slex-toast-mark {
-  background: var(--destructive);
+  background: var(--slex-destructive, var(--destructive));
 }
 
 .slex-toast-title {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.35;
@@ -4752,7 +4859,7 @@ color-scheme: dark;
 
 .slex-toast-description {
   margin-top: 0.125rem;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   line-height: 1.45;
 }
@@ -4764,9 +4871,9 @@ color-scheme: dark;
   width: 24px;
   height: 24px;
   border: 0;
-  border-radius: calc(var(--radius) - 4px);
+  border-radius: calc(var(--slex-radius) - 4px);
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
@@ -4787,12 +4894,12 @@ color-scheme: dark;
 }
 
 .slex-toast-close:hover {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-toast-close:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 

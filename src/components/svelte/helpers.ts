@@ -25,6 +25,13 @@ export function text(value: unknown, fallback = ""): string {
   return String(value);
 }
 
+/** Block executable link schemes while retaining host-specific document URLs. */
+export function linkHref(value: unknown): string {
+  const href = text(value, "#");
+  const normalized = href.replace(/[\u0000-\u0020\u007f]/g, "").toLowerCase();
+  return /^(?:javascript|vbscript|data):/.test(normalized) ? "#" : href;
+}
+
 export function label(ctx: RenderContext, key: string, value: unknown, fallback = ""): string {
   return text(value ?? ctx.labels[key], fallback);
 }
@@ -105,9 +112,9 @@ export function catalogGroups(value: unknown): Array<{ label: string; items: Rec
 }
 
 export function renderChildren(node: HTMLElement, ctx: RenderContext) {
-  if (ctx.children && Object.keys(ctx.children).length > 0) {
-    node.replaceChildren();
-    ctx.renderTree(ctx.children, node, ctx.forCtx);
+  if (ctx.registerChildTarget) {
+    ctx.registerChildTarget(node);
+    return { destroy() { ctx.releaseChildTarget?.(node); node.replaceChildren(); } };
   }
   return {
     destroy() {
@@ -171,33 +178,4 @@ export function cancelScheduledFrame(ctx: RenderContext, handle: ScheduledFrame 
   } else if (handle.kind === "native" && typeof handle.id === "number") {
     ctx.document.defaultView?.cancelAnimationFrame(handle.id);
   }
-}
-
-function formatScriptKey(key: string): string {
-  return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key);
-}
-
-export function formatScriptValue(value: unknown, indent = 0): string {
-  const pad = " ".repeat(indent);
-  const nextPad = " ".repeat(indent + 2);
-  if (value === null) return "null";
-  if (typeof value === "string") return JSON.stringify(value);
-  if (typeof value === "number" || typeof value === "boolean") return String(value);
-  if (typeof value === "function") return value.toString();
-  if (Array.isArray(value)) {
-    if (value.length === 0) return "[]";
-    return `[\n${value.map((item) => `${nextPad}${formatScriptValue(item, indent + 2)}`).join(",\n")}\n${pad}]`;
-  }
-  if (value && typeof value === "object") {
-    const entries = Object.entries(value);
-    if (entries.length === 0) return "{}";
-    return `{\n${entries.map(([key, item]) => `${nextPad}${formatScriptKey(key)}: ${formatScriptValue(item, indent + 2)}`).join(",\n")}\n${pad}}`;
-  }
-  return "undefined";
-}
-
-export function stringifySource(source: unknown): string {
-  if (typeof source === "string") return source;
-  if (source && typeof source === "object") return formatScriptValue(source);
-  return '{\n  slex: "0.1",\n  namespace: "playground_empty",\n  g: {},\n  layout: {}\n}';
 }

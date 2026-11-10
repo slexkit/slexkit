@@ -1,18 +1,20 @@
-import { mount } from "../src/engine/index";
+import { defineSlexElements, type SlexElement, type SlexElementType } from "../src/web-components";
 
 export function sleep(ms = 30) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function uniqueNamespace(prefix = "test") {
-  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-}
-
-export function mountDsl(input: Parameters<typeof mount>[0], html = '<div id="app"></div>') {
-  document.body.innerHTML = html;
-  const container = document.getElementById("app");
-  if (!container) throw new Error("mountDsl requires an #app container.");
-  return mount(input, container);
+export function mountSlexElement(
+  type: SlexElementType,
+  props: Record<string, unknown> = {},
+  children: Node[] = [],
+): SlexElement {
+  defineSlexElements({ window: window as Window & typeof globalThis, cssText: "" });
+  const node = document.createElement(`slex-${type}`) as SlexElement;
+  Object.assign(node, props);
+  node.append(...children);
+  document.body.replaceChildren(node);
+  return node;
 }
 
 export function clickByText<T extends HTMLElement = HTMLElement>(selector: string, text: string): T {

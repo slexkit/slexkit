@@ -1,85 +1,25 @@
 # @slexkit/mcp
 
-Read-only MCP server for SlexKit docs, component APIs, examples, and source validation.
-
-## Configure
-
-```json
-{
-  "mcpServers": {
-    "slexkit": {
-      "command": "npx",
-      "args": ["-y", "@slexkit/mcp"]
-    }
-  }
-}
-```
-
-The same command shape works in clients such as Codex, Claude Desktop, and other MCP-compatible agent tools:
+Read-only MCP server for HTML-first SlexKit documentation, examples, custom-element metadata, standard artifacts, and static validation.
 
 ```sh
-npx -y @slexkit/mcp
+bunx @slexkit/mcp
 ```
 
-## Tools
+Tools:
 
-The server exposes three read-only tools:
+- `slexkitDocs` searches/fetches published documentation and HTML-profile metadata.
+- `slexkitExamples` returns HTML examples and metadata generated from the actual Web Components definitions.
+- `slexkitValidate` statically inspects HTML and inline JavaScript. It never executes payload scripts.
 
-| Tool | Purpose |
-|------|---------|
-| `slexkitDocs` | Search or fetch generated Markdown docs, standard artifact JSON, conformance reports, and optional `std.*` / `api.*` capability metadata. |
-| `slexkitExamples` | Return component examples or generated templates such as `status`, `calculator`, `stdlib-calculator`, `secure-network-card`, `toolhost-form`, and `host-integration`. |
-| `slexkitValidate` | Parse Slex source and return diagnostics, warnings, component usage, `std.*` usage, and `api.*` usage. |
-
-Example validation request:
+Validation input:
 
 ```json
 {
-  "name": "slexkitValidate",
-  "arguments": {
-    "source": "{ slex: \"0.1\", namespace: \"demo\", layout: { \"text:message\": { text: \"Hello\" } } }"
-  }
+  "source": "<slex-stat label=\"Count\" value=\"3\"></slex-stat>"
 }
 ```
 
-Successful validation returns structured content similar to:
+The validator rejects legacy object source as well as external scripts/imports, inline event-handler attributes, embedded frames/plugins, navigation metadata, and executable URL schemes according to the runtime inspector. Static success is not permission to execute source in the host page; generated code still belongs in the isolated SlexKit document runtime.
 
-```json
-{
-  "ok": true,
-  "schemaVersion": "2026-06",
-  "protocolVersion": "0.1",
-  "logicProfileVersion": "0.1",
-  "componentUsage": ["text"]
-}
-```
-
-Invalid source returns `ok: false` plus a SlexKit diagnostic with message, location, and excerpt.
-
-Fetch standard artifacts through `slexkitDocs`:
-
-```json
-{
-  "name": "slexkitDocs",
-  "arguments": {
-    "standardArtifact": "slex-standard-manifest.json"
-  }
-}
-```
-
-Available standard artifacts include `slex-expression.schema.json`, `slex-component-catalog.json`, `slex-logic-profile.json`, `slex-capabilities.catalog.json`, `slex-conformance.json`, and `slex-standard-manifest.json`.
-
-Run the bundled conformance fixtures through `slexkitDocs`:
-
-```json
-{
-  "name": "slexkitDocs",
-  "arguments": {
-    "conformanceReport": true
-  }
-}
-```
-
-## Safety
-
-The MCP server is read-only. It serves bundled docs and generated metadata from the package, validates source text, and writes no project files.
+Standard metadata is published as an HTML profile, custom-element catalog, sandbox SDK, static policy, conformance fixtures, and manifest. Component setup and asset URLs remain host-owned.

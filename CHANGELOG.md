@@ -2,6 +2,26 @@
 
 All notable changes to SlexKit.
 
+## v0.5.0 - HTML-first interactive documents
+
+### Breaking changes
+- `slex` fences now contain HTML fragments with standard JavaScript and `slex-*` Web Components. The former object-tree DSL, expression strings, and implicit namespace state are no longer supported.
+- Cross-fence state uses the explicit artifact-local `slex.shared` API. Hosts must configure an isolated runtime URL for generated content.
+
+### Added
+- A reusable Web Components entry, custom-element manifest, theme tokens, and updated Markdown, Streamdown, assistant-ui, Tiptap, and Obsidian integrations.
+- Static, non-executing source inspection and cross-browser, adapter, layout, and lifecycle conformance checks.
+
+### Changed
+- Metric cards adapt numeric precision to available width, preserve the original value, and align automatically in responsive rows.
+- Component documentation now describes the HTML contracts in English and Chinese.
+
+### Fixed
+- Frame initialization timeouts no longer leave artifact updates waiting indefinitely.
+- Long labels, native hidden elements, CSS zoom, and RTL numeric rendering now respect their layout and reading direction.
+
+### Validation status
+- The Obsidian desktop fix remains pending verification in the actual desktop application. Browser tests do not establish desktop compatibility.
 
 ## v0.4.0 - Production adapters and ToolHost hardening
 

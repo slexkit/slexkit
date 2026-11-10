@@ -24,7 +24,7 @@ Do not use ToolHost for ordinary display-only status cards, dashboards, calculat
 2. Prefer built-in templates: `confirm-action`, `choose-options`, `option-list`, `fill-form`.
 3. Use `renderToolCall(call, container)` for host rendering.
 4. Await `handle.promise` and dispose the handle after completion.
-5. For custom templates, compile a `ToolCall` into a `SlexExpression` and include a `submit:actions` boundary.
+5. For custom templates, register a trusted host-side DOM factory with `registerToolTemplate(name, factory)`. The factory receives arguments as data plus `runtime.submit(value)` and `runtime.ignore()`; it returns a DOM `Node` or `{ node, dispose }`.
 
 ## Result Contract
 
@@ -36,3 +36,5 @@ Tool results resolve to:
 ```
 
 Keep returned values small, explicit, and host-readable.
+
+ToolHost arguments are data, not executable SlexKit source. Do not compile them into the removed object-expression format or imitate submission from arbitrary artifact code.

@@ -5,107 +5,39 @@ status: ready
 order: 10
 summary: "普通操作按钮。"
 ---
-# Button 按钮
 
-允许触发操作的按钮组件。
+# Button
 
-<!-- slex:spec-example:start component="button" id="basic" sourceHash="267bd8d1" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_button_typical",
-  "layout": {
-    "row:actions": {
-      "button:save": {
-        "label": "保存",
-        "icon": "floppy-disk",
-        "variant": "primary"
-      },
-      "button:cancel": {
-        "label": "取消",
-        "variant": "secondary"
-      },
-      "button:delete": {
-        "label": "删除",
-        "variant": "danger"
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+提供触发原生 `click` 的操作控件，可配置 label、图标、variant、disabled、pressed 与 selected 状态。
 
-## 使用提示
-
-- 适合：表单提交、确认操作、命令触发。
-- `href` 会把按钮渲染为按钮外观的链接动作；普通正文跳转或导航链接仍应使用 `link`。
-- `selected`、`active`、`pressed` 用于表达按钮图标状态和 pressed 元数据。
-- 关联组件：link 用于跳转而非操作，submit 用于 ToolHost 提交流程。
-- 多个按钮通常放在 row 中水平排列。
-- variant 只表达操作语义，不作为任意样式选择器。
-
-### variant 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_button_variant_diff",
-  layout: {
-    "row:variants": {
-      "button:primary": {
-        label: "主要",
-        variant: "primary"
-      },
-      "button:secondary": {
-        label: "次要",
-        variant: "secondary"
-      },
-      "button:danger": {
-        label: "危险",
-        variant: "danger"
-      },
-      "button:ghost": {
-        label: "弱化",
-        variant: "ghost"
-      }
-    }
-  }
-}
+<slex-button id="action" label="Run"></slex-button>
 ```
 
-### disabled 禁用态
+## API 参考
 
-```slex
-{
-  namespace: "doc_button_disabled_diff",
-  layout: {
-    "row:disabled": {
-      "button:enabled": {
-        label: "已启用"
-      },
-      "button:disabled": {
-        label: "已禁用",
-        disabled: true
-      }
-    }
-  }
-}
-```
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 可见按钮文本；省略时从元素文本内容推导。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
+| `variant` | string | `primary` | 视觉变体，例如 primary、secondary、danger 或 ghost。 |
+| `disabled` | boolean | `false` | 禁用用户交互。 |
+| `pressed` | boolean | `false` | 用于图标粗细与 aria-pressed 的按下状态。 |
+| `selected` | boolean | `false` | 视觉选中状态；单独设置时不会添加 aria-pressed。 |
+| `title` | string | `""` | 原生提示文本；可见标题请使用 label 或元素文本。 |
+| `aria-label` | string | `auto` | 无障碍名称覆盖；省略时会在可用时使用可见标签。 |
 
-<!-- slex:spec-api:start component="button" sourceHash="11a5a574" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `label` | string | 否 | 是 |  | 按钮可见文本和无障碍名称。 |
-| `icon` | string | 否 | 否 |  | 显示在标签前的图标名称。 |
-| `iconOnly` | boolean | 否 | 否 | `false` | 只显示图标，同时保留标签作为无障碍名称。 |
-| `variant` | string: primary, secondary, danger, ghost | 否 | 否 | `"primary"` | 操作语义变体。 |
-| `disabled` | boolean | 否 | 是 | `false` | 禁用该操作。 |
-| `href` | string | 否 | 是 |  | 将按钮表面渲染为指向该 URL 的链接。 |
-| `target` | string | 否 | 否 |  | 存在 href 时使用的链接 target。 |
-| `title` | string | 否 | 是 |  | 工具提示和无障碍标签回退文本。 |
-| `selected` | boolean | 否 | 是 |  | 以选中视觉状态渲染图标。 |
-| `active` | boolean | 否 | 是 |  | 以激活视觉状态渲染图标。 |
-| `pressed` | boolean | 否 | 是 |  | 暴露按下状态并渲染选中图标样式。 |
-| `onclick` | write-expression | 否 | 否 |  | 按钮点击时执行的写表达式。 |
-<!-- slex:spec-api:end -->
+事件：`click`。使用原生事件监听器；交互值从组件 property 读取。
+
+## 接口摘要
+
+- 属性: `label`, `icon`, `variant`, `disabled`, `pressed`, `selected`, `title`, `aria-label`
+- Properties: `label`, `icon`, `variant`, `disabled`, `pressed`, `selected`, `title`, `aria-label`
+- Events: `click`
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

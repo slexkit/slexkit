@@ -1,72 +1,25 @@
-import { describe, it, expect } from "bun:test";
-import { mount } from "../../src/engine/index";
-import "../../src/components/index";
-import { chooseBalancedColumns, createBalancedTileLayout } from "../../src/components/svelte/layout/balancedTiles";
+import { afterEach, describe, expect, it } from "bun:test";
+import { enterAnimationOptions, runCssAnimation } from "../../src/engine/animation";
+import { mockAnimationStyle } from "./animation-test-utils";
 
-function sleep(ms = 30) {
-  return new Promise((r) => setTimeout(r, ms));
-}
+let restore: (() => void) | undefined;
+afterEach(() => { restore?.(); restore = undefined; });
 
-function mockVibrate() {
-  const calls: Array<number | number[]> = [];
-  Object.defineProperty(navigator, "vibrate", {
-    value: (pattern: number | number[]) => {
-      calls.push(pattern);
-      return true;
-    },
-    configurable: true,
-  });
-  return calls;
-}
-
-function unique(ns = "v014") {
-  return `${ns}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-}
-
-describe("$enter animation", () => {
-  it("adds animation class on mount", () => {
-    document.body.innerHTML = '<div id="app"></div>';
-    mount(
-      {
-        namespace: unique("enter_class"),
-        g: {},
-        layout: {
-          "text:hello": { $content: "'Hello'", $enter: "'slex-fade-in'" },
-        },
-      },
-      document.getElementById("app")!,
-    );
-    const el = document.querySelector(".slex-text")!;
-    expect(el.classList.contains("slex-fade-in")).toBe(true);
+describe("enter animation utility", () => {
+  it("adds the requested class and removes it on completion", () => {
+    restore = mockAnimationStyle("slex-fade-in");
+    const node = document.createElement("div"); document.body.replaceChildren(node);
+    runCssAnimation(node, "slex-fade-in", () => {}, enterAnimationOptions);
+    expect(node.classList.contains("slex-fade-in")).toBe(true);
+    node.dispatchEvent(new Event("animationend"));
+    expect(node.classList.contains("slex-fade-in")).toBe(false);
   });
 
-  it("removes animation class on animationend", () => {
-    document.body.innerHTML = '<div id="app"></div>';
-    mount(
-      {
-        namespace: unique("enter_end"),
-        g: {},
-        layout: {
-          "text:hello": { $content: "'Hello'", $enter: "'slex-fade-in'" },
-        },
-      },
-      document.getElementById("app")!,
-    );
-    const el = document.querySelector(".slex-text")!;
-    expect(el.classList.contains("slex-fade-in")).toBe(true);
-    el.dispatchEvent(new AnimationEvent("animationend"));
-    expect(el.classList.contains("slex-fade-in")).toBe(false);
-  });
-
-  it("conditional $enter expression works", () => {
-    document.body.innerHTML = '<div id="app"></div>';
-    const dsl = {
-      namespace: unique("enter_cond"),
-      g: { anim: "slex-slide-in" },
-      layout: { "text:x": { $content: "'X'", $enter: "g.anim" } },
-    };
-    mount(dsl, document.getElementById("app")!);
-    const el = document.querySelector(".slex-text")!;
-    expect(el.classList.contains("slex-slide-in")).toBe(true);
+  it("takes a native JavaScript class value rather than an expression string", () => {
+    restore = mockAnimationStyle("slex-slide-in");
+    const selected = "slex-slide-in";
+    const node = document.createElement("div"); document.body.replaceChildren(node);
+    runCssAnimation(node, selected, () => {}, enterAnimationOptions);
+    expect(node.classList.contains(selected)).toBe(true);
   });
 });

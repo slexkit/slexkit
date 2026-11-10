@@ -1,81 +1,23 @@
-import { attachComponentDisposer, disposeNamespace, mount, register } from "/dist/slexkit.js";
-
-const namespace = "example_custom_component";
-const app = document.getElementById("app");
 const log = document.getElementById("log");
-let cleanup;
-let logLines = [];
-
-function writeLog(message) {
-  logLines.unshift(`${new Date().toLocaleTimeString()} ${message}`);
-  log.textContent = logLines.slice(0, 10).join("\n");
+class DemoCounter extends HTMLElement {
+  connectedCallback() {
+    if (this.shadowRoot) return;
+    const shadow = this.attachShadow({ mode: "open" });
+    const button = document.createElement("button");
+    let value = Number(this.getAttribute("value") || 0);
+    const render = () => { button.textContent = `Count: ${value}`; };
+    button.addEventListener("click", () => { value += 1; render(); this.dispatchEvent(new Event("change", { bubbles: true })); });
+    shadow.append(button); render();
+    log.textContent = "demo-counter connected";
+  }
 }
+customElements.define("demo-counter", DemoCounter);
 
-register("vanilla-counter", (props, name, ctx) => {
-  let value = Number(props.value ?? 0);
-  const root = document.createElement("div");
-  root.className = "example-panel";
-  root.style.boxShadow = "none";
-
-  const title = document.createElement("h2");
-  title.textContent = `Vanilla counter: ${name}`;
-
-  const readout = document.createElement("p");
-  readout.textContent = `Value: ${value}`;
-
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "example-button primary";
-  button.textContent = "Increment";
-  button.addEventListener("click", () => {
-    value += 1;
-    readout.textContent = `Value: ${value}`;
-    ctx.emit("change", value);
-  });
-
-  const timer = setInterval(() => {
-    root.dataset.tick = String(Date.now());
-  }, 1000);
-
-  attachComponentDisposer(root, () => {
-    clearInterval(timer);
-    writeLog("vanilla-counter disposer ran");
-  });
-
-  root.append(title, readout, button);
-  writeLog("vanilla-counter mounted");
-  return root;
-}, { state: "value" });
-
-function mountExample() {
-  cleanup?.();
-  app.textContent = "";
-  cleanup = mount({
-    namespace,
-    g: {
-      count: 2,
-    },
-    layout: {
-      "card:demo": {
-        title: "Custom component bridge",
-        "vanilla-counter:counter": {
-          $value: "g.count",
-          onchange: "g.count = $event",
-        },
-        "stat:count": {
-          label: "Namespace count",
-          $value: "g.count",
-        },
-      },
-    },
-  }, app, { theme: "host-shadcn" });
+const app = document.getElementById("app");
+async function mountExample() {
+  app.replaceChildren(document.createElement("demo-counter"));
+  app.firstElementChild.setAttribute("value", "2");
 }
-
-document.getElementById("dispose").addEventListener("click", () => {
-  disposeNamespace(namespace);
-  writeLog("disposeNamespace called");
-});
-
+document.getElementById("dispose").addEventListener("click", () => { app.replaceChildren(); log.textContent = "custom element disconnected"; });
 document.getElementById("remount").addEventListener("click", mountExample);
-
-mountExample();
+await mountExample();

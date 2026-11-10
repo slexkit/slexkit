@@ -1,10 +1,11 @@
 import { copyFile, mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { compile, compileModule } from "svelte/compiler";
+import { sveltePlugin } from "./svelte-plugin";
+import { publicBuildEntry } from "./public-entry";
 import { fallbackThemeCss } from "../uno.config";
 import { generateAiDocs } from "./generate-ai-docs";
 import { generateStandardArtifacts } from "./generate-standard-artifacts";
+import { writeCustomElementsManifest } from "./custom-elements-manifest";
 
 const root = join(import.meta.dir, "..");
 const dist = join(root, "dist");
@@ -32,28 +33,6 @@ async function run(command: string[], cwd = root) {
 
 // ── JS builds ──────────────────────────────────────────────
 
-function sharedRuntimeExternalPlugin(runtimeSpecifier: string): Bun.BunPlugin {
-  const sharedRuntimeModules = new Set([
-    "engine/registry",
-    "engine/component-scope",
-    "engine/index",
-  ]);
-
-  return {
-    name: "slexkit-shared-runtime",
-    setup(build) {
-      build.onResolve({ filter: /\.\.\/.*engine\/(registry|component-scope|index)$/ }, ({ path }) => {
-        const normalized = path.replace(/\\/g, "/").replace(/^(\.\.\/)+/, "");
-        if (!sharedRuntimeModules.has(normalized)) return undefined;
-        return {
-          path: runtimeSpecifier,
-          external: true,
-        };
-      });
-    },
-  };
-}
-
 async function buildJs(
   format: "esm" | "cjs",
   outfile: string,
@@ -61,7 +40,7 @@ async function buildJs(
   plugins: Bun.BunPlugin[] = [],
 ) {
   const result = await Bun.build({
-    entrypoints: [join(root, entrypoint)],
+    entrypoints: [entrypoint === "src/index.ts" || entrypoint === "src/runtime.ts" || entrypoint === "src/components/tooling.ts" ? await publicBuildEntry(root, outfile, entrypoint) : join(root, entrypoint)],
     outfile: join(dist, outfile),
     target: "browser",
     format,
@@ -70,6 +49,8 @@ async function buildJs(
     plugins: [...plugins, sveltePlugin()],
     define: {
       "process.env.NODE_ENV": JSON.stringify("production"),
+      "import.meta.env.DEV": "false",
+      "import.meta.env.PROD": "true",
     },
   });
 
@@ -84,30 +65,11 @@ async function buildJs(
 }
 
 async function buildComponentEsms() {
-  const entryDir = join(root, "src", "components", "entries");
-  const files = (await readdir(entryDir)).filter((f) => f.endsWith(".ts") && !f.endsWith(".spec.ts"));
-
-  const result = await Bun.build({
-    entrypoints: files.map((f) => join(entryDir, f)),
-    outdir: join(dist, "components"),
-    target: "browser",
-    format: "esm",
-    bundle: true,
-    splitting: true,
-    naming: {
-      entry: "[name].js",
-      chunk: "../chunks/[name]-[hash].js",
-    },
-    write: true,
-    plugins: [sharedRuntimeExternalPlugin("../runtime.js"), sveltePlugin()],
-    define: {
-      "process.env.NODE_ENV": JSON.stringify("production"),
-    },
-  });
-
-  if (!result.success) {
-    for (const log of result.logs) console.error(log);
-    throw new Error("Bun failed to build per-component ESM entries");
+  const { describeSlexElements } = await import(join(dist, "web-components.js"));
+  for (const { tagName } of describeSlexElements()) {
+    const type = tagName.slice(5);
+    await writeFile(join(dist, "components", `${type}.js`),
+      `import { defineSlexElements } from "../web-components.js";\nexport const define = (options = {}) => defineSlexElements({ ...options, components: [${JSON.stringify(type)}] });\nif (typeof window !== "undefined") define();\n`);
   }
 }
 
@@ -119,9 +81,11 @@ async function buildComponentsIndex() {
     format: "esm",
     bundle: true,
     write: true,
-    plugins: [sharedRuntimeExternalPlugin("../runtime.js"), sveltePlugin()],
+    plugins: [sveltePlugin()],
     define: {
       "process.env.NODE_ENV": JSON.stringify("production"),
+      "import.meta.env.DEV": "false",
+      "import.meta.env.PROD": "true",
     },
   });
 
@@ -135,43 +99,11 @@ async function buildComponentsIndex() {
   }
 }
 
-async function rewriteSharedRuntimeImports(target: string, runtimeSpecifier: string): Promise<void> {
-  const targetStat = await stat(target);
-  if (targetStat.isFile()) {
-    if (!target.endsWith(".js")) return;
-    const source = await readFile(target, "utf-8");
-    const next = source.replace(
-      /from\s+["'](?:\.\.\/)+engine\/(?:registry|component-scope|index)["']/g,
-      `from "${runtimeSpecifier}"`,
-    );
-    if (next !== source) await writeFile(target, next);
-    return;
-  }
-
-  const entries = await readdir(target, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const path = join(target, entry.name);
-    if (entry.isDirectory()) {
-      await rewriteSharedRuntimeImports(path, runtimeSpecifier);
-      continue;
-    }
-    if (!entry.isFile() || !entry.name.endsWith(".js")) continue;
-
-    const source = await readFile(path, "utf-8");
-    const next = source.replace(
-      /from\s+["'](?:\.\.\/)+engine\/(?:registry|component-scope|index)["']/g,
-      `from "${runtimeSpecifier}"`,
-    );
-    if (next !== source) await writeFile(path, next);
-  }
-}
-
 async function buildUmd(entrypoint: string, globalName: string, outfile: string) {
   await mkdir(tmp, { recursive: true });
 
   const result = await Bun.build({
-    entrypoints: [join(root, entrypoint)],
+    entrypoints: [await publicBuildEntry(root, outfile.replaceAll("/", "-"), entrypoint)],
     target: "browser",
     format: "iife",
     globalName: `__${globalName}_FACTORY__`,
@@ -180,6 +112,8 @@ async function buildUmd(entrypoint: string, globalName: string, outfile: string)
     plugins: [sveltePlugin()],
     define: {
       "process.env.NODE_ENV": JSON.stringify("production"),
+      "import.meta.env.DEV": "false",
+      "import.meta.env.PROD": "true",
     },
   });
 
@@ -214,61 +148,6 @@ async function buildUmd(entrypoint: string, globalName: string, outfile: string)
 
 // ── Svelte plugin ──────────────────────────────────────────
 
-function sveltePlugin(): Bun.BunPlugin {
-  const svgRawFiles = new Map<string, string>();
-
-  return {
-    name: "svelte",
-    setup(build) {
-      build.onResolve({ filter: /^@humanspeak\/svelte-markdown$/ }, () => ({
-        path: join(root, "node_modules", "@humanspeak", "svelte-markdown", "dist", "index.js"),
-      }));
-      build.onResolve({ filter: /^@humanspeak\/svelte-markdown\/extensions$/ }, () => ({
-        path: join(root, "node_modules", "@humanspeak", "svelte-markdown", "dist", "extensions", "index.js"),
-      }));
-      build.onResolve({ filter: /\.svg\?raw$/ }, ({ path, importer }) => {
-        const [specifier] = path.split("?", 1);
-        const resolved = Bun.resolveSync(specifier, importer);
-        const virtualPath = specifier.replace(/\\/g, "/");
-        svgRawFiles.set(virtualPath, resolved);
-        return { path: virtualPath, namespace: "svg-raw" };
-      });
-      build.onLoad({ filter: /.*/, namespace: "svg-raw" }, async ({ path }) => {
-        const resolved = svgRawFiles.get(path) ?? fileURLToPath(path);
-        return {
-          contents: `export default ${JSON.stringify(await readFile(resolved, "utf-8"))};`,
-          loader: "js",
-        };
-      });
-      build.onLoad({ filter: /\.svelte$/ }, async ({ path }) => {
-        const source = await readFile(path, "utf-8");
-        const result = compile(source, {
-          filename: path,
-          generate: "client",
-          dev: false,
-        });
-
-        return {
-          contents: result.js.code,
-          loader: "js",
-        };
-      });
-      build.onLoad({ filter: /\.svelte\.(js|ts)$/ }, async ({ path }) => {
-        const source = await readFile(path, "utf-8");
-        const result = compileModule(source, {
-          filename: path,
-          dev: false,
-        });
-
-        return {
-          contents: result.js.code,
-          loader: "js",
-        };
-      });
-    },
-  };
-}
-
 // ── CSS ────────────────────────────────────────────────────
 
 async function buildCss() {
@@ -296,7 +175,12 @@ async function buildCss() {
     bundleStyleFile("entry.css"),
   ]);
   const normalizedUnoCss = normalizeGeneratedCss(unoCss.trim());
-  const css = `${normalizedUnoCss}\n\n${entryCss.trim()}\n`;
+  const formulaCss = await readFile(join(root, "node_modules", "katex", "dist", "katex.min.css"), "utf8");
+  const css = `${normalizedUnoCss}\n\n${formulaCss}\n\n${entryCss.trim()}\n`;
+  await mkdir(join(dist, "fonts"), { recursive: true });
+  for (const font of await readdir(join(root, "node_modules", "katex", "dist", "fonts"))) {
+    await copyFile(join(root, "node_modules", "katex", "dist", "fonts", font), join(dist, "fonts", font));
+  }
   const baseCss = `${fallbackThemeCss().trim()}\n\n${(await bundleBaseCss()).trim()}\n`;
   await writeFile(join(dist, "slexkit.css"), css);
   await writeFile(join(dist, "base.css"), baseCss);
@@ -390,15 +274,14 @@ async function buildTypes() {
 }
 
 async function writeComponentEntryStubs() {
-  const entryDir = join(root, "src", "components", "entries");
-  const files = (await readdir(entryDir)).filter((f) => f.endsWith(".ts") && !f.endsWith(".spec.ts"));
+  const { describeSlexElements } = await import(join(dist, "web-components.js"));
   const typesDir = join(dist, "types", "components");
 
   await mkdir(typesDir, { recursive: true });
 
-  for (const file of files) {
-    const name = file.replace(/\.ts$/, "");
-    await writeFile(join(typesDir, `${name}.d.ts`), `// Type stub: importing this module registers the "${name}" component type.\nexport {};\n`);
+  for (const { tagName } of describeSlexElements()) {
+    const name = tagName.slice(5);
+    await writeFile(join(typesDir, `${name}.d.ts`), `import type { DefineSlexElementsOptions } from "../web-components";\nexport declare const define: (options?: DefineSlexElementsOptions) => void;\n`);
   }
 }
 
@@ -410,29 +293,28 @@ await mkdir(join(dist, "umd"), { recursive: true });
 await mkdir(join(dist, "components"), { recursive: true });
 await mkdir(join(dist, "chunks"), { recursive: true });
 
-// Aggregated bundles (engine + all 25 non-tooling components)
+// Default HTML document host with the approved Web Components.
 await Promise.all([
   buildJs("esm", "slexkit.js", "src/index.ts"),
   buildJs("cjs", "slexkit.cjs", "src/index.ts"),
 ]);
 
-// Runtime-only bundles (engine, no components)
+// Runtime aliases include the approved components required by iframe bootstrap.
 await Promise.all([
   buildJs("esm", "runtime.js", "src/runtime.ts"),
   buildJs("cjs", "runtime.cjs", "src/runtime.ts"),
 ]);
 
-// Tooling bundle (Playground only, registers into the root bundle via side effect)
-await buildJs("esm", "tooling.js", "src/components/tooling.ts", [
-  sharedRuntimeExternalPlugin("./slexkit.js"),
-]);
-await rewriteSharedRuntimeImports(join(dist, "tooling.js"), "./slexkit.js");
+// Standard HTML/JS entry, independent of the Slex parser and evaluator.
+await buildJs("esm", "web-components.js", "src/web-components.ts");
+await writeCustomElementsManifest(root, dist);
 
-// Per-component ESM entries (tree-shaking friendly, code-split via chunks/)
+// Optional authoring UI, explicitly registered with host-owned asset options.
+await buildJs("esm", "tooling.js", "src/components/tooling.ts");
+
+// Per-component registration entries share the standalone Web Components bundle.
 await buildComponentEsms();
 await buildComponentsIndex();
-await rewriteSharedRuntimeImports(join(dist, "components"), "../runtime.js");
-await rewriteSharedRuntimeImports(join(dist, "chunks"), "../runtime.js");
 
 // UMD bundles
 await buildUmd("src/index.ts", "SlexKit", "umd/slexkit.umd.js");

@@ -80,7 +80,7 @@ describe("@slexkit/mcp stdio server", () => {
         params: {
           name: "slexkitValidate",
           arguments: {
-            source: `{ slex: "0.1", namespace: "test", layout: { "text:message": { text: "Hello" } } }`,
+            source: `<slex-text text="Hello"></slex-text>`,
           },
         },
       });
@@ -88,10 +88,24 @@ describe("@slexkit/mcp stdio server", () => {
       expect(validated.result).toMatchObject({
         structuredContent: {
           ok: true,
-          schemaVersion: expect.any(String),
-          protocolVersion: "0.1",
-          logicProfileVersion: expect.any(String),
-          componentUsage: ["text"],
+        },
+      });
+
+      write({
+        jsonrpc: "2.0",
+        id: 31,
+        method: "tools/call",
+        params: {
+          name: "slexkitValidate",
+          arguments: {
+            source: '<p>Static inspection only</p><script type="module">globalThis.__must_not_run = true;</script>',
+          },
+        },
+      });
+      const inspected = await waitForLine(proc);
+      expect(inspected.result).toMatchObject({
+        structuredContent: {
+          ok: true,
         },
       });
 
@@ -102,7 +116,7 @@ describe("@slexkit/mcp stdio server", () => {
         params: {
           name: "slexkitValidate",
           arguments: {
-            source: `{ namespace: "broken", layout: { "text:message": { foo:: 1 } } }`,
+            source: `{ g: {}, layout: {} }`,
           },
         },
       });
@@ -110,9 +124,7 @@ describe("@slexkit/mcp stdio server", () => {
       expect(invalid.result).toMatchObject({
         structuredContent: {
           ok: false,
-          diagnostic: {
-            message: expect.any(String),
-          },
+          errors: [expect.objectContaining({ message: expect.any(String) })],
         },
       });
 
@@ -128,8 +140,7 @@ describe("@slexkit/mcp stdio server", () => {
       const docs = await waitForLine(proc);
       const pages = (docs.result as { structuredContent: { pages: unknown[] } }).structuredContent.pages;
       expect(pages.length).toBeGreaterThan(0);
-      expect((docs.result as { structuredContent: { capabilities: { stdlib: unknown[]; capabilities: unknown[] } } }).structuredContent.capabilities.stdlib.length).toBeGreaterThan(0);
-      expect((docs.result as { structuredContent: { standardArtifacts: Record<string, unknown> } }).structuredContent.standardArtifacts["slex-standard-manifest.json"]).toBeTruthy();
+      expect((docs.result as { structuredContent: { capabilities: { sandboxSdk: unknown[] } } }).structuredContent.capabilities.sandboxSdk).toContain("root");
 
       write({
         jsonrpc: "2.0",
@@ -137,41 +148,16 @@ describe("@slexkit/mcp stdio server", () => {
         method: "tools/call",
         params: {
           name: "slexkitDocs",
-          arguments: { standardArtifact: "slex-logic-profile.json" },
+          arguments: { standardArtifact: "slex-html-profile.json" },
         },
       });
       const standard = await waitForLine(proc);
       expect(standard.result).toMatchObject({
         structuredContent: {
-          standardArtifact: {
-            filename: "slex-logic-profile.json",
-            content: {
-              sourceFormat: { fenceLanguage: "slex" },
-              secureMode: {
-                policyGatedApi: expect.arrayContaining(["api.fetch"]),
-              },
-            },
-          },
-        },
-      });
-
-      write({
-        jsonrpc: "2.0",
-        id: 8,
-        method: "tools/call",
-        params: {
-          name: "slexkitDocs",
-          arguments: { conformanceReport: true, conformanceFixture: "valid-full-envelope" },
-        },
-      });
-      const conformance = await waitForLine(proc);
-      expect(conformance.result).toMatchObject({
-        structuredContent: {
-          conformanceReport: {
-            ok: true,
-            total: 1,
-            failed: 0,
-            cases: [expect.objectContaining({ id: "valid-full-envelope", ok: true })],
+          filename: "slex-html-profile.json",
+          content: {
+            fenceLanguage: "slex",
+            sourceType: "HTML fragment string",
           },
         },
       });
@@ -192,7 +178,7 @@ describe("@slexkit/mcp stdio server", () => {
           valid: true,
         },
       });
-      expect((example.result as { structuredContent: { source: string } }).structuredContent.source).toContain("std.math.round");
+      expect((example.result as { structuredContent: { source: string } }).structuredContent.source).toContain("<slex-input");
 
       write({
         jsonrpc: "2.0",
@@ -201,22 +187,14 @@ describe("@slexkit/mcp stdio server", () => {
         params: {
           name: "slexkitValidate",
           arguments: {
-            source: `{ slex: "0.1", namespace: "warn", g: { load() { fetch('/x'); api.socket(); return std.math.nope(1); } }, layout: { "text:message": { madeUp: true, "$text": "std.format.fixed(1, 1)" } } }`,
+            source: `<button onclick="fetch('/x')">Unsafe</button>`,
           },
         },
       });
       const warned = await waitForLine(proc);
       expect(warned.result).toMatchObject({
         structuredContent: {
-          ok: true,
-          warnings: expect.arrayContaining([
-            expect.objectContaining({ code: "unknown_std_member" }),
-            expect.objectContaining({ code: "unknown_api_member" }),
-            expect.objectContaining({ code: "unknown_prop" }),
-            expect.objectContaining({ code: "native_secure_capability" }),
-          ]),
-          stdlibUsage: expect.arrayContaining(["std.format.fixed", "std.math.nope"]),
-          apiUsage: expect.arrayContaining(["api.socket"]),
+          ok: false,
         },
       });
 

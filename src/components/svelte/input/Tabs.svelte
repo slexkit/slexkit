@@ -4,10 +4,11 @@
   import InlineIcon from "../InlineIcon.svelte";
   import type { PropValues, SvelteComponentProps } from "../types";
 
-  let { props, ctx }: SvelteComponentProps = $props();
+  let { instanceId, props, ctx }: SvelteComponentProps = $props();
   let p = $state<PropValues>({});
   let value = $state<unknown>(undefined);
   let iconVersion = $state(0);
+  const baseId = `slex-tabs-${instanceId}`;
   const orientation = $derived(text(p.orientation, "horizontal"));
   const items = $derived(list(p.tabs).map((item) => ({ ...item })));
   const triggerClass = "slex-tabs-trigger";
@@ -50,8 +51,9 @@
     const nextIndex = enabledItems[nextEnabledIndex]?.itemIndex;
     if (nextIndex === undefined) return;
     chooseIndex(nextIndex);
+    // Delegated events release currentTarget when the handler returns.
+    const root = (event.currentTarget as HTMLElement | null)?.closest(".slex-tabs");
     queueMicrotask(() => {
-      const root = (event.currentTarget as HTMLElement | null)?.closest(".slex-tabs");
       const trigger = root?.querySelector<HTMLElement>(`.slex-tabs-trigger[data-value="${CSS.escape(text(items[nextIndex].value ?? items[nextIndex].label))}"]`);
       trigger?.focus();
     });
@@ -61,17 +63,11 @@
     iconVersion += 1;
   }
 
-  function isLayoutContent(value: unknown): value is Record<string, unknown> {
-    return !!value && typeof value === "object" && !Array.isArray(value);
-  }
-
   function renderTabPanel(node: HTMLElement, item: Record<string, unknown>) {
     function render(next: Record<string, unknown>) {
+      if (ctx.renderSlot?.(text(next.value ?? next.label), node)) return;
+      ctx.releaseChildTarget?.(node);
       node.replaceChildren();
-      if (isLayoutContent(next.content)) {
-        ctx.renderTree(next.content, node, ctx.forCtx);
-        return;
-      }
       if (next.content !== undefined && next.content !== null) {
         node.textContent = text(next.content);
       }
@@ -83,6 +79,7 @@
         render(next);
       },
       destroy() {
+        ctx.releaseChildTarget?.(node);
         node.replaceChildren();
       },
     };
@@ -202,8 +199,8 @@
       <button
         type="button"
         role="tab"
-        id={`slex-tab-${ctx.id ?? "tabs"}-${index}`}
-        aria-controls={`slex-tabpanel-${ctx.id ?? "tabs"}-${index}`}
+        id={`${baseId}-tab-${index}`}
+        aria-controls={`${baseId}-panel-${index}`}
         aria-selected={selected}
         tabindex={selected ? 0 : -1}
         disabled={!!item.disabled}
@@ -231,10 +228,10 @@
     {@const selected = text(itemValue) === text(value)}
     {#if selected && item.content}
       <div
-        id={`slex-tabpanel-${ctx.id ?? "tabs"}-${index}`}
+        id={`${baseId}-panel-${index}`}
         class="slex-tabs-content"
         role="tabpanel"
-        aria-labelledby={`slex-tab-${ctx.id ?? "tabs"}-${index}`}
+        aria-labelledby={`${baseId}-tab-${index}`}
         use:renderTabPanel={item}
       ></div>
     {/if}

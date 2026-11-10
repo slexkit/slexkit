@@ -56,6 +56,12 @@ function contentType(path: string) {
       return "application/json; charset=utf-8";
     case ".svg":
       return "image/svg+xml";
+    case ".woff2":
+      return "font/woff2";
+    case ".woff":
+      return "font/woff";
+    case ".ttf":
+      return "font/ttf";
     case ".png":
       return "image/png";
     case ".xml":
@@ -175,6 +181,7 @@ async function runtimeResponse(pathname: string) {
     const headers: Record<string, string> = {
       "cache-control": "no-store",
       "content-type": contentType(path),
+      "access-control-allow-origin": "*",
     };
     if (filename.endsWith(".js")) {
       headers["access-control-allow-origin"] = "*";
@@ -541,6 +548,12 @@ Bun.serve({
     }
     if (url.pathname === "/slexkit.css" || url.pathname === "/dist/slexkit.css") {
       return runtimeResponse(url.pathname);
+    }
+    if (url.pathname.startsWith("/fonts/") || url.pathname.startsWith("/dist/fonts/")) {
+      const filename = url.pathname.split("/").at(-1) ?? "";
+      if (!/^KaTeX_[\w-]+\.(?:woff2?|ttf)$/.test(filename)) return new Response("Not found", { status: 404 });
+      try { return new Response(await readFile(join(projectRoot, "dist/fonts", filename)), { headers: { "content-type": contentType(filename), "access-control-allow-origin": "*" } }); }
+      catch { return new Response("Not found", { status: 404 }); }
     }
     const adapterDemo = await adapterDemoResponse(url);
     if (adapterDemo) return adapterDemo;

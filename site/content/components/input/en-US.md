@@ -5,125 +5,48 @@ status: ready
 order: 10
 summary: "Single-line text or engineering value input."
 ---
+
 # Input
 
-Single-line text input with controlled value, placeholder, label, description, native types, engineering input, and disabled state.
+Collects text, numeric, or engineering-unit input through `.value`; read `.valueAsNumber` when numeric parsing is needed.
 
-<!-- slex:spec-example:start component="input" id="basic" sourceHash="4215f98a" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_input_typical",
-  "layout": {
-    "input:name": {
-      "label": "Project",
-      "value": "SlexKit",
-      "placeholder": "Enter name",
-      "description": "Visible labels keep form fields scannable."
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for name input, search boxes, email/password, and other single-line text.
-- Use `type: "engineering"` for values such as `4.7k`, `2.2uF`, or `1e-3`.
-- Not suitable for numeric range selection (use `slider`).
-- Related components: `select` for option selection, `slider` for numeric ranges.
-- Typically placed inside a `column` to compose forms.
-- Use `$value` and `onchange` for state binding.
-- Numeric and engineering inputs render only the native input. Use `slider` for range adjustment; SlexKit no longer adds custom decrement or increment buttons.
-- `onchange` fires when the user edits the value.
-- `type: "number"` still emits a string value. Convert with `Number($event)` or use `type: "engineering"` to read parsed results.
-- Use `invalid` plus `error` for validation feedback. Error text is linked through `aria-describedby`.
-
-### Label and unit
-
-`label` renders as a clickable native label; `unit` renders as trailing text, suitable for voltage, resistance, frequency, etc.
+## HTML example
 
 ```slex
-{
-  namespace: "doc_input_label_unit",
-  layout: {
-    "input:voltage": {
-      label: "Voltage",
-      value: "3.3",
-      unit: "V",
-      description: "Supply rail"
-    }
-  }
-}
+<slex-input id="value" label="Project" value="SlexKit" placeholder="Enter name" description="Visible labels keep form fields scannable."></slex-input>
 ```
 
-### Disabled state
+## API Reference
 
-```slex
-{
-  namespace: "doc_input_disabled_diff",
-  layout: {
-    "row:diff": {
-      "input:enabled": {
-        value: "Editable",
-        placeholder: "Type here"
-      },
-      "input:disabled": {
-        value: "Disabled",
-        disabled: true
-      }
-    }
-  }
-}
-```
+Defaults below describe the rendered control when an attribute is omitted. Boolean attributes use presence: remove `disabled` to enable the input; `disabled="false"` still disables it.
 
-### Engineering input
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | string / number | `""` | Current input value. User edits expose the source text; assigning a number also updates the field. |
+| `valueAsNumber` | number | `NaN` | Read-only JavaScript property. Parses engineering prefixes when `type="engineering"`; empty or invalid text returns `NaN`. |
+| `label` | string | `""` | Visible label associated with the native input. |
+| `description` | string | `""` | Helper text below the input, connected through `aria-describedby`. |
+| `placeholder` | string | `""` | Hint shown inside an empty input. Keep a visible label as well. |
+| `type` | string | `text` | Native input type, or `engineering` for values such as `4.7kΩ`. Engineering mode uses a text input. |
+| `unit` | string | `""` | Trailing unit label; it does not convert the input value. |
+| `disabled` | boolean | `false` | Disables user editing and native form participation. |
+| `readOnly` / `readonly` | boolean | `false` | Prevents editing while keeping the field readable and focusable. |
+| `required` | boolean | `false` | Enables native required-value validation. |
+| `invalid` | boolean | `false` | Marks the input invalid. A non-empty `error` also sets the invalid state. |
+| `error` | string | `""` | Validation message linked to the input with `aria-describedby`. |
+| `name` | string | unset | Name used when participating in a native form. |
+| `min` | string / number | unset | Native minimum constraint for input types that support it. |
+| `max` | string / number | unset | Native maximum constraint for input types that support it. |
+| `step` | string / number | unset | Native step constraint, including `any` where supported. |
+| `aria-label` | string | inferred | Accessible name override. Without it, the visible label or placeholder supplies the name. |
 
-`type: "engineering"` uses a text input (not the native number type). Component state retains the raw string and additionally exposes parsed results:
+Listen for native `input` and `change` events on `<slex-input>` and read `event.currentTarget.value` or `.valueAsNumber`.
 
-```slex
-{
-  namespace: "doc_input_engineering",
-  layout: {
-    "input:resistance": {
-      type: "engineering",
-      value: "4.7kΩ"
-    },
-    "stat:parsed": {
-      label: "Parsed value",
-      $value: "resistance.valid ? resistance.number : 'Invalid'",
-      $unit: "resistance.unit"
-    }
-  }
-}
-```
+## Contract summary
 
-Supports scientific notation and SI prefixes: `p`, `n`, `u`, `µ`, `m`, `k`, `K`, `M`, `meg`, `G`, `T`. Units are captured but not converted across physical dimensions.
+- Attributes: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `type`, `placeholder`, `readonly`, `required`, `invalid`, `error`, `min`, `max`, `step`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `type`, `placeholder`, `readOnly`, `required`, `invalid`, `error`, `min`, `max`, `step`
+- Events: `input`, `change`
+- Slots: none
 
-## API Reference {#api}
-
-<!-- slex:spec-api:start component="input" sourceHash="a1afe57e" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `value` | string | No | Yes |  | Current input value. |
-| `label` | string | No | Yes |  | Input label. |
-| `unit` | string | No | Yes |  | Trailing unit text. |
-| `description` | string | No | Yes |  | Assistive description below the input. |
-| `help` | string | No | Yes |  | Alias for description. |
-| `hint` | string | No | Yes |  | Alias for description. |
-| `error` | string | No | Yes |  | Error text shown below the input and linked with aria-describedby. |
-| `errorMessage` | string | No | Yes |  | Alias for error. |
-| `invalid` | boolean | No | Yes | `false` | Mark the input as invalid with aria-invalid and error styling. |
-| `placeholder` | string | No | No |  | Placeholder text for empty values. |
-| `type` | string | No | No | `"text"` | Input value kind; use engineering for parsed engineering values. |
-| `disabled` | boolean | No | Yes | `false` | Disable editing. |
-| `readonly` | boolean | No | Yes | `false` | Make the input read-only. |
-| `readOnly` | boolean | No | Yes | `false` | Alias for readonly. |
-| `required` | boolean | No | Yes | `false` | Mark the input as required. |
-| `id` | string | No | No |  | Native input id; defaults to a stable id derived from the component name. |
-| `name` | string | No | No |  | Native input name attribute. |
-| `min` | string \| number | No | Yes |  | Minimum value used by numeric input controls. |
-| `max` | string \| number | No | Yes |  | Maximum value used by numeric input controls. |
-| `step` | string \| number | No | Yes |  | Step size used by numeric input controls. |
-| `onchange` | write-expression | No | No |  | Write expression invoked when the value changes. |
-<!-- slex:spec-api:end -->
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

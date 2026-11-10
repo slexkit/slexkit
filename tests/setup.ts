@@ -10,7 +10,8 @@ Bun.plugin({
       const aliases: Record<string, string> = {
         slexkit: `${import.meta.dir}/../src/index.ts`,
         "slexkit/runtime": `${import.meta.dir}/../src/runtime.ts`,
-        "slexkit/components": `${import.meta.dir}/../src/components/index.ts`,
+        "slexkit/components": `${import.meta.dir}/../src/components-svelte.ts`,
+        "slexkit/web-components": `${import.meta.dir}/../src/web-components.ts`,
         "slexkit/components-svelte": `${import.meta.dir}/../src/components-svelte.ts`,
         "slexkit/tooling": `${import.meta.dir}/../src/components/tooling.ts`,
       };

@@ -9,179 +9,37 @@ slexkitRenderMode: component
 
 # AI / Agents
 
-## AI Accessible Documentation
+Agents should read `AGENTS.slexkit.md`, `docs/html-migration-contract.md`, `docs/web-components.md`, and `dist/custom-elements.json`. Generate standard HTML and JavaScript in explicit `slex` fences.
 
-SlexKit exposes AI-facing documentation as a small set of predictable entry points: a clear index, a full-context file, task-oriented skills, and a minimal MCP surface. Raw docs stay as `.md` pages, and interactive examples use explicit `slex` fences.
+Do not emit object `g/layout` source, expression attributes, runtime imports, registration calls, external scripts, or unsupported tags. Use `slex.root`, the scope `AbortSignal` at `slex.signal`, `slex.onDispose`, explicit snapshot hooks, approved `slex.api`, and JSON-only `slex.shared`. MCP validation is static and never executes payload code.
 
-```slex
-{
-  namespace: "ai_docs_links",
-  layout: {
-    "column:links": {
-      gap: "sm",
-      "link:index": { href: "/llms.txt", text: "/llms.txt - docs index", icon: "list-magnifying-glass" },
-      "link:full": { href: "/llms-full.txt", text: "/llms-full.txt - full English context", icon: "book-open-text" },
-      "link:components": { href: "/llms-components.txt", text: "/llms-components.txt - components and API", icon: "puzzle-piece" },
-      "link:runtime": { href: "/llms-runtime.txt", text: "/llms-runtime.txt - runtime and host integration", icon: "cpu" },
-      "link:capabilities": { href: "/llms-capabilities.txt", text: "/llms-capabilities.txt - std and api capabilities", icon: "function" },
-      "link:toolhost": { href: "/llms-toolhost.txt", text: "/llms-toolhost.txt - structured input", icon: "cursor-click" },
-      "link:authoring": { href: "/llms-authoring.txt", text: "/llms-authoring.txt - slex fence authoring rules", icon: "pencil-simple" },
-      "link:manifest": { href: "/slexkit-ai-manifest.json", text: "/slexkit-ai-manifest.json - machine-readable index", icon: "brackets-curly" },
-      "link:standard": { href: "/standard/slex-standard-manifest.json", text: "/standard/slex-standard-manifest.json - standard artifacts", icon: "brackets-curly" },
-      "link:catalog": { href: "/standard/slex-component-catalog.json", text: "/standard/slex-component-catalog.json - component catalog", icon: "puzzle-piece" },
-      "link:logic": { href: "/standard/slex-logic-profile.json", text: "/standard/slex-logic-profile.json - logic profile", icon: "function" },
-      "link:conformance": { href: "/standard/slex-conformance.json", text: "/standard/slex-conformance.json - conformance fixtures", icon: "check-circle" },
-      "text:note": { text: "Raw docs use .md routes such as /docs/components/card.md. Do not add .mdx routes." }
-    }
-  }
-}
-```
-
-Minimal reading path:
-
-1. Start with [`/llms.txt`](/llms.txt) for the grouped index.
-2. Use [`/llms-full.txt`](/llms-full.txt) when the agent needs broad context.
-3. Use [`/llms-components.txt`](/llms-components.txt) and raw component `.md` pages when authoring UI.
-4. Use [`/llms-capabilities.txt`](/llms-capabilities.txt) for `std.*` and policy-gated `api.*`.
-5. Use [`/llms-runtime.txt`](/llms-runtime.txt) for host and secure runtime integration.
-6. Use [`/llms-toolhost.txt`](/llms-toolhost.txt) only when user input must return structured data to the host.
-7. Use [`/standard/slex-standard-manifest.json`](/standard/slex-standard-manifest.json), [`/standard/slex-logic-profile.json`](/standard/slex-logic-profile.json), and [`/standard/slex-component-catalog.json`](/standard/slex-component-catalog.json) when an agent needs machine-readable authoring or validation context.
-
-SlexKit raw docs are ordinary `.md` pages with explicit `slex` fences. There is no `.mdx` route — `slex` fences are the interactive layer.
-
-## Context Files
-
-Add SlexKit context to `AGENTS.md`, `CLAUDE.md`, or `.cursorrules`:
-
-````md
-## SlexKit
-
-This project uses SlexKit for Markdown-native interactive AI output.
-
-Documentation: https://slexkit.dev/llms-full.txt
-
-Key patterns:
-- Display UI uses explicit `slex` fenced blocks plus Markdown fallback.
-- Slex source uses `{ slex, namespace, g, layout }`; use `slex: "0.1"` for the current public protocol.
-- Use `std.*` for common calculations, formatting, units, and small statistics.
-- Use `/standard/slex-logic-profile.json` and `/standard/slex-component-catalog.json` for machine-readable rules before generating Slex.
-- Run `slex validate --standard` to verify the current package against bundled standard fixtures.
-- ToolHost is only for structured user input flows.
-- Untrusted or agent-generated source should use the secure runtime.
-- Raw docs are `.md` files with `slex` fences, not `.mdx`.
-````
-
-## Skills
-
-The `skills/` directory provides these task entry points:
-
-- `/slexkit`: overview, architecture, and positioning
-- `/author`: write display-oriented `slex` fences with Markdown fallback
-- `/host`: integrate Markdown, Streamdown, Obsidian, or custom hosts
-- `/toolhost`: build confirmations, choices, and structured forms
-- `/secure`: configure sandbox runtime and host policy
-- `/update`: regenerate AI docs after API, docs, or component changes
-
-Use `/author` for display UI. Use `/toolhost` when the host must receive a submitted result.
-
-## MCP
-
-`@slexkit/mcp` provides read-only access to SlexKit documentation, examples, standard artifacts, conformance reports, and Slex source validation. Keep the public surface small and natural: docs, examples, validate.
+Use scalar attributes and slots for a static fragment:
 
 ```slex
-{
-  namespace: "ai_mcp_tools",
-  layout: {
-    "grid:tools": {
-      columns: 1,
-      mdColumns: 3,
-      "card:docs": {
-        title: "slexkitDocs",
-        icon: "book-open-text",
-        "text:body": { text: "Search or fetch Markdown docs, standard artifact JSON, or a conformance report." }
-      },
-      "card:examples": {
-        title: "slexkitExamples",
-        icon: "code",
-        "text:body": { text: "Browse component examples, ToolHost templates, and host integration snippets." }
-      },
-      "card:validate": {
-        title: "slexkitValidate",
-        icon: "check-circle",
-        "text:body": { text: "Parse Slex source and return diagnostics plus component usage." }
-      }
-    }
-  }
-}
+<slex-card title="Build status" tone="success">
+  <slex-row gap="3" align="center">
+    <slex-badge text="Ready" tone="success"></slex-badge>
+    <slex-link text="Read the AI index" href="/llms.txt"></slex-link>
+  </slex-row>
+</slex-card>
 ```
 
-### Quick Install
-
-```sh
-npx add-mcp @slexkit/mcp
-```
-
-Or specify an app:
-
-```sh
-npx add-mcp @slexkit/mcp -a claude-code
-npx add-mcp @slexkit/mcp -a codex
-npx add-mcp @slexkit/mcp -a cursor
-npx add-mcp @slexkit/mcp -a vscode
-npx add-mcp @slexkit/mcp -a zed
-```
-
-### Manual Installation
+Assign arrays through live properties and listen for native events in an inline module. `slex.signal` is the current scope's `AbortSignal`; it is not a signal factory and is never called with an initial value.
 
 ```slex
-{
-  namespace: "ai_manual_configs",
-  layout: {
-    "tabs:manualConfigs": {
-      value: "cursor",
-      tabs: [
-        {
-          value: "cursor",
-          label: "Cursor",
-          content: {
-            "code-block:cursor": {
-              title: ".cursor/mcp.json",
-              language: "json",
-              code: "{\n  \"mcpServers\": {\n    \"slexkit\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@slexkit/mcp\"]\n    }\n  }\n}"
-            }
-          }
-        },
-        {
-          value: "codex",
-          label: "Codex",
-          content: {
-            "code-block:codex": {
-              title: "config.toml",
-              language: "toml",
-              code: "[mcp_servers.slexkit]\ncommand = \"npx\"\nargs = [\"-y\", \"@slexkit/mcp\"]"
-            }
-          }
-        },
-        {
-          value: "vscode",
-          label: "VS Code",
-          content: {
-            "code-block:vscode": {
-              title: ".vscode/mcp.json",
-              language: "json",
-              code: "{\n  \"servers\": {\n    \"slexkit\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"@slexkit/mcp\"],\n      \"type\": \"stdio\"\n    }\n  }\n}"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
+<slex-select id="format" label="Format"></slex-select>
+<slex-text id="selection" text="Choose a format"></slex-text>
+<script type="module">
+  const format = slex.root.querySelector("#format");
+  const selection = slex.root.querySelector("#selection");
+  format.options = [
+    { value: "html", label: "HTML" },
+    { value: "markdown", label: "Markdown" }
+  ];
+  format.addEventListener("change", () => {
+    selection.text = `Selected: ${format.value}`;
+  }, { signal: slex.signal });
+</script>
 ```
 
-## Troubleshooting
-
-- MCP server does not start: verify `npx` and MCP config JSON, then restart the IDE.
-- Tool calls fail: restart the MCP server and confirm `tools/list` exposes only `slexkitDocs`, `slexkitExamples`, and `slexkitValidate`.
-- Docs are stale: run `bun run ai:docs` or `bun run build:core`.
-- Wrong raw source route: use `.md` routes with `slex` fences. Do not request `.mdx`.
+Generated source must remain inert during static inspection. Runtime code executes only after the isolated document host commits it.

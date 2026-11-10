@@ -5,87 +5,40 @@ status: ready
 order: 50
 summary: "分组容器。用于把一组相关内容放在卡片表面里。"
 ---
-# Card 卡片
 
-卡片式容器，可选标题和语义色调。
+# Card
 
-<!-- slex:spec-example:start component="card" id="basic" sourceHash="74b8c7a0" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_card_typical",
-  "layout": {
-    "card:metrics": {
-      "title": "指标",
-      "icon": "chart-bar",
-      "grid:items": {
-        "columns": 2,
-        "stat:requests": {
-          "label": "请求数",
-          "value": "1.2k",
-          "unit": "/min"
-        },
-        "stat:latency": {
-          "label": "延迟",
-          "value": "42",
-          "unit": "ms"
-        }
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+在带标题的表面中组合相关内容，可配置图标、tone 与 variant；子内容通过默认 slot 传入。
 
-## 使用提示
-
-- 适合：分组指标、设置区块、信息摘要。
-- 不适合：页面级区块标题（应当用 section）、纯布局容器（应当用 column 或 grid）。
-- 关联组件：section 提供更完整的页面区块结构（含标题+副标题+操作），card 更轻量。
-- 子组件在卡片内自然排列（可嵌套 row、column、grid）。
-- tone 只表达语义状态，不作为任意样式选择器。
-
-### tone 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_card_tone_diff",
-  layout: {
-    "row:tones": {
-      "card:info": {
-        title: "Info",
-        tone: "info",
-        "text:body": {
-          text: "Information card."
-        }
-      },
-      "card:success": {
-        title: "Success",
-        tone: "success",
-        "text:body": {
-          text: "Success card."
-        }
-      },
-      "card:warning": {
-        title: "Warning",
-        tone: "warning",
-        "text:body": {
-          text: "Warning card."
-        }
-      }
-    }
-  }
-}
+<slex-card title="运行指标" icon="chart-bar">
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+    <slex-stat label="请求数" value="1.2k" unit="/min"></slex-stat>
+    <slex-stat label="延迟" value="42" unit="ms"></slex-stat>
+  </div>
+</slex-card>
 ```
 
-## API 参考 {#api}
+## API 参考
 
-<!-- slex:spec-api:start component="card" sourceHash="fd8bc1c8" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `title` | string | 否 | 是 |  | 卡片标题。 |
-| `icon` | string | 否 | 否 |  | 显示在标题前的图标名称。 |
-| `tone` | string: info, success, warning, danger, muted | 否 | 否 |  | 卡片表面的可选语义色调。 |
-| `variant` | string: tool | 否 | 否 |  | Use tool for ToolHost input cards with compact chrome. |
-| 子组件 | object | 否 | 否 |  | 嵌套组件字段会按字段顺序渲染为子内容。 |
-<!-- slex:spec-api:end -->
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
+
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | `""` | 默认插槽内容上方的可选标题。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
+| `tone` | string | 未设置 | 供主题样式使用的色调数据值。 |
+| `variant` | string | 未设置 | 展示变体数据值。 |
+
+插槽：默认插槽，接收普通 HTML 或自定义元素。
+
+## 接口摘要
+
+- 属性: `title`, `icon`, `tone`, `variant`
+- Properties: `title`, `icon`, `tone`, `variant`
+- Events: 无
+- Slots: `default`
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

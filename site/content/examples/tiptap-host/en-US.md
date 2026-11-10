@@ -5,61 +5,33 @@ status: published
 order: 19
 summary: "A Tiptap CodeBlock adapter that previews explicit slex blocks while preserving ordinary code blocks and Markdown import/export."
 tags: tiptap, editor, markdown, adapter
-components: section, table, callout, code-block
+components: card, grid, input, slider, stat
 difficulty: Intermediate
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
 
 # Tiptap Editor Integration
 
-Use `@slexkit/tiptap` when editor documents need live previews for `slex` code blocks. Tiptap keeps editing, selection, and Markdown import/export; SlexKit only takes over CodeBlock nodes whose language is `slex`.
+The Tiptap extension preserves code-block editing and Markdown round-tripping while delegating explicit `slex` preview execution to the isolated host.
 
-Run it from the repository:
-
-```sh
-bun run build:core
-bun run --filter @slexkit/tiptap build
-bun examples/dev-server.mjs tiptap
+```slex
+<slex-card title="Tiptap Editor Integration"><slex-grid columns="2"><slex-input id="left" label="Value A" value="10"></slex-input><slex-slider id="right" label="Value B" min="0" max="100" value="20"></slex-slider></slex-grid><slex-stat id="result" label="Result"></slex-stat></slex-card>
+<script type="module">
+  const left = slex.root.querySelector("#left"); const right = slex.root.querySelector("#right"); const result = slex.root.querySelector("#result"); const update = () => { result.value = Number(left.value) + right.valueAsNumber; };
+  left.addEventListener("input", update); right.addEventListener("input", update); update(); slex.onDispose(() => { left.removeEventListener("input", update); right.removeEventListener("input", update); });
+</script>
 ```
 
-The source lives in [`examples/tiptap`](https://github.com/slexkit/slexkit/tree/main/examples/tiptap). The Tiptap and Streamdown examples use the same RC low-pass filter content, so editor and read-only hosts can be checked against the same input.
+## Host boundary
 
-<iframe class="slex-example-live-frame" src="/adapter-demos/tiptap/?embed=1" title="Tiptap runnable example"></iframe>
+The adapter recognizes explicit `slex` fences and passes the raw HTML string to the same isolated document host. The host supplies stable artifact/block IDs, runtime/style URLs, and policy; the payload does not.
 
-[Open the integration guide](/docs/guides/integration) · [View runnable source](https://github.com/slexkit/slexkit/tree/main/examples/tiptap)
+The node view keeps the last committed preview interactive while incomplete edits are inspected without execution.
 
-## Scope
+`@slexkit/tiptap` keeps Markdown round-tripping while the node view delegates HTML execution to the isolated document host.
 
-| Item | Convention |
-| --- | --- |
-| Block type | `codeBlock` |
-| Fence language | `slex` |
-| Runtime | `trusted` |
+<iframe class="slex-example-live-frame" src="/adapter-demos/tiptap/?embed=1" title="Tiptap HTML fence demo"></iframe>
 
-Tiptap keeps document editing and Markdown import/export. State-only `slex` fences share one artifact runtime with later preview blocks; non-`slex` code blocks stay native to Tiptap.
-
-Minimal wiring:
-
-```ts
-import { Editor } from "@tiptap/core";
-import StarterKit from "@tiptap/starter-kit";
-import { Markdown } from "@tiptap/markdown";
-import { createSlexKitTiptapExtension } from "@slexkit/tiptap";
-import "@slexkit/theme-shadcn/style.css";
-import "@slexkit/tiptap/style.css";
-
-const editor = new Editor({
-  element: document.querySelector("#editor"),
-  extensions: [
-    StarterKit.configure({ codeBlock: false }),
-    Markdown,
-    createSlexKitTiptapExtension({ artifactId: "doc-1" })
-  ],
-  content: markdown,
-  contentType: "markdown"
-});
-```
-
-Use `@slexkit/tiptap` for editor previews. For read-only Markdown output, use Streamdown or the custom Markdown host API instead.
+Source: `examples/tiptap`.

@@ -18,7 +18,8 @@ const editor = new Editor({
     Mathematics,
     createSlexKitTiptapExtension({
       artifactId: "examples-tiptap",
-      theme: "host-shadcn",
+      runtime: "secure",
+      secureFrame: { runtimeUrl: "/slexkit.runtime.js", styleUrl: "/dist/slexkit.css" },
     }),
   ],
   content: markdown,

@@ -1,6 +1,6 @@
 <script>
   import { onMount, tick } from "svelte";
-  import { registerToolTemplate, renderToolCall } from "../../../src/toolhost/index";
+  import { renderToolCall } from "../../../src/toolhost/index";
   import ToolReplayShell from "./ToolReplayShell.svelte";
   import {
     createToolHostReplay,
@@ -17,113 +17,6 @@
   let toolMount = $state(null);
   let replayState = createToolHostReplay([]);
   let activeHandle = null;
-
-  registerToolTemplate("release-parameters", (args, runtime) => {
-    const values = args.values && typeof args.values === "object" ? args.values : {};
-    const options = Array.isArray(args.options)
-      ? args.options.map((item, index) => ({
-        ...item,
-        value: item.value ?? item.id ?? String(index),
-      }))
-      : [];
-    return {
-      namespace: "tool_release_parameters",
-      g: {
-        __slexkitTool: runtime,
-        options,
-        selected: [],
-        activeStep: "strategy",
-        window: values.window ?? "",
-        owner: values.owner ?? "",
-        rollback: values.rollback ?? "",
-        selectedLabel() {
-          const selected = this.selected[0];
-          const option = this.options.find((item) => item.value === selected || item.id === selected);
-          return option?.label ?? "";
-        },
-        canSubmit() {
-          return this.selected.length > 0 &&
-            String(this.window).trim().length > 0 &&
-            String(this.owner).trim().length > 0 &&
-            String(this.rollback).trim().length > 0;
-        },
-      },
-      layout: {
-        "card:tool": {
-          variant: "tool",
-          title: args.title ?? "Release parameters",
-          "text:description": {
-            $if: args.description ? "true" : "false",
-            text: args.description ?? "",
-          },
-          "step:strategy": {
-            $if: "g.activeStep === 'strategy'",
-            index: 1,
-            total: 2,
-            title: locale === "zh-CN" ? "选择策略" : "Choose strategy",
-            description: locale === "zh-CN" ? "选择这次工具结果里的策略参数。" : "Choose the strategy argument for this tool result.",
-            "radio-group:strategy": {
-              $value: "g.selected[0] || ''",
-              variant: "list",
-              options,
-              onchange: "g.selected = String($event || '') ? [String($event || '')] : []",
-            },
-            "row:strategyActions": {
-              variant: "actions",
-              justify: "end",
-              "button:skip": {
-                label: args.ignoreLabel ?? "Ignore",
-                variant: "ghost",
-                onclick: "g.__slexkitTool.ignore()",
-              },
-              "button:continue": {
-                label: locale === "zh-CN" ? "继续" : "Continue",
-                variant: "primary",
-                $disabled: "!g.selected.length",
-                onclick: "if (g.selected.length) g.activeStep = 'constraints'",
-              },
-            },
-          },
-          "step:constraints": {
-            $if: "g.activeStep === 'constraints'",
-            index: 2,
-            total: 2,
-            title: locale === "zh-CN" ? "填写工具参数" : "Fill tool arguments",
-            $description: locale === "zh-CN"
-              ? "\"已选：\" + g.selectedLabel()"
-              : "\"Selected: \" + g.selectedLabel()",
-            "input:window": {
-              label: locale === "zh-CN" ? "发布窗口" : "Release window",
-              $value: "g.window",
-              onchange: "g.window = String($event || '')",
-            },
-            "input:owner": {
-              label: locale === "zh-CN" ? "负责人" : "Owner",
-              $value: "g.owner",
-              onchange: "g.owner = String($event || '')",
-            },
-            "input:rollback": {
-              label: locale === "zh-CN" ? "回滚条件" : "Rollback criteria",
-              $value: "g.rollback",
-              onchange: "g.rollback = String($event || '')",
-            },
-            "button:back": {
-              label: locale === "zh-CN" ? "返回策略" : "Back to strategy",
-              variant: "ghost",
-              onclick: "g.activeStep = 'strategy'",
-            },
-          },
-          "submit:actions": {
-            $if: "g.activeStep === 'constraints'",
-            returnKeys: ["selected", "window", "owner", "rollback"],
-            submitLabel: args.submitLabel ?? "Submit",
-            ignoreLabel: args.ignoreLabel ?? "Ignore",
-            $disabled: "!g.canSubmit()",
-          },
-        },
-      },
-    };
-  });
 
   const copyForLocale = (value) => toolHostResponsesScenarios[value] ?? toolHostResponsesScenarios["en-US"];
   const formatJson = (value) => JSON.stringify(value ?? {}, null, 2);
@@ -233,7 +126,7 @@ async function runToolHostFunctionCall(item, container) {
 
   function resultSummary(item) {
     if (item.callId === "call_release_parameters") {
-      const selected = item.output?.selected?.[0];
+      const selected = item.output?.strategy;
       return [
         copy.directions?.[selected],
         item.output?.window,

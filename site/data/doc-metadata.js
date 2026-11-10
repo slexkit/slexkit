@@ -1,4 +1,4 @@
-import { componentSpecs, publicComponentTypes } from "../../src/components/spec-registry";
+import { describeSlexElements } from "../../src/web-components/definitions";
 import { normalizeLocale, sourceLocale } from "./locales.js";
 
 export const componentCategoryOrder = [
@@ -68,8 +68,19 @@ export const componentTitleLabels = {
   toast: "Toast 通知",
 };
 
-export const englishComponentTitleLabels = Object.fromEntries(componentSpecs.map((spec) => [spec.type, spec.title]));
-export const publicComponentSlugs = new Set(publicComponentTypes);
+const elementCatalog = describeSlexElements();
+
+export const englishComponentTitleLabels = Object.fromEntries(
+  elementCatalog.map((item) => {
+    const slug = item.tagName.slice(5);
+    const title = slug
+      .split("-")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+    return [slug, title];
+  }),
+);
+export const publicComponentSlugs = new Set(elementCatalog.map((item) => item.tagName.slice(5)));
 
 export function componentTitleForLocale(type, title, locale, contentLocale = locale) {
   if (normalizeLocale(contentLocale) === sourceLocale) return englishComponentTitleLabels[type] ?? title;

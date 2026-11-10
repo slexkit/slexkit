@@ -5,72 +5,39 @@ status: ready
 order: 30
 summary: "复选框，适合确认项或多选项。"
 ---
-# Checkbox 复选框
 
-布尔勾选输入，适合需要确认或从多项中选择的场景。
+# Checkbox
 
-<!-- slex:spec-example:start component="checkbox" id="basic" sourceHash="060e0c05" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_checkbox_typical",
-  "layout": {
-    "checkbox:agree": {
-      "checked": true,
-      "label": "我同意",
-      "icon": "handshake"
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+通过 `.checked` 表示独立布尔选择，并触发原生 `input`/`change` 事件；在受支持浏览器中可参与表单。
 
-## 使用提示
-
-- 适合：同意条款、多选设置、逐项启用/禁用。
-- 不适合：即时生效的开关（应当用 switch）、互斥单选（应当用 radio-group）。
-- 关联组件：switch 用于即时生效的开关，radio-group 用于互斥选项。
-- 通常放在 column 中垂直排列多个选项。
-- 使用 $checked 和 onchange 实现状态绑定。
-
-### checked / disabled 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_checkbox_state_diff",
-  layout: {
-    "column:diff": {
-      "checkbox:checked": {
-        label: "已选中",
-        checked: true
-      },
-      "checkbox:unchecked": {
-        label: "未选中"
-      },
-      "checkbox:disabled-checked": {
-        label: "禁用且已选",
-        checked: true,
-        disabled: true
-      },
-      "checkbox:disabled": {
-        label: "已禁用",
-        disabled: true
-      }
-    }
-  }
-}
+<slex-checkbox></slex-checkbox>
 ```
 
-## API 参考 {#api}
+## API 参考
 
-<!-- slex:spec-api:start component="checkbox" sourceHash="a507c04a" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `checked` | boolean | 否 | 是 | `false` | 选中状态。 |
-| `label` | string | 否 | 是 |  | 复选框标签。 |
-| `icon` | string | 否 | 否 |  | 显示在可见标签前的图标名称。 |
-| `disabled` | boolean | 否 | 是 | `false` | 禁用复选框。 |
-| `haptic` | boolean | 否 | 否 | `true` | 在支持的设备上启用振动反馈。 |
-| `haptics` | boolean | 否 | 否 | `true` | haptic 的别名。 |
-| `onchange` | write-expression | 否 | 否 |  | 选中状态变化时执行的写表达式。 |
-<!-- slex:spec-api:end -->
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
+
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 控件的可见标签。 |
+| `unit` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `description` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `disabled` | boolean | `false` | 禁用用户交互。 |
+| `name` | string | 未设置 | 自定义元素参与原生表单时使用的字段名。 |
+| `value` | string / number | `"on"` | 选中时提交的值；未赋入 value 时提交 on。通过 checked 控制视觉状态。 |
+| `aria-label` | string | `auto` | 无障碍名称覆盖；省略时会在可用时使用可见标签。 |
+| `checked` | boolean | `false` | 当前选中状态。 |
+
+事件：`input`、`change`。使用原生事件监听器；交互值从组件 property 读取。
+
+## 接口摘要
+
+- 属性: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `checked`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `checked`
+- Events: `input`, `change`
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

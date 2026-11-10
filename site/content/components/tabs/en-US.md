@@ -5,100 +5,36 @@ status: ready
 order: 10
 summary: "Tabbed view switcher."
 ---
+
 # Tabs
 
-Switch between named content panels.
+Switches among named slotted panels or a `.tabs` array using `.value`; tab changes emit native value events.
 
-<!-- slex:spec-example:start component="tabs" id="basic" sourceHash="df3a28e8" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_tabs_typical",
-  "layout": {
-    "tabs:main": {
-      "value": "overview",
-      "tabs": [
-        {
-          "value": "overview",
-          "label": "Overview"
-        },
-        {
-          "value": "settings",
-          "label": "Settings"
-        }
-      ]
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for settings panel sections, content category switching, and configuration groups.
-- Not suitable for multi-page wizards — use explicit page state and navigation.
-- Related components: `button` for submit actions, `link` for cross-page navigation.
-- Use `$value` and `onchange` for controlled switching.
-
-### Orientation variants
+## HTML example
 
 ```slex
-{
-  namespace: "doc_tabs_orientation_diff",
-  layout: {
-    "row:orientations": {
-      "column:h": {
-        "text:horiz": {
-          text: "horizontal (default)"
-        },
-        "tabs:horizontal": {
-          value: "a",
-          orientation: "horizontal",
-          tabs: [
-            {
-              value: "a",
-              label: "Tab A"
-            },
-            {
-              value: "b",
-              label: "Tab B"
-            }
-          ]
-        }
-      },
-      "column:v": {
-        "text:vert": {
-          text: "vertical"
-        },
-        "tabs:vertical": {
-          value: "a",
-          orientation: "vertical",
-          tabs: [
-            {
-              value: "a",
-              label: "Tab A"
-            },
-            {
-              value: "b",
-              label: "Tab B"
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+<slex-tabs><section slot="overview" aria-label="Overview">Overview content</section><section slot="details" aria-label="Details">Details content</section></slex-tabs>
 ```
 
-## API Reference {#api}
+## API Reference
 
-<!-- slex:spec-api:start component="tabs" sourceHash="a8288681" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `value` | string | No | Yes |  | Current active tab value. |
-| `tabs` | array | No | No |  | Tab definitions with value, label, content, icon, and iconOnly. |
-| `tabs[].icon` | string | No | No |  | Icon name shown before a tab trigger label. |
-| `tabs[].iconOnly` | boolean | No | No |  | Show only the tab icon while retaining label as accessible text. |
-| `orientation` | string: horizontal, vertical | No | No | `"horizontal"` | Tab list orientation. |
-| `onchange` | write-expression | No | No |  | Write expression invoked when the active tab changes. |
-<!-- slex:spec-api:end -->
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | scalar | `auto` | Selected tab value. Named light-DOM panels derive tabs and select the first enabled panel; property-supplied tabs require an explicit value. |
+| `tabs` | array | `[]` | Property-only tab objects. Named light-DOM panels can derive this array and supply their content. |
+| `orientation` | string | `horizontal` | Tab-list orientation. At 640px or less of isolated-document width, vertical tabs collapse to a horizontal scrolling list. |
+
+Events: `input`, `change`. Use native event listeners; read interactive values from component properties.
+
+Slots: named panels matched to item names.
+
+## Contract summary
+
+- Attributes: `value`, `orientation`
+- Properties: `value`, `tabs`, `orientation`
+- Events: `input`, `change`
+- Slots: `(named panels)`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

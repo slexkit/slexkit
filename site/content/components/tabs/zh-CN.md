@@ -5,100 +5,36 @@ status: ready
 order: 10
 summary: "同一上下文内切换视图。"
 ---
-# Tabs 选项卡
 
-选项卡切换，支持水平和垂直方向。
+# Tabs
 
-<!-- slex:spec-example:start component="tabs" id="basic" sourceHash="df3a28e8" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_tabs_typical",
-  "layout": {
-    "tabs:main": {
-      "value": "overview",
-      "tabs": [
-        {
-          "value": "overview",
-          "label": "概览"
-        },
-        {
-          "value": "settings",
-          "label": "设置"
-        }
-      ]
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+通过 `.value` 在命名 slot panel 或 `.tabs` 数组定义的页面间切换，并触发原生值事件。
 
-## 使用提示
-
-- 适合：设置面板分区、内容分类切换、配置分组。
-- 不适合：跨页面流程向导；这类场景应使用明确的页面状态和导航。
-- 关联组件：button 用于提交动作，link 用于跨页面跳转。
-- 使用 $value 和 onchange 实现受控切换。
-
-### orientation 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_tabs_orientation_diff",
-  layout: {
-    "row:orientations": {
-      "column:h": {
-        "text:horiz": {
-          text: "horizontal (default)"
-        },
-        "tabs:horizontal": {
-          value: "a",
-          orientation: "horizontal",
-          tabs: [
-            {
-              value: "a",
-              label: "Tab A"
-            },
-            {
-              value: "b",
-              label: "Tab B"
-            }
-          ]
-        }
-      },
-      "column:v": {
-        "text:vert": {
-          text: "vertical"
-        },
-        "tabs:vertical": {
-          value: "a",
-          orientation: "vertical",
-          tabs: [
-            {
-              value: "a",
-              label: "Tab A"
-            },
-            {
-              value: "b",
-              label: "Tab B"
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+<slex-tabs><section slot="overview" aria-label="Overview">Overview content</section><section slot="details" aria-label="Details">Details content</section></slex-tabs>
 ```
 
-## API 参考 {#api}
+## API 参考
 
-<!-- slex:spec-api:start component="tabs" sourceHash="a8288681" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `value` | string | 否 | 是 |  | 当前激活的 tab 值。 |
-| `tabs` | array | 否 | 否 |  | Tab 定义，包含 value、label、content、icon 和 iconOnly。 |
-| `tabs[].icon` | string | 否 | 否 |  | 显示在 tab 触发标签前的图标名称。 |
-| `tabs[].iconOnly` | boolean | 否 | 否 |  | 只显示 tab 图标，同时保留标签作为无障碍文本。 |
-| `orientation` | string: horizontal, vertical | 否 | 否 | `"horizontal"` | Tab 列表方向。 |
-| `onchange` | write-expression | 否 | 否 |  | 激活 tab 变化时执行的写表达式。 |
-<!-- slex:spec-api:end -->
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
+
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `value` | scalar | `auto` | 选中的标签值。具名 light DOM 面板会推导 tabs 并选择首个可用面板；通过 property 提供 tabs 时需显式设置 value。 |
+| `tabs` | array | `[]` | 仅 property；标签对象数组。具名 light DOM 面板可推导此数组并提供内容。 |
+| `orientation` | string | `horizontal` | 标签列表方向。隔离文档宽度不超过 640px 时，vertical 会折叠为可横向滚动的列表。 |
+
+事件：`input`、`change`。使用原生事件监听器；交互值从组件 property 读取。
+
+插槽：具名面板（与条目名称对应）。
+
+## 接口摘要
+
+- 属性: `value`, `orientation`
+- Properties: `value`, `tabs`, `orientation`
+- Events: `input`, `change`
+- Slots: `(named panels)`
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

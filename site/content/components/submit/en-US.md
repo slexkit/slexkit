@@ -5,49 +5,34 @@ status: ready
 order: 20
 summary: "ToolHost-only submit action that returns current selection or form values to the host."
 ---
+
 # Submit
 
-`submit` is the ToolHost template action that returns the state fields listed in `returnKeys` to the host. It is not a general button component; use `button` for ordinary interactions.
+Exposes explicit `submit` and `ignore` actions for ToolHost-style workflows; it is not a native form submit replacement.
 
-<!-- slex:spec-example:start component="submit" id="basic" sourceHash="b5d89128" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_submit_typical",
-  "layout": {
-    "column:tool": {
-      "input:title": {
-        "value": "Release note",
-        "placeholder": "Title"
-      },
-      "submit:done": {
-        "submitLabel": "Submit",
-        "ignoreLabel": "Ignore",
-        "returnKeys": [
-          "title"
-        ]
-      }
-    }
-  }
-}
+<slex-submit></slex-submit>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for ToolHost confirmation forms, parameter panels, and selection confirmation flows.
-- Not suitable for ordinary action buttons (use `button`).
-- Related components: `button` for local action triggers.
-- Combine with input components such as `input` and `select` to read user choices.
-- Paths in `returnKeys` are read from the global state `g`.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `submitLabel` / `submit-label` | string | `"Submit"` | Primary submit button label. |
+| `ignoreLabel` / `ignore-label` | string | `"Ignore"` | Secondary ignore button label. |
+| `disabled` | boolean | `false` | Disables only the submit button; Ignore remains available. |
 
-<!-- slex:spec-api:start component="submit" sourceHash="1c7c766f" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `submitLabel` | string | No | No | `"Submit"` | Submit button text. |
-| `ignoreLabel` | string | No | No | `"Ignore"` | Ignore button text. |
-| `returnKeys` | string[] | No | No |  | State field paths returned to ToolHost. |
-| `disabled` | boolean | No | Yes | `false` | Disable submit action. |
-<!-- slex:spec-api:end -->
+Events: `submit`, `ignore`. Use native event listeners; read interactive values from component properties.
+
+## Contract summary
+
+- Attributes: `submit-label`, `ignore-label`, `disabled`
+- Properties: `submitLabel`, `ignoreLabel`, `disabled`
+- Events: `submit`, `ignore`
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

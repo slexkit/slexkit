@@ -5,75 +5,34 @@ status: ready
 order: 60
 summary: "页面区块，带标题、动作和内容区域。"
 ---
-# Section 区块
 
-页面级区块容器，提供标题、副标题、可选操作链接和内容区域。
+# Section
 
-<!-- slex:spec-example:start component="section" id="basic" sourceHash="094666a8" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_section_typical",
-  "layout": {
-    "section:overview": {
-      "eyebrow": "仪表盘",
-      "title": "运行时概览",
-      "icon": "chart-bar",
-      "subtitle": "本节汇总最重要的状态。",
-      "stat:latency": {
-        "label": "延迟",
-        "value": "42",
-        "unit": "ms"
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+创建带标题的内容区，可附加副标题与图标；正文通过默认 slot 传入。
 
-## 使用提示
-
-- 适合：仪表盘区块、设置分组、分类内容区域。
-- 不适合：纯视觉卡片（应当用 card）、无标题容器（应当用 column）。
-- 关联组件：card 是分组容器但更轻量，section 提供更完整的标题结构。
-- 标题区与内容区分明，内容区可嵌套任意布局组件。
-
-### eyebrow / subtitle 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_section_eyebrow_diff",
-  layout: {
-    "column:demo": {
-      "section:with-eyebrow": {
-        eyebrow: "Overview",
-        title: "带眉题",
-        "text:body": {
-          text: "眉题显示在标题上方。"
-        }
-      },
-      "section:with-subtitle": {
-        title: "带副标题",
-        subtitle: "标题下方的补充说明。",
-        "text:body": {
-          text: "副标题提供额外上下文。"
-        }
-      }
-    }
-  }
-}
+<slex-section></slex-section>
 ```
 
-## API 参考 {#api}
+## API 参考
 
-<!-- slex:spec-api:start component="section" sourceHash="03916011" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `title` | string | 否 | 是 |  | 区块标题。 |
-| `icon` | string | 否 | 否 |  | 显示在标题前的图标名称。 |
-| `eyebrow` | string | 否 | 是 |  | 标题上方的小标签。 |
-| `subtitle` | string | 否 | 是 |  | 标题下方的副标题文本。 |
-| `actionLabel` | string | 否 | 是 |  | 可选操作链接标签。 |
-| `actionHref` | string | 否 | 否 |  | 可选操作链接目标。 |
-| 子组件 | object | 否 | 否 |  | 嵌套组件字段会按字段顺序渲染为子内容。 |
-<!-- slex:spec-api:end -->
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
+
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | `""` | 分区标题。 |
+| `subtitle` | string | `""` | 标题下方的辅助文本。 |
+| `icon` | string | `""` | 标题图标；仅在存在 header 时渲染。 |
+
+插槽：默认插槽，接收普通 HTML 或自定义元素。
+
+## 接口摘要
+
+- 属性: `title`, `subtitle`, `icon`
+- Properties: `title`, `subtitle`, `icon`
+- Events: 无
+- Slots: `default`
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

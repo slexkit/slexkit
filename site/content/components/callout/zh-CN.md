@@ -5,79 +5,36 @@ status: ready
 order: 40
 summary: "提示块，用于说明、注意、警告、建议。"
 ---
-# Callout 提示块
 
-醒目的提示区块，支持标题、正文和语义色调。
+# Callout
 
-<!-- slex:spec-example:start component="callout" id="basic" sourceHash="e07c6bdd" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_callout_typical",
-  "layout": {
-    "callout:notice": {
-      "tone": "info",
-      "title": "提示",
-      "icon": "info",
-      "text": "用提示块突出需要注意的信息。"
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+突出展示带标题的说明或警告内容，可设置 tone 与图标；复杂正文通过默认 slot 传入。
 
-## 使用提示
-
-- 适合：操作说明、注意警告、成功提示、建议信息。
-- 不适合：纯状态标签（应当用 badge）、需要独立流程的交互内容（应拆成页面内区域）。
-- 关联组件：badge 紧凑标签，toast 临时反馈。
-- 子组件可嵌套在 callout 内扩展正文区域。
-- tone 只表达语义状态，不作为任意样式选择器。
-
-### tone 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_callout_tone_diff",
-  layout: {
-    "column:tones": {
-      "callout:info": {
-        tone: "info",
-        title: "信息",
-        text: "这是一条说明信息。"
-      },
-      "callout:success": {
-        tone: "success",
-        title: "成功",
-        text: "操作已完成。"
-      },
-      "callout:warning": {
-        tone: "warning",
-        title: "警告",
-        text: "继续前请复核。"
-      },
-      "callout:danger": {
-        tone: "danger",
-        title: "危险",
-        text: "此操作无法撤销。"
-      }
-    }
-  }
-}
+<slex-callout></slex-callout>
 ```
 
-## API 参考 {#api}
+## API 参考
 
-<!-- slex:spec-api:start component="callout" sourceHash="aed6ad17" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `title` | string | 否 | 是 |  | 提示块标题。 |
-| `heading` | string | 否 | 是 |  | title 的别名。 |
-| `label` | string | 否 | 是 |  | title 的别名。 |
-| `icon` | string | 否 | 否 |  | 显示在标题前的图标名称。 |
-| `text` | string | 否 | 是 |  | 提示块正文文本。 |
-| `message` | string | 否 | 是 |  | text 的别名。 |
-| `content` | string | 否 | 是 |  | text 的别名。 |
-| `tone` | string: info, success, warning, danger | 否 | 否 | `"info"` | 提示块的语义色调。 |
-| 子组件 | object | 否 | 否 |  | 嵌套组件字段会按字段顺序渲染为子内容。 |
-<!-- slex:spec-api:end -->
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
+
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | `""` | 可选提示框标题。 |
+| `content` | string | `""` | 主要正文文本，与默认插槽子元素一同渲染。 |
+| `description` | string | `""` | 未设置 content 时使用的后备正文。 |
+| `tone` | string | `info` | 语义色调；error 与 destructive 会归一化为 danger。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
+
+插槽：默认插槽，接收普通 HTML 或自定义元素。
+
+## 接口摘要
+
+- 属性: `title`, `content`, `description`, `tone`, `icon`
+- Properties: `title`, `content`, `description`, `tone`, `icon`
+- Events: 无
+- Slots: `default`
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

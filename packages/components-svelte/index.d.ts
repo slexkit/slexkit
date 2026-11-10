@@ -1,5 +1,6 @@
 export {
+  defineSlexElements,
+  describeSlexElements,
   registerAll,
-  registerSvelteComponent,
   registerSubset,
 } from "slexkit/components-svelte";

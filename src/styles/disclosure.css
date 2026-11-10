@@ -1,14 +1,14 @@
 .slex-accordion,
 .slex-collapsible {
   width: 100%;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-accordion {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
   overflow: hidden;
-  background: var(--card);
+  background: var(--slex-card, var(--card));
 }
 
 .slex-accordion-inner {
@@ -16,7 +16,7 @@
 }
 
 .slex-accordion-item + .slex-accordion-item {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--slex-border, var(--border));
 }
 
 .slex-accordion .slex-accordion-heading {
@@ -35,7 +35,7 @@
   padding: 0.5rem 0.75rem;
   border: 0;
   background: transparent;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
@@ -63,13 +63,13 @@
 
 .slex-accordion-trigger:hover:not([data-disabled]),
 .slex-collapsible-trigger:hover:not([data-disabled]) {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-accordion-trigger:focus-visible,
 .slex-collapsible-trigger:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--slex-ring, var(--ring));
   outline-offset: -2px;
 }
 
@@ -92,7 +92,7 @@
 
 .slex-accordion-content,
 .slex-collapsible-content {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   line-height: 1.45;
 }
@@ -135,9 +135,9 @@
 }
 
 .slex-collapsible {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--card);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: var(--slex-radius);
+  background: var(--slex-card, var(--card));
   overflow: hidden;
 }
 

@@ -1,62 +1,27 @@
 ---
-title: "First Interaction: Slider Controls Data"
+title: "First Interaction: Button Counter"
 category: "Getting Started"
 status: published
 order: 2
-summary: "Adds the g object, a slider input, and reactive expressions to a SlexKit card."
-tags: beginner, reactive, slider
-components: section, slider, stat, callout, badge, column
+summary: "A button updates a stat through native click handling and live component properties."
+tags: beginner, native-events, button
+components: button, card, stat
 difficulty: Beginner
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
 
-# First Interaction: Slider Controls Data
+# First Interaction: Button Counter
 
-Moving from static content to interaction requires three pieces:
-
-1. **`g` object** — reactive state container
-2. **`$value` / `$label` / `$tone`** — read expressions (render values from g)
-3. **`onchange`** — write expressions (user actions write to g)
+A native click listener updates the stat's live `.value` property and is released when the script scope is disposed.
 
 ```slex
-{
-  slex: "0.1",
-  namespace: "learn_first_interaction",
-  g: { count: 42 },
-  layout: {
-    "section:interact": {
-      eyebrow: "Getting Started · 2/4",
-      title: "First Interaction: Slider Controls Data",
-      subtitle: "Move the slider, and the stat and callout update from g.count.",
-      "column:controls": {
-        "slider:count": {
-          label: "Choose a value",
-          "$value": "g.count",
-          min: 0,
-          max: 100,
-          step: 1,
-          onchange: "g.count = Number($event)"
-        },
-        "stat:countStat": { label: "Current value", "$value": "g.count" },
-        "badge:level": {
-          "$label": "g.count < 30 ? 'Low' : g.count < 70 ? 'Medium' : 'High'",
-          "$tone": "g.count < 30 ? 'success' : g.count < 70 ? 'warning' : 'danger'"
-        },
-        "callout:note": {
-          "$tone": "g.count < 50 ? 'success' : 'info'",
-          "$text": "g.count < 50 ? 'Current value is low — suitable for entry-level load.' : 'Current value is high — monitor resource consumption.'"
-        }
-      }
-    }
-  }
-}
+<slex-card title="First Interaction: Button Counter"><slex-stat id="count" label="Count" value="0"></slex-stat><slex-button id="add" label="Add"></slex-button></slex-card>
+<script type="module">
+  const count = slex.root.querySelector("#count"); const add = slex.root.querySelector("#add"); const click = () => { count.value = Number(count.value) + 1; };
+  add.addEventListener("click", click); slex.onDispose(() => add.removeEventListener("click", click));
+</script>
 ```
 
-Core formula:
-```
-User action → onchange → g → SlexKit detects change → all $value/$tone/$text recompute → UI updates
-```
-
-This is a unidirectional data flow: user actions write to `g`, expressions read from `g`, and the UI re-renders. No manual `setState` or DOM manipulation is needed.
+The stable element IDs let compatible commits retain the button/stat instances while script changes still replace their module scope cleanly.

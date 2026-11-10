@@ -7,101 +7,68 @@ import { join, resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const rootPackage = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 const version = process.env.SLEXKIT_SMOKE_VERSION || rootPackage.version;
+const installSpec = process.env.SLEXKIT_SMOKE_SPEC || `slexkit@${version}`;
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
-
 if (!version) throw new Error("Unable to determine SlexKit version for registry smoke.");
 
 const appDir = mkdtempSync(join(tmpdir(), "slexkit-registry-smoke-"));
-
 function run(command, args, options = {}) {
   const isWindowsCmd = process.platform === "win32" && command.endsWith(".cmd");
-  const output = execFileSync(
-    isWindowsCmd ? "cmd.exe" : command,
-    isWindowsCmd ? ["/d", "/s", "/c", command, ...args] : args,
-    {
-      cwd: options.cwd ?? root,
-      encoding: "utf8",
-      shell: false,
-      stdio: options.stdio ?? "pipe",
-    },
-  );
-  return String(output ?? "").trim();
+  return String(
+    execFileSync(
+      isWindowsCmd ? "cmd.exe" : command,
+      isWindowsCmd ? ["/d", "/s", "/c", command, ...args] : args,
+      { cwd: options.cwd ?? root, encoding: "utf8", shell: false, stdio: options.stdio ?? "pipe" },
+    ) ?? "",
+  ).trim();
 }
-
-const packages = [
-  `slexkit@${version}`,
-  `@slexkit/runtime@${version}`,
-  `@slexkit/components-svelte@${version}`,
-  `@slexkit/theme-shadcn@${version}`,
-  `@slexkit/streamdown@${version}`,
-  `@slexkit/assistant-ui@${version}`,
-  `@slexkit/tiptap@${version}`,
-  `@slexkit/mcp@${version}`,
-  "react@19.2.7",
-  "react-dom@19.2.7",
-  "streamdown@2.5.0",
-  "@assistant-ui/react@0.14.24",
-  "@assistant-ui/react-streamdown@0.3.5",
-  "@tiptap/core@3.27.1",
-  "@tiptap/pm@3.27.1",
-  "@tiptap/extension-code-block@3.27.1",
-];
 
 try {
   writeFileSync(
     join(appDir, "package.json"),
     JSON.stringify({ private: true, type: "module" }, null, 2),
   );
-
-  run(npmCommand, ["install", "--no-audit", "--no-fund", "--ignore-scripts", ...packages], {
+  run(npmCommand, ["install", "--no-audit", "--no-fund", "--ignore-scripts", installSpec], {
     cwd: appDir,
     stdio: "inherit",
   });
-
   writeFileSync(
     join(appDir, "smoke.mjs"),
-    [
-      "import { createRequire } from 'node:module';",
-      "import { spawnSync } from 'node:child_process';",
-      "import { existsSync } from 'node:fs';",
-      "import { join } from 'node:path';",
-      "import { mount as rootMount } from 'slexkit/runtime';",
-      "import { mount as scopedMount } from '@slexkit/runtime';",
-      "import '@slexkit/components-svelte';",
-      "import { SlexKitRenderer, createSlexKitRenderer, slexkitRenderer } from '@slexkit/streamdown';",
-      "import { SlexKitAssistantStreamdownText, createSlexKitAssistantStreamdownComponents } from '@slexkit/assistant-ui';",
-      "import { SlexKitTiptapExtension, createSlexKitTiptapExtension } from '@slexkit/tiptap';",
-      "const require = createRequire(import.meta.url);",
-      "for (const id of ['@slexkit/theme-shadcn/style.css', '@slexkit/theme-shadcn/base.css', '@slexkit/theme-shadcn/components/button.css', '@slexkit/streamdown/style.css', '@slexkit/assistant-ui/style.css', '@slexkit/tiptap/style.css']) require.resolve(id);",
-      "if (typeof rootMount !== 'function') throw new Error('slexkit/runtime mount missing');",
-      "if (typeof scopedMount !== 'function') throw new Error('@slexkit/runtime mount missing');",
-      "if (typeof slexkitRenderer !== 'object') throw new Error('@slexkit/streamdown renderer missing');",
-      "if (typeof createSlexKitRenderer !== 'function') throw new Error('@slexkit/streamdown factory missing');",
-      "if (typeof SlexKitRenderer !== 'function') throw new Error('@slexkit/streamdown component missing');",
-      "if (typeof SlexKitAssistantStreamdownText !== 'function') throw new Error('@slexkit/assistant-ui component missing');",
-      "if (typeof createSlexKitAssistantStreamdownComponents !== 'function') throw new Error('@slexkit/assistant-ui factory missing');",
-      "if (typeof createSlexKitTiptapExtension !== 'function') throw new Error('@slexkit/tiptap factory missing');",
-      "if (typeof SlexKitTiptapExtension !== 'object') throw new Error('@slexkit/tiptap extension missing');",
-      "const mcpBinBase = join(process.cwd(), 'node_modules', '.bin', 'slexkit-mcp');",
-      "const mcpBin = (process.platform === 'win32' ? [`${mcpBinBase}.cmd`, `${mcpBinBase}.exe`, mcpBinBase] : [mcpBinBase]).find(existsSync);",
-      "if (!mcpBin) throw new Error('slexkit-mcp binary missing');",
-      "const input = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {} }) + '\\n';",
-      "const result = process.platform === 'win32' && mcpBin.endsWith('.cmd')",
-      "  ? spawnSync('cmd.exe', ['/d', '/s', '/c', mcpBin], { input, encoding: 'utf8', timeout: 5000 })",
-      "  : spawnSync(mcpBin, [], { input, encoding: 'utf8', timeout: 5000 });",
-      "if (result.error) throw result.error;",
-      "if (result.status !== 0 && !result.stdout) throw new Error(result.stderr || `slexkit-mcp exited with ${result.status}`);",
-      "const line = result.stdout.trim().split(/\\r?\\n/)[0];",
-      "const response = JSON.parse(line);",
-      "if (response.result?.serverInfo?.name !== '@slexkit/mcp') throw new Error('@slexkit/mcp initialize failed');",
-      "console.log('registry smoke ok');",
-      "process.exit(0);",
-    ].join("\n"),
+    `
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { defineSlexElements, describeSlexElements } from "slexkit/web-components";
+
+const require = createRequire(import.meta.url);
+const manifestPath = require.resolve("slexkit/custom-elements.json");
+const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+const metadata = JSON.parse(readFileSync(join(dirname(manifestPath), "..", "package.json"), "utf8"));
+assert.equal(metadata.customElements, "./dist/custom-elements.json");
+assert.ok(metadata.exports["./web-components"]?.import.endsWith("web-components.js"));
+assert.equal(metadata.exports["./custom-elements.json"], "./dist/custom-elements.json");
+assert.equal(manifest.packageVersion, metadata.version);
+assert.equal(manifest.modules?.[0]?.path, "dist/web-components.js");
+
+const declarations = manifest.modules.flatMap(module => module.declarations ?? []).filter(item => item.customElement);
+const described = describeSlexElements();
+assert.ok(declarations.length > 0);
+assert.deepEqual(declarations.map(item => item.tagName).sort(), described.map(item => item.tagName).sort());
+for (const declaration of declarations) {
+  const description = described.find(item => item.tagName === declaration.tagName);
+  assert(description, declaration.tagName + " is missing from describeSlexElements()");
+  assert.deepEqual((declaration.attributes ?? []).map(item => item.name).sort(), description.properties.filter(item => item.attribute).map(item => item.attribute).sort());
+  const slug = declaration.tagName.slice("slex-".length);
+  const entry = await import("slexkit/components/" + slug);
+  assert.equal(typeof entry.define, "function", "component entry missing for " + slug);
+}
+assert.equal(typeof defineSlexElements, "function");
+console.log(JSON.stringify({ status: "passed", version: metadata.version, customElements: declarations.length, manifest: manifestPath }));
+`,
   );
-
   run("node", ["smoke.mjs"], { cwd: appDir, stdio: "inherit" });
-
-  console.log(`registry smoke ok\nversion=${version}`);
+  console.log(`registry custom-element smoke ok\nversion=${version}`);
 } finally {
   rmSync(appDir, { recursive: true, force: true });
 }

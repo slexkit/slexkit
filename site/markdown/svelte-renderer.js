@@ -1,18 +1,9 @@
 import { mount, unmount } from "svelte";
-import { attachComponentDisposer, createSlexKitMarkdownRuntimeHost, register } from "slexkit";
+import { createSlexKitMarkdownRuntimeHost } from "slexkit";
 import { withSiteBase } from "../app/site-base.js";
-import { registerSiteComponents } from "../app/site-components.js";
 import MarkdownRenderer from "./MarkdownRenderer.svelte";
 
 let markdownDomainId = 0;
-let siteComponentsRegistered = false;
-
-function ensureSiteComponentsRegistered() {
-  if (siteComponentsRegistered) return;
-  registerSiteComponents({ register, attachComponentDisposer });
-  siteComponentsRegistered = true;
-}
-
 function containerDomain(container) {
   if (!container.dataset.slexkitMarkdownDomain) {
     markdownDomainId += 1;
@@ -129,14 +120,16 @@ function bindLiveExampleFrames(container) {
 }
 
 export function renderMarkdown(content, container, options = {}) {
-  ensureSiteComponentsRegistered();
   const domain = options.domain ?? containerDomain(container);
   const ownsRuntimeHost = !options.slexkitRuntimeHost;
   const runtimeHost = options.slexkitRuntimeHost ?? createSlexKitMarkdownRuntimeHost({
-    mode: options.slexkitRuntime ?? "trusted",
     policy: options.slexkitSecurePolicy ?? {},
     hostAdapter: options.slexkitHostAdapter,
-    secureFrame: options.slexkitSecureFrame ?? true,
+    secureFrame: options.slexkitSecureFrame ?? {
+      runtimeUrl: withSiteBase("/slexkit.runtime.js"),
+      styleUrl: withSiteBase("/slexkit.css"),
+      fontUrls: [new URL(withSiteBase("/fonts/"), window.location.href).href],
+    },
   });
   const app = mount(MarkdownRenderer, {
     target: container,
@@ -144,12 +137,15 @@ export function renderMarkdown(content, container, options = {}) {
       content,
       domain,
       slexkitRenderMode: options.slexkitRenderMode ?? "component",
-      slexkitRuntime: options.slexkitRuntime ?? "trusted",
+      slexkitRuntime: "secure",
       slexkitRuntimeHost: runtimeHost,
       slexkitUseGlobalRuntimeHost: options.slexkitUseGlobalRuntimeHost ?? false,
       slexkitSecurePolicy: options.slexkitSecurePolicy ?? {},
       slexkitHostAdapter: options.slexkitHostAdapter,
-      slexkitSecureFrame: options.slexkitSecureFrame ?? true,
+      slexkitSecureFrame: options.slexkitSecureFrame ?? {
+        runtimeUrl: withSiteBase("/slexkit.runtime.js"),
+        styleUrl: withSiteBase("/slexkit.css"),
+      },
       slexkitStreaming: options.slexkitStreaming ?? false,
       slexkitIncomplete: options.slexkitIncomplete ?? false,
     },

@@ -11,7 +11,7 @@
     <main class="example-shell">
       <header class="example-header">
         <div class="example-kicker">Markdown host</div>
-        <h1 class="example-title">Fences, state-only blocks, and artifact scope</h1>
+        <h1 class="example-title">HTML fences and artifact scope</h1>
         <p class="example-description">
           This example uses the Markdown runtime host directly, mirroring how chat,
           document, or note hosts mount explicit `slex` fences.
@@ -22,24 +22,24 @@
           <h2>Fence source</h2>
           <div class="example-fence-list">
             <div class="example-fence">
-              <div class="example-fence-label">state-only slex fence</div>
-              <pre id="state-source" class="example-code"></pre>
+              <div class="example-fence-label">HTML summary fence</div>
+              <pre id="summary-source" class="example-code"></pre>
             </div>
             <div class="example-fence">
-              <div class="example-fence-label">renderable slex fence</div>
-              <pre id="layout-source" class="example-code"></pre>
+              <div class="example-fence-label">HTML + module script fence</div>
+              <pre id="interactive-source" class="example-code"></pre>
             </div>
             <div class="example-fence">
-              <div class="example-fence-label">slex shorthand fence</div>
-              <pre id="shorthand-source" class="example-code"></pre>
+              <div class="example-fence-label">Migration note</div>
+              <pre id="migration-source" class="example-code"></pre>
             </div>
           </div>
         </div>
         <div class="example-panel">
           <h2>Mounted blocks</h2>
-          <div id="state-slot" class="example-slot"></div>
-          <div id="layout-slot" class="example-slot"></div>
-          <div id="shorthand-slot" class="example-slot"></div>
+          <div id="summary-slot" class="example-slot"></div>
+          <div id="interactive-slot" class="example-slot"></div>
+          <div id="migration-slot" class="example-slot"></div>
         </div>
       </section>
     </main>

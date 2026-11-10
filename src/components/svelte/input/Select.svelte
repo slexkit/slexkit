@@ -5,14 +5,14 @@
   import InlineIcon from "../InlineIcon.svelte";
   import type { PropValues, SvelteComponentProps } from "../types";
 
-  let { props, ctx }: SvelteComponentProps = $props();
+  let { instanceId, props, ctx }: SvelteComponentProps = $props();
   let p = $state<PropValues>({});
   let value = $state<unknown>("");
   let open = $state(false);
   let activeIndex = $state(-1);
   let triggerEl = $state<HTMLButtonElement | null>(null);
   const ariaLabel = $derived(text(p["aria-label"] ?? p.ariaLabel));
-  const baseId = $derived(`slex-select-${ctx.id}`);
+  const baseId = $derived(text(p.id) || `slex-select-${instanceId}`);
   const labelId = $derived(`${baseId}-label`);
   const valueId = $derived(`${baseId}-value`);
   const listboxId = $derived(`${baseId}-listbox`);
@@ -35,13 +35,15 @@
   const activeOptionId = $derived(open && activeIndex >= 0 ? `${baseId}-option-${activeIndex}` : undefined);
 
   onMount(() => {
+    const ownerDocument = ctx.document || document;
     function closeFromOutside(event: MouseEvent): void {
       const target = event.target as Node | null;
-      if (!target || !triggerEl?.closest(".slex-select")?.contains(target)) close(false);
+      const root = triggerEl?.closest(".slex-select");
+      if (!target || !root || (!root.contains(target) && !event.composedPath().includes(root))) close(false);
     }
 
-    document.addEventListener("mousedown", closeFromOutside);
-    return () => document.removeEventListener("mousedown", closeFromOutside);
+    ownerDocument.addEventListener("mousedown", closeFromOutside);
+    return () => ownerDocument.removeEventListener("mousedown", closeFromOutside);
   });
 
   function choose(next: unknown): void {
@@ -206,6 +208,7 @@
     class="slex-select-native"
     bind:value
     disabled={!!p.disabled}
+    name={text(p.name) || undefined}
     required={!!p.required}
     tabindex="-1"
     aria-hidden="true"

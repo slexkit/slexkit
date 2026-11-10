@@ -4,12 +4,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
   max-width: 100%;
   min-width: 0;
   padding: 0.5rem 1rem;
   border: 1px solid transparent;
-  border-radius: var(--radius);
+  border-radius: var(--slex-radius);
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
@@ -20,59 +20,59 @@
   cursor: pointer;
   user-select: none;
   transition:
-    background 150ms ease,
-    border-color 150ms ease,
-    color 150ms ease,
-    box-shadow 150ms ease,
-    transform 150ms ease;
+    background var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    border-color var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    color var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    box-shadow var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    transform var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease);
 }
 
 .slex-button--primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border-color: var(--primary);
+  background: var(--slex-primary, var(--primary));
+  color: var(--slex-primary-foreground, var(--primary-foreground));
+  border-color: var(--slex-primary, var(--primary));
 }
 
 .slex-button--primary:hover:not(:disabled):not(.slex-button--disabled) {
-  background: color-mix(in oklab, var(--primary) 90%, transparent);
-  border-color: color-mix(in oklab, var(--primary) 90%, transparent);
-  color: var(--primary-foreground);
+  background: color-mix(in oklab, var(--slex-primary, var(--primary)) 90%, transparent);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 90%, transparent);
+  color: var(--slex-primary-foreground, var(--primary-foreground));
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--slex-shadow-md);
 }
 
 .slex-button--secondary {
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-  border-color: var(--border);
+  background: var(--slex-secondary, var(--secondary));
+  color: var(--slex-secondary-foreground, var(--secondary-foreground));
+  border-color: var(--slex-border, var(--border));
 }
 
 .slex-button--secondary:hover:not(:disabled):not(.slex-button--disabled) {
-  background: var(--accent);
-  color: var(--accent-foreground);
-  border-color: var(--border);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
+  border-color: var(--slex-border, var(--border));
 }
 
 .slex-button--danger {
-  background: var(--destructive);
-  color: var(--destructive-foreground);
-  border-color: var(--destructive);
+  background: var(--slex-destructive, var(--destructive));
+  color: var(--slex-destructive-foreground, var(--destructive-foreground));
+  border-color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-button--danger:hover:not(:disabled):not(.slex-button--disabled) {
-  background: color-mix(in oklab, var(--destructive) 90%, transparent);
-  border-color: color-mix(in oklab, var(--destructive) 90%, transparent);
+  background: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 90%, transparent);
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 90%, transparent);
 }
 
 .slex-button--ghost {
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   border-color: transparent;
 }
 
 .slex-button--ghost:hover:not(:disabled):not(.slex-button--disabled) {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-button:disabled,
@@ -87,11 +87,11 @@
 
 .slex-button:active:not(:disabled):not(.slex-button--disabled) {
   transform: translateY(0);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--slex-shadow-sm);
 }
 
 .slex-button:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: var(--slex-focus-ring-width, 2px) solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 
@@ -124,7 +124,7 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--slex-border, var(--border));
 }
 
 /* components/slider.css */
@@ -133,7 +133,7 @@
 .slex-slider-field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
   width: 100%;
 }
 
@@ -145,18 +145,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .slex-slider-value {
   padding: 0.125rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-  font-family: var(--font-mono, "Geist Mono", "Noto Sans Mono", "Noto Sans Mono CJK SC", "SFMono-Regular", "Cascadia Code", Consolas, monospace);
+  border: 1px solid var(--slex-border, var(--border));
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-secondary, var(--secondary));
+  color: var(--slex-secondary-foreground, var(--secondary-foreground));
+  font-family: var(--slex-font-mono);
   font-size: 0.875rem;
   font-weight: 600;
 }
@@ -176,10 +176,10 @@
   border-radius: 999px;
   background: linear-gradient(
     to right,
-    var(--primary) 0%,
-    var(--primary) var(--slex-slider-progress, 0%),
-    var(--secondary) var(--slex-slider-progress, 0%),
-    var(--secondary) 100%
+    var(--slex-primary, var(--primary)) 0%,
+    var(--slex-primary, var(--primary)) var(--slex-slider-progress, 0%),
+    var(--slex-secondary, var(--secondary)) var(--slex-slider-progress, 0%),
+    var(--slex-secondary, var(--secondary)) 100%
   );
   pointer-events: none;
   transform: translateY(-50%);
@@ -200,7 +200,7 @@
   appearance: none;
   background: transparent;
   color: transparent;
-  accent-color: var(--primary);
+  accent-color: var(--slex-primary, var(--primary));
   cursor: pointer;
   overflow: visible;
   transition: box-shadow 150ms ease, filter 150ms ease;
@@ -235,11 +235,11 @@
   width: 1rem;
   height: 1rem;
   margin-top: 0;
-  border: 2px solid var(--primary);
+  border: 2px solid var(--slex-primary, var(--primary));
   border-radius: 999px;
-  background-color: var(--background);
+  background-color: var(--slex-background, var(--background));
   background-clip: padding-box;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 14%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 14%, transparent);
   -webkit-appearance: none;
   appearance: none;
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 120ms ease;
@@ -258,43 +258,43 @@
   box-sizing: border-box;
   width: 1rem;
   height: 1rem;
-  border: 2px solid var(--primary);
+  border: 2px solid var(--slex-primary, var(--primary));
   border-radius: 999px;
-  background-color: var(--background);
+  background-color: var(--slex-background, var(--background));
   background-clip: padding-box;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 14%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 14%, transparent);
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 120ms ease;
 }
 
 .slex-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 12%, transparent);
   transform: scale(1.06);
 }
 
 .slex-slider:hover::-moz-range-thumb {
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 12%, transparent);
   transform: scale(1.06);
 }
 
 .slex-slider:focus-visible::-webkit-slider-thumb {
   box-shadow:
-    0 0 0 4px var(--background),
-    0 0 0 6px var(--ring);
+    0 0 0 4px var(--slex-background, var(--background)),
+    0 0 0 6px var(--slex-ring, var(--ring));
 }
 
 .slex-slider:focus-visible::-moz-range-thumb {
   box-shadow:
-    0 0 0 4px var(--background),
-    0 0 0 6px var(--ring);
+    0 0 0 4px var(--slex-background, var(--background)),
+    0 0 0 6px var(--slex-ring, var(--ring));
 }
 
 .slex-slider:active::-webkit-slider-thumb {
-  box-shadow: 0 0 0 6px color-mix(in oklab, var(--primary) 16%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--slex-primary, var(--primary)) 16%, transparent);
   transform: scale(1.12);
 }
 
 .slex-slider:active::-moz-range-thumb {
-  box-shadow: 0 0 0 6px color-mix(in oklab, var(--primary) 16%, transparent);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--slex-primary, var(--primary)) 16%, transparent);
   transform: scale(1.12);
 }
 
@@ -323,7 +323,7 @@
 .slex-switch {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
   cursor: pointer;
 }
 
@@ -340,7 +340,7 @@
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.8125rem;
   font-weight: 500;
 }
@@ -369,7 +369,7 @@
   padding: 0;
   border: 2px solid transparent;
   border-radius: 9999px;
-  background: var(--input);
+  background: var(--slex-input, var(--input));
   transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
 
@@ -380,37 +380,37 @@
   height: 1.25rem;
   border: 0;
   border-radius: 9999px;
-  background: var(--background);
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 12%, transparent);
+  background: var(--slex-background, var(--background));
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 12%, transparent);
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
   transform: translateX(0);
   will-change: transform;
 }
 
 .slex-switch:hover .slex-switch-control {
-  border-color: color-mix(in oklab, var(--primary) 42%, var(--input));
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 42%, var(--slex-input, var(--input)));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--slex-primary, var(--primary)) 8%, transparent);
 }
 
 .slex-switch:hover .slex-switch-control::after {
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 10%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--slex-primary, var(--primary)) 10%, transparent);
 }
 
 .slex-switch:active .slex-switch-control::after {
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 16%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 16%, transparent);
 }
 
 .slex-switch-input:checked + .slex-switch-control {
-  border-color: var(--primary);
-  background: var(--primary);
+  border-color: var(--slex-primary, var(--primary));
+  background: var(--slex-primary, var(--primary));
 }
 
 .slex-switch:hover .slex-switch-input:checked + .slex-switch-control {
-  background: color-mix(in oklab, var(--primary) 88%, var(--background));
+  background: color-mix(in oklab, var(--slex-primary, var(--primary)) 88%, var(--slex-background, var(--background)));
 }
 
 .slex-switch-input:checked + .slex-switch-control::after {
-  background: var(--background);
+  background: var(--slex-background, var(--background));
   transform: translateX(1.25rem);
 }
 
@@ -419,7 +419,7 @@
 }
 
 .slex-switch-input:focus-visible + .slex-switch-control {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 18%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--slex-ring, var(--ring)) 18%, transparent);
 }
 
 .slex-switch-input:disabled + .slex-switch-control {
@@ -451,7 +451,9 @@
   align-items: center;
   gap: 0.25rem;
   width: fit-content;
-  color: var(--foreground);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.25;
@@ -459,7 +461,7 @@
 
 .slex-input-field[data-required="true"] .slex-input-label::after {
   content: "*";
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
   font-weight: 700;
 }
 
@@ -469,7 +471,7 @@
   align-items: stretch;
   width: 100%;
   min-width: 0;
-  border-radius: var(--radius);
+  border-radius: var(--slex-radius);
   transition: box-shadow 150ms ease;
 }
 
@@ -481,11 +483,11 @@
   min-width: 0;
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
-  background: var(--background);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
   background-clip: padding-box;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -501,16 +503,16 @@
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
-  min-height: 2.5625rem;
+  min-height: var(--slex-control-height, 2.5625rem);
   height: auto;
   margin: 0;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
   box-shadow: none;
-  background: var(--background);
+  background: var(--slex-background, var(--background));
   background-clip: padding-box;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -534,13 +536,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.5625rem;
+  min-height: var(--slex-control-height, 2.5625rem);
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--input);
+  border: 1px solid var(--slex-input, var(--input));
   border-left: 0;
-  border-radius: 0 var(--radius) var(--radius) 0;
-  background: var(--muted);
-  color: var(--muted-foreground);
+  border-radius: 0 var(--slex-radius) var(--slex-radius) 0;
+  background: var(--slex-muted, var(--muted));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.5;
@@ -549,12 +551,12 @@
 }
 
 .slex-input::placeholder {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-input:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 18%, transparent);
+  border-color: var(--slex-ring, var(--ring));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 18%, transparent);
 }
 
 .slex-input-control[data-has-unit="true"] .slex-input:focus {
@@ -572,17 +574,17 @@
 }
 
 .slex-input[readonly] {
-  background: color-mix(in oklab, var(--muted) 42%, var(--background));
-  color: color-mix(in oklab, var(--foreground) 82%, var(--muted-foreground));
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 42%, var(--slex-background, var(--background)));
+  color: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 82%, var(--slex-muted-foreground, var(--muted-foreground)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input {
-  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 72%, var(--slex-input, var(--input)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input:focus {
-  border-color: var(--destructive);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+  border-color: var(--slex-destructive, var(--destructive));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-destructive, var(--destructive)) 18%, transparent);
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control[data-has-unit="true"] .slex-input:focus {
@@ -590,7 +592,7 @@
 }
 
 .slex-input-control:focus-within {
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 16%, transparent);
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 16%, transparent);
 }
 
 .slex-input-control:not([data-has-unit]):focus-within {
@@ -599,16 +601,16 @@
 
 .slex-input-control:focus-within .slex-input,
 .slex-input-control:focus-within .slex-input-unit {
-  border-color: var(--ring);
+  border-color: var(--slex-ring, var(--ring));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-unit {
-  border-color: color-mix(in oklab, var(--destructive) 72%, var(--input));
-  color: color-mix(in oklab, var(--destructive) 84%, var(--muted-foreground));
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 72%, var(--slex-input, var(--input)));
+  color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 84%, var(--slex-muted-foreground, var(--muted-foreground)));
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within {
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 18%, transparent);
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-destructive, var(--destructive)) 18%, transparent);
 }
 
 .slex-input-field[data-invalid="true"] .slex-input-control:not([data-has-unit]):focus-within {
@@ -617,7 +619,7 @@
 
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input,
 .slex-input-field[data-invalid="true"] .slex-input-control:focus-within .slex-input-unit {
-  border-color: var(--destructive);
+  border-color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-input[disabled] {
@@ -631,13 +633,13 @@
 }
 
 .slex-input-description {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   line-height: 1.35;
 }
 
 .slex-input-error {
-  color: var(--destructive);
+  color: var(--slex-destructive, var(--destructive));
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.35;
@@ -651,7 +653,7 @@
   width: 100%;
   min-width: 0;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
 }
 
 .slex-select-label {
@@ -659,7 +661,7 @@
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1;
@@ -678,18 +680,18 @@
   gap: 0.75rem;
   width: 100%;
   min-width: 0;
-  min-height: 2.5rem;
+  min-height: var(--slex-control-height, 2.5rem);
   margin: 0;
   padding: 0.5rem 1rem;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
-  background: var(--background);
-  color: var(--foreground);
+  border: 1px solid var(--slex-input, var(--input));
+  border-radius: var(--slex-radius);
+  background: var(--slex-background, var(--background));
+  color: var(--slex-foreground, var(--foreground));
   font: inherit;
   font-size: 0.875rem;
   line-height: 1.25rem;
   outline: none;
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 8%, transparent);
   cursor: pointer;
   transition:
     border-color 150ms ease,
@@ -701,12 +703,12 @@
 }
 
 .slex-select .slex-select-trigger:hover:not(:disabled) {
-  background: color-mix(in oklab, var(--accent) 34%, var(--background));
+  background: color-mix(in oklab, var(--slex-accent, var(--accent)) 34%, var(--slex-background, var(--background)));
 }
 
 .slex-select .slex-select-trigger:focus-visible {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 20%, transparent);
+  border-color: var(--slex-ring, var(--ring));
+  box-shadow: 0 0 0 var(--slex-focus-ring-width, 2px) color-mix(in oklab, var(--slex-ring, var(--ring)) 20%, transparent);
 }
 
 .slex-select .slex-select-trigger:disabled {
@@ -725,7 +727,7 @@
 }
 
 .slex-select-value[data-placeholder] {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-select-icon {
@@ -771,10 +773,10 @@
   margin: 0;
   padding: 0.25rem;
   overflow-y: auto;
-  border: 1px solid color-mix(in oklab, var(--border) 82%, transparent);
-  border-radius: var(--radius);
-  background: var(--popover, var(--background));
-  color: var(--popover-foreground, var(--foreground));
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 82%, transparent);
+  border-radius: var(--slex-radius);
+  background: var(--slex-popover, var(--popover, var(--slex-background, var(--background))));
+  color: var(--slex-popover-foreground, var(--popover-foreground, var(--slex-foreground, var(--foreground))));
   box-shadow: var(
     --shadow-md,
     0 6px 16px rgb(0 0 0 / 0.12),
@@ -801,8 +803,8 @@
   gap: 0.75rem;
   min-height: 2rem;
   padding: 0.5rem 0.75rem;
-  border-radius: calc(var(--radius) - 2px);
-  color: var(--popover-foreground, var(--foreground));
+  border-radius: calc(var(--slex-radius) - 2px);
+  color: var(--slex-popover-foreground, var(--popover-foreground, var(--slex-foreground, var(--foreground))));
   font-size: 0.875rem;
   line-height: 1.25rem;
   cursor: pointer;
@@ -811,8 +813,8 @@
 
 .slex-select-option:hover:not([data-disabled]),
 .slex-select-option--active:not([data-disabled]) {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-select-option--selected {
@@ -820,7 +822,7 @@
 }
 
 .slex-select-option[data-disabled] {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   cursor: not-allowed;
   opacity: 0.52;
 }
@@ -864,7 +866,7 @@
   height: var(--slex-control-height, 2.25rem);
   min-height: 0;
   border-width: 0 1px 0 0;
-  border-color: color-mix(in oklab, var(--border) 58%, transparent);
+  border-color: color-mix(in oklab, var(--slex-border, var(--border)) 58%, transparent);
   border-radius: 0;
   background: transparent;
   padding: 0 0.75rem 0 0.875rem;
@@ -874,7 +876,7 @@
 }
 
 .slex-select[data-variant="toolbar"] .slex-select-trigger:hover:not(:disabled) {
-  background: color-mix(in oklab, var(--muted) 36%, var(--background));
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 36%, var(--slex-background, var(--background)));
 }
 
 .slex-select[data-variant="toolbar"] .slex-select-menu {
@@ -883,8 +885,8 @@
   right: auto;
   width: 100%;
   min-width: 100%;
-  border-color: color-mix(in oklab, var(--border) 76%, transparent);
-  border-radius: calc(var(--radius) - 2px);
+  border-color: color-mix(in oklab, var(--slex-border, var(--border)) 76%, transparent);
+  border-radius: calc(var(--slex-radius) - 2px);
   padding: 0.25rem;
   box-shadow: var(
     --shadow-sm,
@@ -895,7 +897,7 @@
 
 .slex-select[data-variant="toolbar"] .slex-select-option {
   height: 1.875rem;
-  border-radius: calc(var(--radius) - 4px);
+  border-radius: calc(var(--slex-radius) - 4px);
   font-size: 0.8125rem;
   padding-inline: 0.75rem;
 }
@@ -922,7 +924,7 @@
   padding: 0;
   list-style: none;
   overflow: hidden;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--slex-border, var(--border));
 }
 
 .slexkit-root .slex-tabs-list {
@@ -941,7 +943,7 @@
   width: var(--slex-tabs-indicator-width, 0);
   height: var(--slex-tabs-indicator-height, 0.125rem);
   border-radius: 999px;
-  background: var(--primary);
+  background: var(--slex-primary, var(--primary));
   opacity: var(--slex-tabs-indicator-opacity, 0);
   pointer-events: none;
   transform: translate3d(var(--slex-tabs-indicator-x, 0), var(--slex-tabs-indicator-y, 0), 0);
@@ -949,15 +951,15 @@
 
 .slex-tabs-list[data-indicator-ready="true"] .slex-tabs-selected-indicator {
   transition:
-    transform var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
-    width var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
-    height var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)),
-    opacity var(--slex-tabs-indicator-duration, 140ms) var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1));
+    transform var(--slex-tabs-indicator-duration, var(--slex-motion-duration, 140ms)) var(--slex-motion-easing, var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1))),
+    width var(--slex-tabs-indicator-duration, var(--slex-motion-duration, 140ms)) var(--slex-motion-easing, var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1))),
+    height var(--slex-tabs-indicator-duration, var(--slex-motion-duration, 140ms)) var(--slex-motion-easing, var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1))),
+    opacity var(--slex-tabs-indicator-duration, var(--slex-motion-duration, 140ms)) var(--slex-motion-easing, var(--slex-motion-ease-standard, cubic-bezier(0.22, 1, 0.36, 1)));
 }
 
 .slex-tabs[data-orientation="vertical"] .slex-tabs-list {
   flex-direction: column;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--slex-border, var(--border));
   border-bottom: none;
 }
 
@@ -967,7 +969,7 @@
   border: none;
   border-radius: 0;
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
@@ -988,7 +990,7 @@
 .slex-tabs-trigger--with-icon {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
 }
 
 .slex-tabs-trigger-icon {
@@ -1008,15 +1010,15 @@
 
 .slex-tabs-trigger:hover:not([data-disabled]) {
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
 }
 
 .slex-tabs-trigger.slex-tabs-trigger--selected {
-  color: var(--primary);
+  color: var(--slex-primary, var(--primary));
 }
 
 .slex-tabs-trigger.slex-tabs-trigger--selected:hover:not([data-disabled]) {
-  color: var(--primary);
+  color: var(--slex-primary, var(--primary));
 }
 
 .slex-tabs-trigger[data-disabled] {
@@ -1025,7 +1027,7 @@
 }
 
 .slex-tabs-trigger:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: var(--slex-focus-ring-width, 2px) solid var(--slex-ring, var(--ring));
   outline-offset: -2px;
 }
 
@@ -1034,7 +1036,7 @@
   border-radius: 0 !important;
   background: transparent !important;
   padding: 0 !important;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   line-height: 1.625;
   animation: slex-tabs-content-in 200ms ease-out;
@@ -1081,7 +1083,7 @@
   .slex-tabs[data-orientation="vertical"] .slex-tabs-list {
     flex-direction: row;
     border-right: 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--slex-border, var(--border));
   }
 
 }
@@ -1092,8 +1094,8 @@
 .slex-radio-field {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--foreground);
+  gap: var(--slex-control-gap, 0.5rem);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   cursor: pointer;
   user-select: none;
@@ -1106,7 +1108,7 @@
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   line-height: 1.35;
   transition: color 150ms ease;
 }
@@ -1118,7 +1120,7 @@
 }
 
 .slex-radio-label-text small {
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 400;
   line-height: 1.4;
@@ -1134,10 +1136,10 @@
   width: 1rem;
   height: 1rem;
   margin: 0;
-  border: 1.5px solid var(--input);
-  color: var(--primary);
-  accent-color: var(--primary);
-  background: var(--background);
+  border: 1.5px solid var(--slex-input, var(--input));
+  color: var(--slex-primary, var(--primary));
+  accent-color: var(--slex-primary, var(--primary));
+  background: var(--slex-background, var(--background));
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
@@ -1149,7 +1151,7 @@
 }
 
 .slex-checkbox {
-  border-radius: calc(var(--radius) - 4px);
+  border-radius: calc(var(--slex-radius) - 4px);
 }
 
 .slex-radio {
@@ -1168,7 +1170,7 @@
 .slex-checkbox::after {
   width: 0.55rem;
   height: 0.34rem;
-  border: solid var(--primary-foreground);
+  border: solid var(--slex-primary-foreground, var(--primary-foreground));
   border-width: 0 0 2px 2px;
   transform: translateY(-0.08rem) rotate(-45deg) scale(0.5);
 }
@@ -1177,25 +1179,25 @@
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 999px;
-  background: var(--primary-foreground);
+  background: var(--slex-primary-foreground, var(--primary-foreground));
 }
 
 .slex-checkbox-field:hover .slex-checkbox:not(:disabled),
 .slex-radio-field:hover .slex-radio:not(:disabled) {
-  border-color: color-mix(in oklab, var(--primary) 48%, var(--input));
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 48%, var(--slex-input, var(--input)));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--slex-primary, var(--primary)) 8%, transparent);
 }
 
 .slex-checkbox-field:active .slex-checkbox:not(:disabled),
 .slex-radio-field:active .slex-radio:not(:disabled) {
   transform: scale(0.92);
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 12%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 12%, transparent);
 }
 
 .slex-checkbox:checked,
 .slex-radio:checked {
-  border-color: var(--primary);
-  background: var(--primary);
+  border-color: var(--slex-primary, var(--primary));
+  background: var(--slex-primary, var(--primary));
 }
 
 .slex-checkbox:checked::after,
@@ -1213,12 +1215,12 @@
 
 .slex-checkbox-field:hover .slex-checkbox-label,
 .slex-radio-field:hover .slex-radio-label {
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
 }
 
 .slex-checkbox:focus-visible,
 .slex-radio:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: var(--slex-focus-ring-width, 2px) solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 
@@ -1233,7 +1235,7 @@
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -1241,7 +1243,7 @@
 .slex-radio-group-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
 }
 
 .slex-radio-group[data-orientation="horizontal"] .slex-radio-group-list {
@@ -1258,10 +1260,10 @@
   display: flex;
   width: 100%;
   align-items: flex-start;
-  border: 1px solid color-mix(in oklab, var(--border) 68%, transparent);
-  border-radius: calc(var(--radius) - 2px);
-  background: var(--card);
-  padding: 0.6rem 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 68%, transparent);
+  border-radius: calc(var(--slex-radius) - 2px);
+  background: var(--slex-card, var(--card));
+  padding: var(--slex-surface-padding, 0.6rem 0.75rem);
   transition:
     background-color 150ms ease,
     border-color 150ms ease,
@@ -1269,8 +1271,8 @@
 }
 
 .slex-radio-group[data-variant="list"] .slex-radio-field[data-state="checked"] {
-  border-color: color-mix(in oklab, var(--foreground) 28%, var(--border));
-  background: color-mix(in oklab, var(--muted) 28%, var(--card));
+  border-color: color-mix(in oklab, var(--slex-foreground, var(--foreground)) 28%, var(--slex-border, var(--border)));
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 28%, var(--slex-card, var(--card)));
 }
 
 .slex-radio-group[data-variant="list"] .slex-radio-field:hover .slex-radio:not(:disabled) {
@@ -1329,10 +1331,10 @@
   min-width: 2.25rem;
   min-height: 1.35rem;
   place-items: center;
-  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border: 1px solid color-mix(in oklab, var(--slex-border, var(--border)) 70%, transparent);
   border-radius: 999px;
-  background: color-mix(in oklab, var(--muted) 18%, var(--card));
-  color: var(--muted-foreground);
+  background: color-mix(in oklab, var(--slex-muted, var(--muted)) 18%, var(--slex-card, var(--card)));
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.75rem;
   font-weight: 650;
   line-height: 1;
@@ -1340,7 +1342,7 @@
 
 .slex-step-header h3 {
   margin: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.9375rem;
   letter-spacing: 0;
   line-height: 1.35;
@@ -1348,7 +1350,7 @@
 
 .slex-step-header p {
   margin: 0;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   font-size: 0.8125rem;
   line-height: 1.45;
 }

@@ -35,7 +35,7 @@ describe("runtime style safety", () => {
     expect(css).toContain(".slex-slider {\n  position: relative;");
     expect(css).toContain("background: transparent;");
     expect(css).toContain(".slex-slider::-webkit-slider-runnable-track");
-    expect(css).toContain("var(--primary) var(--slex-slider-progress, 0%)");
+    expect(css).toContain("var(--slex-primary, var(--primary)) var(--slex-slider-progress, 0%)");
     expect(css).toContain(".slex-slider::-webkit-slider-runnable-track {\n  box-sizing: border-box;");
     expect(css).toContain("background: transparent;");
   });

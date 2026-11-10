@@ -1,7 +1,5 @@
-import { mount } from "../engine/index";
 import { parseEngineeringNumber } from "../engine/engineering";
-import { SLEX_PROTOCOL_VERSION } from "../version";
-import type { SlexExpression } from "../engine/types";
+import { defineSlexElements, type SlexElement } from "../web-components";
 
 export type ToolCall = {
   id?: string;
@@ -28,11 +26,15 @@ export type ToolRuntime = {
   ignore: () => void;
 };
 
-export type ToolTemplateCompiler<TArgs extends Record<string, unknown> = Record<string, unknown>> = (
+export type ToolTemplateRender = Node | { node: Node; dispose?: () => void };
+
+/** A trusted host-side DOM factory. Tool arguments are data, never executable source. */
+export type ToolTemplateFactory<TArgs extends Record<string, unknown> = Record<string, unknown>> = (
   args: TArgs,
   runtime: ToolRuntime,
   call: ToolCall,
-) => SlexExpression;
+  document: Document,
+) => ToolTemplateRender;
 
 export type OptionListItem = {
   id?: string;
@@ -91,370 +93,370 @@ export type FillFormArguments = {
   ignoreLabel?: string;
 };
 
-const templates = new Map<string, ToolTemplateCompiler>();
+type Listener = { target: EventTarget; type: string; listener: EventListener };
+
+const templates = new Map<string, ToolTemplateFactory>();
 
 function cloneValue<T>(value: T): T {
   if (value == null) return value;
+  if (typeof structuredClone === "function") return structuredClone(value);
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
-function namespaceFor(prefix: string): string {
-  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+function text(value: unknown, fallback = ""): string {
+  return typeof value === "string" ? value : fallback;
 }
 
-function safeId(value: string, index: number): string {
-  const id = value.replace(/[^A-Za-z0-9_$]/g, "_");
-  return id ? `${id}_${index}` : `field_${index}`;
-}
-
-function exprKey(key: string): string {
-  return JSON.stringify(key);
-}
-
-function normalizeOption(item: OptionListItem, index: number): Required<OptionListItem> {
-  const id = item.id ?? item.value ?? String(index);
-  return {
-    id,
-    value: item.value ?? id,
-    label: item.label,
-    description: item.description ?? "",
-    selected: item.selected ?? false,
-    disabled: item.disabled ?? false,
-  };
-}
-
-function normalizeNumber(value: unknown, fallback: number): number {
+function number(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
-function registerBuiltInTemplate(name: string, compiler: ToolTemplateCompiler): void {
-  templates.set(name, compiler);
+function element(document: Document, type: string): SlexElement {
+  return document.createElement(`slex-${type}`) as SlexElement;
 }
 
-export function registerToolTemplate(name: string, compiler: ToolTemplateCompiler): void {
-  templates.set(name, compiler);
+function set(target: SlexElement, values: Record<string, unknown>): SlexElement {
+  Object.assign(target, values);
+  return target;
 }
 
-function compileConfirmAction(args: ConfirmActionArguments, runtime: ToolRuntime): SlexExpression {
+function listen(
+  listeners: Listener[],
+  target: EventTarget,
+  type: string,
+  listener: EventListener,
+): void {
+  target.addEventListener(type, listener);
+  listeners.push({ target, type, listener });
+}
+
+function disposeListeners(listeners: Listener[]): void {
+  for (const { target, type, listener } of listeners.splice(0))
+    target.removeEventListener(type, listener);
+}
+
+function toolCard(
+  document: Document,
+  title: string,
+  description: string,
+): { root: SlexElement; body: SlexElement } {
+  const root = set(element(document, "card"), { title, variant: "tool" });
+  root.classList.add("slex-toolhost");
+  const body = element(document, "column");
+  if (description) body.append(set(element(document, "text"), { text: description }));
+  root.append(body);
+  return { root, body };
+}
+
+function submitBar(
+  document: Document,
+  listeners: Listener[],
+  runtime: ToolRuntime,
+  readValue: () => Record<string, unknown>,
+  submitLabel: string,
+  ignoreLabel: string,
+): SlexElement {
+  const actions = set(element(document, "submit"), { submitLabel, ignoreLabel });
+  listen(listeners, actions, "submit", () => runtime.submit(readValue()));
+  listen(listeners, actions, "ignore", () => runtime.ignore());
+  return actions;
+}
+
+function normalizeOption(item: OptionListItem, index: number): Required<OptionListItem> {
+  const id = text(item.id, text(item.value, String(index)));
+  return {
+    id,
+    value: text(item.value, id),
+    label: text(item.label, id),
+    description: text(item.description),
+    selected: item.selected === true,
+    disabled: item.disabled === true,
+  };
+}
+
+function confirmActionFactory(
+  raw: Record<string, unknown>,
+  runtime: ToolRuntime,
+  _call: ToolCall,
+  document: Document,
+): ToolTemplateRender {
+  const args = raw as ConfirmActionArguments;
+  const listeners: Listener[] = [];
   const requireReason = args.requireReason === true;
-
-  return {
-    slex: SLEX_PROTOCOL_VERSION,
-    namespace: namespaceFor("tool_confirm_action"),
-    g: {
-      __slexkitTool: runtime,
-      confirmed: true,
-      requireReason,
-      reason: "",
-      canSubmit(this: { requireReason: boolean; reason: string }) {
-        return !this.requireReason || this.reason.trim().length > 0;
-      },
-    },
-    layout: {
-      "card:tool": {
-        variant: "tool",
-        title: args.title ?? "Confirm action",
-        "text:description": {
-          $if: args.description ? "true" : "false",
-          text: args.description ?? "",
-        },
-        "column:reasonField": {
-          $if: requireReason ? "true" : "false",
-          "text:reasonLabel": {
-            text: args.reasonLabel ?? "Reason",
-          },
-          "input:reason": {
-            $value: "g.reason",
-            placeholder: args.reasonPlaceholder ?? "Add a reason",
-            onchange: "g.reason = String($event || '')",
-          },
-        },
-        "submit:actions": {
-          returnKeys: requireReason ? ["confirmed", "reason"] : ["confirmed"],
-          submitLabel: args.confirmLabel ?? "Confirm",
-          ignoreLabel: args.ignoreLabel ?? "Ignore",
-          $disabled: "!g.canSubmit()",
-        },
-      },
-    },
-  };
+  const { root, body } = toolCard(
+    document,
+    text(args.title, "Confirm action"),
+    text(args.description),
+  );
+  let reason = "";
+  if (requireReason) {
+    const input = set(element(document, "input"), {
+      label: text(args.reasonLabel, "Reason"),
+      placeholder: text(args.reasonPlaceholder, "Add a reason"),
+      value: "",
+    });
+    listen(listeners, input, "input", () => {
+      reason = String(input.value ?? "");
+      actions.disabled = reason.trim().length === 0;
+    });
+    body.append(input);
+  }
+  const actions = submitBar(
+    document,
+    listeners,
+    runtime,
+    () => (requireReason ? { confirmed: true, reason } : { confirmed: true }),
+    text(args.confirmLabel, "Confirm"),
+    text(args.ignoreLabel, "Ignore"),
+  );
+  actions.disabled = requireReason;
+  body.append(actions);
+  return { node: root, dispose: () => disposeListeners(listeners) };
 }
 
-function compileChooseOptions(args: ChooseOptionsArguments, runtime: ToolRuntime): SlexExpression {
-  const options = (args.options ?? args.items ?? []).map(normalizeOption);
-  const selected = Array.isArray(args.selected)
-    ? args.selected
-    : options.filter((item) => item.selected).map((item) => item.id);
+function chooseOptionsFactory(
+  raw: Record<string, unknown>,
+  runtime: ToolRuntime,
+  _call: ToolCall,
+  document: Document,
+): ToolTemplateRender {
+  const args = raw as ChooseOptionsArguments;
+  const listeners: Listener[] = [];
+  const options = (Array.isArray(args.options) ? args.options : Array.isArray(args.items) ? args.items : [])
+    .filter((item): item is OptionListItem => !!item && typeof item === "object")
+    .map(normalizeOption);
+  const knownIds = new Set(options.map((item) => item.id));
+  let selected = (Array.isArray(args.selected)
+    ? args.selected.filter((id): id is string => typeof id === "string" && knownIds.has(id))
+    : options.filter((item) => item.selected).map((item) => item.id));
   const multiple = args.multiple !== false;
-  const minSelected = normalizeNumber(args.minSelected, 0);
-  const maxSelected = normalizeNumber(args.maxSelected, Number.POSITIVE_INFINITY);
-  const choiceNode = multiple
-    ? {
-        "checkbox:": {
-          $for: "g.options",
-          $key: "id",
-          $checked: "g.selected.includes($item.id)",
-          $label: "$item.description ? $item.label + ' - ' + $item.description : $item.label",
-          $disabled: "$item.disabled",
-          onchange: "g.toggle($item.id, Boolean($event))",
-        },
-      }
-    : {
-        "radio-group:option": {
-          $value: "g.selected[0] || ''",
-          variant: "list",
-          options,
-          onchange: "g.selectOne(String($event || ''))",
-        },
-      };
-
-  return {
-    slex: SLEX_PROTOCOL_VERSION,
-    namespace: namespaceFor("tool_choose_options"),
-    g: {
-      __slexkitTool: runtime,
-      options,
-      multiple,
-      minSelected,
-      maxSelected,
-      selected,
-      canSubmit(this: { selected: string[]; minSelected: number; maxSelected: number }) {
-        return this.selected.length >= this.minSelected && this.selected.length <= this.maxSelected;
-      },
-      toggle(
-        this: {
-          options: OptionListItem[];
-          multiple: boolean;
-          selected: string[];
-          maxSelected: number;
-        },
-        id: string,
-        checked: boolean,
-      ) {
-        const option = this.options.find((item: OptionListItem) => item.id === id);
-        if (option?.disabled) return;
-        if (!this.multiple) {
-          this.selected = checked ? [id] : [];
-          return;
-        }
-        const exists = this.selected.includes(id);
-        if (checked && !exists && this.selected.length < this.maxSelected) {
-          this.selected = [...this.selected, id];
-        }
-        if (!checked && exists) {
-          this.selected = this.selected.filter((value: string) => value !== id);
-        }
-      },
-      selectOne(this: { selected: string[]; options: OptionListItem[] }, id: string) {
-        const option = this.options.find((item: OptionListItem) => item.id === id);
-        if (option?.disabled) return;
-        this.selected = id ? [id] : [];
-      },
-    },
-    layout: {
-      "card:tool": {
-        variant: "tool",
-        title: args.title ?? "Choose options",
-        "text:description": {
-          $if: args.description ? "true" : "false",
-          text: args.description ?? "",
-        },
-        ...choiceNode,
-        "submit:actions": {
-          returnKeys: ["selected"],
-          submitLabel: args.submitLabel ?? "Submit",
-          ignoreLabel: args.ignoreLabel ?? "Ignore",
-          $disabled: "!g.canSubmit()",
-        },
-      },
-    },
+  if (!multiple) selected = selected.slice(0, 1);
+  const minSelected = Math.max(0, number(args.minSelected, 0));
+  const maxSelected = Math.max(minSelected, number(args.maxSelected, Number.POSITIVE_INFINITY));
+  const { root, body } = toolCard(
+    document,
+    text(args.title, "Choose options"),
+    text(args.description),
+  );
+  const updateValidity = () => {
+    actions.disabled = selected.length < minSelected || selected.length > maxSelected;
   };
-}
 
-function initialFieldValues(fields: FormField[], args: FillFormArguments): Record<string, unknown> {
-  const values: Record<string, unknown> = {};
-  for (const field of fields) {
-    if (args.values && Object.prototype.hasOwnProperty.call(args.values, field.name)) {
-      values[field.name] = args.values[field.name];
-    } else if (field.value !== undefined) {
-      values[field.name] = field.value;
-    } else if (field.type === "checkbox" || field.type === "switch") {
-      values[field.name] = false;
-    } else {
-      values[field.name] = "";
+  if (multiple) {
+    for (const option of options) {
+      const choice = set(element(document, "checkbox"), {
+        label: option.description ? `${option.label} - ${option.description}` : option.label,
+        checked: selected.includes(option.id),
+        disabled: option.disabled,
+      });
+      choice.dataset.optionId = option.id;
+      listen(listeners, choice, "change", () => {
+        if (option.disabled) return;
+        const checked = choice.checked;
+        const exists = selected.includes(option.id);
+        if (checked && !exists) {
+          if (selected.length >= maxSelected) choice.checked = false;
+          else selected = [...selected, option.id];
+        } else if (!checked && exists) {
+          selected = selected.filter((id) => id !== option.id);
+        }
+        updateValidity();
+      });
+      body.append(choice);
     }
-  }
-  return values;
-}
-
-function initialEngineeringValues(fields: FormField[], values: Record<string, unknown>): Record<string, unknown> {
-  const engineering: Record<string, unknown> = {};
-  for (const field of fields) {
-    if (field.type === "engineering") {
-      const result = parseEngineeringNumber(values[field.name]);
-      engineering[field.name] = result;
-      values[field.name] = result.valid ? result.number : null;
-    }
-  }
-  return engineering;
-}
-
-function fieldLayout(field: FormField, index: number): Record<string, unknown> {
-  const id = safeId(field.name, index);
-  const type = field.type ?? "text";
-  const nameExpr = exprKey(field.name);
-  const children: Record<string, unknown> = {};
-
-  if (type === "checkbox" || type === "switch") {
-    const component = type === "switch" ? "switch" : "checkbox";
-    const stateProp = type === "switch" ? "$enabled" : "$checked";
-    children[`${component}:${id}`] = {
-      [stateProp]: `g.values[${nameExpr}]`,
-      label: field.label ?? field.name,
-      disabled: field.disabled === true,
-      onchange: `g.setField(${nameExpr}, $event, ${exprKey(type)})`,
-    };
-  } else if (type === "select") {
-    children[`select:${id}`] = {
-      $value: `g.values[${nameExpr}]`,
-      label: field.label ?? field.name,
-      placeholder: field.placeholder ?? "Select...",
-      options: field.options ?? [],
-      disabled: field.disabled === true,
-      onchange: `g.setField(${nameExpr}, $event, ${exprKey(type)})`,
-    };
   } else {
-    children[`text:label_${id}`] = {
-      text: field.label ?? field.name,
-    };
-    children[`input:${id}`] = {
-      $value: type === "engineering"
-        ? `g.engineering[${nameExpr}] ? g.engineering[${nameExpr}].raw : g.values[${nameExpr}]`
-        : `g.values[${nameExpr}]`,
-      type: type === "number" || type === "engineering" ? type : "text",
-      placeholder: field.placeholder ?? "",
-      disabled: field.disabled === true,
-      onchange: `g.setField(${nameExpr}, $event, ${exprKey(type)})`,
-    };
+    const choices = set(element(document, "radio-group"), {
+      value: selected[0] ?? "",
+      variant: "list",
+      options: options.map((option) => ({
+        value: option.id,
+        label: option.label,
+        description: option.description,
+        disabled: option.disabled,
+      })),
+    });
+    listen(listeners, choices, "change", () => {
+      const id = String(choices.value ?? "");
+      const option = options.find((candidate) => candidate.id === id);
+      selected = id && option && !option.disabled ? [id] : [];
+      updateValidity();
+    });
+    body.append(choices);
   }
 
-  if (field.description) {
-    children[`text:description_${id}`] = {
-      text: field.description,
-    };
-  }
-
-  return children;
+  const actions = submitBar(
+    document,
+    listeners,
+    runtime,
+    () => ({ selected: [...selected] }),
+    text(args.submitLabel, "Submit"),
+    text(args.ignoreLabel, "Ignore"),
+  );
+  updateValidity();
+  body.append(actions);
+  return { node: root, dispose: () => disposeListeners(listeners) };
 }
 
-function compileFillForm(args: FillFormArguments, runtime: ToolRuntime): SlexExpression {
-  const fields = args.fields ?? [];
-  const values = initialFieldValues(fields, args);
-  const engineering = initialEngineeringValues(fields, values);
-  const fieldNodes: Record<string, unknown> = {};
-
-  fields.forEach((field, index) => {
-    fieldNodes[`column:${safeId(field.name, index)}`] = {
-      ...fieldLayout(field, index),
-    };
+function fillFormFactory(
+  raw: Record<string, unknown>,
+  runtime: ToolRuntime,
+  _call: ToolCall,
+  document: Document,
+): ToolTemplateRender {
+  const args = raw as FillFormArguments;
+  const listeners: Listener[] = [];
+  const fields = (Array.isArray(args.fields) ? args.fields : []).filter(
+    (field): field is FormField => !!field && typeof field === "object" && typeof field.name === "string" && field.name.length > 0,
+  );
+  if (new Set(fields.map((field) => field.name)).size !== fields.length)
+    throw new Error("[SlexKit] fill-form field names must be unique");
+  const values: Record<string, unknown> = {};
+  const engineeringValidity = new Map<string, boolean>();
+  const { root, body } = toolCard(
+    document,
+    text(args.title, "Fill form"),
+    text(args.description),
+  );
+  const valid = () => fields.every((field) => {
+    if (!field.required) return true;
+    if (field.type === "engineering") return engineeringValidity.get(field.name) === true;
+    const value = values[field.name];
+    return typeof value === "string"
+      ? value.trim().length > 0
+      : value !== null && value !== undefined && value !== false;
   });
+  const updateValidity = () => { actions.disabled = !valid(); };
 
-  return {
-    slex: SLEX_PROTOCOL_VERSION,
-    namespace: namespaceFor("tool_fill_form"),
-    g: {
-      __slexkitTool: runtime,
-      fields,
-      values,
-      engineering,
-      ...values,
-      setField(this: Record<string, unknown> & { values: Record<string, unknown>; engineering: Record<string, unknown> }, name: string, value: unknown, type: string) {
-        let next = value;
-        if (type === "number") {
-          next = value === "" || value == null ? null : Number(value);
-        } else if (type === "engineering") {
-          const result = parseEngineeringNumber(value && typeof value === "object" && "raw" in value ? (value as { raw: unknown }).raw : value);
-          this.engineering[name] = result;
-          next = result.valid ? result.number : null;
-        } else if (type === "checkbox" || type === "switch") {
-          next = Boolean(value);
-        }
-        this.values[name] = next;
-        this[name] = next;
-      },
-      canSubmit(this: { fields: FormField[]; values: Record<string, unknown>; engineering: Record<string, { valid?: boolean }> }) {
-        return this.fields.every((field) => {
-          if (!field.required) return true;
-          if (field.type === "engineering") return this.engineering[field.name]?.valid === true;
-          const value = this.values[field.name];
-          if (typeof value === "string") return value.trim().length > 0;
-          return value !== null && value !== undefined && value !== false;
-        });
-      },
-    },
-    layout: {
-      "card:tool": {
-        variant: "tool",
-        title: args.title ?? "Fill form",
-        "text:description": {
-          $if: args.description ? "true" : "false",
-          text: args.description ?? "",
-        },
-        ...fieldNodes,
-        "submit:actions": {
-          returnKeys: fields.map((field) => field.name),
-          submitLabel: args.submitLabel ?? "Submit",
-          ignoreLabel: args.ignoreLabel ?? "Ignore",
-          $disabled: "!g.canSubmit()",
-        },
-      },
-    },
-  };
+  for (const field of fields) {
+    const type = field.type ?? "text";
+    const initial = args.values && Object.hasOwn(args.values, field.name)
+      ? args.values[field.name]
+      : field.value !== undefined
+        ? field.value
+        : type === "checkbox" || type === "switch"
+          ? false
+          : "";
+    const controlType = type === "checkbox" || type === "switch" ? type : type === "select" ? "select" : "input";
+    const control = set(element(document, controlType), {
+      label: text(field.label, field.name),
+      description: text(field.description),
+      placeholder: text(field.placeholder, type === "select" ? "Select..." : ""),
+      disabled: field.disabled === true,
+    });
+    control.dataset.fieldName = field.name;
+    if (type === "checkbox") {
+      control.checked = Boolean(initial);
+      values[field.name] = control.checked;
+    } else if (type === "switch") {
+      control.enabled = Boolean(initial);
+      values[field.name] = control.enabled;
+    } else if (type === "select") {
+      control.options = Array.isArray(field.options) ? field.options : [];
+      control.value = initial == null ? "" : String(initial);
+      values[field.name] = control.value;
+    } else if (type === "engineering") {
+      control.setAttribute("type", "engineering");
+      control.value = initial == null ? "" : String(initial);
+      const result = parseEngineeringNumber(control.value);
+      engineeringValidity.set(field.name, result.valid);
+      values[field.name] = result.valid ? result.number : null;
+    } else if (type === "number") {
+      control.setAttribute("type", "number");
+      control.value = initial == null ? "" : String(initial);
+      values[field.name] = control.value === "" ? null : Number(control.value);
+    } else {
+      control.setAttribute("type", "text");
+      control.value = initial == null ? "" : String(initial);
+      values[field.name] = control.value;
+    }
+    const eventType = type === "select" || type === "checkbox" || type === "switch" ? "change" : "input";
+    listen(listeners, control, eventType, () => {
+      if (type === "checkbox") values[field.name] = control.checked;
+      else if (type === "switch") values[field.name] = control.enabled;
+      else if (type === "number") {
+        const rawValue = String(control.value ?? "");
+        values[field.name] = rawValue === "" ? null : Number(rawValue);
+      } else if (type === "engineering") {
+        const result = parseEngineeringNumber(control.value);
+        engineeringValidity.set(field.name, result.valid);
+        values[field.name] = result.valid ? result.number : null;
+      } else values[field.name] = control.value;
+      updateValidity();
+    });
+    body.append(control);
+  }
+
+  const actions = submitBar(
+    document,
+    listeners,
+    runtime,
+    () => cloneValue(values),
+    text(args.submitLabel, "Submit"),
+    text(args.ignoreLabel, "Ignore"),
+  );
+  updateValidity();
+  body.append(actions);
+  return { node: root, dispose: () => disposeListeners(listeners) };
 }
 
-registerBuiltInTemplate("confirm-action", compileConfirmAction as ToolTemplateCompiler);
-registerBuiltInTemplate("choose-options", compileChooseOptions as ToolTemplateCompiler);
-registerBuiltInTemplate("option-list", compileChooseOptions as ToolTemplateCompiler);
-registerBuiltInTemplate("fill-form", compileFillForm as ToolTemplateCompiler);
+function registerBuiltInTemplate(name: string, factory: ToolTemplateFactory): void {
+  templates.set(name, factory);
+}
 
-function compileToolCall(call: ToolCall, runtime: ToolRuntime): SlexExpression {
-  const compiler = templates.get(call.name);
-  if (!compiler) throw new Error(`[SlexKit] Unknown tool template: ${call.name}`);
-  return compiler(call.arguments ?? {}, runtime, call);
+registerBuiltInTemplate("confirm-action", confirmActionFactory);
+registerBuiltInTemplate("choose-options", chooseOptionsFactory);
+registerBuiltInTemplate("option-list", chooseOptionsFactory);
+registerBuiltInTemplate("fill-form", fillFormFactory);
+
+export function registerToolTemplate(name: string, factory: ToolTemplateFactory): void {
+  if (!name.trim()) throw new Error("[SlexKit] Tool template name is required");
+  if (typeof factory !== "function") throw new TypeError("[SlexKit] Tool template must be a DOM factory");
+  templates.set(name, factory);
 }
 
 export function renderToolCall(call: ToolCall, container: HTMLElement): ToolRenderHandle {
-  if (!templates.has(call.name)) {
-    throw new Error(`[SlexKit] Unknown tool template: ${call.name}`);
-  }
+  const factory = templates.get(call.name);
+  if (!factory) throw new Error(`[SlexKit] Unknown tool template: ${call.name}`);
+  const document = container.ownerDocument;
+  const owner = document.defaultView as (Window & typeof globalThis) | null;
+  if (!owner) throw new Error("[SlexKit] ToolHost requires a document window");
+  defineSlexElements({ window: owner });
 
-  let cleanup: (() => void) | undefined;
   let settled = false;
-
-  const promise = new Promise<ToolResult>((resolve) => {
-    const settle = (status: ToolResultStatus, value: Record<string, unknown> | null) => {
-      if (settled) return;
-      settled = true;
-      resolve({
-        toolCallId: call.id,
-        toolName: call.name,
-        status,
-        value: cloneValue(value),
-      });
-    };
-
-    const runtime: ToolRuntime = {
-      submit: (value) => settle("submitted", value),
-      ignore: () => settle("ignored", null),
-    };
-
-    cleanup = mount(compileToolCall(call, runtime), container);
-  });
+  let disposed = false;
+  let factoryDispose: (() => void) | undefined;
+  let root: Node | undefined;
+  let resolveResult!: (result: ToolResult) => void;
+  const promise = new Promise<ToolResult>((resolve) => { resolveResult = resolve; });
+  const settle = (status: ToolResultStatus, value: Record<string, unknown> | null) => {
+    if (settled || disposed) return;
+    settled = true;
+    resolveResult({
+      toolCallId: call.id,
+      toolName: call.name,
+      status,
+      value: cloneValue(value),
+    });
+  };
+  const runtime: ToolRuntime = {
+    submit: (value) => settle("submitted", value),
+    ignore: () => settle("ignored", null),
+  };
+  const rendered = factory(call.arguments ?? {}, runtime, call, document);
+  if (rendered instanceof owner.Node) root = rendered;
+  else if (rendered && rendered.node instanceof owner.Node) {
+    root = rendered.node;
+    factoryDispose = rendered.dispose;
+  } else throw new TypeError("[SlexKit] Tool template must return a DOM Node");
+  container.replaceChildren(root);
 
   return {
     promise,
     dispose: () => {
-      if (cleanup) cleanup();
+      if (disposed) return;
+      disposed = true;
+      factoryDispose?.();
+      if (root?.parentNode === container) container.removeChild(root);
     },
   };
 }

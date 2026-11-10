@@ -1,10 +1,10 @@
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { publicComponentTypes } from "../../src/components/spec-registry";
+import { describeSlexElements } from "../../src/web-components/definitions";
 import { docsHref, normalizeLocale, sourceLocale, supportedLocales } from "./locales.js";
 import { siteUiLabelsForLocale } from "./ui-labels.js";
 
-const publicComponentSlugs = new Set(publicComponentTypes);
+const publicComponentSlugs = new Set(describeSlexElements().map(({ tagName }) => tagName.slice(5)));
 const exampleSourceLocale = "zh-CN";
 
 const allowedExampleSlugs = new Set([

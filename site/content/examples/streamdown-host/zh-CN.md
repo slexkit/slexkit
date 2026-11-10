@@ -5,61 +5,33 @@ status: published
 order: 18
 summary: "React/Streamdown 适配器示例，在 Markdown 页面中渲染显式 `slex` 代码块。"
 tags: streamdown, react, markdown, adapter
-components: section, table, callout, code-block
+components: card, grid, input, slider, stat
 difficulty: 中级
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
 
 # Streamdown 接入
 
-如果 React 页面已经使用 Streamdown 渲染 Markdown，可以用 `@slexkit/streamdown` 接入 SlexKit。该示例复用官网的 RC 低通滤波器内容，演示 SlexKit 组件在 Streamdown 页面中的渲染方式。
+Streamdown 继续按常规方式处理普通 Markdown，只把明确的 `slex` fence 字符串交给隔离文档宿主。
 
-本地运行：
-
-```sh
-bun run build:core
-bun run --filter @slexkit/streamdown build
-bun examples/dev-server.mjs streamdown
+```slex
+<slex-card title="Streamdown 接入"><slex-grid columns="2"><slex-input id="left" label="数值 A" value="10"></slex-input><slex-slider id="right" label="数值 B" min="0" max="100" value="20"></slex-slider></slex-grid><slex-stat id="result" label="结果"></slex-stat></slex-card>
+<script type="module">
+  const left = slex.root.querySelector("#left"); const right = slex.root.querySelector("#right"); const result = slex.root.querySelector("#result"); const update = () => { result.value = Number(left.value) + right.valueAsNumber; };
+  left.addEventListener("input", update); right.addEventListener("input", update); update(); slex.onDispose(() => { left.removeEventListener("input", update); right.removeEventListener("input", update); });
+</script>
 ```
 
-源码位于 [`examples/streamdown`](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)。Streamdown 与 Tiptap 示例使用同一份 RC 低通滤波器内容，便于对照两种宿主的接入方式。
+## 宿主边界
 
-<iframe class="slex-example-live-frame" src="/adapter-demos/streamdown/?embed=1" title="Streamdown 可运行示例"></iframe>
+适配器识别显式 `slex` fence，并把原始 HTML 字符串交给同一个隔离文档 host。宿主提供稳定 artifact/block ID、runtime URL、style URL 与策略；payload 不包含这些设置。
 
-[打开集成指南](/zh-CN/docs/guides/integration) · [查看可运行源码](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)
+适配器维护稳定的 artifact/block ID，并把 preview 与 commit 决策交给文档宿主。
 
-## 接入方式
+`@slexkit/streamdown` 识别显式 fence，并把 HTML source 交给隔离文档 host。
 
-| 项目 | 约定 |
-| --- | --- |
-| Fence language | `slex` |
-| Runtime | `trusted` 或 `secure` |
-| Markdown 宿主 | Streamdown |
+<iframe class="slex-example-live-frame" src="/adapter-demos/streamdown/?embed=1" title="Streamdown HTML fence demo"></iframe>
 
-普通 Markdown、公式、表格和非 `slex` 代码块继续由 Streamdown 渲染。只写状态的 `slex` fence 不渲染独立 UI，但会写入同一 artifact state，供后续可渲染 fence 读取。
-
-最小配置：
-
-```tsx
-import { Streamdown } from "streamdown";
-import { createSlexKitRenderer } from "@slexkit/streamdown";
-import "@slexkit/theme-shadcn/style.css";
-import "@slexkit/streamdown/style.css";
-
-const slexkitRenderer = createSlexKitRenderer({
-  domain: "message-1",
-  showChrome: false
-});
-
-export function Message({ markdown }: { markdown: string }) {
-  return (
-    <Streamdown plugins={{ renderers: [slexkitRenderer] }}>
-      {markdown}
-    </Streamdown>
-  );
-}
-```
-
-如果项目已经以 Streamdown 作为 Markdown 渲染层，使用 `@slexkit/streamdown`。如果宿主有自己的 Markdown parser 或 renderer，直接接入自定义 Markdown host API。
+源码：`examples/streamdown`。

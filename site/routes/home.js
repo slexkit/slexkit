@@ -1,20 +1,20 @@
 import { defaultLocale } from "../data/component-docs.js";
-import { homePlaygroundConfig } from "../playground/home-playground.js";
+import { homePlaygroundSource } from "../playground/home-playground.js";
 
 const homeLabelsByLocale = {
   "zh-CN": {
     previewLabel: "实时预览",
-    lede: '"文档即工具，工具即文档"，把显式 Markdown fence 渲染成带状态的交互块。',
+    lede: "面向交互式 Markdown 的 HTML-first 文档运行时。",
     primaryAction: "快速开始",
     secondaryAction: "查看组件",
-    description: "SlexKit 是面向 Markdown 宿主的交互式 UI 运行时。文档中写显式 slex fence，运行时负责挂载表单、指标、计算器和预览组件；不需要为每段内容增加构建流程。",
+    description: "SlexKit 在隔离文档 frame 中渲染显式 Markdown fence 里的标准 HTML、JavaScript 与已记录的自定义元素。",
     featuresTitle: "能力范围",
     features: [
       ["零构建", "在 Markdown 中直接写 slex fence；宿主只需加载运行时和样式"],
-      ["流式渲染", "适合消息流和文档流：内容到达后按 fence 挂载"],
-      ["响应式状态", "同一 artifact 内共享状态，控件和展示组件可以联动"],
+      ["流式渲染", "适合消息流和文档流：生成中保留旧交互，完整提交后协调更新"],
+      ["标准 JavaScript", "使用原生事件、精简 slex SDK 与显式的 artifact-local JSON 共享状态"],
       ["组件集", "内置常用文档组件：卡片、表单、表格、代码块、标签页等"],
-      ["安全沙箱", "不可信内容可放入 secure runtime，与宿主页隔离"],
+      ["隔离文档", "生成内容在独立 frame 中运行，并与宿主页 DOM 和 JavaScript 全局对象隔离"],
       ["工具调用渲染", "ToolHost 把确认、选择和表单类工具调用渲染成可提交 UI"],
     ],
     hostAdaptersTitle: "宿主接入",
@@ -31,17 +31,17 @@ const homeLabelsByLocale = {
   },
   "en-US": {
     previewLabel: "Live preview",
-    lede: '"Docs as tools, tools as docs" renders explicit Markdown fences as stateful UI blocks.',
+    lede: "An HTML-first document runtime for interactive Markdown.",
     primaryAction: "Quick start",
     secondaryAction: "Components",
-    description: "SlexKit is an interactive UI runtime for Markdown hosts. Write explicit slex fences in the document; the runtime mounts forms, metrics, calculators, and previews without adding a build step for each artifact.",
+    description: "SlexKit renders standard HTML, JavaScript, and documented custom elements from explicit Markdown fences inside isolated document frames.",
     featuresTitle: "Runtime scope",
     features: [
       ["Zero-build", "Write slex fences directly in Markdown; the host loads the runtime and CSS."],
-      ["Streaming", "Works with message and document streams; fences mount as content arrives."],
-      ["Reactive state", "Components in one artifact can share state and update together."],
+      ["Streaming", "Works with message and document streams; the last commit stays interactive while new source is generated."],
+      ["Standard JavaScript", "Use native events, the small slex SDK, and explicit artifact-local shared JSON state."],
       ["Component set", "Built-in document components: cards, forms, tables, code blocks, tabs, and more."],
-      ["Secure sandbox", "Run untrusted content in a secure runtime isolated from the host page."],
+      ["Isolated document", "Run generated content in a separate frame, isolated from the host page DOM and JavaScript globals."],
       ["Tool-call rendering", "ToolHost renders confirmations, choices, and forms as submit-ready UI."],
     ],
     hostAdaptersTitle: "Host integration",
@@ -179,7 +179,7 @@ function renderHomePreview(labels) {
   return shell;
 }
 
-export function createHomeRoute({ clearMobileContext, currentLocale, mount, navHref, replaceRoot, setSiteMount }) {
+export function createHomeRoute({ clearMobileContext, currentLocale, navHref, replaceRoot, setSiteMount }) {
   function homeLabels(locale = currentLocale()) {
     return homeLabelsByLocale[locale] ?? homeLabelsByLocale[defaultLocale];
   }
@@ -283,16 +283,23 @@ export function createHomeRoute({ clearMobileContext, currentLocale, mount, navH
   function mountHomePlayground(root) {
     const host = root.querySelector("[data-home-playground]");
     if (!host) return;
-    setSiteMount(mount(
-      {
-        namespace: "site_home_playground",
-        g: {},
-        layout: {
-          "playground:demo": homePlaygroundConfig(currentLocale()),
-        },
-      },
-      host,
-    ));
+    const frame = document.createElement("iframe");
+    frame.className = "slex-home-playground-frame";
+    frame.title = "SlexKit HTML playground";
+    const url = new URL(navHref("/playground.html"), window.location.href);
+    url.searchParams.set("embed", "1");
+    url.searchParams.set("mode", "render");
+    url.searchParams.set("type", "markdown");
+    url.searchParams.set("source", homePlaygroundSource(currentLocale()));
+    frame.src = url.href;
+    const resize = (event) => {
+      if (event.source !== frame.contentWindow || event.origin !== window.location.origin ||
+          event.data?.type !== "slexkit:playground:resize" || !Number.isFinite(event.data.height)) return;
+      frame.style.height = `${Math.min(8000, Math.max(120, Math.ceil(event.data.height)))}px`;
+    };
+    window.addEventListener("message", resize);
+    setSiteMount?.(() => window.removeEventListener("message", resize));
+    host.replaceChildren(frame);
   }
 
   function renderHome() {

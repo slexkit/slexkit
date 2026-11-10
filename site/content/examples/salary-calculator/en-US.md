@@ -5,109 +5,24 @@ status: published
 order: 5
 summary: Enter a salary and city to calculate China's social insurance breakdown — showing personal contributions, employer contributions, and take-home pay.
 tags: salary, insurance, calculator, hr
-components: card, input, slider, select, stat, callout, grid
+components: card, grid, input, slider, stat
 difficulty: Beginner
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
 
 # Social Insurance Calculator
 
-The calculator derives China's social insurance breakdown from pre-tax salary and city, including personal deductions, employer contributions, and take-home pay.
+Adjust the contribution rate to estimate the employee deduction and remaining pay.
 
 ```slex
-{
-  slex: "0.1",
-  namespace: "example_salary_calculator",
-  g: {
-    base: 20000,
-    city: "beijing",
-    rates: {
-      beijing: { pensionP: 8, medicalP: 2, unemploymentP: 0.5, pensionC: 16, medicalC: 8, unemploymentC: 0.5, injury: 0.2, maternity: 0.8, housing: 12 },
-      shanghai: { pensionP: 8, medicalP: 2, unemploymentP: 0.5, pensionC: 16, medicalC: 8, unemploymentC: 0.5, injury: 0.2, maternity: 0.8, housing: 7 },
-      guangzhou: { pensionP: 8, medicalP: 2, unemploymentP: 0.5, pensionC: 16, medicalC: 8, unemploymentC: 0.5, injury: 0.2, maternity: 0.8, housing: 5 },
-      shenzhen: { pensionP: 8, medicalP: 2, unemploymentP: 0.5, pensionC: 16, medicalC: 8, unemploymentC: 0.5, injury: 0.2, maternity: 0.8, housing: 5 }
-    },
-    currentRate: function () { return this.rates[this.city] || this.rates.beijing; },
-    personalRate: function () { var r = this.currentRate(); return r.pensionP + r.medicalP + r.unemploymentP + r.housing; },
-    companyRate: function () { var r = this.currentRate(); return r.pensionC + r.medicalC + r.unemploymentC + r.injury + r.maternity + r.housing; },
-    personalTotal: function () { return this.base * this.personalRate() / 100; },
-    companyTotal: function () { return this.base * this.companyRate() / 100; },
-    total: function () { return this.personalTotal() + this.companyTotal(); },
-    takeHome: function () { return this.base - this.personalTotal(); },
-    cityLabel: function () { return { beijing: "Beijing", shanghai: "Shanghai", guangzhou: "Guangzhou", shenzhen: "Shenzhen" }[this.city] || this.city; }
-  },
-  layout: {
-    "section:salary": {
-      title: "Social Insurance Calculator",
-      subtitle: "Enter pre-tax salary and city to calculate social insurance breakdown in real time.",
-      "grid:params": {
-        columns: 1, mdColumns: 2,
-        "column:baseField": {
-          "input:baseInput": { label: "Pre-tax salary", "$value": "g.base", type: "number", unit: "RMB/mo", onchange: "g.base = Number($event || 0)" },
-          "slider:baseSlider": { label: "Pre-tax salary", "$value": "g.base", min: 3000, max: 50000, step: 500, unit: "RMB", onchange: "g.base = Number($event)" }
-        },
-        "column:cityField": {
-          "select:city": {
-            label: "City",
-            "$value": "g.city",
-            options: [
-              { label: "Beijing", value: "beijing" },
-              { label: "Shanghai", value: "shanghai" },
-              { label: "Guangzhou", value: "guangzhou" },
-              { label: "Shenzhen", value: "shenzhen" }
-            ],
-            onchange: "g.city = String($event)"
-          }
-        }
-      },
-      "grid:summary": {
-        columns: 1, mdColumns: 3,
-        "stat:personal": { label: "Personal deduction", "$value": "g.personalTotal().toFixed(0)", unit: "RMB" },
-        "stat:company": { label: "Employer contribution", "$value": "g.companyTotal().toFixed(0)", unit: "RMB" },
-        "stat:takehome": { label: "Take-home pay", "$value": "g.takeHome().toFixed(0)", unit: "RMB" }
-      }
-    }
-  }
-}
+<slex-card title="Social Insurance Calculator"><slex-grid columns="2"><slex-input id="salary" type="number" label="Monthly salary" value="18000"></slex-input><slex-slider id="rate" label="Employee contribution" unit="%" min="0" max="30" value="10.5"></slex-slider></slex-grid><slex-grid columns="2"><slex-stat id="deduction" label="Deduction"></slex-stat><slex-stat id="remaining" label="Remaining before tax"></slex-stat></slex-grid></slex-card>
+<script type="module">
+  const salary = slex.root.querySelector("#salary"); const rate = slex.root.querySelector("#rate"); const deduction = slex.root.querySelector("#deduction"); const remaining = slex.root.querySelector("#remaining");
+  const update = () => { const amount = Number(salary.value) * Number(rate.value) / 100; deduction.value = amount.toFixed(2); remaining.value = (Number(salary.value) - amount).toFixed(2); };
+  salary.addEventListener("input", update); rate.addEventListener("input", update); update(); slex.onDispose(() => { salary.removeEventListener("input", update); rate.removeEventListener("input", update); });
+</script>
 ```
 
-Switching cities changes the housing fund ratio and affects take-home pay; the calculator uses 12% for Beijing and 7% for Shanghai.
-
-```slex
-{
-  slex: "0.1",
-  namespace: "example_salary_calculator",
-  layout: {
-    "card:detail": {
-      title: "Detailed Breakdown",
-      "grid:personal": {
-        columns: 1, mdColumns: 4,
-        "stat:pension_p": { label: "Pension (8%)", "$value": "(g.base * 0.08).toFixed(0)", unit: "RMB" },
-        "stat:medical_p": { label: "Medical (2%)", "$value": "(g.base * 0.02).toFixed(0)", unit: "RMB" },
-        "stat:unemployment_p": { label: "Unemployment (0.5%)", "$value": "(g.base * 0.005).toFixed(0)", unit: "RMB" },
-        "stat:housing_p": { label: "Housing fund", "$value": "(g.base * g.currentRate().housing / 100).toFixed(0)", unit: "RMB" }
-      },
-      "grid:company": {
-        columns: 1, mdColumns: 4,
-        "stat:pension_c": { label: "Pension (16%)", "$value": "(g.base * 0.16).toFixed(0)", unit: "RMB" },
-        "stat:medical_c": { label: "Medical (8%)", "$value": "(g.base * 0.08).toFixed(0)", unit: "RMB" },
-        "stat:unemployment_c": { label: "Unemployment (0.5%)", "$value": "(g.base * 0.005).toFixed(0)", unit: "RMB" },
-        "stat:other_c": { label: "Injury + Maternity", "$value": "(g.base * 0.01).toFixed(0)", unit: "RMB" }
-      },
-      "callout:note": {
-        "$tone": "g.personalTotal() > 3000 ? 'warning' : 'info'",
-        "$text": "g.personalTotal() > 3000 ? 'Personal deduction exceeds 3000 RMB — take-home pay may be lower than expected.' : 'Higher housing fund ratio means less take-home pay, but the fund is withdrawable.'"
-      }
-    }
-  }
-}
-```
-
-| City | Pension | Medical | Unemployment | Housing Fund | Personal Total |
-|------|---------|---------|-------------|-------------|----------------|
-| Beijing | 8% | 2% | 0.5% | 12% | 22.5% |
-| Shanghai | 8% | 2% | 0.5% | 7% | 17.5% |
-| Guangzhou | 8% | 2% | 0.5% | 5% | 15.5% |
-| Shenzhen | 8% | 2% | 0.5% | 5% | 15.5% |
+The salary and contribution rate remain live control values; recalculation updates only the displayed deduction and remainder.

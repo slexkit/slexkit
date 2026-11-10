@@ -5,44 +5,37 @@ status: ready
 order: 20
 summary: "Single expandable content area."
 ---
+
 # Collapsible
 
-Manages a single expand/collapse region for supplementary details or secondary information.
+Shows or hides one slotted content region through `.open`, with configurable trigger text and icon.
 
-<!-- slex:spec-example:start component="collapsible" id="basic" sourceHash="d074a138" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_collapsible_typical",
-  "layout": {
-    "collapsible:more": {
-      "open": true,
-      "trigger": "Details",
-      "icon": "caret-circle-down",
-      "content": "This secondary content can be collapsed."
-    }
-  }
-}
+<slex-collapsible></slex-collapsible>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for expandable details, supplementary notes, and collapsible secondary info.
-- Not suitable for multi-panel lists (use `accordion`).
-- Related components: `accordion` for multi-panel collapse.
-- Child components extend the default body content area.
-- Use `$value` and `onchange` for controlled expansion.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | boolean | `false` | Current expanded state. |
+| `trigger` | string | `"Toggle"` | Trigger button label. |
+| `icon` | string | `""` | Registered icon name. No icon is rendered when empty. |
+| `content` | string | `""` | Text rendered in the panel alongside default-slot children. |
 
-<!-- slex:spec-api:start component="collapsible" sourceHash="7580b7c4" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `open` | boolean | No | Yes | `false` | Expanded state. |
-| `trigger` | string | No | Yes |  | Trigger button text. |
-| `icon` | string | No | No |  | Icon name shown before trigger text. |
-| `content` | string | No | Yes |  | Static body content. |
-| `onchange` | write-expression | No | No |  | Write expression invoked when open state changes. |
-| child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
-<!-- slex:spec-api:end -->
+Events: `input`, `change`. Use native event listeners; read interactive values from component properties.
+
+Slots: default slot accepting ordinary HTML or custom elements.
+
+## Contract summary
+
+- Attributes: `open`, `trigger`, `icon`, `content`
+- Properties: `open`, `trigger`, `icon`, `content`
+- Events: `input`, `change`
+- Slots: `default`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

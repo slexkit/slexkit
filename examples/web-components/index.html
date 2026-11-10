@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SlexKit · HTML 与 JavaScript</title>
+    <style>
+      :root { color-scheme: light dark; --background: #f5f7fb; --foreground: #172033; --card: #fff; --border: #dce2eb; --primary: #3777df; --muted-foreground: #56657a; }
+      :root.dark { --background: #111827; --foreground: #e5e7eb; --card: #1f2937; --border: #374151; --muted-foreground: #aab5c5; }
+      body { margin: 0; background: var(--background); color: var(--foreground); font: 16px/1.6 system-ui, sans-serif; }
+      main { max-width: 900px; margin: auto; padding: 32px 20px; }
+      header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+      h1 { font-size: 28px; margin-bottom: 0; } p { color: var(--muted-foreground); }
+      .calculators { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 24px; margin: 24px 0; }
+      .controls { display: grid; gap: 16px; }
+      slex-button { display: inline-block; }
+      #table { margin-top: 24px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header><h1>用 HTML 组合，用 JavaScript 交互</h1><button id="theme">切换主题</button></header>
+      <p>两个独立的功率计算器，复用相同组件和样式。</p>
+      <div class="calculators">
+        <section class="calculator">
+          <slex-card title="直流功率 · A">
+            <div class="controls">
+              <slex-input name="voltage" label="电压" type="engineering" value="12" unit="V"></slex-input>
+              <slex-input name="current" label="电流" type="engineering" value="2" unit="A"></slex-input>
+              <slex-stat label="功率" unit="W" value="24"></slex-stat>
+              <slex-button label="重置"></slex-button>
+            </div>
+          </slex-card>
+        </section>
+        <section class="calculator">
+          <slex-card title="直流功率 · B">
+            <div class="controls">
+              <slex-input name="voltage" label="电压" type="engineering" value="5" unit="V"></slex-input>
+              <slex-input name="current" label="电流" type="engineering" value="500m" unit="A"></slex-input>
+              <slex-stat label="功率" unit="W" value="2.5"></slex-stat>
+              <slex-button label="重置"></slex-button>
+            </div>
+          </slex-card>
+        </section>
+      </div>
+      <slex-card title="普通 JavaScript 数组"><slex-table id="table"></slex-table></slex-card>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

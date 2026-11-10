@@ -1,28 +1,8 @@
-import { renderToolCall, registerToolTemplate } from "/dist/slexkit.js";
+import { renderToolCall } from "/dist/slexkit.js";
 
 const tool = document.getElementById("tool");
 const result = document.getElementById("result");
 let activeHandle;
-
-registerToolTemplate("custom-template", (_args, runtime) => ({
-  namespace: "example_custom_tool",
-  g: {
-    __slexkitTool: runtime,
-    answer: "custom-ok",
-  },
-  layout: {
-    "card:tool": {
-      title: "Custom ToolHost template",
-      "text:description": {
-        text: "Custom templates compile to normal Slex source.",
-      },
-      "submit:actions": {
-        returnKeys: ["answer"],
-        submitLabel: "Submit custom result",
-      },
-    },
-  },
-}));
 
 const calls = {
   "confirm-action": {
@@ -77,11 +57,6 @@ const calls = {
         { name: "approved", label: "Approved", type: "switch", value: false },
       ],
     },
-  },
-  "custom-template": {
-    id: "call_custom_template",
-    name: "custom-template",
-    arguments: {},
   },
 };
 

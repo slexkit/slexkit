@@ -5,40 +5,34 @@ status: ready
 order: 10
 summary: "Progress bar."
 ---
+
 # Progress
 
-Display task completion progress controlled by value.
+Displays determinate progress from `value` or an indeterminate state, with optional label and accessible name.
 
-<!-- slex:spec-example:start component="progress" id="basic" sourceHash="d5fe2c3c" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_progress_typical",
-  "layout": {
-    "progress:build": {
-      "label": "Build progress",
-      "icon": "gear-six",
-      "value": 64
-    }
-  }
-}
+<slex-progress></slex-progress>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for build progress, upload progress, and task completion.
-- Not suitable for indeterminate waiting states.
-- Related components: `stat` for numeric metric display.
-- Value range is 0-100.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | string | `""` | Visible control label. |
+| `value` | string / number | `0` | Percentage clamped to the 0–100 range. |
+| `icon` | string | `""` | Registered icon name. No icon is rendered when empty. |
+| `indeterminate` | boolean | `false` | Removes numeric ARIA range values and marks indeterminate state. |
+| `aria-label` | string | `auto` | Accessible name override; otherwise the visible label supplies the name when available. |
 
-<!-- slex:spec-api:start component="progress" sourceHash="a6111bbf" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `value` | number | No | Yes | `0` | Progress percentage from 0 to 100. |
-| `label` | string | No | Yes |  | Progress label. |
-| `icon` | string | No | No |  | Icon name shown before the label. |
-| `indeterminate` | boolean | No | Yes | `false` | Render an indeterminate progress state without aria-valuenow. |
-<!-- slex:spec-api:end -->
+## Contract summary
+
+- Attributes: `label`, `value`, `icon`, `indeterminate`, `aria-label`
+- Properties: `label`, `value`, `icon`, `indeterminate`, `aria-label`
+- Events: none
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

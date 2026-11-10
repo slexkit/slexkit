@@ -16,7 +16,7 @@ function stripSpecDirectives(md: string): string {
 
 function replaceSlexFences(md: string): { processed: string; count: number } {
   let count = 0;
-  const fencePattern = /```slex(?:\s+[^\n]*)?\n([\s\S]*?)```/g;
+  const fencePattern = /```slex(?:[ \t]+[^\n]*)?\n([\s\S]*?)```/g;
   const processed = md.replace(fencePattern, (_match, code: string) => {
     count++;
     const trimmed = code.trim();

@@ -5,103 +5,37 @@ status: ready
 order: 40
 summary: "Responsive equal-width grid for sibling cards, metrics, and field groups."
 ---
+
 # Grid
 
-Responsive equal-width column layout with breakpoint-prefixed column count.
+Arranges slotted children in a responsive grid controlled by column counts and gap properties.
 
-<!-- slex:spec-example:start component="grid" id="basic" sourceHash="fc9c72e9" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_grid_typical",
-  "layout": {
-    "grid:stats": {
-      "columns": 1,
-      "mdColumns": 3,
-      "stat:a": {
-        "label": "Requests",
-        "value": "1.2k"
-      },
-      "stat:b": {
-        "label": "Success",
-        "value": "98%"
-      },
-      "stat:c": {
-        "label": "Errors",
-        "value": "3"
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for metric dashboards, card lists, and horizontal equal-width groups of form fields.
-- Not suitable for mixed-width layouts (use `row` + `column` combinations) or single-column arrangements (use `column`).
-- Related components: `row` for horizontal layout without equal-width guarantees, `column` for vertical layout.
-- Child components are automatically equal-width — best for same-level content.
-- Use `gap` to override the spacing; when omitted, the grid keeps its theme CSS default.
-
-### Column variants
+## HTML example
 
 ```slex
-{
-  namespace: "doc_grid_columns_diff",
-  layout: {
-    "column:demo": {
-      "text:cols2": {
-        text: "columns: 2"
-      },
-      "grid:cols2": {
-        columns: 2,
-        "stat:a": {
-          label: "A",
-          value: "1"
-        },
-        "stat:b": {
-          label: "B",
-          value: "2"
-        },
-        "stat:c": {
-          label: "C",
-          value: "3"
-        }
-      },
-      "text:cols3": {
-        text: "columns: 3"
-      },
-      "grid:cols3": {
-        columns: 3,
-        "stat:a": {
-          label: "A",
-          value: "1"
-        },
-        "stat:b": {
-          label: "B",
-          value: "2"
-        },
-        "stat:c": {
-          label: "C",
-          value: "3"
-        }
-      }
-    }
-  }
-}
+<slex-grid></slex-grid>
 ```
 
-## API Reference {#api}
+## API Reference
 
-<!-- slex:spec-api:start component="grid" sourceHash="e8ab3ffb" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `columns` | number | No | Yes | `1` | Base column count. |
-| `smColumns` | number | No | Yes |  | Column count at the small breakpoint. |
-| `mdColumns` | number | No | Yes |  | Column count at the medium breakpoint. |
-| `lgColumns` | number | No | Yes |  | Column count at the large breakpoint. |
-| `xlColumns` | number | No | Yes |  | Column count at the extra-large breakpoint. |
-| `gap` | string | No | Yes |  | Spacing between grid items. |
-| child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
-<!-- slex:spec-api:end -->
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `columns` | string / number | `1` | Base column count. The grid is forced to one column below 640px of isolated-document width. |
+| `smColumns` / `sm-columns` | string / number | unset | Column count from 640px isolated-document width. |
+| `mdColumns` / `md-columns` | string / number | `auto` | Column count from 768px isolated-document width; falls back to columns. |
+| `lgColumns` / `lg-columns` | string / number | unset | Column count from 1024px isolated-document width. |
+| `xlColumns` / `xl-columns` | string / number | unset | Column count from 1280px isolated-document width. |
+| `gap` | string | `1rem` | CSS length used as the grid gap; unitless token integers are not supported. |
+
+Slots: default slot accepting ordinary HTML or custom elements.
+
+## Contract summary
+
+- Attributes: `columns`, `sm-columns`, `md-columns`, `lg-columns`, `xl-columns`, `gap`
+- Properties: `columns`, `smColumns`, `mdColumns`, `lgColumns`, `xlColumns`, `gap`
+- Events: none
+- Slots: `default`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

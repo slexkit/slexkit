@@ -5,59 +5,35 @@ status: ready
 order: 10
 summary: "结构化表格，展示 columns / rows。"
 ---
-# Table 表格
 
-结构化的行列数据展示，通过 columns 定义表头、rows 提供数据行。
+# Table
 
-<!-- slex:spec-example:start component="table" id="basic" sourceHash="8491bf94" -->
+根据实时 `.columns` 与 `.rows`/`.items` 数组渲染纯文本表格；这些数组必须通过 property 赋值，不能写成 JSON attribute。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_table_typical",
-  "layout": {
-    "table:routes": {
-      "columns": [
-        {
-          "key": "name",
-          "label": "姓名",
-          "icon": "text-t"
-        },
-        {
-          "key": "status",
-          "label": "状态",
-          "icon": "check-circle"
-        }
-      ],
-      "rows": [
-        {
-          "name": "Parse",
-          "status": "ready"
-        },
-        {
-          "name": "Publish",
-          "status": "pending"
-        }
-      ]
-    }
-  }
-}
+<slex-table id="items"></slex-table>
+<script type="module">
+  const table = slex.root.querySelector("#items"); table.columns = [{ key: "name", label: "Name" }]; table.rows = [{ name: "Ada" }];
+</script>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：数据列表、配置表、结构化信息展示。
-- 不适合：卡片式布局（应当用 grid）。
-- 关联组件：grid 用于等宽卡片布局。
-- columns 的 key 与 rows 中每项的字段名对应。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `columns` | array | `[]` | 仅 property；列键或 { key, label, icon } 对象数组。 |
+| `rows` | array | `[]` | 仅 property；行数据，包含空数组在内都优先于 items。 |
+| `items` | array | `[]` | 仅 property；rows 未设置时使用的后备行数据。 |
 
-<!-- slex:spec-api:start component="table" sourceHash="9a408c2a" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `columns` | array | 否 | 否 |  | 列定义，包含 key、label 和可选 icon。 |
-| `columns[].icon` | string | 否 | 否 |  | 显示在列标签前的图标名称。 |
-| `rows` | array | 否 | 否 |  | 按列 key 对齐的行数据对象。 |
-| `items` | array | 否 | 否 |  | rows 的别名。 |
-<!-- slex:spec-api:end -->
+## 接口摘要
+
+- 属性: 无
+- Properties: `columns`, `rows`, `items`
+- Events: 无
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

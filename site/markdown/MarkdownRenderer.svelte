@@ -2,13 +2,13 @@
   import SvelteMarkdown from "../../node_modules/@humanspeak/svelte-markdown/dist/index.js";
   import { AlertRenderer, KatexRenderer, markedAlert, markedKatex } from "../../node_modules/@humanspeak/svelte-markdown/dist/extensions/index.js";
   import { normalizeHeadingAnchors } from "./headings.js";
+  import DocumentTable from "./DocumentTable.svelte";
   import SlexCode from "./SlexCode.svelte";
   import type {
     SlexKitMarkdownRuntimeHost,
     HostRuntimeAdapter,
     HostRuntimePolicy,
     SecureFrameOptions,
-    SlexStreamingMode,
   } from "slexkit";
 
   type RenderMode = "component" | "playground";
@@ -24,7 +24,7 @@
     slexkitSecurePolicy?: HostRuntimePolicy;
     slexkitHostAdapter?: HostRuntimeAdapter;
     slexkitSecureFrame?: boolean | SecureFrameOptions;
-    slexkitStreaming?: SlexStreamingMode | true;
+    slexkitStreaming?: boolean;
     slexkitIncomplete?: boolean;
   };
 
@@ -32,7 +32,7 @@
     content,
     domain,
     slexkitRenderMode = "component",
-    slexkitRuntime = "trusted",
+    slexkitRuntime = "secure",
     slexkitRuntimeHost,
     slexkitUseGlobalRuntimeHost = false,
     slexkitSecurePolicy = {},
@@ -47,6 +47,7 @@
     alert: AlertRenderer,
     inlineKatex: KatexRenderer,
     blockKatex: KatexRenderer,
+    table: DocumentTable,
   };
 
   const options = { headerIds: false };

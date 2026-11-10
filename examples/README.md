@@ -1,9 +1,6 @@
-# SlexKit Examples
+# SlexKit examples
 
-These examples are GitHub-only integration samples. They are not shipped in the
-published npm package.
-
-## Run
+These repository examples exercise HTML-first authoring and host integration. They are not published as package files.
 
 ```sh
 bun install
@@ -11,46 +8,18 @@ bun run build:core
 bun examples/dev-server.mjs basic-resistor
 ```
 
-Open the printed local URL in a browser. Replace `basic-resistor` with any
-example name below.
-
-## Examples
-
-| Example | What it demonstrates |
+| Example | Purpose |
 | --- | --- |
-| `minimal-cdn` | Zero-build CDN usage: bundled CSS, ES module runtime, inline Slex source, thin host shell only |
-| `basic-resistor` | Trusted `mount()`, `g` methods, component instance state, input/stat/grid, reset action |
-| `component-gallery` | Built-in components, including custom select listbox, tabs, switch, slider, checkbox, radio group, accordion, toast, progress |
-| `markdown-fence` | `slex` fence payloads, state-only block, artifact-scoped trusted Markdown runtime |
-| `streamdown` | React/Streamdown custom renderer rendering the official RC low-pass Markdown + `slex` example |
-| `tiptap` | Tiptap NodeView adapter editing the same official RC low-pass Markdown + `slex` example |
-| `secure-fetch` | `mountSecureArtifact()`, sandbox iframe runtime URL, host network policy, `api.fetch` allow and deny paths |
-| `toolhost` | `renderToolCall()` with confirm, choose-options, fill-form, submitted and ignored results |
-| `custom-component` | `register()`, vanilla renderer, `attachComponentDisposer()`, root cleanup, `disposeNamespace()` |
+| `web-components` | Standalone custom elements, native events, reset, themes, and table array properties |
+| `minimal-cdn` | No-build host shell with host-owned runtime/style URLs |
+| `basic-resistor` | `mount(source, container)` with an HTML payload and inline module algorithm |
+| `component-gallery` | Supported custom elements plus native HTML alternatives |
+| `markdown-fence` | Stable block IDs and `updateArtifact()` preview/commit lifecycle |
+| `assistant-ui` | HTML `slex` fence inside an assistant-ui text part |
+| `streamdown` | Streamdown renderer using the shared HTML-first Markdown fixture |
+| `tiptap` | Tiptap node view using the shared HTML-first Markdown fixture |
+| `secure-fetch` | Policy-gated `slex.api.fetch` in an isolated frame |
+| `toolhost` | Structured tool-call UI, which remains separate from ordinary `slex` authoring |
+| `custom-component` | Application-authored standard custom element lifecycle |
 
-## Notes
-
-- Examples import from `/dist/slexkit.js` and `/dist/slexkit.css`, so run
-  `bun run build:core` after changing runtime or component source.
-- Adapter examples such as `streamdown` and `tiptap` also import their package
-  builds from `/packages/<name>/dist`; run `bun run build` before checking all
-  examples together.
-- `minimal-cdn` is the exception: it can be opened directly from disk because it
-  loads SlexKit from jsDelivr.
-- `streamdown` is a framework-free host example. It loads React only because
-  Streamdown's custom renderer API uses React peer dependencies.
-- `streamdown` and `tiptap` intentionally load the public site's
-  `site/content/examples/rc-low-pass-filter/en-US.md` through
-  `examples/shared/adapter-demo.js`, so every adapter can be compared against
-  the same official Markdown and `slex` source.
-- The public site mirrors these runnable adapter examples as
-  `/examples/streamdown-host` and `/examples/tiptap-host`; deployment should
-  point developers to those pages and keep the source links on the matching
-  `examples/<adapter>` directories.
-- `tiptap` adds Tiptap's optional mathematics extension only in the example
-  host, because the official fixture contains Markdown formulas. The
-  `@slexkit/tiptap` package itself does not require math rendering peers.
-- The source snippets use English UI copy by default. A small amount of Chinese
-  text is kept in `basic-resistor` to verify Unicode content handling.
-- `secure-fetch` uses a fake host adapter response. It demonstrates policy and
-  capability flow without making a real network request.
+Generated payloads never register components, choose runtime/style URLs, or import code. Those are host responsibilities. The document runtime must fail closed when its frame runtime cannot load. The adapter examples require their package builds; run `bun run build` before checking all examples.

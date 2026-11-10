@@ -5,7 +5,7 @@ status: published
 order: 17
 summary: "assistant-ui adapter for rendering explicit slex fences inside Streamdown text message parts."
 tags: assistant-ui, react, streamdown, markdown, adapter
-components: section, table, callout, code-block
+components: card, grid, input, slider, stat
 difficulty: Intermediate
 runtime: secure
 featured: true
@@ -14,82 +14,24 @@ slexkitRenderMode: component
 
 # assistant-ui Integration
 
-When an assistant-ui app already renders text through `@assistant-ui/react-streamdown`, use `@slexkit/assistant-ui` to replace the `slex` language block inside text parts. Threads, composer, message parts, runtime, and tool UI stay with assistant-ui.
+This page shows how assistant-ui's Streamdown text wrapper detects an explicit `slex` fence and forwards its HTML string to the shared isolated document host.
 
-The runnable demo below is a static assistant-ui transcript. It verifies rendering inside assistant-ui's message-part context without connecting a model, API key, or ToolHost flow.
-
-```sh
-bun run --filter @slexkit/assistant-ui build
-bun examples/dev-server.mjs assistant-ui
-```
-
-The source lives in [`examples/assistant-ui`](https://github.com/slexkit/slexkit/tree/main/examples/assistant-ui). The page uses `useExternalStoreRuntime` and `AssistantRuntimeProvider` for the thread, then renders text parts through `SlexKitAssistantStreamdownText`.
-
-<iframe class="slex-example-live-frame" src="/adapter-demos/assistant-ui/?embed=1" title="assistant-ui runnable example"></iframe>
-
-[Open the integration guide](/docs/guides/integration) · [View runnable source](https://github.com/slexkit/slexkit/tree/main/examples/assistant-ui)
-
-Install the wrapper and peers:
-
-```sh
-npm install slexkit @slexkit/theme-shadcn @slexkit/streamdown @slexkit/assistant-ui @assistant-ui/react @assistant-ui/react-streamdown streamdown react react-dom
-```
-
-Import styles once:
-
-```ts
-import "@slexkit/theme-shadcn/style.css";
-import "@slexkit/assistant-ui/style.css";
-```
-
-Use it in the assistant message:
-
-```tsx
-import { MessagePrimitive } from "@assistant-ui/react";
-import { SlexKitAssistantStreamdownText } from "@slexkit/assistant-ui";
-
-export function AssistantMessage() {
-  return (
-    <MessagePrimitive.Root>
-      <MessagePrimitive.Parts>
-        {({ part }) =>
-          part.type === "text" ? (
-            <SlexKitAssistantStreamdownText
-              artifactId="message-1"
-              runtime="secure"
-              secureFrame={{ runtimeUrl: "/slexkit.runtime.js" }}
-            />
-          ) : null
-        }
-      </MessagePrimitive.Parts>
-    </MessagePrimitive.Root>
-  );
-}
-```
-
-Example model output:
-
-````md
 ```slex
-{
-  namespace: "assistant_status",
-  g: {},
-  layout: {
-    "text:status": { text: "Rendered inside assistant-ui." }
-  }
-}
+<slex-card title="assistant-ui Integration"><slex-grid columns="2"><slex-input id="left" label="Value A" value="10"></slex-input><slex-slider id="right" label="Value B" min="0" max="100" value="20"></slex-slider></slex-grid><slex-stat id="result" label="Result"></slex-stat></slex-card>
+<script type="module">
+  const left = slex.root.querySelector("#left"); const right = slex.root.querySelector("#right"); const result = slex.root.querySelector("#result"); const update = () => { result.value = Number(left.value) + right.valueAsNumber; };
+  left.addEventListener("input", update); right.addEventListener("input", update); update(); slex.onDispose(() => { left.removeEventListener("input", update); right.removeEventListener("input", update); });
+</script>
 ```
-````
 
-## Scope
+## Host boundary
 
-| Item | Convention |
-| --- | --- |
-| Fence language | `slex` |
-| Runtime | `secure` by default |
-| Markdown host | `@assistant-ui/react-streamdown` |
-| ToolHost | Not adapted |
+The adapter recognizes explicit `slex` fences and passes the raw HTML string to the same isolated document host. The host supplies stable artifact/block IDs, runtime/style URLs, and policy; the payload does not.
 
-ToolHost/tool-call rendering is a separate integration layer. This adapter is only the Markdown fence runtime for assistant-ui text message parts.
+The adapter owns artifact/block identity and runtime asset URLs; fence payloads neither register elements nor import the runtime.
 
-For an existing custom `StreamdownTextPrimitive`, merge only the SlexKit language override with `createSlexKitAssistantStreamdownComponents()`.
+`@slexkit/assistant-ui` supplies `SlexKitAssistantStreamdownText` for assistant-ui text parts. Tool calls remain a separate host integration.
+
+<iframe class="slex-example-live-frame" src="/adapter-demos/assistant-ui/?embed=1" title="assistant-ui HTML fence demo"></iframe>
+
+Source: `examples/assistant-ui`.

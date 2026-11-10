@@ -5,85 +5,37 @@ status: ready
 order: 20
 summary: "Transient notification with semantic type."
 ---
+
 # Toast
 
-Inline notification with semantic type and optional icon.
+Shows transient feedback with title, description, tone, icon, duration, and dismiss behavior; closing emits `close`.
 
-<!-- slex:spec-example:start component="toast" id="basic" sourceHash="1cab367e" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_toast_typical",
-  "layout": {
-    "toast:saved": {
-      "type": "success",
-      "title": "Saved",
-      "icon": "check-circle",
-      "description": "Changes have been written."
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for save confirmations, operation errors, and status change notifications.
-- Not suitable for messages that require user response or long-term visibility — use an inline form or `callout` instead.
-- Related components: `callout` for in-page prompt blocks, `badge` for compact status.
-- Set `duration` for auto-hide behavior; without it, the toast renders as an inline notification card.
-- Use `type` only for semantic message purpose.
-
-### Type variants
+## HTML example
 
 ```slex
-{
-  namespace: "doc_toast_type_diff",
-  layout: {
-    "column:types": {
-      "toast:info": {
-        type: "info",
-        title: "Info",
-        description: "A new update is available."
-      },
-      "toast:success": {
-        type: "success",
-        title: "Success",
-        description: "Operation completed."
-      },
-      "toast:warning": {
-        type: "warning",
-        title: "Warning",
-        description: "Review before proceeding."
-      },
-      "toast:danger": {
-        type: "danger",
-        title: "Error",
-        description: "Something went wrong."
-      }
-    }
-  }
-}
+<slex-toast></slex-toast>
 ```
 
-## API Reference {#api}
+## API Reference
 
-<!-- slex:spec-api:start component="toast" sourceHash="854ea3a2" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `title` | string | No | Yes |  | Toast title. |
-| `heading` | string | No | Yes |  | Alias for title. |
-| `label` | string | No | Yes |  | Alias for title. |
-| `icon` | string | No | No |  | Icon name shown at the left of the toast. |
-| `description` | string | No | Yes |  | Toast body text. |
-| `text` | string | No | Yes |  | Alias for description. |
-| `message` | string | No | Yes |  | Alias for description. |
-| `content` | string | No | Yes |  | Alias for description. |
-| `type` | string: info, success, warning, danger | No | No | `"info"` | Semantic notification type. |
-| `tone` | string: info, success, warning, danger | No | No | `"info"` | Alias for type. |
-| `duration` | number | No | No |  | Auto-hide delay in milliseconds. |
-| `dismissable` | boolean | No | No | `true` | Show a close button. |
-| `dismissible` | boolean | No | No | `true` | Alias for dismissable. |
-| `closeLabel` | string | No | No | `"Close notification"` | Accessible close button label. |
-| `closeAriaLabel` | string | No | No |  | Alias for closeLabel. |
-<!-- slex:spec-api:end -->
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | string | `""` | Toast heading. |
+| `description` | string | `""` | Toast body text. |
+| `tone` | string | `info` | Semantic tone; error and destructive normalize to danger. |
+| `icon` | string | `""` | Registered icon name. No icon is rendered when empty. |
+| `duration` | string / number | `0` | Auto-dismiss delay in milliseconds; zero or invalid values keep it visible. |
+| `dismissable` | boolean | `true` | Shows the close control. The public spelling is dismissable. |
+
+Events: `close`. Use native event listeners; read interactive values from component properties.
+
+## Contract summary
+
+- Attributes: `title`, `description`, `tone`, `icon`, `duration`, `dismissable`
+- Properties: `title`, `description`, `tone`, `icon`, `duration`, `dismissable`
+- Events: `close`
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

@@ -1,62 +1,27 @@
 ---
-title: "第一个交互：滑块操控数据"
+title: "第一个交互：按钮计数器"
 category: "入门教程"
 status: published
 order: 2
-summary: "在 SlexKit 卡片中加入 g 对象、滑块输入和响应式表达式。"
-tags: beginner, reactive, slider
-components: section, slider, stat, callout, badge, column
+summary: "通过原生 click 事件与实时组件 property，让按钮更新指标值。"
+tags: beginner, native-events, button
+components: button, card, stat
 difficulty: 入门
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
 
-# 第一个交互：滑块操控数据
+# 第一个交互：按钮计数器
 
-从静态内容进入交互内容时，需要三样东西：
-
-1. **`g` 对象** — 响应式状态容器
-2. **`$value` / `$label` / `$tone`** — 读表达式（从 g 取值渲染）
-3. **`onchange`** — 写表达式（用户操作写入 g）
+原生 click 监听器更新指标组件的实时 `.value` property，并在脚本作用域释放时完成清理。
 
 ```slex
-{
-  slex: "0.1",
-  namespace: "learn_first_interaction",
-  g: { count: 42 },
-  layout: {
-    "section:interact": {
-      eyebrow: "入门教程 · 2/4",
-      title: "第一个交互：滑块操控数据",
-      subtitle: "滑动下面的滑块，stat 和 callout 会随 g.count 更新。",
-      "column:controls": {
-        "slider:count": {
-          label: "选择数值",
-          "$value": "g.count",
-          min: 0,
-          max: 100,
-          step: 1,
-          onchange: "g.count = Number($event)"
-        },
-        "stat:countStat": { label: "当前数值", "$value": "g.count" },
-        "badge:level": {
-          "$label": "g.count < 30 ? '低' : g.count < 70 ? '中' : '高'",
-          "$tone": "g.count < 30 ? 'success' : g.count < 70 ? 'warning' : 'danger'"
-        },
-        "callout:note": {
-          "$tone": "g.count < 50 ? 'success' : 'info'",
-          "$text": "g.count < 50 ? '当前值偏低，适合入门级负载。' : '当前值偏高，注意监控资源消耗。'"
-        }
-      }
-    }
-  }
-}
+<slex-card title="第一个交互：按钮计数器"><slex-stat id="count" label="次数" value="0"></slex-stat><slex-button id="add" label="增加"></slex-button></slex-card>
+<script type="module">
+  const count = slex.root.querySelector("#count"); const add = slex.root.querySelector("#add"); const click = () => { count.value = Number(count.value) + 1; };
+  add.addEventListener("click", click); slex.onDispose(() => add.removeEventListener("click", click));
+</script>
 ```
 
-核心公式：
-```
-用户操作 → onchange → g → SlexKit 检测变化 → 所有 $value/$tone/$text 自动重算 → UI 更新
-```
-
-这是一条单向数据流：用户操作写入 `g`，表达式读取 `g` 并触发重渲染。不需要手动 `setState` 或 DOM 操作。
+稳定元素 ID 让兼容 commit 保留按钮和指标实例；脚本变化时仍会干净地替换模块作用域。

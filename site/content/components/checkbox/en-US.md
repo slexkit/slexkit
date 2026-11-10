@@ -5,72 +5,39 @@ status: ready
 order: 30
 summary: "Boolean checkbox for confirmations and multi-select."
 ---
+
 # Checkbox
 
-Boolean toggle for confirmation or multi-select scenarios.
+Represents an independent boolean choice through `.checked` and native `input`/`change` events; it participates in forms where supported.
 
-<!-- slex:spec-example:start component="checkbox" id="basic" sourceHash="060e0c05" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_checkbox_typical",
-  "layout": {
-    "checkbox:agree": {
-      "checked": true,
-      "label": "I agree",
-      "icon": "handshake"
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for terms agreement, multi-select settings, and per-item enable/disable.
-- Not suitable for instant-activation toggles (use `switch`) or mutually exclusive options (use `radio-group`).
-- Related components: `switch` for instant effect toggles, `radio-group` for exclusive options.
-- Multiple options are typically arranged vertically inside a `column`.
-- Use `$checked` and `onchange` for state binding.
-
-### Checked / disabled states
+## HTML example
 
 ```slex
-{
-  namespace: "doc_checkbox_state_diff",
-  layout: {
-    "column:diff": {
-      "checkbox:checked": {
-        label: "Checked",
-        checked: true
-      },
-      "checkbox:unchecked": {
-        label: "Unchecked"
-      },
-      "checkbox:disabled-checked": {
-        label: "Disabled checked",
-        checked: true,
-        disabled: true
-      },
-      "checkbox:disabled": {
-        label: "Disabled",
-        disabled: true
-      }
-    }
-  }
-}
+<slex-checkbox></slex-checkbox>
 ```
 
-## API Reference {#api}
+## API Reference
 
-<!-- slex:spec-api:start component="checkbox" sourceHash="a507c04a" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `checked` | boolean | No | Yes | `false` | Checked state. |
-| `label` | string | No | Yes |  | Checkbox label. |
-| `icon` | string | No | No |  | Icon name shown before the visible label. |
-| `disabled` | boolean | No | Yes | `false` | Disable the checkbox. |
-| `haptic` | boolean | No | No | `true` | Enable vibration feedback on supported devices. |
-| `haptics` | boolean | No | No | `true` | Alias for haptic. |
-| `onchange` | write-expression | No | No |  | Write expression invoked when checked state changes. |
-<!-- slex:spec-api:end -->
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | string | `""` | Visible control label. |
+| `unit` | string | `""` | Exposed for contract consistency, but this component does not currently render it. |
+| `description` | string | `""` | Exposed for contract consistency, but this component does not currently render it. |
+| `disabled` | boolean | `false` | Disables user interaction. |
+| `name` | string | unset | Name used when the custom element participates in a native form. |
+| `value` | string / number | `"on"` | Value submitted when checked; defaults to on when no value was assigned. Use checked to control the visual state. |
+| `aria-label` | string | `auto` | Accessible name override; otherwise the visible label supplies the name when available. |
+| `checked` | boolean | `false` | Current checked state. |
+
+Events: `input`, `change`. Use native event listeners; read interactive values from component properties.
+
+## Contract summary
+
+- Attributes: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `checked`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `checked`
+- Events: `input`, `change`
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

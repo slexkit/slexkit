@@ -1,7 +1,22 @@
 .slexkit-root {
-  color: var(--foreground, #111827);
-  background: transparent;
-  font-family: var(
+  /* Shadow trees cannot see :root declarations from their own stylesheet.
+   * Resolve optional design tokens once on the mount while preserving values
+   * inherited from a host document. */
+  --slex-radius: var(--radius, 0.5rem);
+  --slex-shadow-sm: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+  --slex-shadow-md: var(
+    --shadow-md,
+    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)
+  );
+  --slex-shadow-lg: var(
+    --shadow-lg,
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)
+  );
+  --slex-shadow-xl: var(
+    --shadow-xl,
+    0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)
+  );
+  --slex-font-sans: var(
     --font-sans,
     "Geist",
     "Geist Sans",
@@ -14,18 +29,122 @@
     "Segoe UI",
     sans-serif
   );
+  --slex-font-mono: var(
+    --font-mono,
+    "Geist Mono",
+    "Noto Sans Mono",
+    "Noto Sans Mono CJK SC",
+    "SFMono-Regular",
+    "Cascadia Code",
+    Consolas,
+    monospace
+  );
+  color: var(--slex-foreground, var(--foreground, #111827));
+  background: transparent;
+  font-family: var(--slex-font-sans);
 }
 
 .slexkit-theme-host-shadcn {
-  --slex-primary-50: color-mix(in srgb, var(--primary, #4A90E2) 8%, white);
-  --slex-primary-100: color-mix(in srgb, var(--primary, #4A90E2) 14%, white);
-  --slex-primary-200: color-mix(in srgb, var(--primary, #4A90E2) 25%, white);
-  --slex-primary-300: color-mix(in srgb, var(--primary, #4A90E2) 38%, white);
-  --slex-primary-400: color-mix(in srgb, var(--primary, #4A90E2) 62%, white);
-  --slex-primary-500: var(--primary, #4A90E2);
-  --slex-primary-600: color-mix(in srgb, var(--primary, #4A90E2) 82%, black);
-  --slex-primary-700: color-mix(in srgb, var(--primary, #4A90E2) 74%, black);
-  --slex-primary-800: color-mix(in srgb, var(--primary, #4A90E2) 65%, black);
-  --slex-primary-900: color-mix(in srgb, var(--primary, #4A90E2) 56%, black);
-  --slex-primary-950: color-mix(in srgb, var(--primary, #4A90E2) 44%, black);
+  /*
+   * Resolve host values into private aliases instead of declaring shadcn
+   * variables on the root. This preserves inherited host tokens while giving
+   * an explicitly selected partial host theme a complete readable palette.
+   */
+  --slex-background: var(--background, #fff);
+  --slex-foreground: var(--foreground, oklch(14.1% 0.005 285.823));
+  --slex-card: var(--card, var(--slex-background));
+  --slex-card-foreground: var(--card-foreground, var(--slex-foreground));
+  --slex-popover: var(--popover, var(--slex-card));
+  --slex-popover-foreground: var(--popover-foreground, var(--slex-card-foreground));
+  --slex-primary: var(--primary, oklch(21% 0.006 285.885));
+  --slex-primary-foreground: var(--primary-foreground, oklch(98.5% 0 0));
+  --slex-secondary: var(--secondary, oklch(96.7% 0.001 286.375));
+  --slex-secondary-foreground: var(--secondary-foreground, oklch(21% 0.006 285.885));
+  --slex-muted: var(--muted, oklch(96.7% 0.001 286.375));
+  --slex-muted-foreground: var(--muted-foreground, oklch(55.2% 0.016 285.938));
+  --slex-accent: var(--accent, oklch(96.7% 0.001 286.375));
+  --slex-accent-foreground: var(--accent-foreground, oklch(21% 0.006 285.885));
+  --slex-info: var(--info, oklch(48.8% 0.243 264.376));
+  --slex-info-foreground: var(--info-foreground, #fff);
+  --slex-success: var(--success, oklch(59.6% 0.145 163.225));
+  --slex-success-foreground: var(--success-foreground, #fff);
+  --slex-warning: var(--warning, oklch(66.6% 0.179 58.318));
+  --slex-warning-foreground: var(--warning-foreground, oklch(14.1% 0.005 285.823));
+  --slex-destructive: var(--destructive, oklch(57.7% 0.245 27.325));
+  --slex-destructive-foreground: var(--destructive-foreground, oklch(98.5% 0 0));
+  --slex-border: var(--border, oklch(92% 0.004 286.32));
+  --slex-input: var(--input, oklch(92% 0.004 286.32));
+  --slex-ring: var(--ring, oklch(14.1% 0.005 285.823));
+  --slex-primary-50: oklch(98.5% 0 0);
+  --slex-primary-100: oklch(96.7% 0.001 286.375);
+  --slex-primary-200: oklch(92% 0.004 286.32);
+  --slex-primary-300: oklch(87.1% 0.006 286.286);
+  --slex-primary-400: oklch(70.5% 0.015 286.067);
+  --slex-primary-500: oklch(55.2% 0.016 285.938);
+  --slex-primary-600: oklch(44.2% 0.017 285.786);
+  --slex-primary-700: oklch(37% 0.013 285.805);
+  --slex-primary-800: oklch(27.4% 0.006 286.033);
+  --slex-primary-900: oklch(21% 0.006 285.885);
+  --slex-primary-950: oklch(14.1% 0.005 285.823);
+}
+
+.dark .slexkit-theme-host-shadcn,
+[data-theme="dark"] .slexkit-theme-host-shadcn,
+.slexkit-theme-host-shadcn.dark {
+  --slex-background: var(--background, oklch(14.1% 0.005 285.823));
+  --slex-foreground: var(--foreground, oklch(98.5% 0 0));
+  --slex-card: var(--card, oklch(21% 0.006 285.885));
+  --slex-card-foreground: var(--card-foreground, oklch(98.5% 0 0));
+  --slex-popover: var(--popover, oklch(21% 0.006 285.885));
+  --slex-popover-foreground: var(--popover-foreground, oklch(98.5% 0 0));
+  --slex-primary: var(--primary, oklch(98.5% 0 0));
+  --slex-primary-foreground: var(--primary-foreground, oklch(14.1% 0.005 285.823));
+  --slex-secondary: var(--secondary, oklch(27.4% 0.006 286.033));
+  --slex-secondary-foreground: var(--secondary-foreground, oklch(98.5% 0 0));
+  --slex-muted: var(--muted, oklch(27.4% 0.006 286.033));
+  --slex-muted-foreground: var(--muted-foreground, oklch(70.5% 0.015 286.067));
+  --slex-accent: var(--accent, oklch(27.4% 0.006 286.033));
+  --slex-accent-foreground: var(--accent-foreground, oklch(98.5% 0 0));
+  --slex-info: var(--info, oklch(62.3% 0.214 259.815));
+  --slex-info-foreground: var(--info-foreground, oklch(14.1% 0.005 285.823));
+  --slex-success: var(--success, oklch(76.5% 0.177 163.223));
+  --slex-success-foreground: var(--success-foreground, oklch(14.1% 0.005 285.823));
+  --slex-warning: var(--warning, oklch(82.8% 0.189 84.429));
+  --slex-warning-foreground: var(--warning-foreground, oklch(14.1% 0.005 285.823));
+  --slex-destructive: var(--destructive, oklch(70.4% 0.191 22.216));
+  --slex-destructive-foreground: var(--destructive-foreground, oklch(14.1% 0.005 285.823));
+  --slex-border: var(--border, oklch(27.4% 0.006 286.033));
+  --slex-input: var(--input, oklch(37% 0.013 285.805));
+  --slex-ring: var(--ring, oklch(87.1% 0.006 286.286));
+}
+
+/* Incomplete color pairs use one coherent fallback palette. Mixing a host
+ * background with an unrelated foreground can make controls unreadable. */
+.slexkit-theme-host-shadcn[data-slex-incomplete-palette] {
+  --slex-background: #fff; --slex-foreground: oklch(14.1% 0.005 285.823);
+  --slex-card: #fff; --slex-card-foreground: oklch(14.1% 0.005 285.823);
+  --slex-popover: #fff; --slex-popover-foreground: oklch(14.1% 0.005 285.823);
+  --slex-primary: oklch(21% 0.006 285.885); --slex-primary-foreground: oklch(98.5% 0 0);
+  --slex-secondary: oklch(96.7% 0.001 286.375); --slex-secondary-foreground: oklch(21% 0.006 285.885);
+  --slex-muted: oklch(96.7% 0.001 286.375); --slex-muted-foreground: oklch(55.2% 0.016 285.938);
+  --slex-accent: oklch(96.7% 0.001 286.375); --slex-accent-foreground: oklch(21% 0.006 285.885);
+  --slex-info: oklch(48.8% 0.243 264.376); --slex-info-foreground: #fff;
+  --slex-success: oklch(59.6% 0.145 163.225); --slex-success-foreground: #fff;
+  --slex-warning: oklch(66.6% 0.179 58.318); --slex-warning-foreground: oklch(14.1% 0.005 285.823);
+  --slex-destructive: oklch(57.7% 0.245 27.325); --slex-destructive-foreground: oklch(98.5% 0 0);
+}
+.dark .slexkit-theme-host-shadcn[data-slex-incomplete-palette],
+[data-theme="dark"] .slexkit-theme-host-shadcn[data-slex-incomplete-palette],
+.slexkit-theme-host-shadcn.dark[data-slex-incomplete-palette] {
+  --slex-background: oklch(14.1% 0.005 285.823); --slex-foreground: oklch(98.5% 0 0);
+  --slex-card: oklch(21% 0.006 285.885); --slex-card-foreground: oklch(98.5% 0 0);
+  --slex-popover: oklch(21% 0.006 285.885); --slex-popover-foreground: oklch(98.5% 0 0);
+  --slex-primary: oklch(98.5% 0 0); --slex-primary-foreground: oklch(14.1% 0.005 285.823);
+  --slex-secondary: oklch(27.4% 0.006 286.033); --slex-secondary-foreground: oklch(98.5% 0 0);
+  --slex-muted: oklch(27.4% 0.006 286.033); --slex-muted-foreground: oklch(70.5% 0.015 286.067);
+  --slex-accent: oklch(27.4% 0.006 286.033); --slex-accent-foreground: oklch(98.5% 0 0);
+  --slex-info: oklch(62.3% 0.214 259.815); --slex-info-foreground: oklch(14.1% 0.005 285.823);
+  --slex-success: oklch(76.5% 0.177 163.223); --slex-success-foreground: oklch(14.1% 0.005 285.823);
+  --slex-warning: oklch(82.8% 0.189 84.429); --slex-warning-foreground: oklch(14.1% 0.005 285.823);
+  --slex-destructive: oklch(70.4% 0.191 22.216); --slex-destructive-foreground: oklch(14.1% 0.005 285.823);
 }

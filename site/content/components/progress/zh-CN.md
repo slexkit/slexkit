@@ -5,40 +5,34 @@ status: ready
 order: 10
 summary: "进度条。"
 ---
-# Progress 进度
 
-展示任务完成进度，通过 value 控制百分比。
+# Progress
 
-<!-- slex:spec-example:start component="progress" id="basic" sourceHash="d5fe2c3c" -->
+根据 `value` 展示确定进度，也可切换为不确定状态，并支持 label 与无障碍名称。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_progress_typical",
-  "layout": {
-    "progress:build": {
-      "label": "构建进度",
-      "icon": "gear-six",
-      "value": 64
-    }
-  }
-}
+<slex-progress></slex-progress>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：构建进度、上传进度、任务完成度。
-- 不适合：不确定时长的等待。
-- 关联组件：stat 用于展示最终数值指标。
-- value 范围建议 0-100。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 控件的可见标签。 |
+| `value` | string / number | `0` | 会限制在 0–100 范围内的百分比。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
+| `indeterminate` | boolean | `false` | 移除数值型 ARIA 范围并标记为不定进度。 |
+| `aria-label` | string | `auto` | 无障碍名称覆盖；省略时会在可用时使用可见标签。 |
 
-<!-- slex:spec-api:start component="progress" sourceHash="a6111bbf" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `value` | number | 否 | 是 | `0` | 0 到 100 的进度百分比。 |
-| `label` | string | 否 | 是 |  | 进度标签。 |
-| `icon` | string | 否 | 否 |  | 显示在标签前的图标名称。 |
-| `indeterminate` | boolean | 否 | 是 | `false` | 渲染不带 aria-valuenow 的不确定进度状态。 |
-<!-- slex:spec-api:end -->
+## 接口摘要
+
+- 属性: `label`, `value`, `icon`, `indeterminate`, `aria-label`
+- Properties: `label`, `value`, `icon`, `indeterminate`, `aria-label`
+- Events: 无
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

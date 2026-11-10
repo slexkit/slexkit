@@ -5,106 +5,40 @@ status: ready
 order: 30
 summary: "横向排列子组件。适合工具栏、状态行、按钮组。"
 ---
-# Row 行
 
-基本水平布局容器。
+# Row
 
-<!-- slex:spec-example:start component="row" id="basic" sourceHash="6d23c539" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_row_typical",
-  "layout": {
-    "row:toolbar": {
-      "justify": "space-between",
-      "text:title": {
-        "text": "运行时状态"
-      },
-      "button:refresh": {
-        "label": "刷新"
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
+指标卡片或内容卡片自动均衡排列；混合内容使用 flex 行，可配置 gap、对齐与分布方式。
 
-## 使用提示
-
-- 适合：按钮组、工具栏、状态指示行、表头操作区。
-- 不适合：垂直表单字段（应当用 column）、等宽卡片网格（应当用 grid）。
-- 关联组件：column 垂直排列，grid 二维等宽网格。
-- 子组件自然宽度排列，可通过 justify 控制分布。
-- `gap` 用于覆盖子组件间距；省略时使用主题 CSS 默认间距。
-
-### justify 变体
+## HTML 示例
 
 ```slex
-{
-  namespace: "doc_row_justify_diff",
-  layout: {
-    "column:demo": {
-      "text:start": {
-        text: "justify: start"
-      },
-      "row:justify-start": {
-        justify: "start",
-        "badge:a": {
-          label: "A"
-        },
-        "badge:b": {
-          label: "B"
-        }
-      },
-      "text:center": {
-        text: "justify: center"
-      },
-      "row:justify-center": {
-        justify: "center",
-        "badge:a": {
-          label: "A"
-        },
-        "badge:b": {
-          label: "B"
-        }
-      },
-      "text:end": {
-        text: "justify: end"
-      },
-      "row:justify-end": {
-        justify: "end",
-        "badge:a": {
-          label: "A"
-        },
-        "badge:b": {
-          label: "B"
-        }
-      },
-      "text:space-between": {
-        text: "justify: space-between"
-      },
-      "row:justify-between": {
-        justify: "space-between",
-        "badge:a": {
-          label: "A"
-        },
-        "badge:b": {
-          label: "B"
-        }
-      }
-    }
-  }
-}
+<slex-row>
+  <slex-stat label="供电电压" value="12" unit="V"></slex-stat>
+  <slex-stat label="测量电流" value="2.5" unit="A"></slex-stat>
+  <slex-stat label="计算输出功率" value="30" unit="W"></slex-stat>
+</slex-row>
 ```
 
-## API 参考 {#api}
+两个及以上的直接子元素均为 `slex-stat`，或均为 `slex-card` 时，自动按容器宽度均衡分列，末行铺满，同行卡片等高。标签换行时，指标值仍在底部对齐。调整宽度、重排、增删时保留子元素实例和数值。显式设置 `align` 或 `justify` 可使用普通 flex 布局；需要指定列数时使用 Grid。
 
-<!-- slex:spec-api:start component="row" sourceHash="a483a589" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `justify` | string: start, center, end, space-between, space-around | 否 | 否 | `"start"` | 主轴分布方式。 |
-| `align` | string: start, center, end, baseline, stretch | 否 | 否 | `"center"` | 交叉轴对齐方式。 |
-| `gap` | string | 否 | 是 |  | 子组件之间的间距。 |
-| `variant` | string: actions | 否 | 否 |  | Use actions for compact ToolHost action rows. |
-| 子组件 | object | 否 | 否 |  | 嵌套组件字段会按字段顺序渲染为子内容。 |
-<!-- slex:spec-api:end -->
+## API 参考
+
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
+
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `gap` | string | `1rem` | 子元素之间的 CSS 长度；不支持无单位 token 整数。 |
+| `align` | string | `stretch` | CSS align-items 值。省略时，同类 stat/card 自动均衡分列并保持同行等高；显式 align 或 justify 使用普通 flex 布局。 |
+| `justify` | string | `normal` | CSS justify-content 值。 |
+
+插槽：默认插槽，接收普通 HTML 或自定义元素。
+
+## 接口摘要
+
+- 属性: `gap`, `align`, `justify`
+- Properties: `gap`, `align`, `justify`
+- Events: 无
+- Slots: `default`
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

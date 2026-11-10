@@ -13,6 +13,8 @@ const math = createMathPlugin({
 
 const renderer = createSlexKitRenderer({
   domain: "examples-streamdown",
+  runtime: "secure",
+  secureFrame: { runtimeUrl: "/slexkit.runtime.js" },
   showChrome: false,
 });
 

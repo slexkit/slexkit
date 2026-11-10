@@ -5,75 +5,34 @@ status: ready
 order: 60
 summary: "Page section with title, subtitle, optional action, and content area."
 ---
+
 # Section
 
-Page-level block container with title, subtitle, optional action link, and content area.
+Creates a titled content section with optional subtitle and icon; section body uses the default slot.
 
-<!-- slex:spec-example:start component="section" id="basic" sourceHash="094666a8" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_section_typical",
-  "layout": {
-    "section:overview": {
-      "eyebrow": "Dashboard",
-      "title": "Runtime overview",
-      "icon": "chart-bar",
-      "subtitle": "This section groups the most important state.",
-      "stat:latency": {
-        "label": "Latency",
-        "value": "42",
-        "unit": "ms"
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for dashboard blocks, settings groups, and categorized content areas.
-- Not suitable for purely visual cards (use `card`) or untitled containers (use `column`).
-- Related components: `card` is a lighter grouping container, while `section` provides a more complete heading structure.
-- The heading area and content area are distinct; nest any layout component inside the content area.
-
-### Eyebrow / subtitle variants
+## HTML example
 
 ```slex
-{
-  namespace: "doc_section_eyebrow_diff",
-  layout: {
-    "column:demo": {
-      "section:with-eyebrow": {
-        eyebrow: "Overview",
-        title: "With eyebrow",
-        "text:body": {
-          text: "Eyebrow appears above the title."
-        }
-      },
-      "section:with-subtitle": {
-        title: "With subtitle",
-        subtitle: "Additional context below the title.",
-        "text:body": {
-          text: "Subtitle provides extra context."
-        }
-      }
-    }
-  }
-}
+<slex-section></slex-section>
 ```
 
-## API Reference {#api}
+## API Reference
 
-<!-- slex:spec-api:start component="section" sourceHash="03916011" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `title` | string | No | Yes |  | Section title. |
-| `icon` | string | No | No |  | Icon name shown before the title. |
-| `eyebrow` | string | No | Yes |  | Small label above the title. |
-| `subtitle` | string | No | Yes |  | Subtitle text below the title. |
-| `actionLabel` | string | No | Yes |  | Optional action link label. |
-| `actionHref` | string | No | No |  | Optional action link target. |
-| child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
-<!-- slex:spec-api:end -->
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | string | `""` | Section heading. |
+| `subtitle` | string | `""` | Supporting text below the heading. |
+| `icon` | string | `""` | Heading icon; it renders only when a header exists. |
+
+Slots: default slot accepting ordinary HTML or custom elements.
+
+## Contract summary
+
+- Attributes: `title`, `subtitle`, `icon`
+- Properties: `title`, `subtitle`, `icon`
+- Events: none
+- Slots: `default`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

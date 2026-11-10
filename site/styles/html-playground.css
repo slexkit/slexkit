@@ -1,0 +1,346 @@
+:where(.slex-playground, .slex-example-shell) {
+  --slex-preview-toolbar-height: 2.5rem;
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--border) 78%, transparent);
+  border-radius: calc(var(--radius) + 2px);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.slex-standalone-playground {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 90rem;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.slex-preview-toolbar {
+  display: flex;
+  height: var(--slex-preview-toolbar-height);
+  min-height: var(--slex-preview-toolbar-height);
+  align-items: stretch;
+  overflow: hidden;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  background: color-mix(in oklab, var(--muted) 20%, var(--background));
+}
+
+.slex-preview-modes,
+.slex-preview-actions {
+  display: flex;
+  align-items: stretch;
+}
+
+.slex-preview-actions {
+  margin-left: auto;
+  border-left: 1px solid color-mix(in oklab, var(--border) 68%, transparent);
+}
+
+.slex-preview-toolbar button,
+.slex-preview-icon-button {
+  position: relative;
+  display: inline-grid;
+  width: var(--slex-preview-toolbar-height);
+  min-width: var(--slex-preview-toolbar-height);
+  height: var(--slex-preview-toolbar-height);
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  padding: 0;
+  cursor: pointer;
+}
+
+.slex-preview-toolbar button:hover,
+.slex-preview-toolbar button:focus-visible,
+.slex-preview-toolbar button.is-active {
+  background: color-mix(in oklab, var(--muted) 52%, transparent);
+  color: var(--foreground);
+  outline: none;
+}
+
+.slex-preview-toolbar button.is-active::after {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0;
+  left: 0.45rem;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--foreground);
+  content: "";
+}
+
+.slex-preview-toolbar svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.65;
+}
+
+.slex-preview-toolbar button[data-copied="true"] {
+  color: var(--success, var(--foreground));
+}
+
+.slex-preview-format {
+  display: inline-flex;
+  min-width: 6.5rem;
+  align-items: center;
+  border-left: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  padding: 0 0.9rem;
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 560;
+  letter-spacing: 0.01em;
+}
+
+.slex-preview-status {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  padding: 0 0.75rem;
+  font-size: 0.7rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slex-playground-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  min-height: min(46rem, calc(100svh - 5.5rem));
+}
+
+.slex-playground--render .slex-playground-workspace,
+.slex-playground--code .slex-playground-workspace {
+  display: block;
+  min-height: 0;
+}
+
+.slex-playground-editor,
+.slex-playground-preview {
+  min-width: 0;
+}
+
+.slex-playground-editor {
+  overflow: auto;
+  border-right: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  background: var(--background);
+}
+
+.slex-playground--code .slex-playground-editor {
+  border-right: 0;
+}
+
+.slex-playground-editor .cm-editor {
+  min-height: min(46rem, calc(100svh - 5.5rem));
+  background: transparent;
+  color: var(--foreground);
+  font-size: 0.8125rem;
+}
+
+.slex-playground-editor .cm-scroller {
+  overflow: auto;
+  font-family: var(--font-mono, "Geist Mono", monospace);
+}
+
+.slex-playground-editor .cm-content {
+  padding: 1.5rem 0;
+}
+
+.slex-playground-editor[hidden],
+.slex-playground-preview[hidden],
+.slex-component-preview[hidden],
+.slex-component-code[hidden] {
+  display: none !important;
+}
+
+.slex-preview-canvas {
+  box-sizing: border-box;
+  overflow: auto;
+  background-color: var(--background);
+  background-image: radial-gradient(color-mix(in oklab, var(--border) 62%, transparent) 0.8px, transparent 0.8px);
+  background-position: 0 0;
+  background-size: 18px 18px;
+}
+
+.slex-playground-preview {
+  min-height: min(46rem, calc(100svh - 5.5rem));
+  padding: 3rem clamp(1.5rem, 5vw, 6.5rem);
+}
+
+.slex-playground--render .slex-playground-preview {
+  min-height: 0;
+}
+
+.slex-playground-document-segment {
+  width: min(100%, 47.5rem);
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.slex-playground-document-segment > :where(.slex-doc-streamdown, .slex-example-shell, .slex-streamdown-block) {
+  width: 100%;
+}
+
+.slex-playground-preview .slex-doc-streamdown > :first-child { margin-top: 0; }
+.slex-playground-preview .slex-doc-streamdown > :last-child { margin-bottom: 0; }
+.slex-playground-preview .slex-doc-streamdown h1 {
+  margin: 1.34rem 0;
+  color: var(--foreground);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+.slex-playground-preview .slex-doc-streamdown p {
+  margin: 0.75rem 0;
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.slex-playground-preview .slex-doc-streamdown code {
+  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, var(--muted) 60%, transparent);
+  color: var(--foreground);
+  padding: 0.05rem 0.25rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.84em;
+}
+.slex-playground-preview .slex-doc-streamdown .katex-display {
+  margin: 1rem 0 1.25rem;
+  color: var(--foreground);
+}
+
+/* Slex fences in a Markdown playground belong to the document-level shell. */
+.slex-playground-preview .slex-example-shell {
+  overflow: visible;
+  margin: 1rem 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.slex-playground-preview .slex-example-shell > .slex-preview-toolbar { display: none; }
+.slex-playground-preview .slex-example-shell > .slex-component-preview {
+  overflow: visible;
+  min-height: 0;
+  background: transparent;
+  padding: 0;
+}
+.slex-playground-preview .slex-example-shell .slex-component-preview-inner {
+  width: 100%;
+  max-width: none;
+}
+
+.slex-example-shell {
+  --slex-preview-toolbar-height: 2rem;
+  width: 100%;
+  margin: 1rem 0 1.5rem;
+}
+
+.slex-component-preview {
+  display: grid;
+  min-height: 22.5rem;
+  place-items: center;
+  padding: 3.5rem 4.25rem 2.25rem;
+}
+
+.slex-component-preview-inner {
+  width: min(100%, 42rem);
+  min-width: 0;
+}
+
+.slex-component-preview-inner > div,
+.slex-component-preview-inner iframe {
+  width: 100%;
+  min-width: 0;
+}
+
+.slex-component-live-frame {
+  display: block;
+  width: 100%;
+  height: 34rem;
+  border: 0;
+  background: var(--background);
+}
+
+.slex-component-code {
+  max-height: 34rem;
+  overflow: auto;
+  background: var(--background);
+}
+
+.slex-doc-prose .slex-component-code pre.slex-markdown-code,
+.slex-component-code pre.slex-markdown-code {
+  min-height: 16rem;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 1.5rem;
+  box-shadow: none;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+html[data-playground-embed] {
+  overflow-y: auto;
+  scrollbar-gutter: auto;
+}
+
+body[data-playground-embed] {
+  min-height: 0;
+  overflow: hidden;
+}
+
+body[data-playground-embed] .slex-standalone-playground {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body[data-playground-embed] .slex-playground {
+  border-radius: 0;
+}
+
+body[data-playground-embed] .slex-playground--render .slex-playground-preview {
+  padding: 0.9375rem clamp(1rem, 3.5vw, 2.25rem) 2.25rem;
+}
+
+.slex-home-playground-frame {
+  display: block;
+  width: 100%;
+  min-height: 24rem;
+  border: 0;
+  border-radius: inherit;
+}
+
+@media (max-width: 760px) {
+  .slex-standalone-playground { padding: 0.75rem; }
+  .slex-playground-workspace { grid-template-columns: minmax(0, 1fr); }
+  .slex-playground-editor {
+    max-height: 24rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .slex-playground-preview { padding: 1.5rem 1rem; }
+  .slex-preview-status { display: none; }
+  .slex-preview-format { min-width: 0; padding-inline: 0.65rem; }
+  .slex-component-preview { min-height: 22.5rem; padding: 3.5rem 3.25rem 2.25rem; }
+  .slex-component-live-frame { height: 44rem; }
+  body[data-playground-embed] .slex-playground--render .slex-playground-preview { padding: 0.9375rem 1.25rem 1.25rem; }
+}
+
+@media (min-width: 600px) and (max-width: 760px) {
+  body[data-playground-embed] .slex-playground--render .slex-playground-preview {
+    padding: 0.9375rem 2.25rem 2.25rem;
+  }
+}

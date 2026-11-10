@@ -1,4 +1,4 @@
-import { copyFile, mkdir, rm } from "node:fs/promises";
+import { copyFile, mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { generateAiDocs } from "../../../scripts/generate-ai-docs";
 import { generateStandardArtifacts } from "../../../scripts/generate-standard-artifacts";
@@ -23,14 +23,11 @@ const result = await Bun.build({
   sourcemap: "external",
   write: true,
   plugins: [{
-    name: "local-slexkit-runtime",
+    name: "html-static-inspector",
     setup(build) {
-      build.onResolve({ filter: /^slexkit(\/.*)?$/ }, (args) => {
-        if (args.path === "slexkit/runtime") {
-          return { path: join(repoRoot, "dist", "runtime.js") };
-        }
-        return { path: join(repoRoot, "dist", "slexkit.js") };
-      });
+      build.onResolve({ filter: /^slexkit\/runtime$/ }, () => ({
+        path: join(repoRoot, "src", "html", "inspect.ts"),
+      }));
     },
   }],
 });
@@ -39,6 +36,10 @@ if (!result.success) {
   for (const log of result.logs) console.error(log);
   throw new Error("Bun failed to build MCP server");
 }
+
+// The package is a stdio executable and intentionally has no library API.
+// Keep the declared types export valid for package managers that resolve it.
+await writeFile(join(dist, "index.d.ts"), "export {};\n", "utf8");
 
 for (const file of [
   "slexkit-ai-manifest.json",

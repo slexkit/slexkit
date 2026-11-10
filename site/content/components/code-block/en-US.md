@@ -5,44 +5,33 @@ status: ready
 order: 50
 summary: "Code or configuration snippet display."
 ---
+
 # Code Block
 
-Display code, configuration, or source snippets with a language label and optional title.
+Renders code or preformatted content with an optional language and title; it is display content, not an executable script surface.
 
-<!-- slex:spec-example:start component="code-block" id="basic" sourceHash="9c3453f7" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_code_block_typical",
-  "layout": {
-    "code-block:config": {
-      "title": "Config",
-      "icon": "code",
-      "language": "js",
-      "code": "export const enabled = true;"
-    }
-  }
-}
+<slex-code-block></slex-code-block>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for code samples, JSON config, CLI snippets, and log output.
-- Not suitable for runnable SlexKit examples (use `slex` fence or `playground`).
-- Related components: `playground` for editable interactive previews.
-- Code content is display-only; editing is not supported.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `code` | string | `""` | Primary code source. |
+| `content` | string | `""` | Alternate source field; the light-DOM-derived code takes precedence. Prefer code or element text. |
+| `language` | string | `""` | Language label and syntax-highlighting hint; unsupported names render plain code. |
+| `title` | string | `""` | Optional caption title. |
 
-<!-- slex:spec-api:start component="code-block" sourceHash="0cc54fab" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `code` | string | No | Yes |  | Code text content. |
-| `source` | string | No | Yes |  | Alias for code. |
-| `content` | string | No | Yes |  | Alias for code. |
-| `language` | string | No | No |  | Language label. |
-| `title` | string | No | No |  | Code block title. |
-| `icon` | string | No | No |  | Icon name shown before the title. |
-| `lineNumbers` | boolean | No | No | `true` | Show line numbers. |
-<!-- slex:spec-api:end -->
+## Contract summary
+
+- Attributes: `code`, `content`, `language`, `title`
+- Properties: `code`, `content`, `language`, `title`
+- Events: none
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

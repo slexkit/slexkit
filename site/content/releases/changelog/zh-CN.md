@@ -11,6 +11,23 @@ slexkitRenderMode: component
 
 SlexKit 的所有重要变更。
 
+## v0.5.0 - 以 HTML 为基础的交互文档
+
+### 破坏性变更
+- `slex` 代码块改为 HTML 片段、标准 JavaScript 与 `slex-*` Web Components；旧对象树 DSL、表达式字符串和隐式 namespace 状态不再支持。
+- 跨代码块状态使用显式的 artifact 局部 `slex.shared` API。宿主处理生成内容时必须配置隔离运行时 URL。
+
+### 新增与改进
+- 提供 Web Components 入口、组件清单、主题变量，以及更新后的 Markdown、Streamdown、assistant-ui、Tiptap 和 Obsidian 适配器。
+- 提供不执行源码的静态检查，以及浏览器、适配器、布局和生命周期一致性测试。
+- 指标卡片按宽度调整数值精度、保留原值，并在响应式行中自动对齐；中英文组件文档同步更新。
+
+### 修复
+- iframe 初始化超时不再使文档更新队列永久等待。
+- 修复长标签、原生 hidden、CSS 缩放及 RTL 数值显示问题。
+
+### 验证状态
+- Obsidian 桌面修复仍待真实桌面复验；浏览器模拟不能代替真实设备测试。
 
 ## v0.4.0 - 生产适配器与 ToolHost 加固
 

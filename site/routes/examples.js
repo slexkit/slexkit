@@ -1,9 +1,8 @@
-import { ingest } from "../../src/engine/index";
 import { mount as mountSvelte, unmount } from "svelte";
 import { loadExampleDocs } from "../data/examples.js";
 import { siteUiLabelsForLocale } from "../data/component-docs.js";
 import { renderMarkdown } from "../markdown/svelte-renderer.js";
-import { createPage as createExamplesShellPage } from "../pages/examples.slex.js";
+import DocsShell from "../components/DocsShell.svelte";
 import { siteFetch, withSiteBase } from "../app/site-base.js";
 import ToolHostResponsesDemo from "../components/examples/ToolHostResponsesDemo.svelte";
 
@@ -121,6 +120,18 @@ function shellDoc(example) {
     markdownHref: withSiteBase(example.markdownHref),
     bodyHtml: `<div class="slex-docs-markdown" data-markdown-doc="${escapeAttribute(example.slug)}"></div>`,
   };
+}
+
+function mountExamplesShell(target, value) {
+  const app = mountSvelte(DocsShell, {
+    target,
+    props: {
+      componentName: "docs-shell",
+      props: { subscribe(run) { run(value); return () => {}; } },
+      ctx: { id: "site-examples", emit() {} },
+    },
+  });
+  return () => void unmount(app);
 }
 
 function groupExamples(examples, category) {
@@ -290,12 +301,10 @@ export function createExamplesRoute({
   clearMobileContext,
   currentLocale,
   exampleHrefForPath,
-  mount,
   replaceRoot,
   setSiteMount,
 }) {
   const examplesPromiseByLocale = new Map();
-  let examplesShellRoot = null;
 
   async function loadExamples(locale = currentLocale()) {
     if (!examplesPromiseByLocale.has(locale)) {
@@ -344,27 +353,17 @@ export function createExamplesRoute({
         docsLabel: copy.examplesLabel,
       },
     };
-    let page = examplesShellRoot;
-
-    if (!page?.isConnected || document.body.dataset.siteRoute !== "examples") {
-      page = document.createElement("main");
-      replaceRoot(page);
-      examplesShellRoot = page;
-      setSiteMount(mount(createExamplesShellPage(shellState), page));
-    } else {
-      clearMarkdown();
-      ingest({
-        namespace: "site_examples",
-        g: {
-          docs: shellState.docs,
-          activeHref: shellState.activeHref,
-          doc: shellState.currentDoc,
-          locale: shellState.locale,
-          playgroundHrefBase: shellState.playgroundHrefBase,
-          uiLabels: shellState.uiLabels,
-        },
-      });
-    }
+    const page = document.createElement("main");
+    replaceRoot(page);
+    setSiteMount(mountExamplesShell(page, {
+      label: shellState.uiLabels.docsLabel,
+      items: shellState.docs,
+      active: shellState.activeHref,
+      doc: shellState.currentDoc,
+      locale: shellState.locale,
+      playgroundHrefBase: shellState.playgroundHrefBase,
+      uiLabels: shellState.uiLabels,
+    }));
 
     await Promise.resolve();
     const markdownHost = page.querySelector("[data-markdown-doc]");

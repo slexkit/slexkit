@@ -4,7 +4,7 @@ import type {
   StreamdownTextPrimitiveProps,
   SyntaxHighlighterProps,
 } from "@assistant-ui/react-streamdown";
-import { SlexKitRenderer } from "@slexkit/streamdown";
+import { createSlexKitRenderer } from "@slexkit/streamdown";
 import type { SlexKitRendererOptions } from "@slexkit/streamdown";
 import { createElement, useId, useMemo } from "react";
 
@@ -41,14 +41,13 @@ function normalizeSlexKitOptions(
 function createSlexKitSyntaxHighlighter(
   options: SlexKitAssistantRendererOptions = {},
 ) {
-  const rendererOptions = normalizeSlexKitOptions(options);
+  const renderer = createSlexKitRenderer(normalizeSlexKitOptions(options));
 
   return function SlexKitAssistantSyntaxHighlighter({
     code,
     language,
   }: SyntaxHighlighterProps) {
-    return createElement(SlexKitRenderer, {
-      ...rendererOptions,
+    return createElement(renderer.component, {
       code,
       isIncomplete: false,
       language: language || "slex",

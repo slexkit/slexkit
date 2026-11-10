@@ -15,8 +15,8 @@ Usage:
   slex validate --standard [--fixture id] [--json]
 
 Commands:
-  copy-runtime  Copy dist/runtime.js to a public static path.
-  validate      Validate Slex source or run standard conformance fixtures.
+  copy-runtime  Copy the browser runtime with default components and its CSS.
+  validate      Statically inspect HTML/module source or run static HTML fixtures.
 
 Example:
   slex copy-runtime public/slexkit.runtime.js
@@ -26,10 +26,11 @@ Example:
 }
 
 function copyRuntime(target = "public/slexkit.runtime.js") {
-  const source = resolve(packageRoot, "dist", "runtime.js");
+  const source = resolve(packageRoot, "dist", "slexkit.js");
   const destination = resolve(process.cwd(), target);
   mkdirSync(dirname(destination), { recursive: true });
   copyFileSync(source, destination);
+  copyFileSync(resolve(packageRoot, "dist", "slexkit.css"), resolve(dirname(destination), "slexkit.css"));
   console.log(`Copied SlexKit runtime to ${destination}`);
   console.log("Serve this file with:");
   console.log("  Access-Control-Allow-Origin: *");
@@ -112,9 +113,11 @@ function printValidation(result, options) {
   const status = result.ok ? "pass" : "fail";
   console.log(`Slex validation: ${status}`);
   if (!result.ok) {
-    console.log(`${result.diagnostic.message} at line ${result.diagnostic.line}, column ${result.diagnostic.column}`);
-    if (result.diagnostic.detail) console.log(result.diagnostic.detail);
-    console.log(result.diagnostic.excerpt);
+    const diagnostics = result.errors ?? result.diagnostics ?? [];
+    for (const diagnostic of diagnostics) {
+      const position = diagnostic.start ? ` at line ${diagnostic.start.line}, column ${diagnostic.start.column}` : "";
+      console.log(`${diagnostic.code}: ${diagnostic.message}${position}`);
+    }
   }
   if (result.warnings.length) {
     console.log(`Warnings: ${result.warnings.length}`);
@@ -134,7 +137,16 @@ async function validateCommand(args) {
   const runtime = await runtimeApi();
 
   if (options.standard) {
-    const report = runtime.runSlexConformance({ fixtureId: options.fixtureId || undefined });
+    const catalog = JSON.parse(readFileSync(resolve(packageRoot, "dist", "standard", "slex-html-conformance.json"), "utf8"));
+    const fixtures = options.fixtureId ? catalog.fixtures.filter(item => item.id === options.fixtureId) : catalog.fixtures;
+    if (options.fixtureId && !fixtures.length) throw new Error(`Unknown HTML fixture: ${options.fixtureId}`);
+    const cases = fixtures.map(item => {
+      const actual = runtime.inspectSlexSource(item.source);
+      const ok = actual.ok === item.expected.ok;
+      return { id: item.id, ok, errors: ok ? [] : [`Expected static ok=${item.expected.ok}, received ${actual.ok}`], diagnostics: actual.diagnostics ?? [] };
+    });
+    const passed = cases.filter(item => item.ok).length;
+    const report = { ok: passed === cases.length, profile: "html-1", scope: "static HTML/module inspection only; not browser behavioral conformance", total: cases.length, passed, failed: cases.length - passed, cases };
     if (options.json) printJson(report);
     else printConformance(report);
     process.exit(report.ok ? 0 : 1);

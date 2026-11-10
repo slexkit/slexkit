@@ -15,7 +15,8 @@
     "paths": {
       "slexkit": ["./src/index.ts"],
       "slexkit/runtime": ["./src/runtime.ts"],
-      "slexkit/components": ["./src/components/index.ts"],
+      "slexkit/components": ["./src/components-svelte.ts"],
+      "slexkit/web-components": ["./src/web-components.ts"],
       "slexkit/components-svelte": ["./src/components-svelte.ts"],
       "slexkit/tooling": ["./src/components/tooling.ts"]
     },

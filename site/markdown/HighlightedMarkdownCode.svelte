@@ -48,25 +48,10 @@
     yml: "yaml",
   };
 
-  const slexKeywords = new Set([
-    "const",
-    "false",
-    "g",
-    "layout",
-    "let",
-    "namespace",
-    "null",
-    "return",
-    "true",
-    "undefined",
-  ]);
-
-  const slexPattern = /\/\/[^\n]*|\/\*[\s\S]*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\b\d+(?:\.\d+)?\b|\b[$A-Z_a-z][$\w]*\b|[{}[\]():,.]|\r\n|\r|\n|./g;
-
   let { lang = "", text = "", className = "" }: Props = $props();
 
   const languageName = $derived(normalizeLanguage(lang));
-  const language = $derived(languageName === "slex" ? typescript : languages[languageName]);
+  const language = $derived(languageName === "slex" ? xml : languages[languageName]);
   const highlightedMarkdown = $derived(languageName === "markdown" ? highlightMarkdownSlexFences(text) : "");
   const blockClass = $derived([
     "slex-markdown-code",
@@ -97,15 +82,7 @@
   }
 
   function highlightSlexSource(source: string): string {
-    return Array.from(source.matchAll(slexPattern), ([token]) => {
-      const escaped = escapeHtml(token);
-      if (token.startsWith("//") || token.startsWith("/*")) return `<span class="hljs-comment">${escaped}</span>`;
-      if (/^["'`]/.test(token)) return `<span class="hljs-string">${escaped}</span>`;
-      if (/^\d/.test(token)) return `<span class="hljs-number">${escaped}</span>`;
-      if (slexKeywords.has(token)) return `<span class="hljs-keyword">${escaped}</span>`;
-      if (/^[{}[\]():,.]$/.test(token)) return `<span class="hljs-punctuation">${escaped}</span>`;
-      return escaped;
-    }).join("");
+    return escapeHtml(source);
   }
 
   function escapeHtml(value: string): string {

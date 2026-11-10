@@ -9,6 +9,7 @@ export type PropStore = {
 
 export type SvelteComponentProps = {
   componentName: string;
+  instanceId: string;
   ctx: RenderContext;
   props: PropStore;
 };

@@ -1,7 +1,7 @@
 ﻿.slex-switch {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
   cursor: pointer;
 }
 
@@ -18,7 +18,7 @@
   align-items: center;
   gap: 0.375rem;
   min-width: 0;
-  color: var(--foreground);
+  color: var(--slex-foreground, var(--foreground));
   font-size: 0.8125rem;
   font-weight: 500;
 }
@@ -47,7 +47,7 @@
   padding: 0;
   border: 2px solid transparent;
   border-radius: 9999px;
-  background: var(--input);
+  background: var(--slex-input, var(--input));
   transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
 
@@ -58,37 +58,37 @@
   height: 1.25rem;
   border: 0;
   border-radius: 9999px;
-  background: var(--background);
-  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 12%, transparent);
+  background: var(--slex-background, var(--background));
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--slex-foreground, var(--foreground)) 12%, transparent);
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
   transform: translateX(0);
   will-change: transform;
 }
 
 .slex-switch:hover .slex-switch-control {
-  border-color: color-mix(in oklab, var(--primary) 42%, var(--input));
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 8%, transparent);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 42%, var(--slex-input, var(--input)));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--slex-primary, var(--primary)) 8%, transparent);
 }
 
 .slex-switch:hover .slex-switch-control::after {
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 10%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--slex-primary, var(--primary)) 10%, transparent);
 }
 
 .slex-switch:active .slex-switch-control::after {
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 16%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--slex-primary, var(--primary)) 16%, transparent);
 }
 
 .slex-switch-input:checked + .slex-switch-control {
-  border-color: var(--primary);
-  background: var(--primary);
+  border-color: var(--slex-primary, var(--primary));
+  background: var(--slex-primary, var(--primary));
 }
 
 .slex-switch:hover .slex-switch-input:checked + .slex-switch-control {
-  background: color-mix(in oklab, var(--primary) 88%, var(--background));
+  background: color-mix(in oklab, var(--slex-primary, var(--primary)) 88%, var(--slex-background, var(--background)));
 }
 
 .slex-switch-input:checked + .slex-switch-control::after {
-  background: var(--background);
+  background: var(--slex-background, var(--background));
   transform: translateX(1.25rem);
 }
 
@@ -97,7 +97,7 @@
 }
 
 .slex-switch-input:focus-visible + .slex-switch-control {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 18%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--slex-ring, var(--ring)) 18%, transparent);
 }
 
 .slex-switch-input:disabled + .slex-switch-control {

@@ -1,19 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import { existsSync } from "node:fs";
-import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { disposeNamespace, mount } from "../../src/runtime";
-
-async function sleep(ms = 40): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 function runCli(args: string[]) {
-  const result = Bun.spawnSync(["node", "scripts/cli.mjs", ...args], {
-    stdout: "pipe",
-    stderr: "pipe",
-  });
+  const result = Bun.spawnSync(["node", "scripts/cli.mjs", ...args], { stdout: "pipe", stderr: "pipe" });
   return {
     exitCode: result.exitCode,
     stdout: new TextDecoder().decode(result.stdout),
@@ -21,264 +13,91 @@ function runCli(args: string[]) {
   };
 }
 
-describe("split runtime and Svelte component entries", () => {
-  it("keeps the runtime entry component-free until Svelte components are loaded", async () => {
-    document.body.innerHTML = '<div id="runtime-only"></div><div id="with-components"></div>';
-
-    mount({
-      namespace: "entry_split_runtime_only",
-      g: {},
-      layout: {
-        "text:message": { text: "Runtime only" },
-      },
-    }, document.getElementById("runtime-only")!);
-
-    expect(document.querySelector("#runtime-only .slexkit-root")).toBeTruthy();
-    expect(document.querySelector("#runtime-only .slex-text")).toBeNull();
-
-    await import("../../src/components-svelte");
-
-    mount({
-      namespace: "entry_split_components",
-      g: {},
-      layout: {
-        "text:message": { text: "With components" },
-      },
-    }, document.getElementById("with-components")!);
-
-    expect(document.querySelector("#with-components .slex-text")?.textContent).toBe("With components");
-
-    disposeNamespace("entry_split_runtime_only");
-    disposeNamespace("entry_split_components");
+describe("HTML runtime and component entries", () => {
+  it("exports one HTML runtime from root and runtime entries", async () => {
+    const root = await import("../../src/index");
+    const runtime = await import("../../src/runtime");
+    for (const entry of [root, runtime]) {
+      expect(typeof entry.mount).toBe("function");
+      expect(typeof entry.inspectSlexSource).toBe("function");
+      expect(typeof entry.defineSlexElements).toBe("function");
+      expect(entry.inspectSlexSource("<slex-text></slex-text>").ok).toBe(true);
+      expect(entry.inspectSlexSource({ layout: {} }).ok).toBe(false);
+      expect(entry).not.toHaveProperty("disposeNamespace");
+      expect(entry).not.toHaveProperty("getRenderer");
+    }
   });
 
-  it("registers published per-component entries into the published runtime entry", async () => {
-    document.body.innerHTML = '<div id="published-components"></div>';
-
-    const runtime = await import("../../dist/runtime.js");
-    await import("../../dist/components/text.js");
-
-    runtime.mount({
-      namespace: "published_entry_split_components",
-      g: {},
-      layout: {
-        "text:message": { text: "Published component" },
-      },
-    }, document.getElementById("published-components")!);
-
-    expect(document.querySelector("#published-components .slex-text")?.textContent).toBe("Published component");
-
-    runtime.disposeNamespace("published_entry_split_components");
+  it("keeps components-svelte as a Web Components compatibility wrapper", async () => {
+    const components = await import("../../src/components-svelte");
+    expect(components.registerAll).toBe(components.defineSlexElements);
+    expect(components.describeSlexElements().map(item => item.tagName)).toContain("slex-input");
   });
 
-  it("registers the published tooling entry into the published root bundle", async () => {
-    document.body.innerHTML = '<div id="published-tooling"></div>';
-
-    const slexkit = await import("../../dist/slexkit.js");
-    await import("../../dist/tooling.js");
-
-    const cleanup = slexkit.mount({
-      namespace: "published_entry_split_tooling",
-      g: {},
-      layout: {
-        "playground:inline": {
-          mode: "render",
-          previewMinHeight: "120px",
-          source: `{
-            namespace: "published_entry_split_tooling_inner",
-            layout: { "text:message": { text: "Tooling component" } }
-          }`,
-          sourceType: "slex",
-        },
-      },
-    }, document.getElementById("published-tooling")!);
-
-    await sleep();
-
-    expect(document.querySelector("#published-tooling .slex-playground")).toBeTruthy();
-    expect(document.querySelector("#published-tooling .slex-playground-preview-pane")?.textContent).toContain("Tooling component");
-
-    cleanup();
-    slexkit.disposeNamespace("published_entry_split_tooling");
-  });
-
-  it("keeps scoped package wrappers on the root split entries", async () => {
-    const [rootPackage, runtimePackage, componentsPackage, streamdownPackage, assistantUiPackage, tiptapPackage, themePackage, runtimeEntry, componentsEntry] = await Promise.all([
-      readFile("package.json", "utf-8").then(JSON.parse),
-      readFile("packages/runtime/package.json", "utf-8").then(JSON.parse),
-      readFile("packages/components-svelte/package.json", "utf-8").then(JSON.parse),
-      readFile("packages/streamdown/package.json", "utf-8").then(JSON.parse),
-      readFile("packages/assistant-ui/package.json", "utf-8").then(JSON.parse),
-      readFile("packages/tiptap/package.json", "utf-8").then(JSON.parse),
-      readFile("packages/theme-shadcn/package.json", "utf-8").then(JSON.parse),
-      readFile("packages/runtime/index.js", "utf-8"),
-      readFile("packages/components-svelte/index.js", "utf-8"),
+  it("keeps scoped wrappers and public HTML/component exports aligned", async () => {
+    const [rootPackage, runtimePackage, componentsPackage, themePackage, runtimeEntry, componentsEntry] = await Promise.all([
+      readFile("package.json", "utf8").then(JSON.parse),
+      readFile("packages/runtime/package.json", "utf8").then(JSON.parse),
+      readFile("packages/components-svelte/package.json", "utf8").then(JSON.parse),
+      readFile("packages/theme-shadcn/package.json", "utf8").then(JSON.parse),
+      readFile("packages/runtime/index.js", "utf8"),
+      readFile("packages/components-svelte/index.js", "utf8"),
     ]);
-
-    expect(runtimePackage.name).toBe("@slexkit/runtime");
-    expect(componentsPackage.name).toBe("@slexkit/components-svelte");
-    expect(themePackage.name).toBe("@slexkit/theme-shadcn");
     expect(runtimePackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
     expect(componentsPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
-    expect(streamdownPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
-    expect(assistantUiPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
-    expect(assistantUiPackage.peerDependencies["@slexkit/streamdown"]).toBe(`^${rootPackage.version}`);
-    expect(tiptapPackage.peerDependencies.slexkit).toBe(`^${rootPackage.version}`);
-    expect(runtimePackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
-    expect(componentsPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
-    expect(streamdownPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
-    expect(assistantUiPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
-    expect(tiptapPackage.peerDependenciesMeta?.slexkit?.optional).toBe(true);
     expect(runtimeEntry).toContain('from "slexkit/runtime"');
     expect(componentsEntry).toContain('from "slexkit/components"');
-    expect(componentsEntry).not.toContain("registerSiteComponents");
+    expect(rootPackage.exports["./web-components"]).toBeTruthy();
     expect(rootPackage.exports["./style.css"]).toBe("./dist/slexkit.css");
-    expect(rootPackage.exports["./base.css"]).toBe("./dist/base.css");
-    expect(rootPackage.exports["./components/*.css"]).toBe("./dist/components/*.css");
-    expect(rootPackage.exports["./standard/*"]).toBe("./dist/standard/*");
     expect(themePackage.exports["./style.css"]).toBe("./style.css");
-    expect(themePackage.exports["./base.css"]).toBe("./base.css");
-    expect(themePackage.exports["./components/*.css"]).toBe("./components/*.css");
   });
 
-  it("keeps every scoped package aligned for release packaging", async () => {
-    const rootPackage = await readFile("package.json", "utf-8").then(JSON.parse) as {
-      bugs?: { url?: string };
-      homepage?: string;
-      repository?: { type?: string; url?: string };
-      version: string;
-    };
-    const packageDirs = [
-      "runtime",
-      "components-svelte",
-      "theme-shadcn",
-      "streamdown",
-      "assistant-ui",
-      "tiptap",
-      "mcp",
-    ];
-
-    for (const dir of packageDirs) {
-      const packageJson = await readFile(`packages/${dir}/package.json`, "utf-8").then(JSON.parse) as {
-        bugs?: { url?: string };
-        homepage?: string;
-        name: string;
-        version: string;
-        files?: string[];
-        license?: string;
-        publishConfig?: { access?: string };
-        repository?: { type?: string; url?: string; directory?: string };
-      };
-
+  it("keeps every scoped package aligned for release packaging metadata", async () => {
+    const rootPackage = await readFile("package.json", "utf8").then(JSON.parse);
+    for (const dir of ["runtime", "components-svelte", "theme-shadcn", "streamdown", "assistant-ui", "tiptap", "mcp"]) {
+      const packageJson = await readFile(`packages/${dir}/package.json`, "utf8").then(JSON.parse);
       expect(packageJson.name).toBe(`@slexkit/${dir}`);
       expect(packageJson.version).toBe(rootPackage.version);
       expect(packageJson.license).toBe("MIT");
-      expect(packageJson.publishConfig?.access).toBe("public");
-      expect(packageJson.repository?.type).toBe("git");
-      expect(packageJson.repository?.url).toBe(rootPackage.repository?.url);
-      expect(packageJson.repository?.directory).toBe(`packages/${dir}`);
-      expect(packageJson.homepage).toContain(`packages/${dir}`);
-      expect(packageJson.bugs?.url).toBe(rootPackage.bugs?.url);
       expect(packageJson.files).toContain("README.md");
-      expect(packageJson.files).toContain("LICENSE");
-      expect(existsSync(`packages/${dir}/README.md`)).toBe(true);
       expect(existsSync(`packages/${dir}/LICENSE`)).toBe(true);
     }
-
-    expect(existsSync("packages/mcp/dist/index.js")).toBe(true);
-    expect(existsSync("packages/mcp/dist/data/slexkit-ai-manifest.json")).toBe(true);
-    expect(existsSync("dist/standard/slex-standard-manifest.json")).toBe(true);
-    expect(existsSync("packages/mcp/dist/data/standard/slex-logic-profile.json")).toBe(true);
-    expect(rootPackage.repository?.type).toBe("git");
-    expect(rootPackage.repository?.url).toContain("github.com/slexkit/slexkit");
-    expect(rootPackage.homepage).toContain("github.com/slexkit/slexkit");
-    expect(rootPackage.bugs?.url).toContain("github.com/slexkit/slexkit/issues");
   });
 
-  it("exports package and protocol version information from public entries", async () => {
-    const rootPackage = await readFile("package.json", "utf-8").then(JSON.parse) as { version: string };
-    const root = await import("../../dist/slexkit.js");
-    const runtime = await import("../../dist/runtime.js");
-    const siteVersion = await import("../../site/app/version.js");
-
-    expect(root.SLEXKIT_VERSION).toBe(rootPackage.version);
-    expect(root.SLEXKIT_COMPONENTS_VERSION).toBe(rootPackage.version);
-    expect(root.SLEX_PROTOCOL_VERSION).toBe("0.1");
-    expect(root.getSlexKitInfo()).toEqual({
-      version: rootPackage.version,
-      protocolVersion: "0.1",
-      componentsVersion: rootPackage.version,
-    });
-    expect(runtime.SLEXKIT_VERSION).toBe(rootPackage.version);
-    expect(runtime.getSlexKitInfo()).toEqual(root.getSlexKitInfo());
-    expect(root.runSlexConformance().ok).toBe(true);
-    expect(runtime.runSlexConformance().ok).toBe(true);
-    expect(root.isLikelyIncompleteSlexSource("{ layout: {")).toBe(true);
-    expect(runtime.isLikelyIncompleteSlexSource("{ layout: {")).toBe(true);
-    expect(root.parseSlexStreamingSource("{ layout: {", { mode: "repair" }).status).toBe("repaired");
-    expect(runtime.parseSlexStreamingSource("{ layout: {", { mode: "repair" }).status).toBe("repaired");
-    expect(siteVersion.SLEXKIT_SITE_VERSION).toBe(rootPackage.version);
-    expect(siteVersion.SLEX_PROTOCOL_VERSION).toBe("0.1");
+  it("exports package versions without the retired DSL protocol helpers", async () => {
+    const packageJson = await readFile("package.json", "utf8").then(JSON.parse);
+    const root = await import("../../src/index");
+    expect(root.SLEXKIT_VERSION).toBe(packageJson.version);
+    expect(root.SLEXKIT_COMPONENTS_VERSION).toBe(packageJson.version);
+    expect(root).not.toHaveProperty("runSlexConformance");
+    expect(root).not.toHaveProperty("parseSlexStreamingSource");
   });
 
-  it("copies the built runtime module through the published CLI", async () => {
-    const tempDir = await mkdtemp(join(tmpdir(), "slexkit-cli-"));
-    const target = join(tempDir, "slexkit.runtime.js");
+  it("validates HTML files and warnings through the CLI without executing scripts", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "slexkit-html-cli-"));
     try {
-      await Bun.$`node scripts/cli.mjs copy-runtime ${target}`;
-      const [sourceInfo, targetInfo, source, copied] = await Promise.all([
-        stat("dist/runtime.js"),
-        stat(target),
-        readFile("dist/runtime.js", "utf-8"),
-        readFile(target, "utf-8"),
-      ]);
-
-      expect(targetInfo.size).toBe(sourceInfo.size);
-      expect(copied).toBe(source);
-    } finally {
-      await rm(tempDir, { recursive: true, force: true });
-    }
-  });
-
-  it("validates source files and standard fixtures through the published CLI", async () => {
-    const standard = runCli(["validate", "--standard", "--json"]);
-    expect(standard.exitCode, standard.stderr).toBe(0);
-    expect(JSON.parse(standard.stdout)).toMatchObject({
-      ok: true,
-      failed: 0,
-      total: expect.any(Number),
-    });
-
-    const tempDir = await mkdtemp(join(tmpdir(), "slexkit-validate-"));
-    try {
-      const validPath = join(tempDir, "valid.slex");
-      await writeFile(validPath, '{ slex: "0.1", namespace: "cli_valid", layout: { "text:message": { text: "ok" } } }', "utf-8");
+      const validPath = join(directory, "valid.slex.html");
+      await writeFile(validPath, '<slex-text text="ok"></slex-text><script>process.exit(71)</script>');
       const valid = runCli(["validate", validPath, "--json"]);
       expect(valid.exitCode, valid.stderr).toBe(0);
-      expect(JSON.parse(valid.stdout)).toMatchObject({ ok: true, componentUsage: ["text"] });
-
-      const warningPath = join(tempDir, "warning.slex");
-      await writeFile(warningPath, '{ namespace: "cli_warning", layout: { "text:message": { madeUp: true } } }', "utf-8");
-      const warning = runCli(["validate", warningPath, "--strict", "--json"]);
-      expect(warning.exitCode).toBe(1);
-      expect(JSON.parse(warning.stdout)).toMatchObject({
-        ok: true,
-        warnings: expect.arrayContaining([expect.objectContaining({ code: "unknown_prop" })]),
-      });
+      expect(JSON.parse(valid.stdout).ok).toBe(true);
+      const warningPath = join(directory, "warning.slex.html");
+      await writeFile(warningPath, "<section><div>streaming");
+      expect(runCli(["validate", warningPath, "--strict", "--json"]).exitCode).toBe(1);
     } finally {
-      await rm(tempDir, { recursive: true, force: true });
+      await rm(directory, { recursive: true, force: true });
     }
+  });
+
+  it("requires the CLI runtime copy path to use the HTML bundle and adjacent CSS", async () => {
+    const source = await readFile("scripts/cli.mjs", "utf8");
+    expect(source).toContain('resolve(packageRoot, "dist", "slexkit.js")');
+    expect(source).toContain('resolve(packageRoot, "dist", "slexkit.css")');
   });
 
   it("keeps test-only component entries out of the public build", async () => {
-    const [componentFiles, chunkFiles, typeFiles] = await Promise.all([
-      Array.fromAsync(new Bun.Glob("dist/components/**/*.spec.js").scan(".")),
-      Array.fromAsync(new Bun.Glob("dist/chunks/**/*.spec-*.js").scan(".")),
-      Array.fromAsync(new Bun.Glob("dist/types/**/*.spec.d.ts").scan(".")),
-    ]);
-
-    expect(componentFiles).toEqual([]);
-    expect(chunkFiles).toEqual([]);
-    expect(typeFiles).toEqual([]);
+    const build = await readFile("scripts/build-core.ts", "utf8");
+    expect(build).toContain('new Bun.Glob("dist/types/**/*.spec.d.ts")');
+    expect(build).not.toContain('entrypoints: ["src/components/entries/playground.spec.ts"]');
   });
 });

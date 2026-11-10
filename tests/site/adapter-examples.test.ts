@@ -11,7 +11,8 @@ describe("adapter examples", () => {
 
     expect(markdown).toContain("# RC Low-Pass Filter");
     expect(markdown).toContain("```slex");
-    expect(markdown).toContain('namespace: "example_rc_low_pass_filter"');
+    expect(markdown).toContain("<slex-input");
+    expect(markdown).toContain("slex.onDispose");
     expect(markdown.startsWith("---")).toBe(false);
   });
 
@@ -44,15 +45,15 @@ describe("adapter examples", () => {
     expect(main).toContain("MessagePrimitive.Parts");
     expect(main).toContain("SlexKitAssistantStreamdownText");
     expect(main).toContain('runtime: "secure"');
-    expect(main).toContain('runtimeUrl: "/dist/slexkit.runtime.js"');
+    expect(main).toContain('runtimeUrl: "/slexkit.runtime.js"');
     expect(main).toContain("const cutoffHz = 640");
-    expect(main).toContain("namespace: \"assistant_ui_static_filter\"");
-    expect(main).toContain('"grid:stats"');
-    expect(main).toContain('"badge:runtime"');
-    expect(main).toContain('"$value": "g.alpha.toFixed(4)"');
+    expect(main).toContain('<slex-grid columns="2">');
+    expect(main).toContain('<slex-badge text="isolated frame"');
+    expect(main).not.toContain("namespace:");
+    expect(main).not.toContain("layout:");
     expect(main).not.toContain("children: [");
     expect(main).not.toContain("renderToolCall");
-    expect(main).not.toContain("ToolHost");
+    expect(main).toContain("Tool-call UI remains a separate integration layer");
 
     const css = readFileSync("examples/assistant-ui/style.css", "utf8");
     expect(css).toContain('html[data-embed="true"]');
@@ -67,7 +68,7 @@ describe("adapter examples", () => {
 
     expect(assistantUi).toContain("@slexkit/assistant-ui");
     expect(assistantUi).toContain("SlexKitAssistantStreamdownText");
-    expect(assistantUi).toContain("ToolHost | Not adapted");
+    expect(assistantUi).toContain("Tool calls remain a separate host integration");
     expect(assistantUi).toContain('src="/adapter-demos/assistant-ui/?embed=1"');
     expect(assistantUi).toContain("examples/assistant-ui");
     expect(assistantUiZh).toContain('category: "宿主集成"');

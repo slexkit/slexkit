@@ -1,64 +1,71 @@
-import { describe, expect, it, mock } from "bun:test";
-import { boot } from "../../src/engine/index";
-import "../../src/components/index";
+import { describe, expect, it } from "bun:test";
+import { marked, type Token } from "marked";
+import { inspectSlexSource } from "../../src/html/inspect";
 
-describe("markdown boot source controls", () => {
-  it("boot renders only language-slex and keeps source controls", () => {
-    document.body.innerHTML = `
-      <pre><code class="language-slex">{
-        namespace: "boot_source",
-        g: {},
-        layout: { "text:msg": { text: "Rendered" } }
-      }</code></pre>
-      <pre><code class="language-js">const namespace = "not_slexkit";</code></pre>
-      <pre><code class="language-slex-js">not mounted</code></pre>
-      <pre><code class="language-slexkit">not mounted</code></pre>
-      <pre><code class="language-slexkit-js">not mounted</code></pre>
-    `;
+function codeTokens(markdown: string) {
+  return marked.lexer(markdown).filter((token): token is Extract<Token, { type: "code" }> => token.type === "code");
+}
 
-    boot();
+function slexSources(markdown: string) {
+  return codeTokens(markdown)
+    .filter((token) => String(token.lang ?? "").trim().split(/\s+/, 1)[0].toLowerCase() === "slex")
+    .map((token) => token.text);
+}
 
-    expect(document.querySelectorAll(".slexkit-card")).toHaveLength(1);
-    expect(document.querySelectorAll(".slexkit-source-toolbar")).toHaveLength(1);
-    expect(document.querySelector(".slexkit-root")?.textContent).toContain("Rendered");
-    expect(document.querySelector("pre")?.hidden).toBe(false);
+describe("Markdown HTML fence extraction", () => {
+  it("extracts only explicit slex fences and leaves ordinary Markdown/code intact", () => {
+    const markdown = [
+      "# Status",
+      "",
+      "Ordinary **Markdown** remains readable.",
+      "",
+      "```slex render=component",
+      '<slex-card title="Build"><p>Ready</p></slex-card>',
+      "```",
+      "",
+      "```js",
+      "const untouched = true;",
+      "```",
+      "",
+      "```slexkit",
+      "not a SlexKit document fence",
+      "```",
+      "",
+      "    indented code remains ordinary code",
+    ].join("\n");
+
+    const tokens = marked.lexer(markdown);
+    expect(tokens.some((token) => token.type === "heading" && token.text === "Status")).toBe(true);
+    expect(tokens.some((token) => token.type === "paragraph" && token.text.includes("Ordinary"))).toBe(true);
+    expect(codeTokens(markdown).map((token) => token.lang ?? "")).toEqual([
+      "slex render=component", "js", "slexkit", "",
+    ]);
+    expect(slexSources(markdown)).toEqual(['<slex-card title="Build"><p>Ready</p></slex-card>']);
+    expect(inspectSlexSource(slexSources(markdown)[0]).ok).toBe(true);
   });
 
-  it("source toolbar can copy, hide, and re-render the original code block", () => {
-    const writeText = mock().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: { writeText },
+  it("preserves complete static HTML fixtures and never executes their scripts while extracting", () => {
+    const marker = "__slexkit_markdown_nonexecution__";
+    delete (globalThis as Record<string, unknown>)[marker];
+    const source = [
+      '<section id="fixture">',
+      "  <style>.ready { color: green; }</style>",
+      '  <slex-stat label="Count" value="3"></slex-stat>',
+      '  <svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4"></circle></svg>',
+      `  <script type="module">globalThis.${marker} = true;</script>`,
+      "</section>",
+    ].join("\n");
+    const extracted = slexSources(`~~~slex\n${source}\n~~~`);
+    expect(extracted).toEqual([source]);
+    expect(inspectSlexSource(extracted[0])).toMatchObject({ ok: true, value: source });
+    expect((globalThis as Record<string, unknown>)[marker]).toBeUndefined();
+  });
+
+  it("rejects old object authoring instead of treating it as HTML", () => {
+    const [source] = slexSources("```slex\n{ g: {}, layout: {} }\n```");
+    expect(inspectSlexSource(source)).toMatchObject({
+      ok: false,
+      diagnostic: { code: "legacy-object-source" },
     });
-
-    document.body.innerHTML = `
-      <pre><code class="language-slex">{
-        namespace: "boot_toolbar",
-        g: {},
-        layout: { "text:msg": { text: "Before" } }
-      }</code></pre>
-    `;
-
-    boot();
-
-    const pre = document.querySelector("pre") as HTMLPreElement;
-    const code = document.querySelector("code.language-slex") as HTMLElement;
-    const buttons = Array.from(document.querySelectorAll(".slexkit-source-button")) as HTMLButtonElement[];
-
-    buttons[0].click();
-    expect(writeText).toHaveBeenCalledWith(expect.stringContaining("boot_toolbar"));
-
-    buttons[1].click();
-    expect(pre.hidden).toBe(true);
-    buttons[1].click();
-    expect(pre.hidden).toBe(false);
-
-    code.textContent = `{
-      namespace: "boot_toolbar",
-      g: {},
-      layout: { "text:msg": { text: "After" } }
-    }`;
-    buttons[2].click();
-    expect(document.querySelector(".slexkit-root")?.textContent).toContain("After");
   });
 });

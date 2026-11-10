@@ -111,6 +111,10 @@ const server = Bun.serve({
       const runtimeAlias = rest === "slexkit.runtime.js" ? "slexkit.js" : rest;
       return (await serveFile(distRoot, runtimeAlias)) || response("Not found", 404);
     }
+    if (url.pathname === "/slexkit.runtime.js") {
+      return (await serveFile(distRoot, "slexkit.js")) || response("Not found", 404);
+    }
+    if (url.pathname === "/slexkit.css") return (await serveFile(distRoot, "slexkit.css")) || response("Not found", 404);
     if (url.pathname.startsWith("/packages/streamdown/")) {
       const rest = url.pathname.slice("/packages/streamdown/".length);
       return (await serveFile(streamdownPackageRoot, rest)) || response("Not found", 404);

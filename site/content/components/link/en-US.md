@@ -5,45 +5,35 @@ status: ready
 order: 25
 summary: "Navigation or lightweight jump action."
 ---
+
 # Link
 
-Text link navigation.
+Renders a navigable link from `href`, text/label, target, icon, and variant; URL policy still applies inside isolated documents.
 
-<!-- slex:spec-example:start component="link" id="basic" sourceHash="cf9f6896" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_link_typical",
-  "layout": {
-    "column:links": {
-      "link:docs": {
-        "href": "/components",
-        "icon": "arrow-square-out",
-        "text": "View components"
-      }
-    }
-  }
-}
+<slex-link></slex-link>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for page navigation, external links, and inline text links.
-- Not suitable for primary action buttons (use `button`).
-- Related components: `button` for explicit action triggers.
-- Keep link text short.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `text` | string | `""` | Primary visible link text. |
+| `label` | string | `""` | Alternate label field; the light-DOM-derived text takes precedence. Prefer text or element text. |
+| `href` | string | `"#"` | Destination URL; executable URL schemes are replaced with #. |
+| `target` | string | unset | Browsing-context target; _blank also adds noreferrer. |
+| `icon` | string | `""` | Registered icon name. No icon is rendered when empty. |
+| `variant` | string | unset | Variant data value used by theme styles. |
 
-<!-- slex:spec-api:start component="link" sourceHash="7404dc9d" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `href` | string | No | No |  | Target URL. |
-| `text` | string | No | Yes |  | Visible link text. |
-| `label` | string | No | Yes |  | Alias for text. |
-| `content` | string | No | Yes |  | Alias for text. |
-| `icon` | string | No | No |  | Icon name shown before link text. |
-| `target` | string | No | No |  | Native link target attribute. |
-| `variant` | string: default, muted | No | No | `"default"` | Link visual variant. |
-<!-- slex:spec-api:end -->
+## Contract summary
+
+- Attributes: `text`, `label`, `href`, `target`, `icon`, `variant`
+- Properties: `text`, `label`, `href`, `target`, `icon`, `variant`
+- Events: none
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

@@ -5,44 +5,37 @@ status: ready
 order: 20
 summary: "单个可展开内容区域。"
 ---
-# Collapsible 折叠区
 
-管理单个内容的展开/收起状态，适合辅助详情或次级信息。
+# Collapsible
 
-<!-- slex:spec-example:start component="collapsible" id="basic" sourceHash="d074a138" -->
+通过 `.open` 展开或隐藏一个 slot 内容区，并可设置触发文字与图标。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_collapsible_typical",
-  "layout": {
-    "collapsible:more": {
-      "open": true,
-      "trigger": "Details",
-      "icon": "caret-circle-down",
-      "content": "这段补充内容可以折叠。"
-    }
-  }
-}
+<slex-collapsible></slex-collapsible>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：详情展开、补充说明、可折叠的辅助信息。
-- 不适合：多项折叠列表（应当用 accordion）。
-- 关联组件：accordion 用于多项折叠面板。
-- 子组件可扩展默认正文内容。
-- 使用 $value 和 onchange 实现受控展开。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `open` | boolean | `false` | 当前展开状态。 |
+| `trigger` | string | `"Toggle"` | 触发按钮标签。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
+| `content` | string | `""` | 在面板中与默认插槽子元素一同渲染的文本。 |
 
-<!-- slex:spec-api:start component="collapsible" sourceHash="7580b7c4" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `open` | boolean | 否 | 是 | `false` | 展开状态。 |
-| `trigger` | string | 否 | 是 |  | 触发按钮文本。 |
-| `icon` | string | 否 | 否 |  | 显示在触发文本前的图标名称。 |
-| `content` | string | 否 | 是 |  | 静态正文内容。 |
-| `onchange` | write-expression | 否 | 否 |  | 展开状态变化时执行的写表达式。 |
-| 子组件 | object | 否 | 否 |  | 嵌套组件字段会按字段顺序渲染为子内容。 |
-<!-- slex:spec-api:end -->
+事件：`input`、`change`。使用原生事件监听器；交互值从组件 property 读取。
+
+插槽：默认插槽，接收普通 HTML 或自定义元素。
+
+## 接口摘要
+
+- 属性: `open`, `trigger`, `icon`, `content`
+- Properties: `open`, `trigger`, `icon`, `content`
+- Events: `input`, `change`
+- Slots: `default`
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

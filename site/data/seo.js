@@ -5,7 +5,7 @@ import { loadExampleDocs } from "./examples.js";
 
 const siteName = "SlexKit";
 const defaultDescription =
-  "\"Docs as tools, tools as docs\" renders explicit Markdown fences as stateful UI blocks.";
+  "HTML-first interactive Markdown rendered in isolated document frames.";
 const homeDescriptions = {
   "en-US": defaultDescription,
   "zh-CN": "\"文档即工具，工具即文档\"，把显式 Markdown fence 渲染成带状态的交互块。",
@@ -18,13 +18,13 @@ export function prerenderedHomeHtml(locale = "en-US") {
     <div class="slex-home-copy">
       <h1>SlexKit</h1>
       <p><strong>Streaming Live EXpressions Kit</strong></p>
-      <p class="slex-home-lede">"文档即工具，工具即文档"，把显式 Markdown fence 渲染成带状态的交互块。</p>
+      <p class="slex-home-lede">HTML-first 交互式 Markdown，在隔离文档 frame 中运行。</p>
       <p>SlexKit 是面向 Markdown 宿主的交互式 UI 运行时。文档中写显式 <code>slex</code> fence，运行时负责挂载表单、指标、计算器和预览组件；不需要为每段内容增加构建流程。</p>
       <h2>能力范围</h2>
       <ul>
         <li><strong>零构建</strong> — 在 Markdown 中直接写 slex fence；宿主只需加载运行时和样式</li>
         <li><strong>流式渲染</strong> — 适合消息流和文档流：内容到达后按 fence 挂载</li>
-        <li><strong>响应式状态</strong> — 同一 artifact 内共享状态，控件和展示组件可以联动</li>
+        <li><strong>标准 JavaScript</strong> — 用 DOM 事件与 <code>slex</code> SDK 实现交互；不使用表达式字符串</li>
         <li><strong>组件集</strong> — 内置常用文档组件：卡片、表单、表格、代码块、标签页等</li>
         <li><strong>安全沙箱</strong> — 不可信内容可放入 secure runtime，与宿主页隔离</li>
         <li><strong>工具调用渲染</strong> — ToolHost 把确认、选择和表单类工具调用渲染成可提交 UI</li>
@@ -32,30 +32,23 @@ export function prerenderedHomeHtml(locale = "en-US") {
       <h2>快速示例</h2>
       <p>在 Markdown 中写一个交互式计算器：</p>
       <pre><code>\`\`\`slex
-{
-  namespace: "seo_home_calculator",
-  g: { price: 99, qty: 3 },
-  layout: {
-    "row:inputs": {
-      "input:price": {
-        type: "number",
-        label: "单价",
-        "$value": "g.price",
-        onchange: "g.price = Number($event || 0)"
-      },
-      "input:qty": {
-        type: "number",
-        label: "数量",
-        "$value": "g.qty",
-        onchange: "g.qty = Number($event || 0)"
-      },
-      "stat:total": {
-        label: "总价",
-        "$value": "g.price * g.qty"
-      }
-    }
-  }
-}
+&lt;slex-row&gt;
+  &lt;slex-input id="price" type="number" label="单价" value="99"&gt;&lt;/slex-input&gt;
+  &lt;slex-input id="qty" type="number" label="数量" value="3"&gt;&lt;/slex-input&gt;
+  &lt;slex-stat id="total" label="总价" value="297"&gt;&lt;/slex-stat&gt;
+&lt;/slex-row&gt;
+&lt;script type="module"&gt;
+  const price = slex.root.querySelector("#price");
+  const qty = slex.root.querySelector("#qty");
+  const total = slex.root.querySelector("#total");
+  const update = () =&gt; { total.value = Number(price.value) * Number(qty.value); };
+  price.addEventListener("input", update);
+  qty.addEventListener("input", update);
+  slex.onDispose(() =&gt; {
+    price.removeEventListener("input", update);
+    qty.removeEventListener("input", update);
+  });
+&lt;/script&gt;
 \`\`\`</code></pre>
       <h2>开始使用</h2>
       <ul>
@@ -88,13 +81,13 @@ export function prerenderedHomeHtml(locale = "en-US") {
     <div class="slex-home-copy">
       <h1>SlexKit</h1>
       <p><strong>Streaming Live EXpressions Kit</strong></p>
-      <p class="slex-home-lede">"Docs as tools, tools as docs" renders explicit Markdown fences as stateful UI blocks.</p>
+      <p class="slex-home-lede">HTML-first interactive Markdown rendered in isolated document frames.</p>
       <p>SlexKit is an interactive UI runtime for Markdown hosts. Write explicit <code>slex</code> fences in the document; the runtime mounts forms, metrics, calculators, and previews without adding a build step for each artifact.</p>
       <h2>Runtime scope</h2>
       <ul>
         <li><strong>Zero-build</strong> — Write slex fences directly in Markdown; the host loads the runtime and CSS.</li>
         <li><strong>Streaming</strong> — Works with message and document streams; fences mount as content arrives.</li>
-        <li><strong>Reactive state</strong> — Components in one artifact can share state and update together.</li>
+        <li><strong>Standard JavaScript</strong> — Use DOM events and the <code>slex</code> SDK; no expression-string binding language.</li>
         <li><strong>Component set</strong> — Built-in document components: cards, forms, tables, code blocks, tabs, and more.</li>
         <li><strong>Secure sandbox</strong> — Run untrusted content in a secure runtime isolated from the host page.</li>
         <li><strong>Tool-call rendering</strong> — ToolHost renders confirmations, choices, and forms as submit-ready UI.</li>
@@ -102,30 +95,23 @@ export function prerenderedHomeHtml(locale = "en-US") {
       <h2>Quick Example</h2>
       <p>Write an interactive calculator in Markdown:</p>
       <pre><code>\`\`\`slex
-{
-  namespace: "seo_home_calculator",
-  g: { price: 99, qty: 3 },
-  layout: {
-    "row:inputs": {
-      "input:price": {
-        type: "number",
-        label: "Price",
-        "$value": "g.price",
-        onchange: "g.price = Number($event || 0)"
-      },
-      "input:qty": {
-        type: "number",
-        label: "Qty",
-        "$value": "g.qty",
-        onchange: "g.qty = Number($event || 0)"
-      },
-      "stat:total": {
-        label: "Total",
-        "$value": "g.price * g.qty"
-      }
-    }
-  }
-}
+&lt;slex-row&gt;
+  &lt;slex-input id="price" type="number" label="Price" value="99"&gt;&lt;/slex-input&gt;
+  &lt;slex-input id="qty" type="number" label="Qty" value="3"&gt;&lt;/slex-input&gt;
+  &lt;slex-stat id="total" label="Total" value="297"&gt;&lt;/slex-stat&gt;
+&lt;/slex-row&gt;
+&lt;script type="module"&gt;
+  const price = slex.root.querySelector("#price");
+  const qty = slex.root.querySelector("#qty");
+  const total = slex.root.querySelector("#total");
+  const update = () =&gt; { total.value = Number(price.value) * Number(qty.value); };
+  price.addEventListener("input", update);
+  qty.addEventListener("input", update);
+  slex.onDispose(() =&gt; {
+    price.removeEventListener("input", update);
+    qty.removeEventListener("input", update);
+  });
+&lt;/script&gt;
 \`\`\`</code></pre>
       <h2>Get Started</h2>
       <ul>

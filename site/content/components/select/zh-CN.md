@@ -5,59 +5,43 @@ status: ready
 order: 20
 summary: "单选下拉。"
 ---
-# Select 下拉选择
 
-单选下拉选择器，通过 options 定义可选列表，value 控制当前选中项。
+# Select
 
-<!-- slex:spec-example:start component="select" id="basic" sourceHash="b5675bcc" -->
+提供下拉选择控件，以 `.options` 数组定义选项，并通过 `.value` 跟踪当前选择。
+
+## HTML 示例
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_select_typical",
-  "layout": {
-    "select:env": {
-      "label": "环境",
-      "icon": "server",
-      "value": "prod",
-      "options": [
-        {
-          "label": "开发环境",
-          "value": "dev",
-          "icon": "code"
-        },
-        {
-          "label": "生产环境",
-          "value": "prod",
-          "icon": "rocket-launch"
-        }
-      ]
-    }
-  }
-}
+<slex-select label="Environment"><option value="dev">Development</option><option value="prod">Production</option></slex-select>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：枚举选择、配置项、环境选择。
-- 不适合：互斥单选组（应当用 radio-group）。
-- 关联组件：radio-group 用于选项较少的互斥选择。
-- 配合 column 组成表单。
-- 使用 $value 和 onchange 实现状态绑定。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | string | `""` | 控件的可见标签。 |
+| `unit` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `description` | string | `""` | 为保持接口一致而暴露，但该组件目前不会渲染它。 |
+| `disabled` | boolean | `false` | 禁用用户交互。 |
+| `name` | string | 未设置 | 自定义元素参与原生表单时使用的字段名。 |
+| `value` | string / number | `""` | 已选选项值。使用 light DOM option 子元素时会推导首个可用值；通过 property 提供 options 时不会自动选择。 |
+| `aria-label` | string | `auto` | 未提供可见标签时使用的无障碍名称。 |
+| `options` | array | `[]` | 仅 property；{ label, value, disabled, icon } 选项对象数组；也会从 light DOM option 子元素推导。 |
+| `placeholder` | string | `"Select..."` | 未选择选项时显示的文本。 |
+| `icon` | string | `""` | 已注册的图标名称；为空时不渲染图标。 |
+| `variant` | string | `default` | 视觉变体；toolbar 启用紧凑工具栏样式。 |
+| `required` | boolean | `false` | 要求提供值以通过原生表单校验。 |
 
-<!-- slex:spec-api:start component="select" sourceHash="44dbc082" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `label` | string | 否 | 是 |  | 选择器标签。 |
-| `icon` | string | 否 | 否 |  | 显示在顶部标签前的图标名称。 |
-| `value` | string | 否 | 是 |  | 当前选中值。 |
-| `options` | array | 否 | 否 |  | 选项列表，包含 label、value 和可选 icon。 |
-| `options[].icon` | string | 否 | 否 |  | 显示在选项标签前的图标名称。 |
-| `placeholder` | string | 否 | 否 |  | 未选择值时显示的占位文本。 |
-| `disabled` | boolean | 否 | 是 | `false` | 禁用选择器触发器和原生 select。 |
-| `required` | boolean | 否 | 是 | `false` | 要求原生 select 使用非占位值。 |
-| `variant` | string: default, toolbar | 否 | 否 | `"default"` | 选择器表面变体。 |
-| `onchange` | write-expression | 否 | 否 |  | 选择变化时执行的写表达式。 |
-<!-- slex:spec-api:end -->
+事件：`input`、`change`。使用原生事件监听器；交互值从组件 property 读取。
+
+## 接口摘要
+
+- 属性: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `placeholder`, `icon`, `variant`, `required`
+- Properties: `label`, `unit`, `description`, `disabled`, `name`, `value`, `aria-label`, `options`, `placeholder`, `icon`, `variant`, `required`
+- Events: `input`, `change`
+- Slots: 无
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

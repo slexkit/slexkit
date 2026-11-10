@@ -2,12 +2,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--slex-control-gap, 0.5rem);
   max-width: 100%;
   min-width: 0;
   padding: 0.5rem 1rem;
   border: 1px solid transparent;
-  border-radius: var(--radius);
+  border-radius: var(--slex-radius);
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
@@ -18,59 +18,59 @@
   cursor: pointer;
   user-select: none;
   transition:
-    background 150ms ease,
-    border-color 150ms ease,
-    color 150ms ease,
-    box-shadow 150ms ease,
-    transform 150ms ease;
+    background var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    border-color var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    color var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    box-shadow var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease),
+    transform var(--slex-motion-duration, 150ms) var(--slex-motion-easing, ease);
 }
 
 .slex-button--primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border-color: var(--primary);
+  background: var(--slex-primary, var(--primary));
+  color: var(--slex-primary-foreground, var(--primary-foreground));
+  border-color: var(--slex-primary, var(--primary));
 }
 
 .slex-button--primary:hover:not(:disabled):not(.slex-button--disabled) {
-  background: color-mix(in oklab, var(--primary) 90%, transparent);
-  border-color: color-mix(in oklab, var(--primary) 90%, transparent);
-  color: var(--primary-foreground);
+  background: color-mix(in oklab, var(--slex-primary, var(--primary)) 90%, transparent);
+  border-color: color-mix(in oklab, var(--slex-primary, var(--primary)) 90%, transparent);
+  color: var(--slex-primary-foreground, var(--primary-foreground));
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--slex-shadow-md);
 }
 
 .slex-button--secondary {
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-  border-color: var(--border);
+  background: var(--slex-secondary, var(--secondary));
+  color: var(--slex-secondary-foreground, var(--secondary-foreground));
+  border-color: var(--slex-border, var(--border));
 }
 
 .slex-button--secondary:hover:not(:disabled):not(.slex-button--disabled) {
-  background: var(--accent);
-  color: var(--accent-foreground);
-  border-color: var(--border);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
+  border-color: var(--slex-border, var(--border));
 }
 
 .slex-button--danger {
-  background: var(--destructive);
-  color: var(--destructive-foreground);
-  border-color: var(--destructive);
+  background: var(--slex-destructive, var(--destructive));
+  color: var(--slex-destructive-foreground, var(--destructive-foreground));
+  border-color: var(--slex-destructive, var(--destructive));
 }
 
 .slex-button--danger:hover:not(:disabled):not(.slex-button--disabled) {
-  background: color-mix(in oklab, var(--destructive) 90%, transparent);
-  border-color: color-mix(in oklab, var(--destructive) 90%, transparent);
+  background: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 90%, transparent);
+  border-color: color-mix(in oklab, var(--slex-destructive, var(--destructive)) 90%, transparent);
 }
 
 .slex-button--ghost {
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--slex-muted-foreground, var(--muted-foreground));
   border-color: transparent;
 }
 
 .slex-button--ghost:hover:not(:disabled):not(.slex-button--disabled) {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--slex-accent, var(--accent));
+  color: var(--slex-accent-foreground, var(--accent-foreground));
 }
 
 .slex-button:disabled,
@@ -85,11 +85,11 @@
 
 .slex-button:active:not(:disabled):not(.slex-button--disabled) {
   transform: translateY(0);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--slex-shadow-sm);
 }
 
 .slex-button:focus-visible {
-  outline: 2px solid var(--ring);
+  outline: var(--slex-focus-ring-width, 2px) solid var(--slex-ring, var(--ring));
   outline-offset: 2px;
 }
 

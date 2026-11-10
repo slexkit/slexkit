@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { execFile, execFileSync } from "node:child_process";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
 
@@ -67,10 +68,9 @@ function runNpmAsync(args, options = {}) {
 }
 
 function installPackedApp(args, options = {}) {
-  if (npmExecIsBun && npmExecPath) {
-    return run(npmExecPath, ["install", ...args], options);
-  }
-
+  // This is an npm consumer test of the tarballs, independent of the workspace
+  // package manager. Bun's fresh multi-package peer resolution can spin until
+  // the external timeout even when the same workspace builds successfully.
   return runNpm(["install", "--no-audit", "--no-fund", "--ignore-scripts", ...args], options);
 }
 
@@ -91,13 +91,32 @@ writeFileSync(
 );
 
 console.log("installing packed smoke app");
-installPackedApp([...tarballs, "react", "react-dom", "streamdown", "@assistant-ui/react", "@assistant-ui/react-streamdown", "@tiptap/core", "@tiptap/pm", "@tiptap/extension-code-block"], { cwd: appDir, stdio: "inherit" });
+const peerSpecs = [
+  ["streamdown", ["react", "react-dom", "streamdown"]],
+  ["assistant-ui", ["@assistant-ui/react", "@assistant-ui/react-streamdown"]],
+  ["tiptap", ["@tiptap/core", "@tiptap/pm", "@tiptap/extension-code-block"]],
+].flatMap(([workspace, names]) => {
+  const require = createRequire(join(root, "packages", workspace, "package.json"));
+  return names.map(name => {
+    for (const directory of require.resolve.paths(name) ?? []) {
+      const path = join(directory, name, "package.json");
+      if (existsSync(path)) {
+        const metadata = JSON.parse(readFileSync(path, "utf8"));
+        if (metadata.name === name) return `${name}@${metadata.version}`;
+      }
+    }
+    throw new Error(`Cannot identify installed peer ${name}`);
+  });
+});
+console.log(`locked workspace peers: ${peerSpecs.join(", ")}`);
+installPackedApp([...tarballs, ...peerSpecs], { cwd: appDir, stdio: "inherit" });
 
 writeFileSync(
   join(appDir, "smoke.mjs"),
   [
     "import { spawn, spawnSync } from 'node:child_process';",
     "import { mount as rootMount } from 'slexkit/runtime';",
+    "import { defineSlexElements, describeSlexElements } from 'slexkit/web-components';",
     "import { mount as scopedMount } from '@slexkit/runtime';",
     "import '@slexkit/components-svelte';",
     "import { SlexKitRenderer, createSlexKitRenderer, slexkitRenderer } from '@slexkit/streamdown';",
@@ -107,6 +126,8 @@ writeFileSync(
     "import { join } from 'node:path';",
     "import { createRequire } from 'node:module';",
     "const require = createRequire(import.meta.url);",
+    "const elementsManifest = require.resolve('slexkit/custom-elements.json');",
+    "if (!elementsManifest.endsWith('custom-elements.json') || typeof defineSlexElements !== 'function' || describeSlexElements().length !== 28) throw new Error('Web Components entry or manifest missing');",
     "const themeCss = require.resolve('@slexkit/theme-shadcn/style.css');",
     "const themeBaseCss = require.resolve('@slexkit/theme-shadcn/base.css');",
     "const themeButtonCss = require.resolve('@slexkit/theme-shadcn/components/button.css');",
@@ -173,8 +194,10 @@ writeFileSync(
     "const listed = await rpc(2, 'tools/list');",
     "const toolNames = listed.result?.tools?.map((tool) => tool.name).join(',');",
     "if (toolNames !== 'slexkitDocs,slexkitExamples,slexkitValidate') throw new Error('@slexkit/mcp tool list mismatch');",
-    "const validated = await rpc(3, 'tools/call', { name: 'slexkitValidate', arguments: { source: '{ slex: \"0.1\", namespace: \"smoke\", layout: { \"text:message\": { text: \"ok\" } } }' } });",
+    "const validated = await rpc(3, 'tools/call', { name: 'slexkitValidate', arguments: { source: '<slex-text>ok</slex-text>' } });",
     "if (validated.result?.structuredContent?.ok !== true) throw new Error('@slexkit/mcp validate smoke failed');",
+    "const legacy = await rpc(4, 'tools/call', { name: 'slexkitValidate', arguments: { source: '{ g: {}, layout: {} }' } });",
+    "if (legacy.result?.structuredContent?.ok !== false) throw new Error('@slexkit/mcp accepted retired object syntax');",
     "console.log('smoke: MCP server ok');",
     "mcp.kill();",
     "await new Promise((resolve) => {",

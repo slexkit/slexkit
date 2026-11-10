@@ -5,55 +5,37 @@ status: ready
 order: 21
 summary: "ToolHost 专用步骤页，用于在一次 function call 里逐步收集多段用户输入。"
 ---
+
 # ToolHost Step
 
-`step` 是 ToolHost 模板内部的步骤页，用来把一个 function call 里的多个输入段拆成逐页确认。它和 `submit` 一样不是普通公开组件，不应该出现在 display fence 或组件示例里。
+展示工作流中的一个步骤，可设置标题、说明、序号/总数、状态、进度及 slot 详情。
 
-典型用途是：agent 发起一次需要人工输入的 function call，ToolHost 渲染一张 Slex 卡片；卡片内部根据状态切换当前 `step`，先显示“发布策略”，再显示“工程约束”，最后用 `submit:actions` 一次性返回结构化结果。
+## HTML 示例
 
-<!-- slex:spec-example:start component="step" id="basic" sourceHash="86ba4567" -->
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_step_toolhost",
-  "layout": {
-    "step:strategy": {
-      "title": "Release strategy",
-      "index": 1,
-      "radio-group:choice": {
-        "options": [
-          {
-            "label": "Canary",
-            "value": "canary"
-          },
-          {
-            "label": "Full",
-            "value": "full"
-          }
-        ]
-      }
-    }
-  }
-}
+<slex-step></slex-step>
 ```
-<!-- slex:spec-example:end -->
 
-## 使用提示
+## API 参考
 
-- 适合：ToolHost 表单里的逐步提问、审批参数面板、多段人工输入。
-- 不适合：普通页面导航、公开组件 demo、display-only 内容。
-- 与 `submit` 配合使用；`step` 只负责当前页结构，最终提交仍由 `submit:actions` 负责。
+默认值描述省略属性时的渲染行为，不表示 property getter 必然返回相同值；`auto` 表示按说明推导。布尔属性按是否存在判断，数组通过 JavaScript property 传入。
 
-## API 参考 {#api}
+| Property / 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | string | `""` | 步骤标题。 |
+| `description` | string | `""` | 标题下方的辅助文本。 |
+| `index` | string / number | 未设置 | 当前步骤序号；未设置 total 时单独显示。 |
+| `total` | string / number | 未设置 | 步骤总数，与 index 一起显示为 index/total。 |
+| `state` | string | 未设置 | 供主题样式使用的状态数据值。 |
+| `progress` | string / number | `""` | 显式进度标签；非空时优先于 index 与 total。 |
 
-<!-- slex:spec-api:start component="step" sourceHash="73e9bde2" -->
-| 字段 | 类型 | 必填 | 动态 | 默认值 | 说明 |
-|---|---|---|---|---|---|
-| `title` | string | 否 | 否 |  | Step title. |
-| `description` | string | 否 | 否 |  | Short helper text for the step. |
-| `index` | string \| number | 否 | 否 |  | Visible step number. |
-| `total` | string \| number | 否 | 否 |  | Total step count shown with index. |
-| `progress` | string | 否 | 否 |  | Explicit progress label, such as 1/2. |
-| `state` | string | 否 | 否 |  | Optional visual state such as current or completed. |
-| 子组件 | object | 否 | 否 |  | 嵌套组件字段会按字段顺序渲染为子内容。 |
-<!-- slex:spec-api:end -->
+插槽：默认插槽，接收普通 HTML 或自定义元素。
+
+## 接口摘要
+
+- 属性: `title`, `description`, `index`, `total`, `state`, `progress`
+- Properties: `title`, `description`, `index`, `total`, `state`, `progress`
+- Events: 无
+- Slots: `default`
+
+准确类型与完整描述以 `dist/custom-elements.json` 为准。标量初值使用属性，数组/对象使用 JavaScript property，交互使用原生事件。

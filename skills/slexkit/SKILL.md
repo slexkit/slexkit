@@ -1,27 +1,23 @@
 ---
 name: slexkit
-description: Slash-command style `/slexkit` skill for SlexKit architecture, positioning, package boundaries, and display UI versus ToolHost decisions.
+description: Author and validate HTML-first SlexKit interactive Markdown artifacts.
 ---
 
-# SlexKit
+# SlexKit HTML authoring
 
-Use this skill as `/slexkit` for project overview and boundary decisions.
+Read `AGENTS.slexkit.md`, `docs/html-migration-contract.md`, `docs/web-components.md`, and `dist/custom-elements.json` before authoring.
 
-## Core Position
+Create `slex` fences containing standard HTML/SVG, optional CSS, supported `slex-*` elements, and optional inline module scripts. Use ordinary DOM properties/events and the sandbox `slex` SDK. Never generate object `g/layout` source, expression attributes, registration/import code, or unsupported component names.
 
-SlexKit is a zero-build, Markdown-friendly reactive UI runtime for AI output. It renders small interactive fragments in chat messages, documents, agent panels, and tool dashboards.
+For interactive work:
 
-## Boundaries
+- assign stable `id` or `data-key` values;
+- use `slex.root` for scoped queries;
+- release listeners and side effects with `slex.onDispose`;
+- use `slex.onSnapshot`/`slex.onRestore` only for explicit hidden-state persistence;
+- use `slex.shared` only for JSON artifact-local state;
+- use only host-approved operations exposed by `slex.api`.
 
-- Display UI goes through Markdown `slex` fences or direct runtime mounting.
-- Structured user input goes through ToolHost.
-- Untrusted or agent-generated source uses secure runtime mode.
-- SlexKit raw docs are `.md` files with `slex` fences, not `.mdx`.
-- SlexKit is not a full app framework and not a React JSX generator.
+Validate with the static inspector or `slex validate`. Validation must not execute payload scripts. Treat isolated-frame execution as the security boundary and report runtime/browser proof separately from static validation.
 
-## Workflow
-
-1. Read `/llms.txt` first for navigation.
-2. Use `slexkitDocs` from `@slexkit/mcp` when available.
-3. Use `slexkitExamples` for component examples or host snippets.
-4. Use `slexkitValidate` before presenting generated Slex source.
+Use the current `html-1` profile. The frame policy denies direct payload resource loads in supported browsers, but it is not a universal egress firewall because iframe self-navigation can still issue a request. Do not claim CPU preemption; hostile execution needs external browser/process controls and timeouts.

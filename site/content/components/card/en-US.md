@@ -5,87 +5,40 @@ status: ready
 order: 50
 summary: "Grouping container for related content."
 ---
+
 # Card
 
-Card-style container with optional title and semantic tone.
+Groups related content in a titled surface with optional icon, tone, and variant; child content uses the default slot.
 
-<!-- slex:spec-example:start component="card" id="basic" sourceHash="74b8c7a0" -->
-```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_card_typical",
-  "layout": {
-    "card:metrics": {
-      "title": "Metrics",
-      "icon": "chart-bar",
-      "grid:items": {
-        "columns": 2,
-        "stat:requests": {
-          "label": "Requests",
-          "value": "1.2k",
-          "unit": "/min"
-        },
-        "stat:latency": {
-          "label": "Latency",
-          "value": "42",
-          "unit": "ms"
-        }
-      }
-    }
-  }
-}
-```
-<!-- slex:spec-example:end -->
-
-## Usage Notes
-
-- Use for grouped metrics, settings blocks, and information summaries.
-- Not suitable for page-level section headers (use `section`) or pure layout containers (use `column` or `grid`).
-- Related components: `section` provides a complete page block structure (title + subtitle + action), while `card` is more lightweight.
-- Child components arrange naturally inside a card; nest `row`, `column`, or `grid`.
-- Use `tone` only for semantic state, not as an arbitrary style picker.
-
-### Tone variants
+## HTML example
 
 ```slex
-{
-  namespace: "doc_card_tone_diff",
-  layout: {
-    "row:tones": {
-      "card:info": {
-        title: "Info",
-        tone: "info",
-        "text:body": {
-          text: "Information card."
-        }
-      },
-      "card:success": {
-        title: "Success",
-        tone: "success",
-        "text:body": {
-          text: "Success card."
-        }
-      },
-      "card:warning": {
-        title: "Warning",
-        tone: "warning",
-        "text:body": {
-          text: "Warning card."
-        }
-      }
-    }
-  }
-}
+<slex-card title="Metrics" icon="chart-bar">
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+    <slex-stat label="Requests" value="1.2k" unit="/min"></slex-stat>
+    <slex-stat label="Latency" value="42" unit="ms"></slex-stat>
+  </div>
+</slex-card>
 ```
 
-## API Reference {#api}
+## API Reference
 
-<!-- slex:spec-api:start component="card" sourceHash="fd8bc1c8" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `title` | string | No | Yes |  | Card title. |
-| `icon` | string | No | No |  | Icon name shown before the title. |
-| `tone` | string: info, success, warning, danger, muted | No | No |  | Optional semantic tone for the card surface. |
-| `variant` | string: tool | No | No |  | Use tool for ToolHost input cards with compact chrome. |
-| child components | object | No | No |  | Nested component fields are rendered as child content in field order. |
-<!-- slex:spec-api:end -->
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
+
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | string | `""` | Optional heading above the default-slot content. |
+| `icon` | string | `""` | Registered icon name. No icon is rendered when empty. |
+| `tone` | string | unset | Tone data value used by theme styles. |
+| `variant` | string | unset | Presentation variant data value. |
+
+Slots: default slot accepting ordinary HTML or custom elements.
+
+## Contract summary
+
+- Attributes: `title`, `icon`, `tone`, `variant`
+- Properties: `title`, `icon`, `tone`, `variant`
+- Events: none
+- Slots: `default`
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

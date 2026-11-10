@@ -1,17 +1,12 @@
-<script lang="ts" module>
-  let nextInputId = 0;
-</script>
-
 <script lang="ts">
   import { bindPropStore } from "../bindProps";
   import { bool, emit, text } from "../helpers";
   import { parseEngineeringNumber } from "../../../engine/engineering";
   import type { PropValues, SvelteComponentProps } from "../types";
 
-  let { componentName, props, ctx }: SvelteComponentProps = $props();
+  let { instanceId, props, ctx }: SvelteComponentProps = $props();
   let p = $state<PropValues>({});
   let value = $state("");
-  const fallbackId = `slex-input-${++nextInputId}`;
   const labelText = $derived(text(p.label));
   const unitText = $derived(text(p.unit));
   const descriptionText = $derived(text(p.description ?? p.help ?? p.hint));
@@ -20,8 +15,7 @@
   const readonly = $derived(bool(p.readonly) || bool(p.readOnly));
   const required = $derived(bool(p.required));
   const invalid = $derived(bool(p.invalid) || !!errorText);
-  const componentId = $derived(safeId(componentName));
-  const inputId = $derived(text(p.id) || (componentId ? `slex-input-${componentId}` : fallbackId));
+  const inputId = $derived(text(p.id) || `slex-input-${instanceId}`);
   const descriptionId = $derived(`${inputId}-description`);
   const errorId = $derived(`${inputId}-error`);
   const explicitAriaLabel = $derived(text(p["aria-label"] ?? p.ariaLabel));
@@ -29,12 +23,10 @@
   const describedBy = $derived([descriptionText ? descriptionId : "", errorText ? errorId : ""].filter(Boolean).join(" "));
   $effect(() => bindPropStore(props, (next) => {
     p = next;
-    value = text(next.value);
+    // An omitted value is uncontrolled. Updating a label or handler must not
+    // erase a user's value (including anonymous keyed-list inputs).
+    if (Object.prototype.hasOwnProperty.call(next, "value")) value = text(next.value);
   }));
-
-  function safeId(value: string): string {
-    return value.trim().replace(/[^\w-]+/g, "-");
-  }
 
   function inputType(): string {
     return text(p.type, "text") === "engineering" ? "text" : text(p.type, "text");

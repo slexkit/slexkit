@@ -5,45 +5,31 @@ status: ready
 order: 11
 summary: "Reactive KaTeX formula display."
 ---
+
 # Formula
 
-Render SlexKit state and computed values through KaTeX. Use it when Markdown explains the model and the interactive block needs the formula itself to update.
+Renders a TeX formula from `tex`; `display-mode` selects block rather than inline presentation.
 
-<!-- slex:spec-example:start component="formula" id="basic" sourceHash="1578d25d" -->
+## HTML example
+
 ```slex
-{
-  "slex": "0.1",
-  "namespace": "doc_formula_typical",
-  "g": {
-    "r": 10000,
-    "c": 100,
-    "fc": 159.15
-  },
-  "layout": {
-    "formula:cutoff": {
-      "$tex": "'f_c = \\\\frac{1}{2\\\\pi RC} = ' + g.fc + '\\\\text{ Hz}'"
-    }
-  }
-}
+<slex-formula></slex-formula>
 ```
-<!-- slex:spec-example:end -->
 
-## Usage Notes
+## API Reference
 
-- Use for formulas whose variables come from SlexKit state.
-- Keep the explanatory derivation in Markdown and use `formula` for the live expression.
-- Use `displayMode: false` for inline formula fragments.
-- Invalid TeX is rendered by KaTeX as an error expression instead of throwing.
+Defaults describe rendered behavior when an attribute is omitted, not necessarily the property getter; `auto` means derived as described. Boolean attributes use presence; pass arrays through JavaScript properties.
 
-## API Reference {#api}
+| Property / attribute | Type | Default | Description |
+| --- | --- | --- | --- |
+| `tex` | string | `""` | TeX source; empty input renders a harmless spacing formula. |
+| `displayMode` / `display-mode` | boolean | `true` | Uses KaTeX display mode by default. Assign displayMode = false for inline mode; omitting the attribute restores display mode. |
 
-<!-- slex:spec-api:start component="formula" sourceHash="144588e3" -->
-| Field | Type | Required | Dynamic | Default | Description |
-|---|---|---|---|---|---|
-| `tex` | string | No | Yes |  | KaTeX source to render. |
-| `formula` | string | No | Yes |  | Alias for tex. |
-| `value` | string | No | Yes |  | Alias for tex. |
-| `displayMode` | boolean | No | No | `true` | Render as display math when true; inline math when false. |
-| `display` | boolean | No | No | `true` | Alias for displayMode. |
-| `block` | boolean | No | No | `true` | Alias for displayMode. |
-<!-- slex:spec-api:end -->
+## Contract summary
+
+- Attributes: `tex`, `display-mode`
+- Properties: `tex`, `displayMode`
+- Events: none
+- Slots: none
+
+Use `dist/custom-elements.json` for exact types and full descriptions. Use attributes for scalar initial values, JavaScript properties for arrays/objects, and native events for interaction.

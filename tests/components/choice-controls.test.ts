@@ -1,203 +1,33 @@
-import { describe, it, expect } from "bun:test";
-import { mount } from "../../src/engine/index";
-import "../../src/components/index";
+import { describe, expect, it } from "bun:test";
+import type { SlexElement } from "../../src/web-components";
+import { mountSlexElement } from "../helpers";
 
-function sleep(ms = 40) {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
-function unique(ns = "v019") {
-  return `${ns}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-}
-
-function mockVibrate() {
-  const calls: Array<number | number[]> = [];
-  Object.defineProperty(navigator, "vibrate", {
-    value: (pattern: number | number[]) => {
-      calls.push(pattern);
-      return true;
-    },
-    configurable: true,
+describe("choice controls through custom elements", () => {
+  it("checkbox exposes native state and one facade change", () => {
+    const element = mountSlexElement("checkbox", { label: "Approve", checked: false });
+    let changes = 0;
+    element.addEventListener("change", () => changes++);
+    const input = element.shadowRoot!.querySelector("input")!;
+    input.checked = true;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(element.checked).toBe(true);
+    expect(changes).toBe(1);
   });
-  return calls;
-}
 
-describe("choice controls", () => {
-    it("mount options provide direction and localized fallback labels", () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      mount(
-        {
-          namespace: unique("mount_options"),
-          g: {},
-          layout: {
-            "button:action": {},
-          },
-        },
-        document.getElementById("app")!,
-        { dir: "rtl", labels: { "button.label": "Localized action" } },
-      );
-
-      const root = document.querySelector(".slexkit-root") as HTMLElement;
-      expect(root.dir).toBe("rtl");
-      expect(root.dataset.dir).toBe("rtl");
-      expect(document.querySelector(".slex-button")?.textContent).toContain("Localized action");
+  it("radio-group uses array properties and skips disabled options", async () => {
+    const element = mountSlexElement("radio-group", {
+      value: "a",
+      options: [
+        { value: "a", label: "Alpha" },
+        { value: "b", label: "Beta", disabled: true },
+        { value: "c", label: "Gamma" },
+      ],
     });
-
-
-    it("checkbox renders a native input and emits checked changes", async () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      const emitted: unknown[] = [];
-      mount(
-        {
-          namespace: unique("checkbox"),
-          g: {
-            checked: false,
-            onChange(x: unknown) { emitted.push(x); },
-          },
-          layout: {
-            "checkbox:agree": {
-              $checked: "g.checked",
-              label: "Agree",
-              onchange: "g.checked = $event; g.onChange($event)",
-            },
-          },
-        },
-        document.getElementById("app")!,
-      );
-
-      const root = document.querySelector(".slex-checkbox") as HTMLElement;
-      expect((root as HTMLInputElement).checked).toBe(false);
-      root.click();
-      await sleep();
-      expect((root as HTMLInputElement).checked).toBe(true);
-      expect(emitted).toEqual([true]);
-    });
-
-
-    it("radio-group supports value binding and option selection", async () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      const emitted: unknown[] = [];
-      mount(
-        {
-          namespace: unique("radio"),
-          g: {
-            value: "a",
-            onChange(x: unknown) { emitted.push(x); },
-          },
-          layout: {
-            "radio-group:choice": {
-              $value: "g.value",
-              onchange: "g.value = $event; g.onChange($event)",
-              options: [
-                { label: "Alpha", value: "a" },
-                { label: "Beta", value: "b" },
-              ],
-            },
-          },
-        },
-        document.getElementById("app")!,
-      );
-
-      const root = document.querySelector(".slex-radio-group")!;
-      expect(root.getAttribute("data-scope")).toBe("radio-group");
-      const radios = root.querySelectorAll(".slex-radio");
-      expect(radios[0].getAttribute("data-state")).toBe("checked");
-      (radios[1] as HTMLElement).click();
-      await sleep();
-      expect(emitted).toEqual(["b"]);
-    });
-
-
-    it("choice controls vibrate on pointer down unless haptics are disabled", async () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      const calls = mockVibrate();
-      mount(
-        {
-          namespace: unique("choice_haptics"),
-          g: { checked: false, value: "a" },
-          layout: {
-            "checkbox:a": { $checked: "g.checked", label: "A" },
-            "checkbox:b": { $checked: "g.checked", label: "B", haptic: false },
-            "radio-group:r": {
-              $value: "g.value",
-              options: [
-                { label: "Alpha", value: "a" },
-                { label: "Beta", value: "b" },
-              ],
-            },
-          },
-        },
-        document.getElementById("app")!,
-      );
-
-      const choiceLayers = document.querySelectorAll(".slex-choice-event-layer");
-      choiceLayers[0].dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
-      choiceLayers[1].dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
-      choiceLayers[3].dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
-      await sleep();
-      expect(calls).toEqual([8, 8]);
-    });
-
-
-    it("choice controls use click haptic fallback without double vibration", async () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      const calls = mockVibrate();
-      mount(
-        {
-          namespace: unique("choice_haptic_click"),
-          g: { checked: false, value: "a" },
-          layout: {
-            "checkbox:a": { $checked: "g.checked", label: "A" },
-            "radio-group:r": {
-              $value: "g.value",
-              options: [
-                { label: "Alpha", value: "a" },
-                { label: "Beta", value: "b" },
-              ],
-            },
-          },
-        },
-        document.getElementById("app")!,
-      );
-
-      const choiceLayers = document.querySelectorAll(".slex-choice-event-layer");
-      choiceLayers[0].dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
-      choiceLayers[0].dispatchEvent(new MouseEvent("click", { bubbles: true }));
-      choiceLayers[2].dispatchEvent(new MouseEvent("click", { bubbles: true }));
-      await sleep();
-      expect(calls).toEqual([8, 8]);
-    });
-
-
-    it("marks disabled choice labels without broad :has selectors", async () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      mount(
-        {
-          namespace: unique("choice_disabled_style"),
-          layout: {
-            "checkbox:a": { label: "A", disabled: true },
-            "radio-group:r": {
-              value: "a",
-              options: [
-                { label: "Alpha", value: "a", disabled: true },
-                { label: "Beta", value: "b" },
-              ],
-            },
-          },
-        },
-        document.getElementById("app")!,
-      );
-
-      expect((document.querySelector(".slex-checkbox-field") as HTMLElement).dataset.disabled).toBe("true");
-      const radioFields = Array.from(document.querySelectorAll(".slex-radio-field")) as HTMLElement[];
-      expect(radioFields[0].dataset.disabled).toBe("true");
-      expect(radioFields[1].dataset.disabled).toBeUndefined();
-
-      const css = [
-        await Bun.file("src/styles/components/choice.css").text(),
-        await Bun.file("src/styles/components/select.css").text(),
-        await Bun.file("src/styles/components/switch.css").text(),
-      ].join("\n");
-      expect(css).not.toContain(":has(");
-    });
+    const radios = element.shadowRoot!.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+    radios[1].click();
+    expect(element.value).toBe("a");
+    radios[2].click();
+    await Promise.resolve();
+    expect(element.value).toBe("c");
+  });
 });

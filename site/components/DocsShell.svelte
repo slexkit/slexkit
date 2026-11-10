@@ -9,7 +9,6 @@
   import SidebarItem from "../../node_modules/flowbite-svelte/dist/sidebar/SidebarItem.svelte";
   import { uiHelpers } from "../../node_modules/flowbite-svelte/dist/uiHelpers.svelte.js";
   import DocRail from "./navigation/DocRail.svelte";
-  import Playground from "../../src/components/svelte/tooling/Playground.svelte";
   import { bindPropStore } from "./bindProps";
   import { emit, objects, text } from "./helpers";
   import { getPhosphorIcon } from "../app/icons.js";
@@ -312,11 +311,6 @@
       </button>
     </div>
 
-    {#if p.playground && typeof p.playground === "object"}
-      <div class="slex-docs-shell-playground">
-        <Playground componentName="playground" {ctx} props={{ subscribe: (run) => { run(p.playground as Record<string, unknown>); return () => {}; } }} />
-      </div>
-    {/if}
     {#if p.doc && typeof p.doc === "object"}
       {@const doc = p.doc as DocItem}
       <article class="slex-doc-detail">

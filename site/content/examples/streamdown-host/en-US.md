@@ -5,61 +5,33 @@ status: published
 order: 18
 summary: "A React/Streamdown adapter that takes over explicit slex fences and leaves ordinary Markdown and code blocks to Streamdown."
 tags: streamdown, react, markdown, adapter
-components: section, table, callout, code-block
+components: card, grid, input, slider, stat
 difficulty: Intermediate
-runtime: trusted
+runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
 
 # Streamdown Integration
 
-Use `@slexkit/streamdown` when a React page already renders Markdown with Streamdown. The adapter takes over fences whose language is `slex`; Streamdown continues to render the rest of the document, including prose, math, and ordinary code blocks.
+The Streamdown renderer handles ordinary Markdown normally and sends only explicit `slex` fence strings to the isolated document host.
 
-Run it from the repository:
-
-```sh
-bun run build:core
-bun run --filter @slexkit/streamdown build
-bun examples/dev-server.mjs streamdown
+```slex
+<slex-card title="Streamdown Integration"><slex-grid columns="2"><slex-input id="left" label="Value A" value="10"></slex-input><slex-slider id="right" label="Value B" min="0" max="100" value="20"></slex-slider></slex-grid><slex-stat id="result" label="Result"></slex-stat></slex-card>
+<script type="module">
+  const left = slex.root.querySelector("#left"); const right = slex.root.querySelector("#right"); const result = slex.root.querySelector("#result"); const update = () => { result.value = Number(left.value) + right.valueAsNumber; };
+  left.addEventListener("input", update); right.addEventListener("input", update); update(); slex.onDispose(() => { left.removeEventListener("input", update); right.removeEventListener("input", update); });
+</script>
 ```
 
-The source lives in [`examples/streamdown`](https://github.com/slexkit/slexkit/tree/main/examples/streamdown). The Streamdown and Tiptap examples use the same RC low-pass filter content, so both hosts can be checked against the same input.
+## Host boundary
 
-<iframe class="slex-example-live-frame" src="/adapter-demos/streamdown/?embed=1" title="Streamdown runnable example"></iframe>
+The adapter recognizes explicit `slex` fences and passes the raw HTML string to the same isolated document host. The host supplies stable artifact/block IDs, runtime/style URLs, and policy; the payload does not.
 
-[Open the integration guide](/docs/guides/integration) · [View runnable source](https://github.com/slexkit/slexkit/tree/main/examples/streamdown)
+The adapter keeps stable artifact/block IDs and delegates preview versus commit decisions to the document host.
 
-## Scope
+`@slexkit/streamdown` recognizes explicit fences and forwards their HTML source to the isolated document host.
 
-| Item | Convention |
-| --- | --- |
-| Fence language | `slex` |
-| Runtime | `trusted` or `secure` |
-| Markdown host | Streamdown |
+<iframe class="slex-example-live-frame" src="/adapter-demos/streamdown/?embed=1" title="Streamdown HTML fence demo"></iframe>
 
-Ordinary Markdown, math, tables, and non-`slex` code blocks stay with Streamdown. State-only `slex` fences do not render standalone UI, but write to the same artifact state used by later renderable fences.
-
-Minimal wiring:
-
-```tsx
-import { Streamdown } from "streamdown";
-import { createSlexKitRenderer } from "@slexkit/streamdown";
-import "@slexkit/theme-shadcn/style.css";
-import "@slexkit/streamdown/style.css";
-
-const slexkitRenderer = createSlexKitRenderer({
-  domain: "message-1",
-  showChrome: false
-});
-
-export function Message({ markdown }: { markdown: string }) {
-  return (
-    <Streamdown plugins={{ renderers: [slexkitRenderer] }}>
-      {markdown}
-    </Streamdown>
-  );
-}
-```
-
-Use `@slexkit/streamdown` when Streamdown is the Markdown layer. If the host owns its parser or renderer, wire SlexKit through the custom Markdown host API instead.
+Source: `examples/streamdown`.
