@@ -40,5 +40,11 @@ jobs:
       - name: Run tests
         run: bun run test
 
+      - name: Install Chromium for website acceptance
+        run: bunx playwright install --with-deps chromium
+
+      - name: Verify website interactions and request limits
+        run: bun run browser:acceptance
+
       - name: Release smoke
         run: bun run smoke:release

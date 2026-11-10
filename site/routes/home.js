@@ -1,5 +1,6 @@
 import { defaultLocale } from "../data/component-docs.js";
 import { homePlaygroundSource } from "../playground/home-playground.js";
+import { setPlaygroundSource } from "../playground/source-url.js";
 
 const homeLabelsByLocale = {
   "zh-CN": {
@@ -290,7 +291,7 @@ export function createHomeRoute({ clearMobileContext, currentLocale, navHref, re
     url.searchParams.set("embed", "1");
     url.searchParams.set("mode", "render");
     url.searchParams.set("type", "markdown");
-    url.searchParams.set("source", homePlaygroundSource(currentLocale()));
+    setPlaygroundSource(url, homePlaygroundSource(currentLocale()));
     frame.src = url.href;
     const resize = (event) => {
       if (event.source !== frame.contentWindow || event.origin !== window.location.origin ||

@@ -9,6 +9,7 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
   import HighlightedMarkdownCode from "./HighlightedMarkdownCode.svelte";
+  import { setPlaygroundSource } from "../playground/source-url.js";
   import { loadSlexKitRuntime, resolveSlexKitSandboxRuntimeUrl } from "./runtime-loader.js";
   import {
     removeSlexArtifactRegistration,
@@ -178,7 +179,7 @@
 
   function playgroundHref(mode: "render" | "live" | "code" = "live") {
     const url = new URL(playgroundUrl, window.location.href);
-    url.searchParams.set("source", text);
+    setPlaygroundSource(url, text);
     url.searchParams.set("type", "slex");
     url.searchParams.set("mode", mode);
     url.searchParams.set("embed", "1");

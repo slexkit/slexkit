@@ -3,8 +3,17 @@ import { inspectSlexSource } from "../../src/html/inspect";
 import { analyzeSlexSource, canParseSlexSource, defaultPlaygroundSource, normalizePlaygroundMode } from "../../site/playground/playground-utils.js";
 import { homePlaygroundConfig } from "../../site/playground/home-playground.js";
 import { createDocsShellProps } from "../../site/pages/docs.js";
+import { getPlaygroundSource, setPlaygroundSource } from "../../site/playground/source-url.js";
 
 describe("HTML-first site playground", () => {
+  it("keeps large shared source out of HTTP request URLs and supports existing links", () => {
+    const source = '<slex-text value="你好 & world"></slex-text>\n'.repeat(400);
+    const url = setPlaygroundSource(new URL("https://example.com/playground.html?mode=live&source=old"), source);
+    expect(url.search).toBe("?mode=live");
+    expect(getPlaygroundSource(url)).toBe(source);
+    expect(getPlaygroundSource(new URL("https://example.com/playground.html?source=legacy%20source"))).toBe("legacy source");
+    expect(getPlaygroundSource(setPlaygroundSource(url, ""))).toBe("");
+  });
   it("preserves the first HTML line in multiline fences with optional inline metadata", () => {
     const html = '<div onclick="unexpected()">\n<p>Inside</p>\n</div>';
     for (const header of ['~~~slex', '```slex render=component']) {

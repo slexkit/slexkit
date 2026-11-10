@@ -1,19 +1,30 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { chromium } from 'playwright';
+import { chromium, firefox, webkit } from 'playwright';
 
 const output = new URL('../../test-results/html-migration/site/', import.meta.url);
 const styleOutput = new URL('../../test-results/html-style-review/', import.meta.url);
 const baseUrl = (process.argv[2] ?? 'http://localhost:4199').replace(/\/$/, '');
 await mkdir(output, { recursive: true });
 await mkdir(styleOutput, { recursive: true });
-const browser = await chromium.launch({ headless: true });
+const browserName = process.env.SLEXKIT_SITE_BROWSER ?? 'chromium';
+const browserType = { chromium, firefox, webkit }[browserName];
+if (!browserType) throw new Error(`Unknown site browser: ${browserName}`);
+const browser = await browserType.launch({ headless: true });
 const report = { version: browser.version(), pages: [], errors: [] };
 try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 960 }, colorScheme: 'light' });
   const page = await context.newPage();
   page.setDefaultTimeout(15000);
   page.on('pageerror', error => report.errors.push(error.message));
+  // Match the request-target limit imposed by public static-site hosts. URL
+  // fragments are excluded because browsers never send them to the server.
+  await context.route('**/playground.html?**', async route => {
+    const url = new URL(route.request().url());
+    if ((url.pathname + url.search).length > 2048) {
+      await route.fulfill({ status: 414, body: 'URI Too Long' });
+    } else await route.continue();
+  });
   await page.goto(baseUrl + '/');
   const homeShell = page.frameLocator('iframe.slex-home-playground-frame');
   const home = page.frameLocator('iframe.slex-home-playground-frame').frameLocator('iframe');
@@ -100,6 +111,9 @@ try {
   const popup = await popupPromise;
   await popup.waitForLoadState('domcontentloaded');
   assert.match(popup.url(), /mode=render/);
+  await popup.getByRole('toolbar', { name: 'Preview controls' }).waitFor();
+  assert.ok(new URL(popup.url()).search.length < 2048);
+  assert.ok(new URLSearchParams(new URL(popup.url()).hash.slice(1)).get('source')?.includes('First-order RC Low-pass Filter'));
   await popup.close();
   await page.screenshot({ path: new URL('playground.png', output).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
   await page.screenshot({ path: new URL('after-playground-dark.png', styleOutput).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
@@ -112,6 +126,12 @@ try {
   assert.equal(await page.locator('[data-playground-preview] img').count(), 0);
   assert.match(await page.locator('[data-playground-preview]').innerText(), /window\.__hostPwned/);
   report.pages.push('raw HTML from query source remains inert in the host document');
+
+  const longSource = '# Long source\n\n' + 'Portable content.\n\n'.repeat(2000) + 'End of content.';
+  await page.goto(baseUrl + '/playground.html?mode=render&type=markdown#' + new URLSearchParams({ source: longSource }));
+  await page.getByRole('heading', { name: 'Long source' }).waitFor();
+  assert.match(await page.locator('[data-playground-preview]').innerText(), /End of content\./);
+  report.pages.push('large fragment source renders under a strict HTTP request-target limit');
 
   report.pages.push('RC module execution stays in the opaque isolated iframe');
 

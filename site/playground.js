@@ -11,6 +11,7 @@ import {
 import { applySiteTheme, initSiteTheme } from "./app/theme.js";
 import PlaygroundMarkdown from "./markdown/PlaygroundMarkdown.svelte";
 import { defaultPlaygroundSource, normalizePlaygroundMode } from "./playground/playground-utils.js";
+import { getPlaygroundSource, setPlaygroundSource } from "./playground/source-url.js";
 
 initSiteTheme();
 
@@ -51,8 +52,8 @@ function sourceUrl(value) {
 }
 
 async function loadSource() {
-  const inline = params.get("source") ?? params.get("code");
-  if (inline) return inline;
+  const inline = getPlaygroundSource(new URL(location.href));
+  if (inline !== null) return inline;
   const url = sourceUrl(params.get("src"));
   if (!url) return defaultPlaygroundSource;
   const response = await fetch(url, { cache: "no-store" });
@@ -152,7 +153,7 @@ function openPopout() {
   url.searchParams.delete("embed");
   url.searchParams.delete("embedded");
   url.searchParams.delete("src");
-  url.searchParams.set("source", editor?.state.doc.toString() ?? "");
+  setPlaygroundSource(url, editor?.state.doc.toString() ?? "");
   url.searchParams.set("type", sourceType);
   url.searchParams.set("mode", activeMode);
   window.open(url, "_blank", "noopener,noreferrer");
