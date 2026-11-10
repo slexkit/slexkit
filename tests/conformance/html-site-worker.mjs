@@ -25,7 +25,7 @@ try {
       await route.fulfill({ status: 414, body: 'URI Too Long' });
     } else await route.continue();
   });
-  await page.goto(baseUrl + '/');
+  await page.goto(baseUrl + '/', { waitUntil: 'domcontentloaded' });
   const homeShell = page.frameLocator('iframe.slex-home-playground-frame');
   const home = page.frameLocator('iframe.slex-home-playground-frame').frameLocator('iframe');
   await homeShell.getByRole('toolbar', { name: 'Preview controls' }).waitFor();
@@ -51,11 +51,19 @@ try {
   await page.waitForFunction(() => document.querySelector('iframe.slex-home-playground-frame')?.getBoundingClientRect().height > 700);
   await page.waitForFunction(() => Number(getComputedStyle(document.querySelector('.slex-home-preview')).opacity) > .99);
   assert.equal(await home.locator('#r input').isVisible(), true);
-  await page.screenshot({ path: new URL('home.png', output).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
-  await page.screenshot({ path: new URL('after-home-light.png', styleOutput).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
+  // Interaction can scroll the host while focusing an iframe control. Reset
+  // before full-page capture so sticky headers are not stitched mid-page.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForFunction(() => window.scrollY === 0);
+  await page.waitForFunction(() => {
+    const name = document.querySelector('.slex-home-expanded-name');
+    return !name || name.getBoundingClientRect().width >= name.scrollWidth - 1;
+  });
+  await page.screenshot({ path: new URL('home.png', output).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true, animations: 'disabled' });
+  await page.screenshot({ path: new URL('after-home-light.png', styleOutput).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true, animations: 'disabled' });
   report.pages.push('homepage Markdown, formulas, four controls/sliders/stats, reset, and late iframe resize');
 
-  await page.goto(baseUrl + '/docs/components/input');
+  await page.goto(baseUrl + '/docs/components/input', { waitUntil: 'domcontentloaded' });
   const componentShell = page.locator('.slex-example-shell').first();
   await componentShell.waitFor();
   assert.equal(await componentShell.getByRole('toolbar', { name: 'Example preview controls' }).isVisible(), true);
@@ -68,13 +76,13 @@ try {
   await page.screenshot({ path: new URL('after-input-light.png', styleOutput).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
   report.pages.push('component demo shell, accessible modes, dotted canvas, and HTML format label');
 
-  await page.goto(baseUrl + '/docs/guides/quick-start');
+  await page.goto(baseUrl + '/docs/guides/quick-start', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelectorAll('iframe').length > 0);
   await page.getByRole('heading', { name: 'Getting Started', exact: true }).waitFor();
   assert.match(await page.locator('body').innerText(), /createSlexKitMarkdownRuntimeHost/);
   await page.screenshot({ path: new URL('quick-start.png', output).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
   report.pages.push('quick-start HTML documentation');
-  await page.goto(baseUrl + '/playground.html?mode=live');
+  await page.goto(baseUrl + '/playground.html?mode=live', { waitUntil: 'domcontentloaded' });
   const frame = page.frameLocator('[data-playground-preview] iframe');
   await page.getByRole('toolbar', { name: 'Preview controls' }).waitFor();
   await frame.locator('#r input').fill('20k');
@@ -120,7 +128,7 @@ try {
   report.pages.push('standalone modes, copy, dark theme, RC calculation, and input retention after Markdown edit');
 
   const hostile = '# Safe host text\n\n<img src=x onerror="window.__hostPwned = true"><script>window.__hostPwned = true</script>';
-  await page.goto(baseUrl + '/playground.html?mode=render&type=markdown&source=' + encodeURIComponent(hostile));
+  await page.goto(baseUrl + '/playground.html?mode=render&type=markdown&source=' + encodeURIComponent(hostile), { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: 'Safe host text' }).waitFor();
   assert.equal(await page.evaluate(() => window.__hostPwned), undefined);
   assert.equal(await page.locator('[data-playground-preview] img').count(), 0);
@@ -128,7 +136,7 @@ try {
   report.pages.push('raw HTML from query source remains inert in the host document');
 
   const longSource = '# Long source\n\n' + 'Portable content.\n\n'.repeat(2000) + 'End of content.';
-  await page.goto(baseUrl + '/playground.html?mode=render&type=markdown#' + new URLSearchParams({ source: longSource }));
+  await page.goto(baseUrl + '/playground.html?mode=render&type=markdown#' + new URLSearchParams({ source: longSource }), { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: 'Long source' }).waitFor();
   assert.match(await page.locator('[data-playground-preview]').innerText(), /End of content\./);
   report.pages.push('large fragment source renders under a strict HTTP request-target limit');
@@ -137,7 +145,7 @@ try {
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => localStorage.setItem('slexkit:theme', 'light'));
-  await page.goto(baseUrl + '/');
+  await page.goto(baseUrl + '/', { waitUntil: 'domcontentloaded' });
   const mobileHome = page.frameLocator('iframe.slex-home-playground-frame').frameLocator('iframe');
   await mobileHome.locator('#r input').waitFor();
   await page.waitForFunction(() => document.querySelector('iframe.slex-home-playground-frame')?.getBoundingClientRect().height > 1200);
