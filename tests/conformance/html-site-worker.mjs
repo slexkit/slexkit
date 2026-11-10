@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium, firefox, webkit } from 'playwright';
+import homeSource from '../../site/examples/home-rc-filter/example.en-US.slex.js';
 
 const output = new URL('../../test-results/html-migration/site/', import.meta.url);
 const styleOutput = new URL('../../test-results/html-style-review/', import.meta.url);
@@ -82,6 +83,65 @@ try {
   assert.match(await page.locator('body').innerText(), /createSlexKitMarkdownRuntimeHost/);
   await page.screenshot({ path: new URL('quick-start.png', output).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
   report.pages.push('quick-start HTML documentation');
+
+  // Standalone render mode must grow beyond the viewport. The interaction
+  // originates inside the opaque iframe, where users naturally wheel over it.
+  await page.setViewportSize({ width: 1280, height: 650 });
+  await page.goto(baseUrl + '/playground.html?mode=render&type=markdown#' + new URLSearchParams({ source: homeSource }), { waitUntil: 'domcontentloaded' });
+  await page.frameLocator('[data-playground-preview] iframe').locator('#r input').waitFor();
+  await page.waitForFunction(() => document.documentElement.scrollHeight > innerHeight + 100);
+  let previewBox = await page.locator('[data-playground-preview] iframe').boundingBox();
+  assert.ok(previewBox && previewBox.y < 650, 'interactive preview must be reachable');
+  await page.mouse.move(previewBox.x + previewBox.width / 2, Math.min(previewBox.y + 80, 620));
+  await page.mouse.wheel(0, 450);
+  await page.waitForFunction(() => window.scrollY > 50);
+  await page.getByRole('button', { name: 'Toggle color theme' }).waitFor();
+  report.pages.push('standalone render scrolls with the pointer inside the interactive iframe');
+
+  await page.setViewportSize({ width: 390, height: 650 });
+  await page.goto(baseUrl + '/playground.html?mode=render&type=markdown#' + new URLSearchParams({ source: homeSource }), { waitUntil: 'domcontentloaded' });
+  await page.frameLocator('[data-playground-preview] iframe').locator('#r input').waitFor();
+  await page.waitForFunction(() => document.documentElement.scrollHeight > innerHeight + 200);
+  await page.evaluate(() => {
+    const frame = document.querySelector('[data-playground-preview] iframe');
+    const top = frame.getBoundingClientRect().top + window.scrollY;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    window.scrollTo(0, Math.max(0, Math.min(top - 150, max - 100)));
+  });
+  const previousScroll = await page.evaluate(() => window.scrollY);
+  previewBox = await page.locator('[data-playground-preview] iframe').boundingBox();
+  assert.ok(previewBox, 'mobile interactive preview must exist');
+  await page.mouse.move(previewBox.x + previewBox.width / 2, Math.max(1, Math.min(previewBox.y + 80, 620)));
+  await page.mouse.wheel(0, 300);
+  await page.waitForFunction(previous => window.scrollY > previous + 20, previousScroll);
+  report.pages.push('standalone mobile-width render scrolls over the interactive iframe');
+
+  if (browserName === 'chromium') {
+    const mobile = await browser.newContext({ viewport: { width: 390, height: 650 }, isMobile: true, hasTouch: true });
+    try {
+      const touchPage = await mobile.newPage();
+      await touchPage.goto(baseUrl + '/playground.html?mode=render&type=markdown#' + new URLSearchParams({ source: homeSource }), { waitUntil: 'domcontentloaded' });
+      await touchPage.frameLocator('[data-playground-preview] iframe').locator('#r input').waitFor();
+      await touchPage.waitForFunction(() => document.documentElement.scrollHeight > innerHeight + 200);
+      const touchFrame = await touchPage.locator('[data-playground-preview] iframe').boundingBox();
+      assert.ok(touchFrame && touchFrame.y < 620, 'touch target must be inside the visible iframe');
+      const x = touchFrame.x + touchFrame.width / 2;
+      const y = Math.min(touchFrame.y + 35, 610);
+      const session = await mobile.newCDPSession(touchPage);
+      await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+      for (let offset = 50; offset <= 300; offset += 50) {
+        await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y - offset }] });
+        await touchPage.waitForTimeout(50);
+      }
+      await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await touchPage.waitForFunction(() => window.scrollY > 50);
+      report.pages.push('mobile Chromium touch swipe scrolls from inside the interactive iframe');
+    } finally {
+      await mobile.close();
+    }
+  }
+
+  await page.setViewportSize({ width: 1280, height: 960 });
   await page.goto(baseUrl + '/playground.html?mode=live', { waitUntil: 'domcontentloaded' });
   const frame = page.frameLocator('[data-playground-preview] iframe');
   await page.getByRole('toolbar', { name: 'Preview controls' }).waitFor();
