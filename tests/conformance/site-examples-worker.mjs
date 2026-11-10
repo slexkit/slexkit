@@ -25,7 +25,8 @@ async function valueIs(frame, selector, expected) {
   await frame.waitForFunction(
     ({ selector, expected }) => String(document.querySelector(selector)?.value) === String(expected),
     { selector, expected },
-    { timeout: 12000 },
+    // Offscreen iframe animation frames can be throttled by the browser.
+    { timeout: 12000, polling: 100 },
   );
 }
 
@@ -133,7 +134,7 @@ async function checkInteraction(slug, locale, frames) {
       await valueIs(frames[2], "#nameValue", "SlexKit");
       await frame.locator("#name input").fill("Shared value");
       await valueIs(frames[2], "#nameValue", "Shared value");
-      await frames[1].waitForFunction(() => document.querySelector("#message")?.text === "Shared value");
+      await frames[1].waitForFunction(() => document.querySelector("#message")?.text === "Shared value", null, { polling: 100 });
       break;
     case "network-policy-fetch-card":
       await frame.locator("#load button").click();
