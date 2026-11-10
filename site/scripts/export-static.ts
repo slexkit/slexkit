@@ -136,9 +136,7 @@ async function copyAdapterDemo(name: AdapterDemoName) {
   const indexPath = join(target, "index.html");
   await writeFile(indexPath, rewriteAdapterDemoHtml(await readFile(indexPath, "utf-8"), name), "utf-8");
 
-  const mainPath = join(target, "main.js");
-  const mainSource = await readFile(mainPath, "utf-8");
-  await writeFile(mainPath, mainSource.replace('from "/shared/adapter-demo.js"', 'from "../../shared/adapter-demo.js"'), "utf-8");
+  await cp(join(assetDir, "adapter-demos", name, "main.js"), join(target, "main.js"));
 }
 
 async function copyAdapterDemoFiles() {

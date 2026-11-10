@@ -66,6 +66,7 @@
   let runtimeApi = $state<RuntimeModule | null>(null);
   let runtimeLoadError = $state<unknown>(null);
   let runtimeError = $state<unknown>(null);
+  let previewPending = $state(false);
   let loadToken = 0;
   let previewMode = $state<PreviewMode>("preview");
   let copied = $state(false);
@@ -133,6 +134,7 @@
       }
       if (!activeHost) return;
 
+      previewPending = true;
       activeHost.configure({ policy: securePolicy, hostAdapter, secureFrame: normalizedSecureFrame() });
       const block: SlexKitMarkdownBlock = {
         artifactId,
@@ -144,7 +146,10 @@
       registeredHost = activeHost;
       registeredArtifact = artifactId;
       updateSlexArtifactRegistration(activeHost, artifactId, owner, [block], phase, (error) => {
-        if (token === updateToken) runtimeError = error;
+        if (token === updateToken) {
+          runtimeError = error;
+          previewPending = false;
+        }
       });
     };
 
@@ -195,6 +200,7 @@
       code: "查看 HTML 源码",
       copy: copied ? "已复制" : "复制源码",
       popout: "在新窗口打开",
+      loading: "正在加载交互示例…",
     } : {
       toolbar: "Example preview controls",
       preview: "Preview",
@@ -202,6 +208,7 @@
       code: "View HTML source",
       copy: copied ? "Copied" : "Copy source",
       popout: "Open in new window",
+      loading: "Loading interactive example…",
     };
   }
 
@@ -271,6 +278,9 @@
             <div class="slex-streamdown-error-title">SlexKit HTML validation failed</div>
             <div class="slex-streamdown-error-message">{errorMessage(displayError)}</div>
           </div>
+        {/if}
+        {#if previewPending && !displayError}
+          <div class="slex-streamdown-loading" role="status">{ui.loading}</div>
         {/if}
         <div use:coordinatePreview={{ activeHost, artifactId, text, phase }}></div>
       </div>

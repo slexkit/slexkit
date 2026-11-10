@@ -13,6 +13,14 @@ afterEach(async () => {
 });
 
 describe("HTML/JavaScript component entry", () => {
+  it("renders explicit text and label properties when no child text is present", () => {
+    document.body.innerHTML = '<slex-card><slex-text text="Hello"></slex-text><slex-badge text="Ready"></slex-badge><slex-button label="Go"></slex-button></slex-card>';
+    for (const [tag, expected] of [["slex-text", "Hello"], ["slex-badge", "Ready"], ["slex-button", "Go"]]) {
+      expect(document.querySelector(tag)!.shadowRoot!.textContent).toContain(expected);
+    }
+    document.body.innerHTML = '<slex-text>Child content</slex-text>';
+    expect(document.querySelector("slex-text")!.shadowRoot!.textContent).toContain("Child content");
+  });
   it("uses the built-in Uno theme when the host has no complete palette", () => {
     document.body.innerHTML = '<slex-card title="Card"></slex-card>';
     const root = document.querySelector("slex-card")!.shadowRoot!.querySelector(".slexkit-root")!;

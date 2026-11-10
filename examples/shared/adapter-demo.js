@@ -6,9 +6,13 @@ export function stripFrontmatter(markdown) {
 }
 
 export async function loadAdapterDemoMarkdown(fetcher = globalThis.fetch) {
-  const response = await fetcher(adapterDemoSourceUrl);
+  // Both standalone demos and the site bundle live two levels below the site base.
+  const sourceUrl = typeof window === "undefined"
+    ? adapterDemoSourceUrl
+    : new URL("../../official-examples/rc-low-pass-filter/en-US.md", import.meta.url).href;
+  const response = await fetcher(sourceUrl);
   if (!response.ok) {
-    throw new Error(`Failed to load ${adapterDemoSourceUrl}: ${response.status}`);
+    throw new Error(`Failed to load ${sourceUrl}: ${response.status}`);
   }
 
   return `${stripFrontmatter(await response.text()).trim()}\n`;

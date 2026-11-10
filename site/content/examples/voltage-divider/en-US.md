@@ -20,10 +20,10 @@ The module script implements \(V_{out} = V_{in} R_2 / (R_1 + R_2)\) with native 
 <slex-card title="Voltage Divider Calculator"><slex-grid columns="3"><slex-input id="vin" type="number" label="Input voltage" value="12"></slex-input><slex-input id="r1" type="number" label="R1" unit="kΩ" value="10"></slex-input><slex-input id="r2" type="number" label="R2" unit="kΩ" value="20"></slex-input></slex-grid><slex-stat id="vout" label="Output voltage" unit="V"></slex-stat></slex-card>
 <script type="module">
   const fields = ["vin", "r1", "r2"].map(id => slex.root.querySelector(`#${id}`)); const vout = slex.root.querySelector("#vout");
-  const update = () => { const [vin, r1, r2] = fields.map(field => Number(field.value)); vout.value = (vin * r2 / (r1 + r2)).toFixed(2); };
+  const update = () => { const [vin, r1, r2] = fields.map(field => Number(field.value)); vout.value = fields.some(field => field.value === "") || !Number.isFinite(vin) || r1 < 0 || r2 < 0 || r1 + r2 <= 0 ? "—" : (vin * r2 / (r1 + r2)).toFixed(2); };
   fields.forEach(field => field.addEventListener("input", update)); update();
   slex.onDispose(() => fields.forEach(field => field.removeEventListener("input", update)));
 </script>
 ```
 
-The three engineering inputs drive one calculation function, which updates output voltage and load-error display properties.
+The three numeric inputs drive one calculation function, which updates the output voltage. Invalid resistor values display a dash.

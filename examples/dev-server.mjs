@@ -2,6 +2,7 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { extname, join, normalize, resolve, sep } from "node:path";
+import { buildAdapterDemos } from "../site/scripts/build.ts";
 
 const root = resolve(import.meta.dir, "..");
 const examplesRoot = join(root, "examples");
@@ -80,6 +81,9 @@ for (const required of ["slexkit.js", "slexkit.css", "runtime.js"]) {
   }
 }
 
+const isAdapterDemo = ["assistant-ui", "streamdown", "tiptap"].includes(exampleName);
+if (isAdapterDemo) await buildAdapterDemos([exampleName]);
+
 const server = Bun.serve({
   port,
   async fetch(request) {
@@ -95,6 +99,9 @@ const server = Bun.serve({
     }
     if (url.pathname.startsWith(`/examples/${exampleName}/`)) {
       const rest = url.pathname.slice(`/examples/${exampleName}/`.length);
+      if (isAdapterDemo && rest === "main.js") {
+        return (await serveFile(join(root, "site", ".bun-dist", "adapter-demos", exampleName), "main.js")) || response("Not found", 404);
+      }
       return (await serveFile(exampleRoot, rest)) || response("Not found", 404);
     }
     if (url.pathname.startsWith("/shared/")) {
@@ -115,6 +122,7 @@ const server = Bun.serve({
       return (await serveFile(distRoot, "slexkit.js")) || response("Not found", 404);
     }
     if (url.pathname === "/slexkit.css") return (await serveFile(distRoot, "slexkit.css")) || response("Not found", 404);
+    if (url.pathname.startsWith("/fonts/")) return (await serveFile(distRoot, url.pathname.slice(1))) || response("Not found", 404);
     if (url.pathname.startsWith("/packages/streamdown/")) {
       const rest = url.pathname.slice("/packages/streamdown/".length);
       return (await serveFile(streamdownPackageRoot, rest)) || response("Not found", 404);

@@ -117,6 +117,11 @@ try {
 
   const frame = page.frameLocator("#root iframe");
   await frame.locator("#control").waitFor();
+  assert.equal(
+    await frame.locator("#control").evaluate((node) => getComputedStyle(node).display),
+    "block",
+    "the sandbox CSP must allow the trusted custom-element base stylesheet",
+  );
   await page.waitForTimeout(800);
   const nonceEvidence = await frame.locator("html").evaluate(() => globalThis.__cspEvidence);
   assert.ok(

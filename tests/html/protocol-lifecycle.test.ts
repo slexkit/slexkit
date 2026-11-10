@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { COMPONENT_BASE_STYLE_HASH } from "../../src/web-components/base-style";
 import {
   HTML_CHANNEL,
   isFrameCommand,
@@ -193,7 +194,7 @@ describe("HTML runtime pure lifecycle contracts", () => {
     });
     expect(locked).toContain("script-src blob:");
     expect(locked).toContain(
-      "style-src-elem blob: data: 'sha256-PVFxfZerdoNVipkc5dcv3WJjvxhrR9SYt0Bh3ejQ3Gg='",
+      `style-src-elem blob: data: ${COMPONENT_BASE_STYLE_HASH}`,
     );
     expect(locked).not.toContain("nonce-");
     expect(locked).not.toContain("script-src https:");

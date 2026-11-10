@@ -1,7 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import { decodeCssDataUrl } from "../../src/web-components/styles";
+import { createHash } from "node:crypto";
+import { COMPONENT_BASE_STYLE, COMPONENT_BASE_STYLE_HASH } from "../../src/web-components/base-style";
 
 describe("native stylesheet preparation", () => {
+  test("the sandbox CSP hash matches the exact custom-element base stylesheet", () => {
+    const actual = createHash("sha256").update(COMPONENT_BASE_STYLE).digest("base64");
+    expect(COMPONENT_BASE_STYLE_HASH).toBe(`'sha256-${actual}'`);
+  });
   test("decodes percent-encoded and base64 UTF-8 CSS data URLs", () => {
     const css = ".探针{color:rgb(1, 2, 3)}";
     const bytes = new TextEncoder().encode(css);

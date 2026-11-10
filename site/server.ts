@@ -111,6 +111,7 @@ async function adapterDemoResponse(url: URL) {
     return Response.redirect(redirectUrl, 308);
   }
   const relative = !requested || requested.endsWith("/") ? `${requested}index.html` : requested;
+  if (relative === "main.js") return localStaticResponse(join(outDir, "adapter-demos", demo), "main.js");
   return localStaticResponse(join(projectRoot, "examples", demo), relative);
 }
 

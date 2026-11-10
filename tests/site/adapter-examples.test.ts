@@ -45,7 +45,7 @@ describe("adapter examples", () => {
     expect(main).toContain("MessagePrimitive.Parts");
     expect(main).toContain("SlexKitAssistantStreamdownText");
     expect(main).toContain('runtime: "secure"');
-    expect(main).toContain('runtimeUrl: "/slexkit.runtime.js"');
+    expect(main).toContain('new URL("../../slexkit.runtime.js", import.meta.url)');
     expect(main).toContain("const cutoffHz = 640");
     expect(main).toContain('<slex-grid columns="2">');
     expect(main).toContain('<slex-badge text="isolated frame"');
@@ -105,7 +105,8 @@ describe("adapter examples", () => {
     expect(exporter).toContain('"official-examples"');
     expect(exporter).toContain('href="${withBase(`${demoBase}/style.css`)}"');
     expect(exporter).toContain('src="${withBase(`${demoBase}/main.js`)}"');
-    expect(exporter).toContain('from "../../shared/adapter-demo.js"');
+    expect(exporter).toContain('join(assetDir, "adapter-demos", name, "main.js")');
+    expect(server).toContain('join(outDir, "adapter-demos", demo)');
     expect(renderer).toContain("rewriteRootRelativeUrls");
     expect(renderer).toContain("bindLiveExampleFrames");
     expect(renderer).toContain("iframe[src]");

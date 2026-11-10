@@ -14,7 +14,11 @@ const math = createMathPlugin({
 const renderer = createSlexKitRenderer({
   domain: "examples-streamdown",
   runtime: "secure",
-  secureFrame: { runtimeUrl: "/slexkit.runtime.js" },
+  secureFrame: {
+    runtimeUrl: new URL("../../slexkit.runtime.js", import.meta.url).href,
+    styleUrl: new URL("../../slexkit.css", import.meta.url).href,
+    fontUrls: [new URL("../../fonts/", import.meta.url).href],
+  },
   showChrome: false,
 });
 

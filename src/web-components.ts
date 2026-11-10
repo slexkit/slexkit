@@ -3,6 +3,7 @@ import { parseEngineeringNumber, isEngineeringNumberResult } from "./engine/engi
 import { slexkitStd } from "./engine/stdlib";
 import { observeThemeMode } from "./engine/theme";
 import { watchElementTheme } from "./web-components/theme";
+import { COMPONENT_BASE_STYLE } from "./web-components/base-style";
 import {
   attachShadowStyle,
   createDocumentStyleSheet,
@@ -170,11 +171,7 @@ export function defineSlexElements(options: DefineSlexElementsOptions = {}): voi
           this.attachShadow({ mode: "open", delegatesFocus: SlexCustomElement.formAssociated });
         shadow.replaceChildren();
         const baseStyle = this.ownerDocument.createElement("style");
-        baseStyle.textContent =
-          ":host{display:block;min-width:0}:host([hidden]){display:none}slot{display:contents}::slotted(*){min-width:0}" +
-          ":host([data-slex-balanced-tile])>.slexkit-root{height:100%}" +
-          ":host([data-slex-balanced-tile]) .slex-stat,:host([data-slex-balanced-tile]) .slex-card{height:100%}" +
-          ":host([data-slex-balanced-tile]) .slex-stat-value{margin-top:auto}";
+        baseStyle.textContent = COMPONENT_BASE_STYLE;
         shadow.append(baseStyle);
         if (options.cssText !== undefined) {
           attachShadowStyle(shadow, options.cssText, trustedCssSheet);
@@ -315,7 +312,8 @@ export function defineSlexElements(options: DefineSlexElementsOptions = {}): voi
           "code-block": "code",
           formula: "tex",
         };
-        if (contentProperty[type]) next[contentProperty[type]] = this.textContent?.trim() || "";
+        const childText = this.textContent?.trim();
+        if (contentProperty[type] && childText) next[contentProperty[type]] = childText;
         if (type === "select" || type === "radio-group") {
           const options = Array.from(this.children)
             .filter((child) => child.localName === "option")

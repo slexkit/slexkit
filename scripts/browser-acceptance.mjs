@@ -43,11 +43,16 @@ try {
     }
     report.routes.push({ route, status: response.status, bytes: Buffer.byteLength(body) });
   }
-  const worker = spawn(process.execPath, ['tests/conformance/html-site-worker.mjs', baseUrl], { cwd: root, stdio: 'inherit', windowsHide: true });
-  const timer = setTimeout(() => killTree(worker), 90000);
-  const code = await new Promise(resolveExit => worker.once('exit', resolveExit));
-  clearTimeout(timer);
-  assert.equal(code, 0, 'Site browser interactions failed');
+  for (const [script, timeout] of [
+    ['tests/conformance/html-site-worker.mjs', 90000],
+    ['tests/conformance/site-examples-worker.mjs', 240000],
+  ]) {
+    const worker = spawn(process.execPath, [script, baseUrl], { cwd: root, stdio: 'inherit', windowsHide: true });
+    const timer = setTimeout(() => killTree(worker), timeout);
+    const code = await new Promise(resolveExit => worker.once('exit', resolveExit));
+    clearTimeout(timer);
+    assert.equal(code, 0, `${script} browser interactions failed`);
+  }
   report.status = 'passed';
 } catch (error) { report.error = error.stack; process.exitCode = 1; console.error(error); }
 finally {

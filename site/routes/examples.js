@@ -5,6 +5,7 @@ import { renderMarkdown } from "../markdown/svelte-renderer.js";
 import DocsShell from "../components/DocsShell.svelte";
 import { siteFetch, withSiteBase } from "../app/site-base.js";
 import ToolHostResponsesDemo from "../components/examples/ToolHostResponsesDemo.svelte";
+import ToolHostFormDemo from "../components/examples/ToolHostFormDemo.svelte";
 
 function escapeAttribute(value) {
   return String(value ?? "")
@@ -375,7 +376,8 @@ export function createExamplesRoute({
           slexkitRuntime: doc.runtime === "secure" ? "secure" : "trusted",
           slexkitSecurePolicy: securePolicyForExample(doc),
           slexkitSecureFrame: {
-            runtimeUrl: withSiteBase("/slexkit.js"),
+            runtimeUrl: withSiteBase("/slexkit.runtime.js"),
+            fontUrls: [withSiteBase("/fonts/")],
           },
         });
         addMarkdownCleanup(cleanup);
@@ -383,7 +385,7 @@ export function createExamplesRoute({
         const dialogContainer = document.createElement("div");
         dialogContainer.style.cssText = "margin-top:2rem;";
         markdownHost.appendChild(dialogContainer);
-        const dialogApp = mountSvelte(ToolHostResponsesDemo, {
+        const dialogApp = mountSvelte(example.slug === "form-wizard-steps" ? ToolHostFormDemo : ToolHostResponsesDemo, {
           target: dialogContainer,
           props: { locale },
         });
@@ -398,7 +400,8 @@ export function createExamplesRoute({
           slexkitRuntime: doc.runtime === "secure" ? "secure" : "trusted",
           slexkitSecurePolicy: securePolicyForExample(doc),
           slexkitSecureFrame: {
-            runtimeUrl: withSiteBase("/slexkit.js"),
+            runtimeUrl: withSiteBase("/slexkit.runtime.js"),
+            fontUrls: [withSiteBase("/fonts/")],
           },
         });
         addMarkdownCleanup(cleanup);

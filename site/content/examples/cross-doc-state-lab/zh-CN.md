@@ -1,28 +1,72 @@
 ---
-title: "Artifact 共享 JSON 实验室"
+title: "Artifact 共享状态实验室"
 category: "平台能力"
 status: published
 order: 15
-summary: "通过 artifact-local slex.shared 发布和订阅有界 JSON，而不共享 DOM 或模块全局对象。"
+summary: "同一篇文档中的三个独立 fence 通过 artifact-local slex.shared 同步 JSON 状态。"
 tags: artifact, shared-json, subscription
-components: card, input, text
+components: card, grid, input, select, slider, text, stat
 difficulty: 入门
 runtime: secure
 featured: true
 slexkitRenderMode: component
 ---
+# Artifact 共享状态实验室
 
-# Artifact 共享 JSON 实验室
+修改主控面板的名称、字号或颜色，下面两个独立的交互块会同步更新。
 
-输入框通过 `slex.shared` 发布 JSON 字符串，订阅回调再显示 artifact-local 值；各 fence 不会因此共享 DOM 或模块全局对象。
+## 主控面板
 
 ```slex
-<slex-card title="Artifact 共享 JSON 实验室"><slex-input id="name" label="共享名称" value="SlexKit"></slex-input><slex-text id="mirror"></slex-text></slex-card>
+<slex-card title="主控面板">
+  <slex-grid columns="3">
+    <slex-input id="name" label="显示名称" value="SlexKit"></slex-input>
+    <slex-slider id="size" label="字号" min="12" max="30" value="18" unit="px"></slex-slider>
+    <slex-select id="color" label="文字颜色"><option value="blue">蓝色</option><option value="green">绿色</option><option value="orange">橙色</option></slex-select>
+  </slex-grid>
+</slex-card>
 <script type="module">
-  const input = slex.root.querySelector("#name"); const mirror = slex.root.querySelector("#mirror");
-  const publish = () => slex.shared.set("name", input.value); const unsubscribe = slex.shared.subscribe("name", (value) => { mirror.text = String(value ?? ""); });
-  input.addEventListener("input", publish); publish(); slex.onDispose(() => { input.removeEventListener("input", publish); unsubscribe(); });
+  const get = id => slex.root.querySelector(`#${id}`);
+  const controls = ["name", "size", "color"].map(get);
+  const publish = () => slex.shared.set("profile", { name: get("name").value, size: Number(get("size").value), color: get("color").value });
+  controls.forEach(control => control.addEventListener("input", publish));
+  publish();
+  slex.onDispose(() => controls.forEach(control => control.removeEventListener("input", publish)));
 </script>
 ```
 
-模块作用域被替换时，订阅与输入监听器都会通过 `slex.onDispose` 释放。
+## 实时预览
+
+此面板通过订阅接收共享值。
+
+```slex
+<slex-card title="实时预览"><slex-text id="message"></slex-text></slex-card>
+<script type="module">
+  const message = slex.root.querySelector("#message");
+  const stop = slex.shared.subscribe("profile", profile => {
+    if (!profile) return;
+    message.text = String(profile.name);
+    message.size = Number(profile.size);
+    message.color = ({ blue: "#2563eb", green: "#15803d", orange: "#c2410c" })[profile.color] || "#2563eb";
+  });
+  slex.onDispose(stop);
+</script>
+```
+
+## 观察面板
+
+第二个独立 fence 订阅同一份 JSON。
+
+```slex
+<slex-card title="观察面板"><slex-grid columns="2"><slex-stat id="nameValue" label="当前名称"></slex-stat><slex-stat id="sizeValue" label="字号" unit="px"></slex-stat></slex-grid></slex-card>
+<script type="module">
+  const stop = slex.shared.subscribe("profile", profile => {
+    if (!profile) return;
+    slex.root.querySelector("#nameValue").value = String(profile.name);
+    slex.root.querySelector("#sizeValue").value = Number(profile.size);
+  });
+  slex.onDispose(stop);
+</script>
+```
+
+各 fence 只有共享的 JSON，没有共享 DOM 或 JavaScript 全局对象。每个订阅和事件监听器都会在释放时清理。

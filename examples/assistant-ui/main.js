@@ -53,6 +53,7 @@ const messages = [
 ];
 
 const noopNewMessage = async () => {};
+const convertMessage = (message) => message;
 const embed = new URLSearchParams(window.location.search).get("embed") === "1";
 
 document.getElementById("assistant-markdown-source").textContent = assistantMarkdown;
@@ -61,7 +62,7 @@ if (embed) document.querySelector(".adapter-example-shell")?.setAttribute("data-
 function StaticAssistantRuntimeProvider({ children }) {
   const runtime = useExternalStoreRuntime({
     messages,
-    convertMessage: (message) => message,
+    convertMessage,
     isRunning: false,
     onNew: noopNewMessage,
   });
@@ -80,7 +81,9 @@ function AssistantTextPart() {
     mode: "static",
     runtime: "secure",
     secureFrame: {
-      runtimeUrl: "/slexkit.runtime.js",
+      runtimeUrl: new URL("../../slexkit.runtime.js", import.meta.url).href,
+      styleUrl: new URL("../../slexkit.css", import.meta.url).href,
+      fontUrls: [new URL("../../fonts/", import.meta.url).href],
     },
     controls: {
       code: { copy: false, download: false },

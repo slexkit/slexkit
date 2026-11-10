@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { compile, compileModule } from "svelte/compiler";
+import { build as bundleAdapter } from "esbuild";
 import { exportComponentSpecManifest, supportedLocales } from "../data/component-docs.js";
 import { discoverExampleMarkdown, discoverWikiMarkdown } from "../data/content-discovery.js";
 
@@ -59,6 +60,7 @@ export async function buildSiteAssets({ clean = true } = {}) {
     throw new Error("Bun failed to build site bundle");
   }
 
+  await buildAdapterDemos();
   await writeStaticWikiDocs();
 
   await copyFile(join(siteRoot, "assets", "logo.svg"), join(outDir, "logo.svg"));
@@ -87,6 +89,34 @@ export async function buildSiteAssets({ clean = true } = {}) {
     ".bun-dist/uno.css",
   ]);
   await sanitizeGeneratedCssSources(join(outDir, "uno.css"));
+}
+
+export async function buildAdapterDemos(names: readonly ("assistant-ui" | "streamdown" | "tiptap")[] = ["assistant-ui", "streamdown", "tiptap"]) {
+  for (const name of names) {
+    const aliases = {
+      name: `adapter-demo-${name}`,
+      setup(build: import("esbuild").PluginBuild) {
+        build.onResolve({ filter: /^@slexkit\/(assistant-ui|streamdown|tiptap)$/ }, (args) => ({
+          path: join(projectRoot, "packages", args.path.slice("@slexkit/".length), "dist", "index.js"),
+        }));
+        build.onResolve({ filter: /^\/shared\/adapter-demo\.js$/ }, () => ({
+          path: join(projectRoot, "examples", "shared", "adapter-demo.js"),
+        }));
+        build.onResolve({ filter: /^slexkit$/ }, () => ({ path: join(projectRoot, "dist", "slexkit.js") }));
+      },
+    };
+    await bundleAdapter({
+      entryPoints: [join(projectRoot, "examples", name, "main.js")],
+      outfile: join(outDir, "adapter-demos", name, "main.js"),
+      bundle: true,
+      platform: "browser",
+      target: "es2022",
+      format: "esm",
+      nodePaths: [join(projectRoot, "node_modules"), join(projectRoot, "node_modules", ".bun", "node_modules")],
+      plugins: [aliases],
+      define: { "process.env.NODE_ENV": JSON.stringify("production") },
+    });
+  }
 }
 
 async function writeStaticWikiDocs() {
