@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { isMissingVersion } from "./npm-registry-errors.mjs";
+import { selectPackages } from "./npm-publish-selection.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const packages = [
@@ -19,6 +20,8 @@ const packages = [
 const dryRun = process.env.DRY_RUN === "1" || process.argv.includes("--dry-run");
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const useProvenance = process.env.GITHUB_ACTIONS === "true" || process.argv.includes("--provenance");
+const packageEntries = packages.map((packagePath) => ({ packagePath, pkg: readPackage(packagePath) }));
+const selectedPackages = selectPackages(process.env.SLEXKIT_PUBLISH_PACKAGES, packageEntries.map(({ pkg }) => pkg.name));
 
 function run(command, args, options = {}) {
   const isWindowsCmd = process.platform === "win32" && command.endsWith(".cmd");
@@ -46,8 +49,8 @@ function readPackage(packagePath) {
   return JSON.parse(readFileSync(jsonPath, "utf8"));
 }
 
-for (const packagePath of packages) {
-  const pkg = readPackage(packagePath);
+for (const { packagePath, pkg } of packageEntries) {
+  if (!selectedPackages.has(pkg.name)) continue;
   if (pkg.private) {
     console.log(`skip private package: ${pkg.name}`);
     continue;

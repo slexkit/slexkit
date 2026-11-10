@@ -2,6 +2,11 @@ name: Publish npm Packages
 
 on:
   workflow_dispatch:
+    inputs:
+      packages:
+        description: Comma-separated package names (empty publishes all)
+        required: false
+        type: string
   release:
     types:
       - published
@@ -49,4 +54,6 @@ jobs:
         run: bun run smoke:release
 
       - name: Publish unpublished package versions
+        env:
+          SLEXKIT_PUBLISH_PACKAGES: ${{ inputs.packages }}
         run: bun run publish:npm
