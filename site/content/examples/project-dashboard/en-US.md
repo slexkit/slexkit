@@ -38,7 +38,7 @@ The dashboard composes cards, grids, controls, and stats while one JavaScript up
       <slex-text id="note"></slex-text>
     </slex-card>
   </slex-grid>
-  <slex-card title="Task details"><slex-table id="tasks"></slex-table></slex-card>
+  <slex-card title="Task details"><div style="overflow-x: auto"><slex-table id="tasks" style="min-width: 300px"></slex-table></div></slex-card>
 </slex-section>
 <script type="module">
   const get = id => slex.root.querySelector(`#${id}`);

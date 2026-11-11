@@ -226,6 +226,7 @@ try {
       assert.equal(boxes.length, 3);
       assert.ok(boxes[0].bottom <= boxes[1].top && boxes[1].bottom <= boxes[2].top, "mobile grid should stack without overlap");
       assert.ok(await frame.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "mobile frame overflows horizontally");
+      assert.ok(await frame.locator("#tasks").evaluate(element => element.parentElement.scrollWidth > element.parentElement.clientWidth), "mobile table should scroll within its card");
       await locator.scrollIntoViewIfNeeded();
       await mkdir(resolve("test-results/site-examples"), { recursive: true });
       await page.screenshot({ path: resolve("test-results/site-examples", `${browserName}-mobile-${scheme}.png`), fullPage: true });

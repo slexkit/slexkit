@@ -38,7 +38,7 @@ slexkitRenderMode: component
       <slex-text id="note"></slex-text>
     </slex-card>
   </slex-grid>
-  <slex-card title="任务明细"><slex-table id="tasks"></slex-table></slex-card>
+  <slex-card title="任务明细"><div style="overflow-x: auto"><slex-table id="tasks" style="min-width: 300px"></slex-table></div></slex-card>
 </slex-section>
 <script type="module">
   const get = id => slex.root.querySelector(`#${id}`);
