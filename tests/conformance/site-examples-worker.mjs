@@ -9,7 +9,7 @@ const engine = { chromium, firefox, webkit }[browserName];
 if (!engine) throw new Error(`Unknown site browser: ${browserName}`);
 const sourceDir = resolve("site/content/examples");
 const browser = await engine.launch({ headless: true });
-const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 await context.route("https://jsonplaceholder.typicode.com/**", route => route.fulfill({
   status: 200,
   contentType: "application/json",
@@ -115,6 +115,11 @@ async function checkInteraction(slug, locale, frames) {
       await frame.waitForFunction(() => document.querySelector("#details slex-collapsible")?.shadowRoot?.querySelector(".slex-collapsible-content")?.innerText.includes("Designer"));
       break;
     case "project-dashboard":
+      await frame.waitForFunction(() => {
+        const cards = [...document.querySelector('slex-grid')?.children ?? []];
+        const boxes = cards.map(card => card.shadowRoot?.querySelector('.slex-card')?.getBoundingClientRect());
+        return cards.length === 3 && boxes.every(Boolean) && boxes[0].right <= boxes[1].left && boxes[1].right <= boxes[2].left && Math.max(...boxes.map(box => box.bottom)) - Math.min(...boxes.map(box => box.bottom)) <= 1;
+      }, null, { polling: 100 });
       await valueIs(frame, "#remaining", 3);
       await frame.locator("#resolved input").fill("5");
       await valueIs(frame, "#remaining", 7);
@@ -178,7 +183,10 @@ try {
           for (let i = 0; i < fenceCount; i++) frames.push(await frameFor(page.locator("iframe.slexkit-html-frame").nth(i)));
           await page.waitForFunction(() => !document.querySelector(".slex-component-preview-inner [role=status]"));
           for (const frame of frames) {
-            await frame.waitForFunction(() => [...document.querySelectorAll("#slex-root *")].filter(element => element.localName.startsWith("slex-")).every(element => element.shadowRoot?.querySelector(".slexkit-root")));
+            await frame.waitForFunction(() => [...document.querySelectorAll("#slex-root *")].filter(element => element.localName.startsWith("slex-")).every(element => {
+              const shadow = element.shadowRoot;
+              return shadow?.querySelector(".slexkit-root") && [...shadow.querySelectorAll('link[rel="stylesheet"]')].every(link => link.sheet);
+            }), null, { polling: 100 });
           }
           await checkInteraction(slug, locale, frames);
         } else if (slug === "form-wizard-steps") {
@@ -201,6 +209,31 @@ try {
         results.push({ slug, locale, status: "failed", error: String(error?.stack ?? error), pageErrors: errors.slice(marker) });
         console.error(`${locale}/${slug}: FAILED: ${String(error?.message ?? error).split("\n")[0]}`);
       }
+    }
+  }
+  for (const scheme of ["light", "dark"]) {
+    try {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto(`${base}/zh-CN/examples/project-dashboard`, { waitUntil: "domcontentloaded", timeout: 45000 });
+      const locator = page.locator("iframe.slexkit-html-frame").first();
+      const frame = await frameFor(locator);
+      await frame.waitForFunction(() => [...document.querySelectorAll("slex-card")].length === 4 && [...document.querySelectorAll("slex-card")].every(element => element.shadowRoot?.querySelector('link[rel="stylesheet"]')?.sheet), null, { polling: 100 });
+      const boxes = await frame.locator("slex-grid > slex-card").evaluateAll(elements => elements.map(element => {
+        const { top, bottom } = element.getBoundingClientRect();
+        return { top, bottom };
+      }));
+      assert.equal(boxes.length, 3);
+      assert.ok(boxes[0].bottom <= boxes[1].top && boxes[1].bottom <= boxes[2].top, "mobile grid should stack without overlap");
+      assert.ok(await frame.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "mobile frame overflows horizontally");
+      await locator.scrollIntoViewIfNeeded();
+      await mkdir(resolve("test-results/site-examples"), { recursive: true });
+      await page.screenshot({ path: resolve("test-results/site-examples", `${browserName}-mobile-${scheme}.png`), fullPage: true });
+      results.push({ slug: "project-dashboard-mobile", locale: "zh-CN", scheme, status: "passed" });
+      console.log(`zh-CN/project-dashboard-mobile/${scheme}: passed`);
+    } catch (error) {
+      results.push({ slug: "project-dashboard-mobile", locale: "zh-CN", scheme, status: "failed", error: String(error?.stack ?? error) });
+      console.error(`zh-CN/project-dashboard-mobile/${scheme}: FAILED: ${String(error?.message ?? error).split("\n")[0]}`);
     }
   }
 } finally {

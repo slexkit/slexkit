@@ -6,6 +6,7 @@ import { aiDocFilenames, createAiDocs, writeAiRawMarkdown } from "../scripts/gen
 import { inspectSlexSource } from "../src/html/inspect";
 import { hashStandardText, SLEX_STANDARD_ARTIFACTS } from "../src/standard/artifacts";
 import { describeSlexElements } from "../src/web-components/definitions";
+import { SLEXKIT_VERSION } from "../src/version";
 
 describe("AI documentation generation", () => {
   function slexFences(source: string): string[] {
@@ -26,7 +27,7 @@ describe("AI documentation generation", () => {
 
     const index = build.files["llms.txt"];
     expect(index).toContain("# SlexKit > Markdown-friendly reactive UI runtime for AI output");
-    expect(index).toContain("Version: 0.5.0");
+    expect(index).toContain(`Version: ${SLEXKIT_VERSION}`);
     for (const path of [
       "/llms-full.txt",
       "/llms-components.txt",

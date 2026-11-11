@@ -180,6 +180,7 @@ describe("HTML runtime pure lifecycle contracts", () => {
     );
     expect(document).toContain("style-src-elem 'nonce-nonce-token-123456789' blob: data:");
     expect(document).toContain("style-src-attr 'unsafe-inline'");
+    expect(document).toContain('<link rel="preload" as="style" crossorigin="anonymous" href="https://cdn.example.test/v1/slexkit.css">');
     expect(document).toContain("connect-src 'none'");
     expect(document).toContain("frame-src 'none'");
     expect(document).not.toContain("script-src 'unsafe-inline'");

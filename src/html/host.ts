@@ -125,7 +125,10 @@ export function createBootstrapDocument(options: {
         : directive,
     ),
   ].join("; ");
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta http-equiv="Content-Security-Policy" content="${htmlAttribute(policy)}"><style nonce="${nonce}">${BASE_STYLE}</style></head><body><script type="module" nonce="${nonce}">${BOOTSTRAP_SCRIPT}</script></body></html>`;
+  const stylesheetPreload = options.styleUrl && !options.styleUrl.startsWith("data:")
+    ? `<link rel="preload" as="style" crossorigin="anonymous" href="${htmlAttribute(options.styleUrl)}">`
+    : "";
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta http-equiv="Content-Security-Policy" content="${htmlAttribute(policy)}">${stylesheetPreload}<style nonce="${nonce}">${BASE_STYLE}</style></head><body><script type="module" nonce="${nonce}">${BOOTSTRAP_SCRIPT}</script></body></html>`;
 }
 
 function resultError(value: { name: string; message: string } | undefined): Error {

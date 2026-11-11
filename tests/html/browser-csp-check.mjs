@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import http from "node:http";
 import { chromium, firefox, webkit } from "playwright";
 
 const browserName =
   process.argv.find((value) => ["chromium", "firefox", "webkit"].includes(value)) ?? "chromium";
 const expectVulnerable = process.argv.includes("--expect-vulnerable");
+const distRoot = process.env.SLEXKIT_TEST_DIST && resolve(process.env.SLEXKIT_TEST_DIST);
 const engine = { chromium, firefox, webkit }[browserName];
 const collectorHits = [];
 
@@ -51,12 +53,12 @@ const assetServer = http.createServer(async (request, response) => {
   }
   if (path === "/dist/slexkit.js") {
     response.setHeader("content-type", "text/javascript");
-    response.end(await readFile(new URL("../../dist/slexkit.js", import.meta.url)));
+    response.end(await readFile(distRoot ? resolve(distRoot, "slexkit.js") : new URL("../../dist/slexkit.js", import.meta.url)));
     return;
   }
   if (path === "/dist/slexkit.css") {
     response.setHeader("content-type", "text/css");
-    response.end(await readFile(new URL("../../dist/slexkit.css", import.meta.url)));
+    response.end(await readFile(distRoot ? resolve(distRoot, "slexkit.css") : new URL("../../dist/slexkit.css", import.meta.url)));
     return;
   }
   response.statusCode = 404;
@@ -68,6 +70,8 @@ const assetOrigin = `http://127.0.0.1:${assetServer.address().port}`;
 const payload = `<style>#custom-style{color:rgb(12, 34, 56)} #external-style-probe{display:block}</style>
 <p id="custom-style">custom style</p><p id="external-style-probe">external style probe</p>
 <slex-input id="control" value="12"></slex-input>
+<slex-text id="attribute-text" text="Visible text"></slex-text>
+<slex-badge id="attribute-badge" text="Visible badge"></slex-badge>
 <script>
 const collector = ${JSON.stringify(collectorOrigin)};
 const originalRevoke = URL.revokeObjectURL.bind(URL);
@@ -117,6 +121,8 @@ try {
 
   const frame = page.frameLocator("#root iframe");
   await frame.locator("#control").waitFor();
+  assert.equal(await frame.locator("#attribute-text .slex-text").innerText(), "Visible text");
+  assert.equal(await frame.locator("#attribute-badge .slex-badge-label").innerText(), "Visible badge");
   assert.equal(
     await frame.locator("#control").evaluate((node) => getComputedStyle(node).display),
     "block",

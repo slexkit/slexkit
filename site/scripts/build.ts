@@ -41,6 +41,7 @@ export async function buildSiteAssets({ clean = true } = {}) {
     target: "browser",
     format: "esm",
     splitting: true,
+    minify: true,
     sourcemap: "linked",
     plugins: [siteAliasPlugin(), sveltePlugin()],
     define: {

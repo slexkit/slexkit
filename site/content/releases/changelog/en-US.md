@@ -11,6 +11,14 @@ slexkitRenderMode: component
 
 All notable changes to SlexKit.
 
+## v0.5.2 - Runtime rendering fixes
+
+### Fixed
+- Preserve explicit text, label, and content attributes when custom elements have no light DOM children.
+- Keep the sandbox's CSP hash in sync with the trusted component layout styles so isolated components render correctly without relaxing the policy.
+- Restore interactive website examples and build adapter demos from pinned local dependencies.
+- Keep grids and their cards aligned in embedded previews, preload sandbox styles, and reduce the documentation site's initial asset size.
+
 ## @slexkit/assistant-ui v0.5.1
 
 ### Fixed

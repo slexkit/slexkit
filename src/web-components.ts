@@ -59,6 +59,7 @@ export function defineSlexElements(options: DefineSlexElementsOptions = {}): voi
   const candidateWindow = options.window ?? (typeof window !== "undefined" ? window : undefined);
   if (!candidateWindow) throw new Error("defineSlexElements requires a browser window");
   const owner = candidateWindow;
+  let registeredLinkedFonts = false;
   const descriptors = describeSlexElements();
   const requested = options.components ?? (Object.keys(elementDefinitions) as SlexElementType[]);
   const trustedCssSheet =
@@ -183,8 +184,10 @@ export function defineSlexElements(options: DefineSlexElementsOptions = {}): voi
           link.addEventListener(
             "load",
             () => {
-              if (link.sheet)
+              if (link.sheet && !registeredLinkedFonts) {
                 installDocumentFonts(this.ownerDocument, link.sheet as CSSStyleSheet, link.href);
+                registeredLinkedFonts = true;
+              }
             },
             { once: true },
           );
