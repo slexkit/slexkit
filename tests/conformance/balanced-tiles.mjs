@@ -7,10 +7,11 @@ import { chromium, firefox, webkit } from "playwright";
 
 const output = resolve("test-results/stat-overflow-review/alignment");
 await mkdir(output, { recursive: true });
+const port = process.env.SLEXKIT_BALANCED_PORT || "4222";
 const server = spawn("bun", ["examples/dev-server.mjs", "web-components"], {
-  env: { ...process.env, PORT: "4222" }, windowsHide: true, stdio: "ignore",
+  env: { ...process.env, PORT: port }, windowsHide: true, stdio: "ignore",
 });
-const base = "http://127.0.0.1:4222";
+const base = `http://127.0.0.1:${port}`;
 const fingerprints = async () => Object.fromEntries(await Promise.all(["dist/web-components.js", "dist/slexkit.css", "tests/conformance/balanced-tiles.mjs"].map(async file => [file, createHash("sha256").update(await readFile(file)).digest("hex")])));
 const report = { date: new Date().toISOString(), artifactHashes: await fingerprints(), layouts: [], transitions: [], resources: [] };
 try {
