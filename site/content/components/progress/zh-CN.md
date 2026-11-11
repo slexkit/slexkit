@@ -13,7 +13,7 @@ summary: "进度条。"
 ## HTML 示例
 
 ```slex
-<slex-progress></slex-progress>
+<slex-progress label="进度" value="65"></slex-progress>
 ```
 
 ## API 参考

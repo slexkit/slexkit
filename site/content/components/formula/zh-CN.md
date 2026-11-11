@@ -13,7 +13,7 @@ summary: "响应式 KaTeX 公式显示。"
 ## HTML 示例
 
 ```slex
-<slex-formula></slex-formula>
+<slex-formula tex="E = mc^2"></slex-formula>
 ```
 
 ## API 参考

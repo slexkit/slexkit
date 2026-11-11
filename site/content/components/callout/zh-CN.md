@@ -13,7 +13,7 @@ summary: "提示块，用于说明、注意、警告、建议。"
 ## HTML 示例
 
 ```slex
-<slex-callout></slex-callout>
+<slex-callout title="提示" tone="info">继续之前请保存更改。</slex-callout>
 ```
 
 ## API 参考

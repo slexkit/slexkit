@@ -13,7 +13,7 @@ Separates adjacent content with an optional label or icon.
 ## HTML example
 
 ```slex
-<slex-divider></slex-divider>
+<slex-divider label="Details"></slex-divider>
 ```
 
 ## API Reference

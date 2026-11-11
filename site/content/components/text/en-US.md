@@ -13,7 +13,7 @@ Displays plain textual content from `text`, `content`, or `label` with variant, 
 ## HTML example
 
 ```slex
-<slex-text></slex-text>
+<slex-text text="A short, readable description."></slex-text>
 ```
 
 ## API Reference

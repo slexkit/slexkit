@@ -13,7 +13,7 @@ summary: "单个可展开内容区域。"
 ## HTML 示例
 
 ```slex
-<slex-collapsible></slex-collapsible>
+<slex-collapsible trigger="查看详情">这里展示更多信息。</slex-collapsible>
 ```
 
 ## API 参考

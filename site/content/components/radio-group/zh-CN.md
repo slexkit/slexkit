@@ -13,7 +13,10 @@ summary: "互斥单选组。"
 ## HTML 示例
 
 ```slex
-<slex-radio-group></slex-radio-group>
+<slex-radio-group label="环境" value="dev">
+  <option value="dev">开发</option>
+  <option value="prod">生产</option>
+</slex-radio-group>
 ```
 
 ## API 参考

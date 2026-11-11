@@ -13,7 +13,10 @@ summary: "多项折叠面板，适合 FAQ 或分组详情。"
 ## HTML 示例
 
 ```slex
-<slex-accordion></slex-accordion>
+<slex-accordion>
+  <section slot="overview" aria-label="概览">查看项目概要。</section>
+  <section slot="details" aria-label="详情">展开查看更多信息。</section>
+</slex-accordion>
 ```
 
 ## API 参考

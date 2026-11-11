@@ -13,7 +13,10 @@ Groups named panels into an expandable disclosure list; set `.items`/`.value` fo
 ## HTML example
 
 ```slex
-<slex-accordion></slex-accordion>
+<slex-accordion>
+  <section slot="overview" aria-label="Overview">See the project summary.</section>
+  <section slot="details" aria-label="Details">Expand to view more information.</section>
+</slex-accordion>
 ```
 
 ## API Reference

@@ -13,7 +13,7 @@ Renders a navigable link from `href`, text/label, target, icon, and variant; URL
 ## HTML example
 
 ```slex
-<slex-link></slex-link>
+<slex-link text="Read the guide" href="/docs/guides/quick-start"></slex-link>
 ```
 
 ## API Reference

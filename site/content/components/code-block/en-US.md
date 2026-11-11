@@ -13,7 +13,7 @@ Renders code or preformatted content with an optional language and title; it is 
 ## HTML example
 
 ```slex
-<slex-code-block></slex-code-block>
+<slex-code-block title="example.js" language="javascript" code="const answer = 42;"></slex-code-block>
 ```
 
 ## API Reference

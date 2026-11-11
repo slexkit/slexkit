@@ -13,7 +13,7 @@ summary: "紧凑标签，用于状态、分类、轻量元信息。"
 ## HTML 示例
 
 ```slex
-<slex-badge></slex-badge>
+<slex-badge text="已就绪" tone="success"></slex-badge>
 ```
 
 ## API 参考

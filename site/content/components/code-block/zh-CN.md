@@ -13,7 +13,7 @@ summary: "代码或配置片段展示。"
 ## HTML 示例
 
 ```slex
-<slex-code-block></slex-code-block>
+<slex-code-block title="example.js" language="javascript" code="const answer = 42;"></slex-code-block>
 ```
 
 ## API 参考

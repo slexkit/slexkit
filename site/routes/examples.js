@@ -1,4 +1,5 @@
 import { mount as mountSvelte, unmount } from "svelte";
+import { defineSlexElements } from "../../src/web-components";
 import { loadExampleDocs } from "../data/examples.js";
 import { siteUiLabelsForLocale } from "../data/component-docs.js";
 import { renderMarkdown } from "../markdown/svelte-renderer.js";
@@ -370,6 +371,9 @@ export function createExamplesRoute({
     const markdownHost = page.querySelector("[data-markdown-doc]");
     if (markdownHost) {
       if (doc.slexkitRenderMode === "dialog") {
+        // ToolHost elements run in the page itself. Its bundled module lives
+        // under /assets, so it cannot infer the site's root stylesheet URL.
+        defineSlexElements({ window, stylesheetUrl: withSiteBase("/slexkit.css") });
         const cleanup = renderMarkdown(doc.markdown, markdownHost, {
           domain: `example:${example.slug}`,
           slexkitRenderMode: "component",

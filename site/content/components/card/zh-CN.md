@@ -13,11 +13,11 @@ summary: "分组容器。用于把一组相关内容放在卡片表面里。"
 ## HTML 示例
 
 ```slex
-<slex-card title="运行指标" icon="chart-bar">
-  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+<slex-card title="运行指标" icon="gear-six">
+  <slex-row>
     <slex-stat label="请求数" value="1.2k" unit="/min"></slex-stat>
     <slex-stat label="延迟" value="42" unit="ms"></slex-stat>
-  </div>
+  </slex-row>
 </slex-card>
 ```
 

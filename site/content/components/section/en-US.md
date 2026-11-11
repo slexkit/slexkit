@@ -13,7 +13,9 @@ Creates a titled content section with optional subtitle and icon; section body u
 ## HTML example
 
 ```slex
-<slex-section></slex-section>
+<slex-section title="Project" subtitle="Overview">
+  <slex-text text="Everything is ready."></slex-text>
+</slex-section>
 ```
 
 ## API Reference

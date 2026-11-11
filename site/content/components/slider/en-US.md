@@ -13,7 +13,7 @@ Provides a bounded numeric control with min/max/step and orientation, emitting c
 ## HTML example
 
 ```slex
-<slex-slider></slex-slider>
+<slex-slider label="Volume" value="40" min="0" max="100" unit="%"></slex-slider>
 ```
 
 ## API Reference

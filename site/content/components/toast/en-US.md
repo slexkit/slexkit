@@ -13,7 +13,7 @@ Shows transient feedback with title, description, tone, icon, duration, and dism
 ## HTML example
 
 ```slex
-<slex-toast></slex-toast>
+<slex-toast title="Saved" description="Your changes have been saved." tone="success"></slex-toast>
 ```
 
 ## API Reference

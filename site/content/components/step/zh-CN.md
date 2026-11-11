@@ -13,7 +13,9 @@ summary: "ToolHost 专用步骤页，用于在一次 function call 里逐步收�
 ## HTML 示例
 
 ```slex
-<slex-step></slex-step>
+<slex-step title="项目信息" description="填写项目名称。" index="1" total="3">
+  <slex-input label="项目名称" placeholder="my-project"></slex-input>
+</slex-step>
 ```
 
 ## API 参考

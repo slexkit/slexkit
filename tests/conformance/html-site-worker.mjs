@@ -18,6 +18,12 @@ try {
   const page = await context.newPage();
   page.setDefaultTimeout(15000);
   page.on('pageerror', error => report.errors.push(error.message));
+  const blockedFonts = [];
+  page.on('console', message => {
+    if (message.type() === 'error' && /font-src|Loading the font.*Content Security Policy/i.test(message.text())) {
+      blockedFonts.push(message.text());
+    }
+  });
   // Match the request-target limit imposed by public static-site hosts. URL
   // fragments are excluded because browsers never send them to the server.
   await context.route('**/playground.html?**', async route => {
@@ -76,6 +82,45 @@ try {
   await componentShell.getByRole('button', { name: 'Preview', exact: true }).click();
   await page.screenshot({ path: new URL('after-input-light.png', styleOutput).pathname.replace(/^\/(\w:)/, '$1'), fullPage: true });
   report.pages.push('component demo shell, accessible modes, dotted canvas, and HTML format label');
+
+  // Markdown's configured host and its SlexCode child must agree on approved
+  // font URLs; a later configure() must not silently reset font-src to none.
+  await page.goto(baseUrl + '/docs/components/formula', { waitUntil: 'domcontentloaded' });
+  const formulaFrame = page.locator('iframe.slexkit-html-frame').first();
+  await formulaFrame.waitFor();
+  const formula = page.frameLocator('iframe.slexkit-html-frame').first().locator('slex-formula');
+  await formula.waitFor();
+  const frameMarkup = await formulaFrame.getAttribute('srcdoc');
+  assert.match(frameMarkup, /font-src\s+[^;]*\/fonts\//);
+  assert.deepEqual(await formula.evaluate(async element =>
+    (await element.ownerDocument.fonts.load('16px KaTeX_Main', 'A')).map(font => font.status)), ['loaded']);
+  assert.deepEqual(blockedFonts, [], 'component previews must load their own KaTeX fonts without CSP violations');
+  report.pages.push('formula preview loads KaTeX fonts through its explicitly approved CSP source');
+
+  await page.goto(baseUrl + '/docs/components/divider', { waitUntil: 'domcontentloaded' });
+  const divider = page.frameLocator('iframe.slexkit-html-frame').first().locator('slex-divider');
+  await divider.waitFor();
+  await page.waitForTimeout(200);
+  const dividerBounds = await divider.evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    return { top: rect.top, bottom: rect.bottom, viewportHeight: element.ownerDocument.defaultView.innerHeight };
+  });
+  assert.ok(dividerBounds.top >= 0 && dividerBounds.bottom <= dividerBounds.viewportHeight + 1,
+    `component with vertical margins must fit within the frame: ${JSON.stringify(dividerBounds)}`);
+  assert.equal(await divider.getByText('Details', { exact: true }).isVisible(), true);
+  report.pages.push('iframe height contains component margins without clipping the divider');
+
+  await page.goto(baseUrl + '/docs/components/accordion', { waitUntil: 'domcontentloaded' });
+  const accordion = page.frameLocator('iframe.slexkit-html-frame').first().locator('slex-accordion');
+  const overview = accordion.getByRole('button', { name: 'Overview' });
+  await overview.click();
+  assert.equal(await overview.getAttribute('aria-expanded'), 'true');
+  assert.equal(await accordion.getByText('See the project summary.').isVisible(), true);
+  await page.goto(baseUrl + '/docs/components/radio-group', { waitUntil: 'domcontentloaded' });
+  const radioGroup = page.frameLocator('iframe.slexkit-html-frame').first().locator('slex-radio-group');
+  await radioGroup.getByRole('radio', { name: 'Production' }).check();
+  assert.equal(await radioGroup.evaluate(element => element.value), 'prod');
+  report.pages.push('component documentation examples expose working accordion and radio interactions');
 
   await page.goto(baseUrl + '/docs/guides/quick-start', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelectorAll('iframe').length > 0);

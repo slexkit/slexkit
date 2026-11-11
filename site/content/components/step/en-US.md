@@ -13,7 +13,9 @@ Displays one workflow step with title, description, index/total, state, progress
 ## HTML example
 
 ```slex
-<slex-step></slex-step>
+<slex-step title="Project details" description="Enter the project name." index="1" total="3">
+  <slex-input label="Project name" placeholder="my-project"></slex-input>
+</slex-step>
 ```
 
 ## API Reference

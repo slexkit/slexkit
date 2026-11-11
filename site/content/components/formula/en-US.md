@@ -13,7 +13,7 @@ Renders a TeX formula from `tex`; `display-mode` selects block rather than inlin
 ## HTML example
 
 ```slex
-<slex-formula></slex-formula>
+<slex-formula tex="E = mc^2"></slex-formula>
 ```
 
 ## API Reference

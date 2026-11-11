@@ -13,7 +13,7 @@ Highlights titled explanatory or warning content with tone and icon options; slo
 ## HTML example
 
 ```slex
-<slex-callout></slex-callout>
+<slex-callout title="Tip" tone="info">Save your changes before continuing.</slex-callout>
 ```
 
 ## API Reference

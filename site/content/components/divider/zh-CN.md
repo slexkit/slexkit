@@ -13,7 +13,7 @@ summary: "分割线，可带 label。"
 ## HTML 示例
 
 ```slex
-<slex-divider></slex-divider>
+<slex-divider label="详细信息"></slex-divider>
 ```
 
 ## API 参考

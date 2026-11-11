@@ -13,7 +13,10 @@ summary: "响应式等宽网格。适合同级卡片、指标、字段组。"
 ## HTML 示例
 
 ```slex
-<slex-grid></slex-grid>
+<slex-grid columns="2" gap="4">
+  <slex-stat label="电压" value="12" unit="V"></slex-stat>
+  <slex-stat label="电流" value="2" unit="A"></slex-stat>
+</slex-grid>
 ```
 
 ## API 参考

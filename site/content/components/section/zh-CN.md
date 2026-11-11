@@ -13,7 +13,9 @@ summary: "页面区块，带标题、动作和内容区域。"
 ## HTML 示例
 
 ```slex
-<slex-section></slex-section>
+<slex-section title="项目" subtitle="概览">
+  <slex-text text="一切准备就绪。"></slex-text>
+</slex-section>
 ```
 
 ## API 参考

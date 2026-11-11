@@ -13,7 +13,7 @@ Displays determinate progress from `value` or an indeterminate state, with optio
 ## HTML example
 
 ```slex
-<slex-progress></slex-progress>
+<slex-progress label="Progress" value="65"></slex-progress>
 ```
 
 ## API Reference

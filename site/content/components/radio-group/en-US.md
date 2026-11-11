@@ -13,7 +13,10 @@ Offers one choice from an `.options` array, exposes the selected `.value`, and e
 ## HTML example
 
 ```slex
-<slex-radio-group></slex-radio-group>
+<slex-radio-group label="Environment" value="dev">
+  <option value="dev">Development</option>
+  <option value="prod">Production</option>
+</slex-radio-group>
 ```
 
 ## API Reference

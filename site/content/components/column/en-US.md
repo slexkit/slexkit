@@ -13,7 +13,10 @@ Stacks slotted children vertically using the component layout styles.
 ## HTML example
 
 ```slex
-<slex-column></slex-column>
+<slex-column>
+  <slex-stat label="Voltage" value="12" unit="V"></slex-stat>
+  <slex-stat label="Current" value="2" unit="A"></slex-stat>
+</slex-column>
 ```
 
 ## API Reference

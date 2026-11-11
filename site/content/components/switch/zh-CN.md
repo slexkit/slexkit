@@ -13,7 +13,7 @@ summary: "开关型布尔输入。"
 ## HTML 示例
 
 ```slex
-<slex-switch></slex-switch>
+<slex-switch label="启用通知" enabled></slex-switch>
 ```
 
 ## API 参考

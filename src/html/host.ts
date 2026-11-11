@@ -24,7 +24,7 @@ import type {
 const BOOTSTRAP_SCRIPT =
   'const expectedNonce=document.querySelector("script[nonce]").nonce;addEventListener("message",async function boot(event){const data=event.data;if(!event.source||!data||data.kind!=="slexkit-bootstrap-init"||data.bootstrapNonce!==expectedNonce||typeof data.runtimeUrl!=="string"||typeof data.token!=="string"||data.token.length<16||!Number.isSafeInteger(data.options?.epoch)||data.options.epoch<1)return;removeEventListener("message",boot);const host=event.source;try{const runtime=await import(data.runtimeUrl);if(typeof runtime.startSlexKitSandboxRunner!=="function")throw new Error("Runtime does not export startSlexKitSandboxRunner.");runtime.startSlexKitSandboxRunner({...data.options,hostWindow:host})}catch(error){try{host.postMessage({channel:"slexkit-html-v1",token:data.token,epoch:data.options.epoch,kind:"error",requestId:"bootstrap",revision:0,error:{name:error?.name||"Error",message:error?.message||String(error)}},"*")}catch{}}})';
 const BASE_STYLE =
-  'html,body{margin:0;min-height:0}body{overflow:hidden;font-family:var(--font-sans,"Geist","Geist Sans","Noto Sans SC",ui-sans-serif,system-ui,sans-serif);font-size:14px;line-height:1.5;color:var(--foreground,CanvasText)}button,input,select,textarea{font:inherit}';
+  'html,body{margin:0;min-height:0}body{overflow:hidden;font-family:var(--font-sans,"Geist","Geist Sans","Noto Sans SC",ui-sans-serif,system-ui,sans-serif);font-size:14px;line-height:1.5;color:var(--foreground,CanvasText)}#slex-root{display:flow-root}button,input,select,textarea{font:inherit}';
 const THEME_TOKEN_LIMIT = 512;
 
 type Pending = {

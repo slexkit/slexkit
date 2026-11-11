@@ -13,7 +13,7 @@ summary: "临时通知。"
 ## HTML 示例
 
 ```slex
-<slex-toast></slex-toast>
+<slex-toast title="已保存" description="更改已保存。" tone="success"></slex-toast>
 ```
 
 ## API 参考

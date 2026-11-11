@@ -13,7 +13,7 @@ summary: "短文本输出，用于状态、说明、结果。"
 ## HTML 示例
 
 ```slex
-<slex-text></slex-text>
+<slex-text text="一段简短清晰的说明文字。"></slex-text>
 ```
 
 ## API 参考

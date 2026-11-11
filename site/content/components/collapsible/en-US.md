@@ -13,7 +13,7 @@ Shows or hides one slotted content region through `.open`, with configurable tri
 ## HTML example
 
 ```slex
-<slex-collapsible></slex-collapsible>
+<slex-collapsible trigger="Show details">Additional information appears here.</slex-collapsible>
 ```
 
 ## API Reference

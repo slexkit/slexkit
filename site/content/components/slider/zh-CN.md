@@ -13,7 +13,7 @@ summary: "数值范围输入。"
 ## HTML 示例
 
 ```slex
-<slex-slider></slex-slider>
+<slex-slider label="音量" value="40" min="0" max="100" unit="%"></slex-slider>
 ```
 
 ## API 参考

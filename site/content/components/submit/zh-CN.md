@@ -13,7 +13,7 @@ summary: "ToolHost 专用提交动作，把当前选择或表单值返回宿主�
 ## HTML 示例
 
 ```slex
-<slex-submit></slex-submit>
+<slex-submit submit-label="提交" ignore-label="忽略"></slex-submit>
 ```
 
 ## API 参考

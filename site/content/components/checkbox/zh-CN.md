@@ -13,7 +13,7 @@ summary: "复选框，适合确认项或多选项。"
 ## HTML 示例
 
 ```slex
-<slex-checkbox></slex-checkbox>
+<slex-checkbox label="接收通知" checked></slex-checkbox>
 ```
 
 ## API 参考

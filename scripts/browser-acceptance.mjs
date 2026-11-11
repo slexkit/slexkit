@@ -46,6 +46,7 @@ try {
   for (const [script, timeout] of [
     ['tests/conformance/html-site-worker.mjs', 90000],
     ['tests/conformance/site-examples-worker.mjs', 240000],
+    ['tests/conformance/site-pages-worker.mjs', 240000],
     ['tests/conformance/stat-animation-worker.mjs', 90000],
   ]) {
     const worker = spawn(process.execPath, [script, baseUrl], { cwd: root, stdio: 'inherit', windowsHide: true });

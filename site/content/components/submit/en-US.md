@@ -13,7 +13,7 @@ Exposes explicit `submit` and `ignore` actions for ToolHost-style workflows; it 
 ## HTML example
 
 ```slex
-<slex-submit></slex-submit>
+<slex-submit submit-label="Submit" ignore-label="Ignore"></slex-submit>
 ```
 
 ## API Reference

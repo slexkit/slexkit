@@ -13,7 +13,7 @@ Displays compact status or category text with optional icon, tone, and visual va
 ## HTML example
 
 ```slex
-<slex-badge></slex-badge>
+<slex-badge text="Ready" tone="success"></slex-badge>
 ```
 
 ## API Reference

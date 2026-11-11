@@ -122,14 +122,15 @@ function bindLiveExampleFrames(container) {
 export function renderMarkdown(content, container, options = {}) {
   const domain = options.domain ?? containerDomain(container);
   const ownsRuntimeHost = !options.slexkitRuntimeHost;
+  const secureFrame = options.slexkitSecureFrame ?? {
+    runtimeUrl: withSiteBase("/slexkit.runtime.js"),
+    styleUrl: withSiteBase("/slexkit.css"),
+    fontUrls: [new URL(withSiteBase("/fonts/"), window.location.href).href],
+  };
   const runtimeHost = options.slexkitRuntimeHost ?? createSlexKitMarkdownRuntimeHost({
     policy: options.slexkitSecurePolicy ?? {},
     hostAdapter: options.slexkitHostAdapter,
-    secureFrame: options.slexkitSecureFrame ?? {
-      runtimeUrl: withSiteBase("/slexkit.runtime.js"),
-      styleUrl: withSiteBase("/slexkit.css"),
-      fontUrls: [new URL(withSiteBase("/fonts/"), window.location.href).href],
-    },
+    secureFrame,
   });
   const app = mount(MarkdownRenderer, {
     target: container,
@@ -142,10 +143,7 @@ export function renderMarkdown(content, container, options = {}) {
       slexkitUseGlobalRuntimeHost: options.slexkitUseGlobalRuntimeHost ?? false,
       slexkitSecurePolicy: options.slexkitSecurePolicy ?? {},
       slexkitHostAdapter: options.slexkitHostAdapter,
-      slexkitSecureFrame: options.slexkitSecureFrame ?? {
-        runtimeUrl: withSiteBase("/slexkit.runtime.js"),
-        styleUrl: withSiteBase("/slexkit.css"),
-      },
+      slexkitSecureFrame: secureFrame,
       slexkitStreaming: options.slexkitStreaming ?? false,
       slexkitIncomplete: options.slexkitIncomplete ?? false,
     },

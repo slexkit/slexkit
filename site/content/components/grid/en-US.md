@@ -13,7 +13,10 @@ Arranges slotted children in a responsive grid controlled by column counts and g
 ## HTML example
 
 ```slex
-<slex-grid></slex-grid>
+<slex-grid columns="2" gap="4">
+  <slex-stat label="Voltage" value="12" unit="V"></slex-stat>
+  <slex-stat label="Current" value="2" unit="A"></slex-stat>
+</slex-grid>
 ```
 
 ## API Reference

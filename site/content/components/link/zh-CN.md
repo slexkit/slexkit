@@ -13,7 +13,7 @@ summary: "链接或轻量跳转动作。"
 ## HTML 示例
 
 ```slex
-<slex-link></slex-link>
+<slex-link text="查看入门指南" href="/zh-CN/docs/guides/quick-start"></slex-link>
 ```
 
 ## API 参考

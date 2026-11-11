@@ -13,7 +13,7 @@ Represents an independent boolean choice through `.checked` and native `input`/`
 ## HTML example
 
 ```slex
-<slex-checkbox></slex-checkbox>
+<slex-checkbox label="Send notifications" checked></slex-checkbox>
 ```
 
 ## API Reference

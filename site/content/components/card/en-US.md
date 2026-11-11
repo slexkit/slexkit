@@ -13,11 +13,11 @@ Groups related content in a titled surface with optional icon, tone, and variant
 ## HTML example
 
 ```slex
-<slex-card title="Metrics" icon="chart-bar">
-  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+<slex-card title="Metrics" icon="gear-six">
+  <slex-row>
     <slex-stat label="Requests" value="1.2k" unit="/min"></slex-stat>
     <slex-stat label="Latency" value="42" unit="ms"></slex-stat>
-  </div>
+  </slex-row>
 </slex-card>
 ```
 

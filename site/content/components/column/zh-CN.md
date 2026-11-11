@@ -13,7 +13,10 @@ summary: "垂直排列子组件。适合表单、说明文字、控制组。"
 ## HTML 示例
 
 ```slex
-<slex-column></slex-column>
+<slex-column>
+  <slex-stat label="电压" value="12" unit="V"></slex-stat>
+  <slex-stat label="电流" value="2" unit="A"></slex-stat>
+</slex-column>
 ```
 
 ## API 参考

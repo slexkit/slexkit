@@ -13,7 +13,7 @@ Represents an on/off setting through `.enabled`/`.checked` and native `input`/`c
 ## HTML example
 
 ```slex
-<slex-switch></slex-switch>
+<slex-switch label="Enable notifications" enabled></slex-switch>
 ```
 
 ## API Reference
