@@ -11,6 +11,12 @@ slexkitRenderMode: component
 
 All notable changes to SlexKit.
 
+## v0.5.3 - Metric animation alignment
+
+### Fixed
+- Keep metric digits on the same baseline after value animations, including rapid updates and reduced-motion settings.
+- Preserve digit alignment and readable glyphs alongside units across browser engines and CSS zoom levels.
+
 ## v0.5.2 - Runtime rendering fixes
 
 ### Fixed

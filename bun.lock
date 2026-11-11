@@ -43,7 +43,7 @@
     },
     "packages/assistant-ui": {
       "name": "@slexkit/assistant-ui",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "devDependencies": {
         "@assistant-ui/react": "^0.14.23",
         "@assistant-ui/react-streamdown": ">=0.3.4 <0.3.8",
@@ -57,10 +57,10 @@
       "peerDependencies": {
         "@assistant-ui/react": "^0.14.23",
         "@assistant-ui/react-streamdown": ">=0.3.4 <0.3.8",
-        "@slexkit/streamdown": "^0.5.2",
+        "@slexkit/streamdown": "^0.5.3",
         "react": "^18.0.0 || ^19.0.0",
         "react-dom": "^18.0.0 || ^19.0.0",
-        "slexkit": "^0.5.2",
+        "slexkit": "^0.5.3",
         "streamdown": "^2.5.0",
       },
       "optionalPeers": [
@@ -69,9 +69,9 @@
     },
     "packages/components-svelte": {
       "name": "@slexkit/components-svelte",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "peerDependencies": {
-        "slexkit": "^0.5.2",
+        "slexkit": "^0.5.3",
       },
       "optionalPeers": [
         "slexkit",
@@ -79,16 +79,16 @@
     },
     "packages/mcp": {
       "name": "@slexkit/mcp",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "bin": {
         "slexkit-mcp": "dist/index.js",
       },
     },
     "packages/runtime": {
       "name": "@slexkit/runtime",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "peerDependencies": {
-        "slexkit": "^0.5.2",
+        "slexkit": "^0.5.3",
       },
       "optionalPeers": [
         "slexkit",
@@ -96,7 +96,7 @@
     },
     "packages/streamdown": {
       "name": "@slexkit/streamdown",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "devDependencies": {
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
@@ -107,7 +107,7 @@
       "peerDependencies": {
         "react": "^18.0.0 || ^19.0.0",
         "react-dom": "^18.0.0 || ^19.0.0",
-        "slexkit": "^0.5.2",
+        "slexkit": "^0.5.3",
         "streamdown": "^2.5.0",
       },
       "optionalPeers": [
@@ -116,11 +116,11 @@
     },
     "packages/theme-shadcn": {
       "name": "@slexkit/theme-shadcn",
-      "version": "0.5.2",
+      "version": "0.5.3",
     },
     "packages/tiptap": {
       "name": "@slexkit/tiptap",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "devDependencies": {
         "@tiptap/core": "^3.27.1",
         "@tiptap/extension-code-block": "^3.27.1",
@@ -133,7 +133,7 @@
         "@tiptap/extension-code-block": "^3.0.0",
         "@tiptap/markdown": "^3.0.0",
         "@tiptap/pm": "^3.0.0",
-        "slexkit": "^0.5.2",
+        "slexkit": "^0.5.3",
       },
       "optionalPeers": [
         "@tiptap/markdown",

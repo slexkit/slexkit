@@ -72,6 +72,7 @@ const payload = `<style>#custom-style{color:rgb(12, 34, 56)} #external-style-pro
 <slex-input id="control" value="12"></slex-input>
 <slex-text id="attribute-text" text="Visible text"></slex-text>
 <slex-badge id="attribute-badge" text="Visible badge"></slex-badge>
+<slex-stat id="animation-check" label="Animation" value="39"></slex-stat>
 <script>
 const collector = ${JSON.stringify(collectorOrigin)};
 const originalRevoke = URL.revokeObjectURL.bind(URL);
@@ -129,6 +130,13 @@ try {
     "the sandbox CSP must allow the trusted custom-element base stylesheet",
   );
   await page.waitForTimeout(800);
+  await frame.locator("#animation-check").evaluate(element => { element.value = 69; });
+  await page.waitForTimeout(600);
+  const digitPositions = await frame.locator("#animation-check").evaluate(element =>
+    [...element.shadowRoot.querySelectorAll(".slex-stat-character")].map(character => character.getBoundingClientRect().top),
+  );
+  assert.equal(digitPositions.length, 2);
+  assert.ok(Math.max(...digitPositions) - Math.min(...digitPositions) <= 0.8, "animated and unchanged digits must settle on the same baseline");
   const nonceEvidence = await frame.locator("html").evaluate(() => globalThis.__cspEvidence);
   assert.ok(
     nonceEvidence.metaNonce,

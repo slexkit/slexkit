@@ -1,6 +1,6 @@
 {
   "name": "slexkit",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "A portable reactive component runtime for interactive Markdown.",
   "author": "SlexKit contributors",
   "type": "module",
