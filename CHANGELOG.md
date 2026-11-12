@@ -2,6 +2,13 @@
 
 All notable changes to SlexKit.
 
+## v0.5.4 - Sandbox layout and documentation fixes
+
+### Fixed
+- Include collapsed vertical margins in sandbox frame sizing so dividers and formulas are not clipped.
+- Restore the approved KaTeX font source in documentation previews and fix stylesheet URLs in the assistant-ui and ToolHost demos.
+- Give component documentation meaningful examples and keep metric cards readable on narrow screens.
+
 ## v0.5.3 - Metric animation alignment
 
 ### Fixed

@@ -11,6 +11,13 @@ slexkitRenderMode: component
 
 All notable changes to SlexKit.
 
+## v0.5.4 - Sandbox layout and documentation fixes
+
+### Fixed
+- Include vertical margins in sandbox frame sizing so dividers and formulas are not clipped.
+- Restore approved formula fonts and fix stylesheets in the assistant-ui and ToolHost examples.
+- Improve component examples and narrow-screen metric layouts.
+
 ## v0.5.3 - Metric animation alignment
 
 ### Fixed

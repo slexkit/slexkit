@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,7 +41,16 @@ jobs:
         run: bun run test
 
       - name: Install Chromium for website acceptance
-        run: bunx playwright install --with-deps chromium
+        timeout-minutes: 5
+        run: |
+          bunx playwright install chromium
+          # Hosted runners normally have the browser libraries already. Avoid
+          # an unconditional apt update (and its long DNS retry loop); only
+          # install OS dependencies if a real launch shows they are missing.
+          if ! node --input-type=module -e 'import { chromium } from "playwright"; const b = await chromium.launch(); await b.close()'; then
+            timeout 180s bunx playwright install-deps chromium
+            node --input-type=module -e 'import { chromium } from "playwright"; const b = await chromium.launch(); await b.close()'
+          fi
 
       - name: Verify website interactions and request limits
         run: bun run browser:acceptance
