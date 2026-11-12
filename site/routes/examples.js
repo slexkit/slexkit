@@ -1,9 +1,9 @@
-import { mount as mountSvelte, unmount } from "svelte";
+import { mount as mountSvelte, tick, unmount } from "svelte";
 import { defineSlexElements } from "../../src/web-components";
 import { loadExampleDocs } from "../data/examples.js";
 import { siteUiLabelsForLocale } from "../data/component-docs.js";
 import { renderMarkdown } from "../markdown/svelte-renderer.js";
-import DocsShell from "../components/DocsShell.svelte";
+import { mountDocsShell } from "../components/mount-docs-shell.js";
 import { siteFetch, withSiteBase } from "../app/site-base.js";
 import ToolHostResponsesDemo from "../components/examples/ToolHostResponsesDemo.svelte";
 import ToolHostFormDemo from "../components/examples/ToolHostFormDemo.svelte";
@@ -122,18 +122,6 @@ function shellDoc(example) {
     markdownHref: withSiteBase(example.markdownHref),
     bodyHtml: `<div class="slex-docs-markdown" data-markdown-doc="${escapeAttribute(example.slug)}"></div>`,
   };
-}
-
-function mountExamplesShell(target, value) {
-  const app = mountSvelte(DocsShell, {
-    target,
-    props: {
-      componentName: "docs-shell",
-      props: { subscribe(run) { run(value); return () => {}; } },
-      ctx: { id: "site-examples", emit() {} },
-    },
-  });
-  return () => void unmount(app);
 }
 
 function groupExamples(examples, category) {
@@ -307,6 +295,8 @@ export function createExamplesRoute({
   setSiteMount,
 }) {
   const examplesPromiseByLocale = new Map();
+  let shell;
+  let renderRevision = 0;
 
   async function loadExamples(locale = currentLocale()) {
     if (!examplesPromiseByLocale.has(locale)) {
@@ -331,8 +321,10 @@ export function createExamplesRoute({
   }
 
   async function renderExamples() {
+    const revision = ++renderRevision;
     document.body.dataset.siteRoute = "examples";
     const examples = await loadExamples();
+    if (revision !== renderRevision || document.body.dataset.siteRoute !== "examples") return;
     if (!examples.length) {
       emptyPage({ clearMobileContext, currentLocale, replaceRoot });
       return;
@@ -355,9 +347,7 @@ export function createExamplesRoute({
         docsLabel: copy.examplesLabel,
       },
     };
-    const page = document.createElement("main");
-    replaceRoot(page);
-    setSiteMount(mountExamplesShell(page, {
+    const value = {
       label: shellState.uiLabels.docsLabel,
       items: shellState.docs,
       active: shellState.activeHref,
@@ -365,9 +355,22 @@ export function createExamplesRoute({
       locale: shellState.locale,
       playgroundHrefBase: shellState.playgroundHrefBase,
       uiLabels: shellState.uiLabels,
-    }));
+    };
+    let page;
+    if (shell) {
+      page = shell.page;
+      clearMarkdown();
+      shell.view.update(value);
+    } else {
+      page = document.createElement("main");
+      replaceRoot(page);
+      const instance = { page, view: mountDocsShell(page, value, "site-examples") };
+      shell = instance;
+      setSiteMount(() => { instance.view.destroy(); if (shell === instance) shell = undefined; });
+    }
 
-    await Promise.resolve();
+    await tick();
+    if (revision !== renderRevision || !page.isConnected || document.body.dataset.siteRoute !== "examples") return;
     const markdownHost = page.querySelector("[data-markdown-doc]");
     if (markdownHost) {
       if (doc.slexkitRenderMode === "dialog") {
@@ -386,6 +389,7 @@ export function createExamplesRoute({
         });
         addMarkdownCleanup(cleanup);
         await Promise.resolve();
+        if (revision !== renderRevision || !page.isConnected || document.body.dataset.siteRoute !== "examples") return;
         const dialogContainer = document.createElement("div");
         dialogContainer.style.cssText = "margin-top:2rem;";
         markdownHost.appendChild(dialogContainer);

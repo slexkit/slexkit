@@ -122,6 +122,62 @@ try {
   assert.equal(await radioGroup.evaluate(element => element.value), 'prod');
   report.pages.push('component documentation examples expose working accordion and radio interactions');
 
+  // In-page navigation should replace the article, not recreate the whole
+  // sidebar. Preserve its scroll position, expansion state and actual nodes.
+  await page.goto(baseUrl + '/examples/first-interaction', { waitUntil: 'domcontentloaded' });
+  const sidebar = page.locator('.slex-docs-shell-sidebar');
+  await sidebar.getByRole('button', { name: 'Calculator', exact: true }).click();
+  assert.equal(await sidebar.getByRole('button', { name: 'Calculator', exact: true }).getAttribute('aria-expanded'), 'false');
+  await page.evaluate(() => {
+    const nav = document.querySelector('.slex-docs-shell-sidebar');
+    nav.scrollTop = 120;
+    window.__navigationTest = { nav, scrollTop: nav.scrollTop, item: nav.querySelector('a[href="/examples/multi-input-coordination"]') };
+    window.__navigationTest.item.click();
+  });
+  await page.locator('[data-markdown-doc="multi-input-coordination"] h1').waitFor();
+  assert.ok(await page.locator('a[href="/examples/multi-input-coordination.md"]').count() > 0);
+  assert.equal(await page.locator('a[href="/examples/first-interaction.md"]').count(), 0);
+  assert.deepEqual(await page.evaluate(() => ({
+    sameNav: window.__navigationTest.nav === document.querySelector('.slex-docs-shell-sidebar'),
+    sameItem: window.__navigationTest.item === document.querySelector('.slex-docs-shell-sidebar a[href="/examples/multi-input-coordination"]'),
+    scrollTop: document.querySelector('.slex-docs-shell-sidebar').scrollTop,
+    originalScrollTop: window.__navigationTest.scrollTop,
+  })), { sameNav: true, sameItem: true, scrollTop: await page.evaluate(() => window.__navigationTest.scrollTop), originalScrollTop: await page.evaluate(() => window.__navigationTest.scrollTop) });
+  assert.equal(await sidebar.getByRole('button', { name: 'Calculator', exact: true }).getAttribute('aria-expanded'), 'false');
+  await page.goBack();
+  await page.locator('[data-markdown-doc="first-interaction"] h1').waitFor();
+  assert.equal(await page.evaluate(() => window.__navigationTest.nav === document.querySelector('.slex-docs-shell-sidebar')), true);
+
+  // Switching the preview toolbar away from and back to the editor must not
+  // recreate its iframe or discard interaction state inside it.
+  const demo = page.locator('.slex-example-shell').first();
+  await demo.getByRole('button', { name: 'Live editor and preview' }).click();
+  const live = demo.frameLocator('iframe.slex-component-live-frame').frameLocator('[data-playground-preview] iframe');
+  await live.locator('#add button').click();
+  assert.equal(await live.locator('#count').evaluate(element => String(element.value)), '1');
+  await demo.locator('iframe.slex-component-live-frame').evaluate(element => { window.__liveFrame = element; });
+  await demo.getByRole('button', { name: 'View HTML source' }).click();
+  await demo.getByRole('button', { name: 'Live editor and preview' }).click();
+  assert.equal(await demo.locator('iframe.slex-component-live-frame').evaluate(element => element === window.__liveFrame), true);
+  assert.equal(await live.locator('#count').evaluate(element => String(element.value)), '1');
+  report.pages.push('example navigation preserves sidebar nodes and editor tabs retain iframe state');
+
+  await page.goto(baseUrl + '/docs/components/input', { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-markdown-doc="input"] h1').waitFor();
+  await page.evaluate(() => {
+    window.__docsNav = document.querySelector('.slex-docs-shell-sidebar');
+    window.__docsNav.querySelector('a[href="/docs/components/slider"]').click();
+  });
+  await page.locator('[data-markdown-doc="slider"] h1').waitFor();
+  assert.equal(await page.evaluate(() => window.__docsNav === document.querySelector('.slex-docs-shell-sidebar')), true);
+  await page.evaluate(() => {
+    document.querySelector('.slex-docs-shell-sidebar a[href="/docs/components/input"]').click();
+    document.querySelector('.slex-docs-shell-sidebar a[href="/docs/components/checkbox"]').click();
+  });
+  await page.locator('[data-markdown-doc="checkbox"] h1').waitFor();
+  assert.equal(await page.locator('[data-markdown-doc]').count(), 1);
+  report.pages.push('documentation navigation retains the sidebar and resolves rapid route changes');
+
   await page.goto(baseUrl + '/docs/guides/quick-start', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.querySelectorAll('iframe').length > 0);
   await page.getByRole('heading', { name: 'Getting Started', exact: true }).waitFor();
@@ -181,6 +237,16 @@ try {
       await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
       await touchPage.waitForFunction(() => window.scrollY > 50);
       report.pages.push('mobile Chromium touch swipe scrolls from inside the interactive iframe');
+
+      await touchPage.goto(baseUrl + '/examples/first-interaction', { waitUntil: 'domcontentloaded' });
+      await touchPage.locator('[data-markdown-doc="first-interaction"] h1').waitFor();
+      await touchPage.getByRole('button', { name: 'Open examples navigation' }).click();
+      await touchPage.evaluate(() => { window.__mobileNav = document.querySelector('.slex-docs-shell-sidebar'); });
+      await touchPage.locator('a[href="/examples/multi-input-coordination"]').first().click();
+      await touchPage.locator('[data-markdown-doc="multi-input-coordination"] h1').waitFor();
+      assert.equal(await touchPage.evaluate(() => window.__mobileNav === document.querySelector('.slex-docs-shell-sidebar')), true);
+      assert.equal(await touchPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+      report.pages.push('mobile example navigation retains the sidebar without viewport overflow');
     } finally {
       await mobile.close();
     }

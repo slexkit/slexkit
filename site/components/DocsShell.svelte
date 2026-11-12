@@ -244,7 +244,7 @@
       classes={{ active: activeClass, nonactive: nonActiveClass }}
       ariaLabel={text(p.label, labels().docsLabel)}
     >
-      {#each sections() as section}
+      {#each sections() as section (section.id)}
         <SidebarGroup class="slex-docs-section">
           <button
             type="button"
@@ -268,11 +268,11 @@
             aria-hidden={!isSectionOpen(section)}
           >
             <div class="slex-docs-section-panel-inner">
-              {#each section.subgroups as subgroup}
+              {#each section.subgroups as subgroup (subgroup.id)}
                 <div class="slex-docs-subgroup">
                   {#if subgroup.label}<div class="slex-docs-subgroup-title">{subgroup.label}</div>{/if}
                   <div class="slex-docs-subgroup-items">
-                    {#each subgroup.items as item}
+                    {#each subgroup.items as item (itemHref(item))}
                       <SidebarItem
                         label={text(item.title ?? item.label ?? itemId(item))}
                         href={itemHref(item)}

@@ -69,6 +69,7 @@
   let previewPending = $state(false);
   let loadToken = 0;
   let previewMode = $state<PreviewMode>("preview");
+  let hasOpenedLive = $state(false);
   let copied = $state(false);
   let copiedTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -253,7 +254,7 @@
         <button type="button" class:is-active={previewMode === "preview"} aria-pressed={previewMode === "preview"} aria-label={ui.preview} title={ui.preview} onclick={() => previewMode = "preview"}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>
         </button>
-        <button type="button" class:is-active={previewMode === "live"} aria-pressed={previewMode === "live"} aria-label={ui.live} title={ui.live} onclick={() => previewMode = "live"}>
+        <button type="button" class:is-active={previewMode === "live"} aria-pressed={previewMode === "live"} aria-label={ui.live} title={ui.live} onclick={() => { hasOpenedLive = true; previewMode = "live"; }}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 5v14"/></svg>
         </button>
         <button type="button" class:is-active={previewMode === "code"} aria-pressed={previewMode === "code"} aria-label={ui.code} title={ui.code} onclick={() => previewMode = "code"}>
@@ -285,8 +286,8 @@
         <div use:coordinatePreview={{ activeHost, artifactId, text, phase }}></div>
       </div>
     </div>
-    {#if previewMode === "live"}
-      <iframe class="slex-component-live-frame" title={ui.live} src={playgroundHref("live")}></iframe>
+    {#if hasOpenedLive}
+      <iframe class="slex-component-live-frame" title={ui.live} src={playgroundHref("live")} hidden={previewMode !== "live"}></iframe>
     {/if}
     <div class="slex-component-code" hidden={previewMode !== "code"}>
       <HighlightedMarkdownCode lang="html" {text} />

@@ -182,6 +182,7 @@
 .slex-playground-editor[hidden],
 .slex-playground-preview[hidden],
 .slex-component-preview[hidden],
+.slex-component-live-frame[hidden],
 .slex-component-code[hidden] {
   display: none !important;
 }

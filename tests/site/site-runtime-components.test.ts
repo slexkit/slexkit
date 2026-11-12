@@ -5,10 +5,12 @@ describe("site HTML runtime boundary", () => {
     const main = await Bun.file("site/main.js").text();
     const docs = await Bun.file("site/routes/docs.js").text();
     const examples = await Bun.file("site/routes/examples.js").text();
+    const shell = await Bun.file("site/components/mount-docs-shell.js").text();
     expect(main).not.toContain("registerSiteComponents");
     expect(main).not.toContain("registerAll");
-    expect(docs).toContain('import DocsShell from "../components/DocsShell.svelte"');
-    expect(examples).toContain('import DocsShell from "../components/DocsShell.svelte"');
+    expect(docs).toContain('import { mountDocsShell } from "../components/mount-docs-shell.js"');
+    expect(examples).toContain('import { mountDocsShell } from "../components/mount-docs-shell.js"');
+    expect(shell).toContain('import DocsShell from "./DocsShell.svelte"');
     expect(docs).not.toContain("ingest(");
     expect(examples).not.toContain("ingest(");
   });

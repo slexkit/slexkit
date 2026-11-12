@@ -1,7 +1,7 @@
-import { mount as mountSvelte, unmount } from "svelte";
+import { tick } from "svelte";
 import { loadWikiDocs, siteUiLabelsForLocale } from "../data/component-docs.js";
 import { renderMarkdown } from "../markdown/svelte-renderer.js";
-import DocsShell from "../components/DocsShell.svelte";
+import { mountDocsShell } from "../components/mount-docs-shell.js";
 import { siteFetch, withSiteBase } from "../app/site-base.js";
 
 function escapeAttribute(value) {
@@ -27,18 +27,6 @@ function docsShellDoc(doc) {
     markdownHref: withSiteBase(doc.markdownHref),
     bodyHtml: `<div class="slex-docs-markdown" data-markdown-doc="${escapeAttribute(doc.slug)}"></div>`,
   };
-}
-
-function mountDocsShell(target, value) {
-  const app = mountSvelte(DocsShell, {
-    target,
-    props: {
-      componentName: "docs-shell",
-      props: { subscribe(run) { run(value); return () => {}; } },
-      ctx: { id: "site-docs", emit() {} },
-    },
-  });
-  return () => void unmount(app);
 }
 
 function revealActiveDocsSidebarItem(root) {
@@ -69,6 +57,8 @@ export function createDocsRoute({
 }) {
   const wikiDocsPromiseByLocale = new Map();
   let tocScrollFrame = 0;
+  let shell;
+  let renderRevision = 0;
 
   async function loadDocs(locale = currentLocale()) {
     if (!wikiDocsPromiseByLocale.has(locale)) {
@@ -115,8 +105,10 @@ export function createDocsRoute({
   }
 
   async function renderDocs() {
+    const revision = ++renderRevision;
     document.body.dataset.siteRoute = "docs";
     const docs = await loadDocs();
+    if (revision !== renderRevision || document.body.dataset.siteRoute !== "docs") return;
     if (!docs.length) {
       renderEmptyDocs();
       return;
@@ -135,9 +127,7 @@ export function createDocsRoute({
       uiLabels: labels,
       emptyText: labels.docNotFound ?? labels.noDocsFound,
     };
-    const page = document.createElement("main");
-    replaceRoot(page);
-    setSiteMount(mountDocsShell(page, {
+    const value = {
       label: shellState.uiLabels.docsLabel,
       items: shellState.docs,
       active: shellState.activeHref,
@@ -147,10 +137,23 @@ export function createDocsRoute({
       playgroundHrefBase: shellState.playgroundHrefBase,
       uiLabels: shellState.uiLabels,
       emptyText: shellState.emptyText,
-    }));
+    };
+    let page;
+    if (shell) {
+      page = shell.page;
+      clearMarkdown();
+      shell.view.update(value);
+    } else {
+      page = document.createElement("main");
+      replaceRoot(page);
+      const instance = { page, view: mountDocsShell(page, value, "site-docs") };
+      shell = instance;
+      setSiteMount(() => { instance.view.destroy(); if (shell === instance) shell = undefined; });
+    }
 
     mobileNav.renderDocsContext(docs, doc);
-    await Promise.resolve();
+    await tick();
+    if (revision !== renderRevision || !page.isConnected || document.body.dataset.siteRoute !== "docs") return;
     const markdownHost = page.querySelector("[data-markdown-doc]");
     if (doc && markdownHost) {
       renderMarkdownInto(doc.markdown, markdownHost, {
